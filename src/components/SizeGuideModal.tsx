@@ -75,7 +75,7 @@ export function SizeGuideModal() {
           borderRadius: "20px",
           boxShadow: "0 28px 70px rgba(10,10,20,.4)",
           overflow: "hidden",
-          animation: "jk-pop .22s cubic-bezier(.2,.8,.2,1)",
+          animation: "sf-pop .22s cubic-bezier(.2,.8,.2,1)",
         }}
       >
         <div
@@ -99,7 +99,7 @@ export function SizeGuideModal() {
             {guide.title}
           </div>
           <button
-            className="jk-gi"
+            className="sf-gi"
             onClick={close}
             style={{
               width: "34px",

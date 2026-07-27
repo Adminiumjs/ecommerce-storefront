@@ -27,7 +27,7 @@ export function ProductCard({ product: p }: ProductCardProps) {
 
   return (
     <div
-      className="jk-card"
+      className="sf-card"
       onClick={() => openProduct(p.id)}
       style={{
         background: "var(--surface)",
@@ -50,7 +50,7 @@ export function ProductCard({ product: p }: ProductCardProps) {
       >
         <ProductImage src={p.image} alt={p.title} tint={p.tint} dim={out} />
         <button
-          className="jk-qa"
+          className="sf-qa"
           onClick={(e) => {
             e.stopPropagation();
             add(p.id, 1);

@@ -40,7 +40,7 @@ export function Home() {
 
   return (
     <main
-      className="jk-screen"
+      className="sf-screen"
       style={{
         maxWidth: "1200px",
         margin: "0 auto",
@@ -120,7 +120,7 @@ export function Home() {
             }}
           >
             <button
-              className="jk-btn"
+              className="sf-btn"
               onClick={() => goCat("all")}
               style={{
                 display: "inline-flex",
@@ -140,7 +140,7 @@ export function Home() {
               <Icon name="arrow-right" size={17} />
             </button>
             <button
-              className="jk-gi"
+              className="sf-gi"
               onClick={() => goCat("gear")}
               style={{
                 display: "inline-flex",
@@ -284,7 +284,7 @@ export function Home() {
               the latest additions to the Northline lineup.
             </p>
             <button
-              className="jk-btn"
+              className="sf-btn"
               onClick={() => goCat("all")}
               style={{
                 marginTop: "16px",
@@ -330,7 +330,7 @@ export function Home() {
             Featured
           </h2>
           <button
-            className="jk-link"
+            className="sf-link"
             onClick={() => goCat("all")}
             style={{
               marginInlineStart: "auto",
@@ -396,7 +396,7 @@ export function Home() {
             return (
               <button
                 key={c.slug}
-                className="jk-tile"
+                className="sf-tile"
                 onClick={() => goCat(c.slug)}
                 style={{
                   position: "relative",
@@ -605,7 +605,7 @@ export function Home() {
             </p>
           </div>
           <button
-            className="jk-btn"
+            className="sf-btn"
             onClick={() => goCat("all")}
             style={{
               position: "relative",

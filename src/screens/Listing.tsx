@@ -149,7 +149,7 @@ export function Listing() {
 
   return (
     <main
-      className="jk-screen"
+      className="sf-screen"
       style={{
         maxWidth: "1200px",
         margin: "0 auto",
@@ -164,7 +164,7 @@ export function Listing() {
         }}
       >
         <button
-          className="jk-link"
+          className="sf-link"
           onClick={() => s.go("home")}
           style={{
             border: "none",
@@ -216,7 +216,7 @@ export function Listing() {
           }}
         >
           <button
-            className="jk-gi jk-filters-btn"
+            className="sf-gi sf-filters-btn"
             onClick={s.toggleFilters}
             style={{
               alignItems: "center",
@@ -236,7 +236,7 @@ export function Listing() {
           </button>
           <div style={{ position: "relative" }}>
             <button
-              className="jk-gi"
+              className="sf-gi"
               onClick={s.toggleSort}
               style={{
                 display: "inline-flex",
@@ -274,7 +274,7 @@ export function Listing() {
                     borderRadius: "12px",
                     boxShadow: "0 16px 40px rgba(10,10,20,.2)",
                     padding: "6px",
-                    animation: "jk-pop .16s ease",
+                    animation: "sf-pop .16s ease",
                   }}
                 >
                   {SORTS.map(([key, label]) => {
@@ -318,7 +318,7 @@ export function Listing() {
           alignItems: "flex-start",
         }}
       >
-        <aside className="jk-sidebar" data-open={filtersOpen}>
+        <aside className="sf-sidebar" data-open={filtersOpen}>
           <div style={{ display: "flex", flexDirection: "column", gap: "22px" }}>
             {/* Category */}
             <div>
@@ -492,7 +492,7 @@ export function Listing() {
             </div>
             {showClear && (
               <button
-                className="jk-link"
+                className="sf-link"
                 onClick={s.clearFilters}
                 style={{
                   alignSelf: "flex-start",
@@ -535,7 +535,7 @@ export function Listing() {
                     background: "var(--surface)",
                   }}
                 >
-                  <div className="jk-skel" style={{ aspectRatio: "1 / 1" }} />
+                  <div className="sf-skel" style={{ aspectRatio: "1 / 1" }} />
                   <div
                     style={{
                       padding: "14px 15px 16px",
@@ -545,15 +545,15 @@ export function Listing() {
                     }}
                   >
                     <div
-                      className="jk-skel"
+                      className="sf-skel"
                       style={{ height: "9px", width: "38%", borderRadius: "5px" }}
                     />
                     <div
-                      className="jk-skel"
+                      className="sf-skel"
                       style={{ height: "14px", width: "82%", borderRadius: "5px" }}
                     />
                     <div
-                      className="jk-skel"
+                      className="sf-skel"
                       style={{
                         height: "13px",
                         width: "46%",
@@ -612,7 +612,7 @@ export function Listing() {
                 everything in the shop.
               </div>
               <button
-                className="jk-btn"
+                className="sf-btn"
                 onClick={s.clearFilters}
                 style={{
                   marginTop: "18px",
@@ -657,7 +657,7 @@ export function Listing() {
                     Showing {visible.length} of {total}
                   </div>
                   <button
-                    className="jk-gi"
+                    className="sf-gi"
                     onClick={s.loadMore}
                     style={{
                       padding: "12px 26px",

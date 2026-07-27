@@ -34,7 +34,7 @@ export function MobileMenu() {
           background: "var(--surface)",
           borderBottom: "1px solid var(--border)",
           padding: "16px clamp(16px,5vw,24px) 22px",
-          animation: "jk-sheet .22s ease",
+          animation: "sf-sheet .22s ease",
         }}
       >
         <div
@@ -51,7 +51,7 @@ export function MobileMenu() {
             Menu
           </span>
           <button
-            className="jk-gi"
+            className="sf-gi"
             onClick={closeMenu}
             style={{
               width: "36px",
@@ -82,7 +82,7 @@ export function MobileMenu() {
             }}
           />
           <input
-            className="jk-fld"
+            className="sf-fld"
             value={qDraft}
             onChange={(e) => setQDraft(e.target.value)}
             onKeyDown={(e) => {

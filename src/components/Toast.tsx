@@ -25,7 +25,7 @@ export function Toast() {
         fontSize: "13px",
         fontWeight: 700,
         boxShadow: "0 12px 34px rgba(10,10,20,.32)",
-        animation: "jk-pop .22s cubic-bezier(.2,.8,.2,1)",
+        animation: "sf-pop .22s cubic-bezier(.2,.8,.2,1)",
       }}
     >
       <Icon name="check-circle-2" size={16} />

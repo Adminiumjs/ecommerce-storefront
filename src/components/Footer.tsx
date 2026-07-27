@@ -124,7 +124,7 @@ export function Footer() {
             </p>
             <div style={{ display: "flex", gap: "8px", maxWidth: "340px" }}>
               <input
-                className="jk-fld"
+                className="sf-fld"
                 value={news}
                 onChange={(e) => setNews(e.target.value)}
                 placeholder="you@email.com"
@@ -141,7 +141,7 @@ export function Footer() {
                 }}
               />
               <button
-                className="jk-btn"
+                className="sf-btn"
                 onClick={newsSubmit}
                 style={{
                   padding: "11px 18px",
@@ -179,7 +179,7 @@ export function Footer() {
                 {col.links.map((lk) => (
                   <button
                     key={lk.label}
-                    className="jk-link"
+                    className="sf-link"
                     onClick={lk.onClick}
                     style={{
                       border: "none",

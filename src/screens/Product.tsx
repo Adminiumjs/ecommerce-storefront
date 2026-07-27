@@ -157,7 +157,7 @@ export function Product() {
 
   return (
     <main
-      className="jk-screen"
+      className="sf-screen"
       style={{
         maxWidth: "1160px",
         margin: "0 auto",
@@ -172,7 +172,7 @@ export function Product() {
         }}
       >
         <button
-          className="jk-link"
+          className="sf-link"
           onClick={() => useStore.getState().go("home")}
           style={{
             border: "none",
@@ -188,7 +188,7 @@ export function Product() {
         </button>
         <span style={{ margin: "0 7px" }}>/</span>
         <button
-          className="jk-link"
+          className="sf-link"
           onClick={() => goCat(p.cat)}
           style={{
             border: "none",
@@ -257,7 +257,7 @@ export function Product() {
             {thumbs.map((t) => (
               <button
                 key={t.id}
-                className="jk-thumb"
+                className="sf-thumb"
                 onClick={t.onClick}
                 style={{
                   position: "relative",
@@ -448,7 +448,7 @@ export function Product() {
                     flexDirection: "column",
                     gap: "13px",
                     borderTop: "1px solid var(--border)",
-                    animation: "jk-fade .2s ease",
+                    animation: "sf-fade .2s ease",
                   }}
                 >
                   <div>
@@ -480,7 +480,7 @@ export function Product() {
                       </span>
                     </div>
                     <input
-                      className="jk-fld"
+                      className="sf-fld"
                       value={customText}
                       onChange={(e) => setCustomText(e.target.value)}
                       placeholder={p.custom.ph}
@@ -589,7 +589,7 @@ export function Product() {
                   }}
                 >
                   <button
-                    className="jk-gi"
+                    className="sf-gi"
                     onClick={qtyDec}
                     style={{
                       width: "44px",
@@ -617,7 +617,7 @@ export function Product() {
                     {qty}
                   </span>
                   <button
-                    className="jk-gi"
+                    className="sf-gi"
                     onClick={qtyInc}
                     style={{
                       width: "44px",
@@ -640,7 +640,7 @@ export function Product() {
               </div>
               <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
                 <button
-                  className="jk-btn"
+                  className="sf-btn"
                   onClick={addToCartPDP}
                   style={{
                     flex: 1,
@@ -663,7 +663,7 @@ export function Product() {
                   Add to cart
                 </button>
                 <button
-                  className="jk-gi"
+                  className="sf-gi"
                   onClick={buyNow}
                   style={{
                     flex: 1,
@@ -719,7 +719,7 @@ export function Product() {
                 Sold out
               </button>
               <button
-                className="jk-gi"
+                className="sf-gi"
                 onClick={notify}
                 style={{
                   flex: 1,
@@ -986,7 +986,7 @@ export function Product() {
                 Save {money(bundleSave)} · 15% off
               </span>
               <button
-                className="jk-btn"
+                className="sf-btn"
                 onClick={() => {
                   bundleItems.forEach((x) =>
                     add(x.id, 1, defaultSel(x), null, 0.15),

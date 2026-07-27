@@ -51,7 +51,7 @@ export function ReviewModal() {
           borderRadius: "20px",
           boxShadow: "0 28px 70px rgba(10,10,20,.4)",
           overflow: "hidden",
-          animation: "jk-pop .22s cubic-bezier(.2,.8,.2,1)",
+          animation: "sf-pop .22s cubic-bezier(.2,.8,.2,1)",
         }}
       >
         <div
@@ -74,7 +74,7 @@ export function ReviewModal() {
             </div>
           </div>
           <button
-            className="jk-gi"
+            className="sf-gi"
             onClick={close}
             style={{
               marginInlineStart: "auto",
@@ -159,7 +159,7 @@ export function ReviewModal() {
               Title
             </label>
             <input
-              className="jk-fld"
+              className="sf-fld"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Sum it up in a few words"
@@ -187,7 +187,7 @@ export function ReviewModal() {
               Your review
             </label>
             <textarea
-              className="jk-fld"
+              className="sf-fld"
               value={body}
               onChange={(e) => setBody(e.target.value)}
               rows={4}
@@ -218,7 +218,7 @@ export function ReviewModal() {
           }}
         >
           <button
-            className="jk-gi"
+            className="sf-gi"
             onClick={close}
             style={{
               flex: 1,
@@ -235,7 +235,7 @@ export function ReviewModal() {
             Cancel
           </button>
           <button
-            className="jk-btn"
+            className="sf-btn"
             onClick={submit}
             style={{
               flex: 1,

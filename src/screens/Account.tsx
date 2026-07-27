@@ -32,7 +32,7 @@ export function Account() {
 
   return (
     <main
-      className="jk-screen"
+      className="sf-screen"
       style={{
         maxWidth: "820px",
         margin: "0 auto",
@@ -194,7 +194,7 @@ export function Account() {
                 </div>
                 <div style={{ display: "flex", gap: "9px" }}>
                   <button
-                    className="jk-gi"
+                    className="sf-gi"
                     onClick={() => viewOrder(o.number)}
                     style={{
                       padding: "9px 15px",
@@ -210,7 +210,7 @@ export function Account() {
                     View details
                   </button>
                   <button
-                    className="jk-btn"
+                    className="sf-btn"
                     onClick={() => buyAgain(o)}
                     style={{
                       display: "inline-flex",

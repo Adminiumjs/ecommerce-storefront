@@ -42,7 +42,7 @@ export function Cart() {
 
   return (
     <main
-      className="jk-screen"
+      className="sf-screen"
       style={{
         maxWidth: "1080px",
         margin: "0 auto",
@@ -104,7 +104,7 @@ export function Cart() {
             Once you add products they’ll show up here, ready for checkout.
           </div>
           <button
-            className="jk-btn"
+            className="sf-btn"
             onClick={() => goCat("all")}
             style={{
               marginTop: "20px",
@@ -149,7 +149,7 @@ export function Cart() {
                 {cnt + (cnt === 1 ? " item" : " items")}
               </span>
               <button
-                className="jk-link"
+                className="sf-link"
                 onClick={() => goCat("all")}
                 style={{
                   display: "inline-flex",
@@ -206,7 +206,7 @@ export function Cart() {
                     <div style={{ display: "flex", gap: "12px", alignItems: "flex-start" }}>
                       <div style={{ flex: 1, minWidth: 0 }}>
                         <button
-                          className="jk-link"
+                          className="sf-link"
                           onClick={() => openProduct(l.p.id)}
                           style={{
                             border: "none",
@@ -285,7 +285,7 @@ export function Cart() {
                         )}
                       </div>
                       <button
-                        className="jk-link"
+                        className="sf-link"
                         onClick={() => removeItem(l.key)}
                         style={{
                           display: "inline-flex",
@@ -505,7 +505,7 @@ export function Cart() {
               {!promoOn ? (
                 <div style={{ display: "flex", gap: "8px", marginBottom: "14px" }}>
                   <input
-                    className="jk-fld"
+                    className="sf-fld"
                     value={promoDraft}
                     onChange={(e) => setPromoDraft(e.target.value)}
                     placeholder="Promo code"
@@ -523,7 +523,7 @@ export function Cart() {
                     }}
                   />
                   <button
-                    className="jk-gi"
+                    className="sf-gi"
                     onClick={applyPromo}
                     style={{
                       padding: "11px 16px",
@@ -564,7 +564,7 @@ export function Cart() {
                     WELCOME10 applied
                   </span>
                   <button
-                    className="jk-link"
+                    className="sf-link"
                     onClick={removePromo}
                     style={{
                       border: "none",
@@ -580,7 +580,7 @@ export function Cart() {
                 </div>
               )}
               <button
-                className="jk-btn"
+                className="sf-btn"
                 onClick={goCheckout}
                 style={{
                   width: "100%",

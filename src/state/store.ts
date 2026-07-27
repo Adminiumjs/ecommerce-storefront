@@ -91,7 +91,7 @@ const KNOWN_VIEWS: string[] = [
 
 export function initialTheme(): Theme {
   if (typeof localStorage !== "undefined") {
-    const t = localStorage.getItem("jk-theme");
+    const t = localStorage.getItem("sf-theme");
     if (t === "light" || t === "dark") return t;
   }
   if (
@@ -106,7 +106,7 @@ export function initialTheme(): Theme {
 export function applyTheme(t: Theme) {
   if (typeof document !== "undefined")
     document.documentElement.setAttribute("data-theme", t);
-  if (typeof localStorage !== "undefined") localStorage.setItem("jk-theme", t);
+  if (typeof localStorage !== "undefined") localStorage.setItem("sf-theme", t);
 }
 
 // --- timers (module-level singletons) ------------------------------------

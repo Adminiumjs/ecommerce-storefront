@@ -62,7 +62,7 @@ export function Confirm() {
 
   return (
     <main
-      className="jk-screen"
+      className="sf-screen"
       style={{
         maxWidth: "900px",
         margin: "0 auto",
@@ -418,7 +418,7 @@ export function Confirm() {
         }}
       >
         <button
-          className="jk-btn"
+          className="sf-btn"
           onClick={() => goCat("all")}
           style={{
             display: "inline-flex",
@@ -438,7 +438,7 @@ export function Confirm() {
           Continue shopping
         </button>
         <button
-          className="jk-gi"
+          className="sf-gi"
           onClick={() => go("account")}
           style={{
             display: "inline-flex",

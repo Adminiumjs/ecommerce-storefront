@@ -46,7 +46,7 @@ export function CartDrawer() {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="jk-scroll"
+        className="sf-scroll"
         style={{
           width: "428px",
           maxWidth: "94vw",
@@ -56,7 +56,7 @@ export function CartDrawer() {
           background: "var(--surface)",
           borderInlineStart: "1px solid var(--border)",
           boxShadow: "-24px 0 60px rgba(10,10,20,.28)",
-          animation: "jk-drawer .28s cubic-bezier(.2,.8,.2,1)",
+          animation: "sf-drawer .28s cubic-bezier(.2,.8,.2,1)",
         }}
       >
         <div
@@ -86,7 +86,7 @@ export function CartDrawer() {
             {cnt + (cnt === 1 ? " item" : " items")}
           </span>
           <button
-            className="jk-gi"
+            className="sf-gi"
             onClick={closeDrawer}
             style={{
               marginInlineStart: "auto",
@@ -155,7 +155,7 @@ export function CartDrawer() {
               Add something you love and it’ll show up right here.
             </div>
             <button
-              className="jk-btn"
+              className="sf-btn"
               onClick={() => goCat("all")}
               style={{
                 marginTop: "14px",
@@ -175,7 +175,7 @@ export function CartDrawer() {
         ) : (
           <>
             <div
-              className="jk-scroll"
+              className="sf-scroll"
               style={{ flex: 1, overflow: "auto", padding: "6px 22px" }}
             >
               {lines.map((l) => (
@@ -276,7 +276,7 @@ export function CartDrawer() {
                         </div>
                       </div>
                       <button
-                        className="jk-link"
+                        className="sf-link"
                         onClick={() => removeItem(l.key)}
                         title="Remove"
                         style={{
@@ -361,7 +361,7 @@ export function CartDrawer() {
                 {shipNote}
               </div>
               <button
-                className="jk-btn"
+                className="sf-btn"
                 onClick={goCheckout}
                 style={{
                   width: "100%",
@@ -383,7 +383,7 @@ export function CartDrawer() {
                 <Icon name="arrow-right" size={16} />
               </button>
               <button
-                className="jk-link"
+                className="sf-link"
                 onClick={() => go("cart")}
                 style={{
                   width: "100%",

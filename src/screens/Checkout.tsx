@@ -117,7 +117,7 @@ export function Checkout() {
           )}
         </label>
         <input
-          className="jk-fld"
+          className="sf-fld"
           value={fd.value}
           onChange={fd.onChange}
           placeholder={placeholder}
@@ -134,7 +134,7 @@ export function Checkout() {
 
   return (
     <main
-      className="jk-screen"
+      className="sf-screen"
       style={{
         maxWidth: "1060px",
         margin: "0 auto",
@@ -229,7 +229,7 @@ export function Checkout() {
           {/* step body */}
           {step === 0 && (
             <div
-              className="jk-screen"
+              className="sf-screen"
               style={{ display: "flex", flexDirection: "column", gap: "16px" }}
             >
               <div
@@ -246,7 +246,7 @@ export function Checkout() {
                 <span style={{ fontSize: "13px", color: "var(--fg-muted)" }}>
                   Have an account?{" "}
                   <button
-                    className="jk-link"
+                    className="sf-link"
                     onClick={st.onLogin}
                     style={{
                       border: "none",
@@ -274,7 +274,7 @@ export function Checkout() {
                   Email address
                 </label>
                 <input
-                  className="jk-fld"
+                  className="sf-fld"
                   value={f.email}
                   onChange={(ev) => st.setField("email", ev.target.value)}
                   placeholder="you@email.com"
@@ -340,7 +340,7 @@ export function Checkout() {
 
           {step === 1 && (
             <div
-              className="jk-screen"
+              className="sf-screen"
               style={{ display: "flex", flexDirection: "column", gap: "16px" }}
             >
               <h2 style={{ margin: 0, fontSize: "20px", fontWeight: 800, letterSpacing: "-.02em" }}>
@@ -406,7 +406,7 @@ export function Checkout() {
 
           {step === 2 && (
             <div
-              className="jk-screen"
+              className="sf-screen"
               style={{ display: "flex", flexDirection: "column", gap: "16px" }}
             >
               <h2 style={{ margin: 0, fontSize: "20px", fontWeight: 800, letterSpacing: "-.02em" }}>
@@ -485,7 +485,7 @@ export function Checkout() {
 
           {step === 3 && (
             <div
-              className="jk-screen"
+              className="sf-screen"
               style={{ display: "flex", flexDirection: "column", gap: "16px" }}
             >
               <div
@@ -551,7 +551,7 @@ export function Checkout() {
                       style={{ flexShrink: 0 }}
                     />
                     <input
-                      className="jk-fld"
+                      className="sf-fld"
                       value={f.card}
                       onChange={(ev) => st.setField("card", ev.target.value)}
                       placeholder="1234 1234 1234 1234"
@@ -588,7 +588,7 @@ export function Checkout() {
                   </div>
                   <div style={{ display: "flex" }}>
                     <input
-                      className="jk-fld"
+                      className="sf-fld"
                       value={f.exp}
                       onChange={(ev) => st.setField("exp", ev.target.value)}
                       placeholder="MM / YY"
@@ -606,7 +606,7 @@ export function Checkout() {
                       }}
                     />
                     <input
-                      className="jk-fld"
+                      className="sf-fld"
                       value={f.cvc}
                       onChange={(ev) => st.setField("cvc", ev.target.value)}
                       placeholder="CVC"
@@ -689,7 +689,7 @@ export function Checkout() {
           {/* nav buttons */}
           <div style={{ display: "flex", gap: "12px", marginTop: "26px" }}>
             <button
-              className="jk-gi"
+              className="sf-gi"
               onClick={st.coBack}
               style={{
                 display: "inline-flex",
@@ -711,7 +711,7 @@ export function Checkout() {
             </button>
             {step < 3 ? (
               <button
-                className="jk-btn"
+                className="sf-btn"
                 onClick={st.coNext}
                 style={{
                   flex: 1,
@@ -734,7 +734,7 @@ export function Checkout() {
               </button>
             ) : (
               <button
-                className="jk-btn"
+                className="sf-btn"
                 onClick={st.placeOrder}
                 style={{
                   flex: 1,

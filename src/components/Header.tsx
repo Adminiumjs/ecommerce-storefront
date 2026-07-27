@@ -76,7 +76,7 @@ function CheckoutHeader() {
           </span>
         </button>
         <button
-          className="jk-link"
+          className="sf-link"
           onClick={() => go("cart")}
           style={{
             marginInlineStart: "auto",
@@ -160,7 +160,7 @@ export function Header() {
         }}
       >
         <button
-          className="jk-gi jk-hamburger"
+          className="sf-gi sf-hamburger"
           onClick={openMenu}
           style={{
             width: "40px",
@@ -213,7 +213,7 @@ export function Header() {
         </button>
 
         <nav
-          className="jk-inline-nav"
+          className="sf-inline-nav"
           style={{
             display: "flex",
             alignItems: "center",
@@ -227,7 +227,7 @@ export function Header() {
           {cats.map((c) => (
             <button
               key={c.slug}
-              className="jk-nav"
+              className="sf-nav"
               onClick={() => goCat(c.slug)}
               style={navBtnStyle(isListing && cat === c.slug)}
             >
@@ -245,7 +245,7 @@ export function Header() {
           }}
         >
           <div
-            className="jk-inline-search"
+            className="sf-inline-search"
             style={{ position: "relative", width: "230px" }}
           >
             <Icon
@@ -260,7 +260,7 @@ export function Header() {
               }}
             />
             <input
-              className="jk-fld"
+              className="sf-fld"
               value={qDraft}
               onChange={(e) => setQDraft(e.target.value)}
               onKeyDown={(e) => {
@@ -280,7 +280,7 @@ export function Header() {
             />
           </div>
           <button
-            className="jk-gi"
+            className="sf-gi"
             onClick={toggleTheme}
             title="Toggle theme"
             style={{
@@ -299,7 +299,7 @@ export function Header() {
             <Icon name={theme === "dark" ? "sun" : "moon"} size={18} />
           </button>
           <button
-            className="jk-gi"
+            className="sf-gi"
             onClick={openDrawer}
             title="Cart"
             style={{

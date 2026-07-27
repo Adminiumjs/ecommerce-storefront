@@ -49,7 +49,7 @@ export function ReviewsModule({ product: p }: ReviewsModuleProps) {
           Ratings &amp; reviews
         </h2>
         <button
-          className="jk-gi"
+          className="sf-gi"
           onClick={openReview}
           style={{
             marginInlineStart: "auto",

@@ -48,7 +48,7 @@ export function QtyStepper({
         overflow: "hidden",
       }}
     >
-      <button className="jk-gi" onClick={onDec} style={btn}>
+      <button className="sf-gi" onClick={onDec} style={btn}>
         <Icon name="minus" size={iconSize} />
       </button>
       <span
@@ -62,7 +62,7 @@ export function QtyStepper({
       >
         {qty}
       </span>
-      <button className="jk-gi" onClick={onInc} style={btn}>
+      <button className="sf-gi" onClick={onInc} style={btn}>
         <Icon name="plus" size={iconSize} />
       </button>
     </div>

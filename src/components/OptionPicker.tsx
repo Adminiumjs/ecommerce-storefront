@@ -49,7 +49,7 @@ export function OptionPicker({ product: p }: OptionPickerProps) {
               </span>
               {o.key === "size" && (
                 <button
-                  className="jk-link"
+                  className="sf-link"
                   onClick={openSizeGuide}
                   style={{
                     marginInlineStart: "auto",

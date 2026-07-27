@@ -9,7 +9,7 @@ export function NotFound() {
 
   return (
     <main
-      className="jk-screen"
+      className="sf-screen"
       style={{
         maxWidth: "560px",
         margin: "0 auto",
@@ -61,7 +61,7 @@ export function NotFound() {
         }}
       >
         <button
-          className="jk-btn"
+          className="sf-btn"
           onClick={() => go("home")}
           style={{
             display: "inline-flex",
@@ -81,7 +81,7 @@ export function NotFound() {
           Back home
         </button>
         <button
-          className="jk-gi"
+          className="sf-gi"
           onClick={() => goCat("all")}
           style={{
             display: "inline-flex",
