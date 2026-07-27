@@ -1,7 +1,7 @@
 /*
  * Design tokens for adminium.dev — a faithful, hand-inlined mirror of
  * @adminium/tokens (packages/tokens/src/{tokens,accents}.css in the product
- * monorepo). Values are canonical; see workplan/02-design-system.md §1.
+ * monorepo). Values are canonical; see 02-design-system.md §1.
  *
  * This file is copied rather than imported because the website is a separate
  * repo and @adminium/tokens is not yet on npm. When it is published, replace
