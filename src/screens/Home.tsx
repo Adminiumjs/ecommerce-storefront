@@ -205,7 +205,7 @@ export function Home() {
         >
           <ProductImage
             src={HERO_IMAGE}
-            alt="Jacky's gear, out on location"
+            alt="Northline gear, out on location"
             tint="#6f74c4"
           />
         </div>
@@ -281,7 +281,7 @@ export function Home() {
               }}
             >
               Fresh gear, apparel, and home goods just dropped. Be first to shop
-              the latest additions to the Jacky’s lineup.
+              the latest additions to the Northline lineup.
             </p>
             <button
               className="jk-btn"
@@ -589,7 +589,7 @@ export function Home() {
                 lineHeight: 1.5,
               }}
             >
-              Join the Jacky’s list. Use code{" "}
+              Join the Northline list. Use code{" "}
               <span
                 style={{
                   fontFamily: "'JetBrains Mono',monospace",

@@ -1,9 +1,9 @@
 spec:
-  name: jackys-storefront
+  name: ecommerce-storefront
   static_sites:
     - name: web
       github:
-        repo: MoSofi/jackys-storefront
+        repo: Adminiumjs/ecommerce-storefront
         branch: main
         deploy_on_push: true
       build_command: npm run build

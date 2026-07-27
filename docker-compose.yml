@@ -1,4 +1,4 @@
-# Jacky's Storefront — full self-host stack ("the full implementation").
+# Ecommerce Storefront — full self-host stack ("the full implementation").
 #
 # `docker compose up` brings up the whole product on a real database:
 #   • storefront       → http://localhost:8080  (the React SPA, now with real images)

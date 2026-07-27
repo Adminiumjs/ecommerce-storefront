@@ -72,7 +72,7 @@ function CheckoutHeader() {
           <span
             style={{ fontWeight: 800, fontSize: "17px", letterSpacing: "-.02em" }}
           >
-            Jacky’s
+            Northline
           </span>
         </button>
         <button
@@ -208,7 +208,7 @@ export function Header() {
           <span
             style={{ fontWeight: 800, fontSize: "18px", letterSpacing: "-.02em" }}
           >
-            Jacky’s
+            Northline
           </span>
         </button>
 

@@ -1,4 +1,4 @@
--- Jacky's Storefront — seed data.
+-- Ecommerce Storefront — seed data.
 --
 -- Mirrors src/data/demo.ts exactly: the same 16 products (title, sku, price, and
 -- the same real Unsplash image_url), the 4 categories, plus a realistic slice of

@@ -1,4 +1,4 @@
-# Jacky's Storefront
+# Ecommerce Storefront
 
 A complete, production-shaped e-commerce storefront — built with Vite + React +
 TypeScript, no CSS framework, no backend required. It's the example app that
@@ -6,7 +6,7 @@ ships with [Adminium](https://adminium.dev): browse a catalog, configure product
 variants, personalize items, run a cart with promo codes and a 4-step checkout,
 and place a (demo) order — all from built-in demo data.
 
-**Live demo → [adminium.dev/demo/jackys-storefront](https://adminium.dev/demo/jackys-storefront)**
+**Live demo → [adminium.dev/demo/ecommerce-storefront](https://adminium.dev/demo/ecommerce-storefront)**
 
 ## Highlights
 
@@ -34,9 +34,9 @@ Then open the URL Vite prints (default http://localhost:5173).
 
 ## Deploy
 
-[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/MoSofi/jackys-storefront&project-name=jackys-storefront&repository-name=jackys-storefront)
+[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Adminiumjs/ecommerce-storefront&project-name=ecommerce-storefront&repository-name=ecommerce-storefront)
 &nbsp;
-[![Deploy to DigitalOcean](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/MoSofi/jackys-storefront/tree/main)
+[![Deploy to DigitalOcean](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/Adminiumjs/ecommerce-storefront/tree/main)
 
 - **Vercel** — click the button above, or import the repo. Build command
   `npm run build`, output `dist`.
@@ -47,18 +47,18 @@ Then open the URL Vite prints (default http://localhost:5173).
   build the container:
 
   ```bash
-  docker build -t jackys-storefront .
-  docker run -p 8080:80 jackys-storefront
+  docker build -t ecommerce-storefront .
+  docker run -p 8080:80 ecommerce-storefront
   ```
 
 ### Build scripts
 
-| Script              | What it does                                                        |
-| ------------------- | ------------------------------------------------------------------- |
-| `npm run dev`       | Start the Vite dev server.                                          |
-| `npm run build`     | Type-check + build to `dist/` at base `/` (root deploys).           |
-| `npm run build:demo`| Build to `dist/` at base `/demo/jackys-storefront/` (Adminium demo).|
-| `npm run preview`   | Preview a production build locally.                                 |
+| Script              | What it does                                                           |
+| ------------------- | ---------------------------------------------------------------------- |
+| `npm run dev`       | Start the Vite dev server.                                             |
+| `npm run build`     | Type-check + build to `dist/` at base `/` (root deploys).              |
+| `npm run build:demo`| Build to `dist/` at base `/demo/ecommerce-storefront/` (Adminium demo).|
+| `npm run preview`   | Preview a production build locally.                                    |
 
 ## Full implementation (self-host)
 
@@ -115,4 +115,4 @@ public/fonts/  self-hosted Manrope + JetBrains Mono (woff2)
 
 ## License
 
-[AGPL-3.0](LICENSE) © 2026 Jacky's. A demo store shipped with Adminium.
+[AGPL-3.0](LICENSE) © 2026 Ecommerce Storefront. A demo shipped with Adminium.

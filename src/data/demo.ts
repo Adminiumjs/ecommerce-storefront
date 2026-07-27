@@ -673,7 +673,7 @@ export const REVIEWPOOL: Review[] = [
     verified: true,
     rating: 5,
     title: "Genuinely impressed",
-    body: "Better than the big-brand version I returned last month. Jacky’s nailed the little details.",
+    body: "Better than the big-brand version I returned last month. Northline nailed the little details.",
   },
   {
     name: "Sofia D.",

@@ -1,4 +1,4 @@
--- Jacky's Storefront — PostgreSQL schema (§10.1 contract).
+-- Ecommerce Storefront — PostgreSQL schema (§10.1 contract).
 --
 -- This is the real database that backs the full self-host stack: the storefront
 -- reads it (through Adminium's records API) and the auto-generated Adminium admin

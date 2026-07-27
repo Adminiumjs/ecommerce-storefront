@@ -29,7 +29,7 @@ export function Footer() {
       {
         title: "Company",
         links: [
-          { label: "About Jacky’s", onClick: () => toast("Demo link") },
+          { label: "About Northline", onClick: () => toast("Demo link") },
           { label: "Stores", onClick: () => toast("Demo link") },
           { label: "Careers", onClick: () => toast("Demo link") },
           { label: "Sustainability", onClick: () => toast("Demo link") },
@@ -99,7 +99,7 @@ export function Footer() {
                   letterSpacing: "-.02em",
                 }}
               >
-                Jacky’s
+                Northline
               </span>
             </div>
             <div
@@ -211,7 +211,7 @@ export function Footer() {
           }}
         >
           <span style={{ fontSize: "12px", color: "var(--fg-subtle)" }}>
-            © 2026 Jacky’s. A demo store shipped with{" "}
+            © 2026 Northline. A demo store shipped with{" "}
             <span style={{ fontWeight: 700, color: "var(--fg-muted)" }}>
               Adminium
             </span>
@@ -224,7 +224,7 @@ export function Footer() {
               color: "var(--fg-subtle)",
             }}
           >
-            adminium.dev/demo/jackys-storefront
+            adminium.dev/demo/ecommerce-storefront
           </span>
           <div
             style={{
