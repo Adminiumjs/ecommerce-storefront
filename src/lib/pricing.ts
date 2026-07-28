@@ -76,8 +76,14 @@ export function lineKey(
     "|" +
     comboKey(p, opts || {}) +
     "|" +
+    /*
+     * The logo flag lives in its OWN delimited field. Appending "+L" to the
+     * engraving meant text that itself ended in "+L" produced the same key as
+     * that text minus the suffix plus a logo — two different products, one
+     * cart line, and the second configuration silently discarded.
+     */
     (custom && custom.text
-      ? "e:" + custom.text + (custom.logo ? "+L" : "")
+      ? "e:" + custom.text + "|logo:" + (custom.logo ? "1" : "0")
       : "") +
     "|b:" +
     (disc || 0)
@@ -172,6 +178,18 @@ export function subtotalOf(lines: CartLineView[]): number {
   return lines.reduce((s, x) => s + x.unit * x.qty, 0);
 }
 
+/**
+ * Round to whole cents.
+ *
+ * Money must not carry binary-float residue: a receipt whose tax is
+ * 12.157999999 renders fine but makes `sub + ship + tax` disagree with the
+ * sum of the printed lines by a cent. Every figure a customer can read is
+ * rounded here before it leaves.
+ */
+export function round2(n: number): number {
+  return Math.round((n + Number.EPSILON) * 100) / 100;
+}
+
 export function shipFee(subtotal: number, ship: ShipMethod): number {
   if (subtotal === 0) return 0;
   if (ship === "express") return SHIP_EXPRESS;
@@ -197,18 +215,38 @@ export function computeTotals(
   ship: ShipMethod,
   promoOn: boolean,
 ): Totals {
-  const sub = subtotalOf(lines);
-  const disc = discountOf(sub, promoOn);
-  const taxable = Math.max(0, sub - disc);
-  const fee = shipFee(sub, ship);
-  const tax = taxable * TAX_RATE;
+  const fee = shipFee(subtotalOf(lines), ship);
+
+  /*
+   * Round every component to the cent, then derive the total FROM THE ROUNDED
+   * PARTS — not from the raw floats.
+   *
+   * `money()` rounds each figure independently at render time, so a total
+   * derived from unrounded values can disagree with the lines printed above
+   * it. One item at $174.25 with WELCOME10 showed Subtotal 174.25, Discount
+   * 17.43, Tax 13.33 — which reads as 170.15 — beside a total of 170.16. The
+   * customer was billed a cent more than the lines they were shown.
+   *
+   * Tax is still assessed on the unrounded taxable base; only the figure that
+   * leaves this function is rounded.
+   */
+  const rawSub = subtotalOf(lines);
+  const rawDisc = discountOf(rawSub, promoOn);
+  const taxable = Math.max(0, rawSub - rawDisc);
+
+  const sub = round2(rawSub);
+  const disc = round2(rawDisc);
+  const tax = round2(taxable * TAX_RATE);
+
   return {
     sub,
     disc,
     ship: fee,
     shipFree: fee === 0,
     tax,
-    total: taxable + fee + tax,
+    /* The goods portion is clamped at zero — a discount larger than the basket
+     * must not produce a negative bill — but shipping is still charged. */
+    total: round2(Math.max(0, sub - disc) + fee + tax),
   };
 }
 
@@ -257,14 +295,23 @@ export function confTotals(
   const ni = normItems(o.items, index);
   const sub = ni.reduce((s, it) => s + it.unit * it.qty, 0);
   const m = o.shipMethod || o.ship || "standard";
-  const ship =
-    m === "express"
-      ? SHIP_EXPRESS
-      : m === "overnight"
-        ? SHIP_OVERNIGHT
-        : sub >= FREE_SHIP
-          ? 0
-          : SHIP_STANDARD;
-  const tax = sub * TAX_RATE;
-  return { sub, disc: 0, ship, shipFree: ship === 0, tax, total: sub + ship + tax };
+  /*
+   * Use `shipFee`, do not re-implement it.
+   *
+   * This branch was a hand-copied duplicate of the same rule and had drifted:
+   * it was missing the `subtotal === 0 → free` case, so an order whose items
+   * have all been delisted (`normItems` prices an unknown pid at 0) rendered
+   * as "Subtotal $0.00 / Shipping $6.00 / Total $6.00" while the live cart,
+   * on the same rule, showed zero.
+   */
+  const ship = shipFee(sub, m as ShipMethod);
+  const tax = round2(sub * TAX_RATE);
+  return {
+    sub,
+    disc: 0,
+    ship,
+    shipFree: ship === 0,
+    tax,
+    total: round2(sub + ship + tax),
+  };
 }

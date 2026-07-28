@@ -55,6 +55,16 @@ export function reviewsFor(
     title: r.title,
     body: r.body,
   }));
+  /*
+   * An empty pool yields no rows, not three blank ones.
+   *
+   * `h % 0` is NaN, so `pool[NaN]` was undefined and spreading it produced
+   * three review cards with no name, no rating and no body. The seeded pool is
+   * never empty, but this is a template people fork — a shop whose first
+   * product has no reviews yet would have shipped three ghosts.
+   */
+  if (pool.length === 0) return ur;
+
   const h = hashId(id);
   const picks = [
     pool[h % pool.length],
