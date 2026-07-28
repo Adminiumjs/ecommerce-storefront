@@ -46,17 +46,14 @@ export function CartDrawer() {
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="sf-scroll"
+        className="sf-scroll sf-drawer-panel"
         style={{
-          width: "428px",
-          maxWidth: "94vw",
-          height: "100%",
+          inlineSize: "428px",
+          maxInlineSize: "94vw",
+          blockSize: "100%",
           display: "flex",
           flexDirection: "column",
           background: "var(--surface)",
-          borderInlineStart: "1px solid var(--border)",
-          boxShadow: "-24px 0 60px rgba(10,10,20,.28)",
-          animation: "sf-drawer .28s cubic-bezier(.2,.8,.2,1)",
         }}
       >
         <div
