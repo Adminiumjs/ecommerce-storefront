@@ -139,13 +139,39 @@ button {
     transform: none;
   }
 }
+/*
+ * The cart drawer slides in from the inline end.
+ *
+ * Its parent uses `justify-content: flex-end`, which IS direction-aware — so
+ * in RTL the drawer correctly docks to the left. The animation was not:
+ * a physical `translateX(100%)` slid it in from the right regardless, sending
+ * it across the whole viewport from the wrong side. `transform` has no logical
+ * form, so the offset flips via a custom property.
+ */
+:root {
+  --sf-drawer-from: 100%;
+  --sf-drawer-shadow-x: -24px;
+}
+[dir="rtl"] {
+  --sf-drawer-from: -100%;
+  --sf-drawer-shadow-x: 24px;
+}
+
 @keyframes sf-drawer {
   from {
-    transform: translateX(100%);
+    transform: translateX(var(--sf-drawer-from));
   }
   to {
     transform: none;
   }
+}
+
+/* The panel's own edge treatment, moved out of the inline style so the
+   shadow can follow the direction too. */
+.sf-drawer-panel {
+  border-inline-start: 1px solid var(--border);
+  box-shadow: var(--sf-drawer-shadow-x) 0 60px rgba(10, 10, 20, 0.28);
+  animation: sf-drawer 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 @keyframes sf-sheet {
   from {
