@@ -69,9 +69,9 @@ deploy the storefront on its own, running on the bundled demo catalog (now with
 real product images). No database, no admin — a fully static preview.
 
 **Tier 2 — the whole stack, one command.** [`docker-compose.yml`](docker-compose.yml)
-stands up Postgres (seeded with the *same* catalog, prices, and images), an
-auto-generated Adminium admin dashboard that manages the catalog and orders on
-that real database, and the storefront:
+stands up Postgres (seeded by default with the *same* catalog, prices, and
+images), an auto-generated Adminium admin dashboard that manages the catalog and
+orders on that real database, and the storefront:
 
 ```bash
 cp .env.example .env      # then set ADMINIUM_SECRET — e.g. openssl rand -hex 32
@@ -81,13 +81,42 @@ docker compose up
 - **Storefront** → http://localhost:8080
 - **Adminium admin dashboard** → http://localhost:4600
 
-On first boot, `shop-db` applies [`db/schema.sql`](db/schema.sql) then
-[`db/seed.sql`](db/seed.sql), and Adminium imports the shop database as its first
+On first boot, `shop-db` applies [`db/schema.sql`](db/schema.sql), installs the
+demo bookkeeping from [`db/demo-toolkit.sql`](db/demo-toolkit.sql), and then runs
+[`db/init-demo.sh`](db/init-demo.sh), which loads [`db/seed.sql`](db/seed.sql)
+unless you set `DEMO_DATA=0`. Adminium imports the shop database as its first
 source connection, introspects the schema, and generates the admin dashboard.
-Finish the ~1-minute first-run wizard at `:4600` — it's pre-pointed at the seeded
-shop DB. The storefront and the dashboard are the **same shop**: the 16 products,
-their prices, and their images match one-for-one. The install spec Adminium reads
-to configure itself is [`manifest.json`](manifest.json).
+Finish the ~1-minute first-run wizard at `:4600` — it's pre-pointed at the shop
+DB. With the demo data loaded, the storefront and the dashboard are the **same
+shop**: the 16 products, their prices, and their images match one-for-one. The
+install spec Adminium reads to configure itself is [`manifest.json`](manifest.json).
+
+### Demo data
+
+The shop arrives stocked — the 16 products, their categories, the customers and
+the order history all come from `db/seed.sql`. To start with an empty shop
+instead, same schema and no rows, set `DEMO_DATA=0` in `.env` before the first
+`docker compose up`. Neither choice is permanent: the demo rows can be loaded
+and removed again whenever you like.
+
+| Script                | What it does                                          |
+| --------------------- | ----------------------------------------------------- |
+| `npm run demo:status` | What is loaded right now, table by table.             |
+| `npm run demo:import` | Load `db/seed.sql`.                                   |
+| `npm run demo:wipe`   | Remove the demo rows — schema and your own rows stay. |
+| `npm run demo:reset`  | Wipe, then import a fresh copy.                       |
+
+A wipe deletes only the rows a ledger attributes to the seed, so the products
+and orders you added yourself, and the tables themselves, survive it. A demo
+row your own data depends on is kept rather than force-deleted, and reported
+under `kept`. `ON DELETE CASCADE` still applies, though: a demo order takes
+its line items with it, including one you added yourself, and those are
+counted separately as `cascaded`. `wipe` and `reset` ask before they act;
+`npm run demo:wipe -- --yes` skips the question, which is what you need in a
+script — without a terminal it fails rather than asking. Setting
+`DATABASE_URL` points all four commands at a Postgres somewhere else — Neon,
+Supabase, RDS — instead of the `shop-db` container.
+[`db/README.md`](db/README.md) has the rest.
 
 ## Connecting to Adminium
 
@@ -111,6 +140,7 @@ src/
   components/  Header, Footer, ProductCard, CartDrawer, OptionPicker, modals, …
   styles/      tokens.css (design tokens) + base.css (fonts, utilities)
 public/fonts/  self-hosted Manrope + JetBrains Mono (woff2)
+db/            schema, demo seed + the demo-data toolkit (see db/README.md)
 ```
 
 ## License
