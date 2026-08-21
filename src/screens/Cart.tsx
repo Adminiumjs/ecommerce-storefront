@@ -1,7 +1,8 @@
 // Cart page: line items on the left, a sticky order-summary aside with the
 // free-shipping progress bar, promo input, and checkout CTA on the right.
 
-import { FREE_SHIP } from "../data/demo.ts";
+import { BUNDLE_OFF, FREE_SHIP, PROMO_CODE } from "../data/demo.ts";
+import { useI18n } from "../i18n";
 import { catName } from "../lib/catalog.ts";
 import { money } from "../lib/format.ts";
 import { hexToRgba } from "../lib/placeholders.ts";
@@ -15,8 +16,10 @@ import { useStore } from "../state/store.ts";
 import { Icon } from "../components/Icon.tsx";
 import { ProductImage } from "../components/ProductImage.tsx";
 import { QtyStepper } from "../components/QtyStepper.tsx";
+import { backArrow, forwardArrow, rich } from "./shared.tsx";
 
 export function Cart() {
+  const { t, number, dir } = useI18n();
   const cart = useStore((s) => s.cart);
   const index = useStore((s) => s.index);
   const cats = useStore((s) => s.cats);
@@ -37,8 +40,8 @@ export function Cart() {
   const lines = cartArr(cart, index);
   const cnt = countLines(lines);
   const sub = subtotalOf(lines);
-  const t = computeTotals(lines, ship, promoOn);
-  const free = t.ship === 0 && sub > 0;
+  const tot = computeTotals(lines, ship, promoOn);
+  const free = tot.ship === 0 && sub > 0;
 
   return (
     <main
@@ -57,7 +60,7 @@ export function Cart() {
           letterSpacing: "-.03em",
         }}
       >
-        Your cart
+        {t("chrome.cart.title")}
       </h1>
 
       {cnt === 0 ? (
@@ -90,7 +93,7 @@ export function Cart() {
             <Icon name="shopping-cart" size={32} />
           </div>
           <div style={{ fontSize: "19px", fontWeight: 800, letterSpacing: "-.02em" }}>
-            Your cart is empty
+            {t("chrome.cart.emptyTitle")}
           </div>
           <div
             style={{
@@ -101,7 +104,7 @@ export function Cart() {
               lineHeight: 1.55,
             }}
           >
-            Once you add products they’ll show up here, ready for checkout.
+            {t("screens.cart.emptyBody")}
           </div>
           <button
             className="sf-btn"
@@ -122,7 +125,7 @@ export function Cart() {
             }}
           >
             <Icon name="store" size={17} />
-            Start shopping
+            {t("chrome.cart.startShopping")}
           </button>
         </div>
       ) : (
@@ -146,7 +149,7 @@ export function Cart() {
               <span
                 style={{ fontSize: "13px", color: "var(--fg-muted)", fontWeight: 600 }}
               >
-                {cnt + (cnt === 1 ? " item" : " items")}
+                {t("chrome.cart.itemCount", { count: number(cnt) }, cnt)}
               </span>
               <button
                 className="sf-link"
@@ -163,8 +166,8 @@ export function Cart() {
                   cursor: "pointer",
                 }}
               >
-                <Icon name="arrow-left" size={15} />
-                Continue shopping
+                <Icon name={backArrow(dir)} size={15} />
+                {t("screens.continueShopping")}
               </button>
             </div>
             <div>
@@ -278,7 +281,10 @@ export function Cart() {
                                 }}
                               >
                                 <Icon name="package" size={12} />
-                                Bundle · 15% off · was {money(l.orig)}
+                                {t("screens.cart.bundleWas", {
+                                  pct: number(BUNDLE_OFF, { style: "percent" }),
+                                  price: money(l.orig),
+                                })}
                               </span>
                             )}
                           </div>
@@ -301,7 +307,7 @@ export function Cart() {
                         }}
                       >
                         <Icon name="trash-2" size={15} />
-                        Remove
+                        {t("chrome.cart.remove")}
                       </button>
                     </div>
                     <div
@@ -342,7 +348,7 @@ export function Cart() {
                             marginTop: "2px",
                           }}
                         >
-                          {money(l.unit)} each
+                          {t("chrome.cart.unitEach", { price: money(l.unit) })}
                         </div>
                       </div>
                     </div>
@@ -370,7 +376,7 @@ export function Cart() {
                   marginBottom: "16px",
                 }}
               >
-                Order summary
+                {t("screens.summary.title")}
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "11px" }}>
                 <div
@@ -381,14 +387,14 @@ export function Cart() {
                     fontSize: "14px",
                   }}
                 >
-                  <span style={{ color: "var(--fg-muted)" }}>Subtotal</span>
+                  <span style={{ color: "var(--fg-muted)" }}>{t("chrome.cart.subtotal")}</span>
                   <span
                     style={{ fontFamily: "'JetBrains Mono',monospace", fontWeight: 600 }}
                   >
                     {money(sub)}
                   </span>
                 </div>
-                {t.disc > 0 && (
+                {tot.disc > 0 && (
                   <div
                     style={{
                       display: "flex",
@@ -398,7 +404,7 @@ export function Cart() {
                     }}
                   >
                     <span style={{ color: "var(--pos)", fontWeight: 600 }}>
-                      Discount · WELCOME10
+                      {t("screens.cart.discountWithCode", { code: PROMO_CODE })}
                     </span>
                     <span
                       style={{
@@ -407,7 +413,7 @@ export function Cart() {
                         color: "var(--pos)",
                       }}
                     >
-                      −{money(t.disc)}
+                      −{money(tot.disc)}
                     </span>
                   </div>
                 )}
@@ -419,7 +425,7 @@ export function Cart() {
                     fontSize: "14px",
                   }}
                 >
-                  <span style={{ color: "var(--fg-muted)" }}>Shipping</span>
+                  <span style={{ color: "var(--fg-muted)" }}>{t("screens.summary.shipping")}</span>
                   <span
                     style={{
                       fontFamily: "'JetBrains Mono',monospace",
@@ -427,7 +433,7 @@ export function Cart() {
                       color: free ? "var(--pos)" : undefined,
                     }}
                   >
-                    {sub > 0 ? (free ? "Free" : money(t.ship)) : money(0)}
+                    {sub > 0 ? (free ? t("screens.summary.free") : money(tot.ship)) : money(0)}
                   </span>
                 </div>
                 <div
@@ -438,11 +444,11 @@ export function Cart() {
                     fontSize: "14px",
                   }}
                 >
-                  <span style={{ color: "var(--fg-muted)" }}>Tax (est.)</span>
+                  <span style={{ color: "var(--fg-muted)" }}>{t("screens.summary.taxEst")}</span>
                   <span
                     style={{ fontFamily: "'JetBrains Mono',monospace", fontWeight: 600 }}
                   >
-                    {money(t.tax)}
+                    {money(tot.tax)}
                   </span>
                 </div>
               </div>
@@ -455,7 +461,7 @@ export function Cart() {
                   marginBottom: "16px",
                 }}
               >
-                <span style={{ fontSize: "15px", fontWeight: 800 }}>Total</span>
+                <span style={{ fontSize: "15px", fontWeight: 800 }}>{t("screens.summary.total")}</span>
                 <span
                   style={{
                     fontFamily: "'JetBrains Mono',monospace",
@@ -464,7 +470,7 @@ export function Cart() {
                     letterSpacing: "-.02em",
                   }}
                 >
-                  {money(t.total)}
+                  {money(tot.total)}
                 </span>
               </div>
               {sub > 0 && !free && (
@@ -498,7 +504,9 @@ export function Cart() {
                     }}
                   >
                     <Icon name="truck" size={14} color="var(--accent)" />
-                    Add {money(Math.max(0, FREE_SHIP - sub))} more for free shipping
+                    {t("screens.cart.freeShipRemaining", {
+                      amount: money(Math.max(0, FREE_SHIP - sub)),
+                    })}
                   </div>
                 </div>
               )}
@@ -508,7 +516,7 @@ export function Cart() {
                     className="sf-fld"
                     value={promoDraft}
                     onChange={(e) => setPromoDraft(e.target.value)}
-                    placeholder="Promo code"
+                    placeholder={t("screens.cart.promoPlaceholder")}
                     style={{
                       flex: 1,
                       minWidth: 0,
@@ -536,7 +544,7 @@ export function Cart() {
                       cursor: "pointer",
                     }}
                   >
-                    Apply
+                    {t("screens.cart.apply")}
                   </button>
                 </div>
               ) : (
@@ -561,7 +569,7 @@ export function Cart() {
                       flex: 1,
                     }}
                   >
-                    WELCOME10 applied
+                    {t("screens.cart.promoApplied", { code: PROMO_CODE })}
                   </span>
                   <button
                     className="sf-link"
@@ -598,8 +606,8 @@ export function Cart() {
                   cursor: "pointer",
                 }}
               >
-                Checkout
-                <Icon name="arrow-right" size={17} />
+                {t("chrome.cart.checkout")}
+                <Icon name={forwardArrow(dir)} size={17} />
               </button>
               <div
                 style={{
@@ -613,10 +621,13 @@ export function Cart() {
                 }}
               >
                 <Icon name="lock" size={13} />
-                Secure checkout · powered by{" "}
-                <span style={{ fontWeight: 700, color: "var(--fg-muted)" }}>
-                  Stripe
-                </span>
+                {rich(t("screens.cart.securePoweredBy"), {
+                  stripe: (
+                    <span style={{ fontWeight: 700, color: "var(--fg-muted)" }}>
+                      Stripe
+                    </span>
+                  ),
+                })}
               </div>
             </div>
           </aside>

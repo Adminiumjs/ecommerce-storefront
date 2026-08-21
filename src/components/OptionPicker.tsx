@@ -4,6 +4,7 @@
 // (or marks out-of-stock ones). This is the load-bearing PDP logic.
 
 import type { Product } from "../data/types.ts";
+import { useT } from "../i18n";
 import { variantExists, variantStatus } from "../lib/pricing.ts";
 import { useStore } from "../state/store.ts";
 import { Icon } from "./Icon.tsx";
@@ -13,6 +14,7 @@ export interface OptionPickerProps {
 }
 
 export function OptionPicker({ product: p }: OptionPickerProps) {
+  const t = useT();
   const sel = useStore((s) => s.sel);
   const setSel = useStore((s) => s.setSel);
   const openSizeGuide = useStore((s) => s.openSizeGuide);
@@ -66,7 +68,7 @@ export function OptionPicker({ product: p }: OptionPickerProps) {
                   }}
                 >
                   <Icon name="ruler" size={14} />
-                  Size guide
+                  {t("chrome.option.sizeGuide")}
                 </button>
               )}
             </div>
@@ -117,7 +119,10 @@ export function OptionPicker({ product: p }: OptionPickerProps) {
                             borderRadius: "50%",
                           }}
                         >
-                          OOS
+                          {/* Sized for three Latin characters, so every locale
+                              gets an abbreviation rather than the full phrase
+                              the chip variant below can afford. */}
+                          {t("chrome.option.oos")}
                         </span>
                       )}
                     </button>
@@ -158,7 +163,7 @@ export function OptionPicker({ product: p }: OptionPickerProps) {
                           color: "var(--warn)",
                         }}
                       >
-                        · out
+                        {t("chrome.option.outSuffix")}
                       </span>
                     )}
                   </button>

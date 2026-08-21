@@ -1,6 +1,7 @@
 // Right-side cart drawer with empty + filled states.
 
 import { FREE_SHIP } from "../data/demo.ts";
+import { useI18n } from "../i18n";
 import { money } from "../lib/format.ts";
 import { hexToRgba } from "../lib/placeholders.ts";
 import { cartArr, count as countLines, subtotalOf } from "../lib/pricing.ts";
@@ -10,6 +11,7 @@ import { ProductImage } from "./ProductImage.tsx";
 import { QtyStepper } from "./QtyStepper.tsx";
 
 export function CartDrawer() {
+  const { t, number } = useI18n();
   const drawer = useStore((s) => s.drawer);
   const cart = useStore((s) => s.cart);
   const index = useStore((s) => s.index);
@@ -26,10 +28,12 @@ export function CartDrawer() {
   const lines = cartArr(cart, index);
   const cnt = countLines(lines);
   const sub = subtotalOf(lines);
+  /* One sentence per outcome, not a stem plus an amount: "add X more" puts the
+   * figure in the middle in English and at the end in several other locales. */
   const shipNote =
     sub >= FREE_SHIP
-      ? "You’ve unlocked free shipping 🎉"
-      : "Add " + money(FREE_SHIP - sub) + " more for free shipping. Taxes at checkout.";
+      ? t("chrome.cart.freeShipUnlocked")
+      : t("chrome.cart.freeShipRemaining", { amount: money(FREE_SHIP - sub) });
 
   return (
     <div
@@ -70,7 +74,7 @@ export function CartDrawer() {
           <span
             style={{ fontSize: "16px", fontWeight: 800, letterSpacing: "-.01em" }}
           >
-            Your cart
+            {t("chrome.cart.title")}
           </span>
           <span
             style={{
@@ -80,11 +84,15 @@ export function CartDrawer() {
               color: "var(--fg-subtle)",
             }}
           >
-            {cnt + (cnt === 1 ? " item" : " items")}
+            {/* The raw count picks the plural variant; the formatted one is
+                what renders. Both are needed — `Intl.PluralRules` cannot read
+                "١٢" and Arabic readers should not be shown "12". */}
+            {t("chrome.cart.itemCount", { count: number(cnt) }, cnt)}
           </span>
           <button
             className="sf-gi"
             onClick={closeDrawer}
+            aria-label={t("chrome.cart.close")}
             style={{
               marginInlineStart: "auto",
               width: "36px",
@@ -139,7 +147,7 @@ export function CartDrawer() {
                 letterSpacing: "-.01em",
               }}
             >
-              Your cart is empty
+              {t("chrome.cart.emptyTitle")}
             </div>
             <div
               style={{
@@ -149,7 +157,7 @@ export function CartDrawer() {
                 maxWidth: "250px",
               }}
             >
-              Add something you love and it’ll show up right here.
+              {t("chrome.cart.emptyBody")}
             </div>
             <button
               className="sf-btn"
@@ -166,7 +174,7 @@ export function CartDrawer() {
                 cursor: "pointer",
               }}
             >
-              Start shopping
+              {t("chrome.cart.startShopping")}
             </button>
           </div>
         ) : (
@@ -256,7 +264,11 @@ export function CartDrawer() {
                                   borderRadius: "20px",
                                 }}
                               >
-                                Bundle · 15% off
+                                {t("chrome.cart.bundleOff", {
+                                  pct: number(l.bundleOff, {
+                                    style: "percent",
+                                  }),
+                                })}
                               </span>
                             )}
                           </div>
@@ -269,13 +281,14 @@ export function CartDrawer() {
                             marginTop: "3px",
                           }}
                         >
-                          {money(l.unit)} each
+                          {t("chrome.cart.unitEach", { price: money(l.unit) })}
                         </div>
                       </div>
                       <button
                         className="sf-link"
                         onClick={() => removeItem(l.key)}
-                        title="Remove"
+                        title={t("chrome.cart.remove")}
+                        aria-label={t("chrome.cart.remove")}
                         style={{
                           border: "none",
                           background: "transparent",
@@ -336,7 +349,7 @@ export function CartDrawer() {
                 }}
               >
                 <span style={{ fontSize: "13px", color: "var(--fg-muted)" }}>
-                  Subtotal
+                  {t("chrome.cart.subtotal")}
                 </span>
                 <span
                   style={{
@@ -376,7 +389,7 @@ export function CartDrawer() {
                   cursor: "pointer",
                 }}
               >
-                Checkout
+                {t("chrome.cart.checkout")}
                 <Icon name="arrow-right" size={16} />
               </button>
               <button
@@ -394,7 +407,7 @@ export function CartDrawer() {
                   cursor: "pointer",
                 }}
               >
-                View full cart
+                {t("chrome.cart.viewFull")}
               </button>
             </div>
           </>

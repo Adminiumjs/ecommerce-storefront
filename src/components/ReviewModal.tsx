@@ -2,12 +2,22 @@
 // selected product's review list.
 
 import { STAR_COLOR } from "../data/demo.ts";
+import { useI18n, type MessageKey } from "../i18n";
 import { useStore } from "../state/store.ts";
 import { Icon } from "./Icon.tsx";
 
-const WORDS = ["Tap a star to rate", "Poor", "Fair", "Good", "Great", "Excellent"];
+/** Index 0 is the un-rated prompt; 1–5 are the words for each star count. */
+const WORD_KEYS: MessageKey[] = [
+  "chrome.review.rate0",
+  "chrome.review.rate1",
+  "chrome.review.rate2",
+  "chrome.review.rate3",
+  "chrome.review.rate4",
+  "chrome.review.rate5",
+];
 
 export function ReviewModal() {
+  const { t, number } = useI18n();
   const open = useStore((s) => s.reviewOpen);
   const selected = useStore((s) => s.selected);
   const index = useStore((s) => s.index);
@@ -67,7 +77,7 @@ export function ReviewModal() {
             <div
               style={{ fontSize: "17px", fontWeight: 800, letterSpacing: "-.02em" }}
             >
-              Write a review
+              {t("chrome.review.write")}
             </div>
             <div style={{ fontSize: "12.5px", color: "var(--fg-subtle)" }}>
               {p?.title}
@@ -76,6 +86,7 @@ export function ReviewModal() {
           <button
             className="sf-gi"
             onClick={close}
+            aria-label={t("chrome.close")}
             style={{
               marginInlineStart: "auto",
               width: "34px",
@@ -111,7 +122,7 @@ export function ReviewModal() {
                 marginBottom: "9px",
               }}
             >
-              Your rating
+              {t("chrome.review.yourRating")}
             </label>
             <div
               style={{ display: "flex", alignItems: "center", gap: "5px" }}
@@ -122,6 +133,12 @@ export function ReviewModal() {
                   key={n}
                   onClick={() => setRating(n)}
                   onMouseEnter={() => setHover(n)}
+                  aria-label={t(
+                    "chrome.review.starAria",
+                    { count: number(n) },
+                    n,
+                  )}
+                  aria-pressed={n <= rating}
                   style={{
                     fontSize: "32px",
                     lineHeight: 1,
@@ -143,7 +160,7 @@ export function ReviewModal() {
                   marginInlineStart: "10px",
                 }}
               >
-                {WORDS[rr] || WORDS[0]}
+                {t(WORD_KEYS[rr] ?? WORD_KEYS[0])}
               </span>
             </div>
           </div>
@@ -156,13 +173,14 @@ export function ReviewModal() {
                 marginBottom: "7px",
               }}
             >
-              Title
+              {t("chrome.review.titleLabel")}
             </label>
             <input
               className="sf-fld"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Sum it up in a few words"
+              placeholder={t("chrome.review.titlePlaceholder")}
+              aria-label={t("chrome.review.titleLabel")}
               style={{
                 width: "100%",
                 padding: "11px 13px",
@@ -184,14 +202,15 @@ export function ReviewModal() {
                 marginBottom: "7px",
               }}
             >
-              Your review
+              {t("chrome.review.bodyLabel")}
             </label>
             <textarea
               className="sf-fld"
               value={body}
               onChange={(e) => setBody(e.target.value)}
               rows={4}
-              placeholder="What did you like? How are you using it?"
+              placeholder={t("chrome.review.bodyPlaceholder")}
+              aria-label={t("chrome.review.bodyLabel")}
               style={{
                 width: "100%",
                 padding: "11px 13px",
@@ -232,7 +251,7 @@ export function ReviewModal() {
               cursor: "pointer",
             }}
           >
-            Cancel
+            {t("chrome.review.cancel")}
           </button>
           <button
             className="sf-btn"
@@ -254,7 +273,7 @@ export function ReviewModal() {
             }}
           >
             <Icon name="send" size={15} />
-            Post review
+            {t("chrome.review.post")}
           </button>
         </div>
       </div>

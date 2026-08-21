@@ -72,10 +72,15 @@ export interface Category {
 /** [average, count] seed for a product's aggregate rating. */
 export type RatingSeed = [number, number];
 
+/** How long ago a review was posted, as an `Intl.RelativeTimeFormat` argument
+ * pair. Stored rather than pre-rendered so "2 weeks ago" can come out as
+ * "il y a 2 semaines" or "منذ أسبوعين" from the same seed. */
+export type Ago = [value: number, unit: Intl.RelativeTimeFormatUnit];
+
 export interface Review {
   name: string;
   initials: string;
-  date: string;
+  ago: Ago;
   verified: boolean;
   rating: number;
   title: string;
@@ -117,6 +122,7 @@ export interface Order {
   number: string;
   items: OrderItem[];
   status?: OrderStatus;
+  /** ISO date (`YYYY-MM-DD`). Formatted for display through the i18n `date()`. */
   placed?: string;
   total?: number;
   shipMethod?: ShipMethod;

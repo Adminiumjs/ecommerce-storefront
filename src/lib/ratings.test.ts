@@ -26,13 +26,18 @@ function review(n: number, rating = 5): Review {
   return {
     name: `Reviewer ${n}`,
     initials: `R${n}`,
-    date: `Jan ${n}, 2026`,
+    /* An offset, not a rendered date — see `Ago` in data/types. */
+    ago: [-(n + 1), "day"],
     verified: n % 2 === 0,
     rating,
     title: `Title ${n}`,
     body: `Body ${n}`,
   };
 }
+
+/** What the runtime should render for a seed's `ago`, in the test locale. */
+const agoText = (r: Review): string =>
+  new Intl.RelativeTimeFormat("en-US", { numeric: "auto" }).format(...r.ago);
 
 /** Nine distinct reviews — enough that the 0/+3/+6 sampling offsets land on
  * three different entries whatever the hash. */
@@ -143,17 +148,21 @@ describe("the headline number", () => {
     expect(ratingFor("p1", seeds({ p1: [4, 2] }), posted({ p1: [mine(5)] })).avgLabel).toBe("4.3");
   });
 
-  it("rounds the half in whichever direction the binary value actually sits", () => {
+  it("rounds a half away from zero, on the decimal that was typed", () => {
     /*
-     * `toFixed` rounds the stored double, not the decimal you typed. 4.25 is
-     * exactly representable, so the tie rounds up to "4.3"; 4.35 is stored as
-     * 4.3499999999999996, so it rounds DOWN to "4.3" — the opposite of what
-     * "round half up" would predict. Both products therefore advertise 4.3
-     * despite differing by a tenth of a star. Not worth fixing, but worth
-     * knowing before someone "corrects" one of these expectations.
+     * These two expectations used to BOTH be "4.3", because `toFixed` rounds
+     * the stored double rather than the decimal you typed: 4.25 is exactly
+     * representable and its tie rounds up, but 4.35 is stored as
+     * 4.3499999999999996 and so rounded DOWN — two products a tenth of a star
+     * apart advertising the same number.
+     *
+     * `Intl.NumberFormat` (which now produces this label, so the separator
+     * follows the reader's locale) rounds the shortest round-trip decimal
+     * instead — it sees "4.35" and rounds half away from zero to 4.4. Same
+     * precision, but the seed a merchant typed is the number a shopper reads.
      */
     expect(ratingFor("a", seeds({ a: [4.25, 1] }), posted({})).avgLabel).toBe("4.3");
-    expect(ratingFor("b", seeds({ b: [4.35, 1] }), posted({})).avgLabel).toBe("4.3");
+    expect(ratingFor("b", seeds({ b: [4.35, 1] }), posted({})).avgLabel).toBe("4.4");
   });
 });
 
@@ -247,11 +256,20 @@ describe("the review list", () => {
     expect(rows[0]).toMatchObject({
       name: source.name,
       initials: source.initials,
-      date: source.date,
       verified: source.verified,
       rating: source.rating,
       body: source.body,
     });
+  });
+
+  it("renders the pool entry's `ago` offset as a relative timestamp", () => {
+    /* The seed stores [-n, "day"]; the row must carry a formatted string, so
+     * the same data reads "2 weeks ago" in en-US and "منذ أسبوعين" in ar-EG
+     * instead of shipping one language's sentence to every reader. */
+    const rows = reviewsFor("p1", POOL, posted({}));
+    const source = POOL.find((r) => r.title === rows[0].title)!;
+    expect(rows[0].date).toBe(agoText(source));
+    expect(rows[0]).not.toHaveProperty("ago");
   });
 
   it("puts the shopper's own reviews first, newest as given", () => {

@@ -71,6 +71,8 @@ import {
   type LucideIcon,
 } from "lucide-react";
 
+import { useI18n } from "../i18n";
+
 const MAP: Record<string, LucideIcon> = {
   "alert-circle": AlertCircle,
   "arrow-left": ArrowLeft,
@@ -139,6 +141,18 @@ const MAP: Record<string, LucideIcon> = {
   zap: Zap,
 };
 
+/**
+ * Navigational arrows are the one class of glyph that means the opposite thing
+ * in the opposite direction: "back" points left in English and right in Arabic.
+ * Nothing else in this set is directional — a bag, a lock, a star read the same
+ * either way — so the swap is a two-entry table rather than a blanket mirror,
+ * and it lives here so every caller inherits it without knowing about `dir`.
+ */
+const MIRROR: Record<string, string> = {
+  "arrow-left": "arrow-right",
+  "arrow-right": "arrow-left",
+};
+
 export interface IconProps {
   name: string;
   size?: number | string;
@@ -148,7 +162,9 @@ export interface IconProps {
 }
 
 export function Icon({ name, size = 16, color, className, style }: IconProps) {
-  const Cmp = MAP[name] || Square;
+  const { dir } = useI18n();
+  const resolved = dir === "rtl" ? (MIRROR[name] ?? name) : name;
+  const Cmp = MAP[resolved] || Square;
   return (
     <Cmp
       size={size}

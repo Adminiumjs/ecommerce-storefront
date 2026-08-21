@@ -3,8 +3,10 @@
 // hamburger / inline-nav / inline-search visibility is driven by CSS media
 // queries (see base.css), not JS width state.
 
+import { useI18n, useT } from "../i18n";
 import { useStore } from "../state/store.ts";
 import { Icon } from "./Icon.tsx";
+import { LocalePicker } from "./LocalePicker.tsx";
 
 function navBtnStyle(active: boolean): React.CSSProperties {
   return {
@@ -21,6 +23,7 @@ function navBtnStyle(active: boolean): React.CSSProperties {
 
 function CheckoutHeader() {
   const go = useStore((s) => s.go);
+  const t = useT();
   return (
     <header
       style={{
@@ -92,8 +95,9 @@ function CheckoutHeader() {
           }}
         >
           <Icon name="arrow-left" size={15} />
-          Back to cart
+          {t("chrome.header.backToCart")}
         </button>
+        <LocalePicker size={34} />
         <span
           style={{
             display: "inline-flex",
@@ -107,7 +111,7 @@ function CheckoutHeader() {
           }}
         >
           <Icon name="lock" size={14} />
-          Secure checkout
+          {t("chrome.header.secureCheckout")}
         </span>
       </div>
     </header>
@@ -115,6 +119,7 @@ function CheckoutHeader() {
 }
 
 export function Header() {
+  const { t, number } = useI18n();
   const view = useStore((s) => s.view);
   const cat = useStore((s) => s.cat);
   const q = useStore((s) => s.q);
@@ -162,6 +167,7 @@ export function Header() {
         <button
           className="sf-gi sf-hamburger"
           onClick={openMenu}
+          aria-label={t("chrome.header.openMenu")}
           style={{
             width: "40px",
             height: "40px",
@@ -222,7 +228,7 @@ export function Header() {
           }}
         >
           <button onClick={() => goCat("all")} style={navBtnStyle(allActive)}>
-            Shop all
+            {t("chrome.header.shopAll")}
           </button>
           {cats.map((c) => (
             <button
@@ -253,7 +259,7 @@ export function Header() {
               size={16}
               style={{
                 position: "absolute",
-                left: "12px",
+                insetInlineStart: "12px",
                 top: "50%",
                 transform: "translateY(-50%)",
                 color: "var(--fg-subtle)",
@@ -266,10 +272,12 @@ export function Header() {
               onKeyDown={(e) => {
                 if (e.key === "Enter") submitSearch();
               }}
-              placeholder="Search"
+              placeholder={t("chrome.header.searchPlaceholder")}
+              aria-label={t("chrome.header.searchAria")}
               style={{
                 width: "100%",
-                padding: "9px 12px 9px 36px",
+                paddingBlock: "9px",
+                paddingInline: "36px 12px",
                 borderRadius: "11px",
                 border: "1px solid var(--border-strong)",
                 background: "var(--surface-2)",
@@ -279,10 +287,12 @@ export function Header() {
               }}
             />
           </div>
+          <LocalePicker />
           <button
             className="sf-gi"
             onClick={toggleTheme}
-            title="Toggle theme"
+            title={t("chrome.header.toggleTheme")}
+            aria-label={t("chrome.header.toggleTheme")}
             style={{
               width: "40px",
               height: "40px",
@@ -301,7 +311,16 @@ export function Header() {
           <button
             className="sf-gi"
             onClick={openDrawer}
-            title="Cart"
+            title={t("chrome.header.cart")}
+            aria-label={
+              cartCount > 0
+                ? t(
+                    "chrome.header.cartWithCount",
+                    { count: number(cartCount) },
+                    cartCount,
+                  )
+                : t("chrome.header.cart")
+            }
             style={{
               position: "relative",
               width: "40px",
@@ -337,8 +356,9 @@ export function Header() {
                   justifyContent: "center",
                   border: "2px solid var(--surface)",
                 }}
+                aria-hidden="true"
               >
-                {cartCount}
+                {number(cartCount)}
               </span>
             )}
           </button>

@@ -3,6 +3,8 @@
 
 import { useEffect } from "react";
 import { useStore } from "../state/store.ts";
+import { useI18n } from "../i18n";
+import { setAmbient } from "../i18n/ambient";
 import { CartDrawer } from "../components/CartDrawer.tsx";
 import { Footer } from "../components/Footer.tsx";
 import { Header } from "../components/Header.tsx";
@@ -42,6 +44,17 @@ function Screen() {
 }
 
 export function App() {
+  /*
+   * Publish the live locale to the module-level bridge before anything below
+   * renders. The store's toasts and the `lib/` layer's price / rating / stock
+   * labels run outside React and cannot hold a hook; this is the one place that
+   * knows both sides. Assigning during render (rather than in an effect)
+   * matters: children render after this line, so the first paint after a locale
+   * switch is already in the new locale instead of one frame behind.
+   */
+  const { locale, t, money, number, relative } = useI18n();
+  setAmbient(locale, t, money, number, relative);
+
   const view = useStore((s) => s.view);
   const closeDrawer = useStore((s) => s.closeDrawer);
   const closeMenu = useStore((s) => s.closeMenu);

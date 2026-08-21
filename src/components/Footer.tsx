@@ -1,50 +1,117 @@
 // Footer: brand + newsletter block, three link columns, and the bottom bar with
 // the Adminium credit + demo domain chip + payment chips.
 
+import { BRAND, PROMO_RATE } from "../data/demo.ts";
+import { useI18n } from "../i18n";
 import { useStore } from "../state/store.ts";
 import { Icon } from "./Icon.tsx";
 
+/** Card schemes are proper nouns; they read the same in every language. */
 const PAY_CHIPS = ["VISA", "MASTERCARD", "AMEX", "APPLE PAY"];
 
+/** The platform's name. Never translated. `BRAND` lives in `data/demo` because
+ * the screens need it too. */
+const ADMINIUM = "Adminium";
+
+/** The comp's fixed copyright year, formatted through `Intl` so ar-EG reads
+ * ٢٠٢٦ rather than Latin digits in an otherwise Arabic line. */
+const CREDIT_YEAR = new Date(2026, 0, 1);
+
+/**
+ * A marker for the one word inside the credit line that has to be its own
+ * styled node. The translator writes the whole sentence with `{adminium}` where
+ * it belongs; the renderer splits on the marker and drops the bolded brand in.
+ * Splitting a finished sentence is not the same as gluing two half-sentences
+ * together — word order stays entirely with the translator.
+ */
+const SLOT = "\u0000";
+
 export function Footer() {
+  const { t, number, date } = useI18n();
   const news = useStore((s) => s.news);
   const setNews = useStore((s) => s.setNews);
   const newsSubmit = useStore((s) => s.newsSubmit);
+  const cats = useStore((s) => s.cats);
   const goCat = useStore((s) => s.goCat);
   const go = useStore((s) => s.go);
   const toast = useStore((s) => s.toast_);
 
-  const cols: { title: string; links: { label: string; onClick: () => void }[] }[] =
-    [
-      {
-        title: "Shop",
-        links: [
-          { label: "All products", onClick: () => goCat("all") },
-          { label: "Gear", onClick: () => goCat("gear") },
-          { label: "Apparel", onClick: () => goCat("apparel") },
-          { label: "Home", onClick: () => goCat("home") },
-          { label: "Accessories", onClick: () => goCat("accessories") },
-        ],
-      },
-      {
-        title: "Company",
-        links: [
-          { label: "About Northline", onClick: () => toast("Demo link") },
-          { label: "Stores", onClick: () => toast("Demo link") },
-          { label: "Careers", onClick: () => toast("Demo link") },
-          { label: "Sustainability", onClick: () => toast("Demo link") },
-        ],
-      },
-      {
-        title: "Support",
-        links: [
-          { label: "Contact", onClick: () => toast("Demo link") },
-          { label: "Shipping & returns", onClick: () => toast("Demo link") },
-          { label: "Order status", onClick: () => go("account") },
-          { label: "FAQ", onClick: () => toast("Demo link") },
-        ],
-      },
-    ];
+  const demo = () => toast("chrome.toast.demoLink");
+
+  /*
+   * `id` is the React key, and it is deliberately not the label: a translated
+   * label changes on every language switch, which would remount the whole
+   * footer, and two labels that happen to collide in one language would be
+   * duplicate keys in that language only.
+   */
+  const cols: {
+    id: string;
+    title: string;
+    links: { id: string; label: string; onClick: () => void }[];
+  }[] = [
+    {
+      id: "shop",
+      title: t("chrome.footer.colShop"),
+      links: [
+        {
+          id: "all",
+          label: t("chrome.footer.allProducts"),
+          onClick: () => goCat("all"),
+        },
+        /* The category rows were a hand-typed copy of the same four names the
+         * header renders from the catalogue. Reading the list makes the two
+         * navs agree by construction, and keeps merchant-entered names out of
+         * the message table, where they do not belong. */
+        ...cats.map((c) => ({
+          id: c.slug,
+          label: c.name,
+          onClick: () => goCat(c.slug),
+        })),
+      ],
+    },
+    {
+      id: "company",
+      title: t("chrome.footer.colCompany"),
+      links: [
+        {
+          id: "about",
+          label: t("chrome.footer.about", { brand: BRAND }),
+          onClick: demo,
+        },
+        { id: "stores", label: t("chrome.footer.stores"), onClick: demo },
+        { id: "careers", label: t("chrome.footer.careers"), onClick: demo },
+        {
+          id: "sustainability",
+          label: t("chrome.footer.sustainability"),
+          onClick: demo,
+        },
+      ],
+    },
+    {
+      id: "support",
+      title: t("chrome.footer.colSupport"),
+      links: [
+        { id: "contact", label: t("chrome.footer.contact"), onClick: demo },
+        {
+          id: "shipping",
+          label: t("chrome.footer.shippingReturns"),
+          onClick: demo,
+        },
+        {
+          id: "orders",
+          label: t("chrome.footer.orderStatus"),
+          onClick: () => go("account"),
+        },
+        { id: "faq", label: t("chrome.footer.faq"), onClick: demo },
+      ],
+    },
+  ];
+
+  const [creditBefore, creditAfter = ""] = t("chrome.footer.credit", {
+    year: date(CREDIT_YEAR, { year: "numeric" }),
+    brand: BRAND,
+    adminium: SLOT,
+  }).split(SLOT);
 
   return (
     <footer
@@ -99,7 +166,7 @@ export function Footer() {
                   letterSpacing: "-.02em",
                 }}
               >
-                Northline
+                {BRAND}
               </span>
             </div>
             <div
@@ -110,7 +177,11 @@ export function Footer() {
                 marginBottom: "6px",
               }}
             >
-              Get 10% off your first order
+              {/* The same rate the WELCOME10 code applies — read from the one
+                  constant so the promise and the discount cannot drift. */}
+              {t("chrome.footer.newsletterTitle", {
+                pct: number(PROMO_RATE, { style: "percent" }),
+              })}
             </div>
             <p
               style={{
@@ -120,14 +191,18 @@ export function Footer() {
                 lineHeight: 1.5,
               }}
             >
-              Product drops, restocks, and the occasional good idea. No spam.
+              {t("chrome.footer.newsletterBody")}
             </p>
             <div style={{ display: "flex", gap: "8px", maxWidth: "340px" }}>
+              {/* The placeholder is a specimen address, not a sentence — the
+                  same string in every locale — so the accessible name carries
+                  the translated label instead. */}
               <input
                 className="sf-fld"
                 value={news}
                 onChange={(e) => setNews(e.target.value)}
-                placeholder="you@email.com"
+                placeholder={t("chrome.footer.emailPlaceholder")}
+                aria-label={t("chrome.footer.emailAria")}
                 style={{
                   flex: 1,
                   minWidth: 0,
@@ -155,12 +230,12 @@ export function Footer() {
                   whiteSpace: "nowrap",
                 }}
               >
-                Subscribe
+                {t("chrome.footer.subscribe")}
               </button>
             </div>
           </div>
           {cols.map((col) => (
-            <div key={col.title}>
+            <div key={col.id}>
               <div
                 style={{
                   fontSize: "11px",
@@ -178,7 +253,7 @@ export function Footer() {
               >
                 {col.links.map((lk) => (
                   <button
-                    key={lk.label}
+                    key={lk.id}
                     className="sf-link"
                     onClick={lk.onClick}
                     style={{
@@ -211,19 +286,22 @@ export function Footer() {
           }}
         >
           <span style={{ fontSize: "12px", color: "var(--fg-subtle)" }}>
-            © 2026 Northline. A demo store shipped with{" "}
+            {creditBefore}
             <span style={{ fontWeight: 700, color: "var(--fg-muted)" }}>
-              Adminium
+              {ADMINIUM}
             </span>
-            .
+            {creditAfter}
           </span>
           <span
+            dir="ltr"
             style={{
               fontFamily: "'JetBrains Mono',monospace",
               fontSize: "11.5px",
               color: "var(--fg-subtle)",
             }}
           >
+            {/* A URL is a machine token: it reads left-to-right even on an
+                Arabic page, where bidi would otherwise reorder the slashes. */}
             adminium.dev/demo/ecommerce-storefront
           </span>
           <div

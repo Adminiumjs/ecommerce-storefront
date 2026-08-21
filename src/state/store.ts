@@ -3,7 +3,9 @@
 // top-level App switches on `view`.
 
 import { create } from "zustand";
+import { PROMO_CODE, PROMO_RATE } from "../data/demo.ts";
 import { demoSource } from "../data/source.ts";
+import { number as fmtNumber, t as tr } from "../i18n/ambient";
 import type {
   Cart,
   CartCustom,
@@ -54,8 +56,21 @@ export interface Form {
   name: string;
 }
 
+/**
+ * A toast is raised as a message KEY plus its params, never as finished prose.
+ *
+ * The store runs outside React and cannot hold a hook, so it names the string
+ * instead of rendering it; `<Toast>` — which does have the hook — looks the key
+ * up. A toast that is on screen when the reader switches language therefore
+ * re-renders in the new one, and nothing here has to know what a locale is.
+ *
+ * `msg` is typed `string` rather than `MessageKey` on purpose: a screen may
+ * still pass literal prose, and the runtime renders an unknown key verbatim,
+ * so that keeps working while those screens are migrated.
+ */
 export interface ToastMsg {
   msg: string;
+  params?: Record<string, string | number>;
   t: number;
 }
 
@@ -204,7 +219,7 @@ export interface StoreState {
   getTotals(): Totals;
 
   // actions
-  toast_(msg: string): void;
+  toast_(msg: string, params?: Record<string, string | number>): void;
   skeleton(): void;
   is404(): boolean;
 
@@ -290,22 +305,30 @@ export interface StoreState {
   viewOrder(number: string): void;
 }
 
+/**
+ * Field errors are resolved to finished text here rather than carried as keys,
+ * because `errs` is read straight into the checkout form's markup. `tr` is
+ * `i18n/ambient`'s forwarder — the provider's own `t`, republished on every
+ * `<App>` render — so this is the app's one message table, not a second one.
+ * The card / expiry / CVC entries stay the bare "1" sentinel they have always
+ * been: they only drive the red field border and are never read as prose.
+ */
 function validateStep(step: number, f: Form): Record<string, string> {
   const e: Record<string, string> = {};
   if (step === 0) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test((f.email || "").trim()))
-      e.email = "Enter a valid email address";
+      e.email = tr("chrome.err.email");
   } else if (step === 1) {
-    if (!(f.first || "").trim()) e.first = "Enter your first name";
-    if (!(f.last || "").trim()) e.last = "Enter your last name";
-    if (!(f.addr || "").trim()) e.addr = "Enter your street address";
-    if (!(f.city || "").trim()) e.city = "Enter your city";
-    if (!(f.zip || "").trim()) e.zip = "Required";
+    if (!(f.first || "").trim()) e.first = tr("chrome.err.first");
+    if (!(f.last || "").trim()) e.last = tr("chrome.err.last");
+    if (!(f.addr || "").trim()) e.addr = tr("chrome.err.addr");
+    if (!(f.city || "").trim()) e.city = tr("chrome.err.city");
+    if (!(f.zip || "").trim()) e.zip = tr("chrome.err.zip");
   } else if (step === 3) {
     if ((f.card || "").replace(/\D/g, "").length < 15) e.card = "1";
     if (!/^\s*\d{1,2}\s*\/\s*\d{2}\s*$/.test(f.exp || "")) e.exp = "1";
     if ((f.cvc || "").replace(/\D/g, "").length < 3) e.cvc = "1";
-    if (!(f.name || "").trim()) e.name = "Enter the name on the card";
+    if (!(f.name || "").trim()) e.name = tr("chrome.err.cardName");
   }
   return e;
 }
@@ -374,8 +397,8 @@ export const useStore = create<StoreState>((set, get) => ({
       get().promoOn,
     ),
 
-  toast_: (msg) => {
-    set({ toast: { msg, t: Date.now() } });
+  toast_: (msg, params) => {
+    set({ toast: { msg, params, t: Date.now() } });
     if (toastTimer) clearTimeout(toastTimer);
     toastTimer = setTimeout(() => set({ toast: null }), 2200);
   },
@@ -446,7 +469,7 @@ export const useStore = create<StoreState>((set, get) => ({
   closeDrawer: () => set({ drawer: false }),
   goCheckout: () => {
     if (get().getCount() === 0) {
-      get().toast_("Your cart is empty");
+      get().toast_("chrome.cart.emptyTitle");
       return;
     }
     set({ view: "checkout", coStep: 0, errs: {}, drawer: false, menu: false });
@@ -456,10 +479,10 @@ export const useStore = create<StoreState>((set, get) => ({
   setNews: (v) => set({ news: v }),
   newsSubmit: () => {
     if (!/.+@.+\..+/.test(get().news)) {
-      get().toast_("Enter a valid email");
+      get().toast_("chrome.toast.emailInvalid");
       return;
     }
-    get().toast_("You’re subscribed — check your inbox");
+    get().toast_("chrome.toast.subscribed");
     set({ news: "" });
   },
 
@@ -468,11 +491,11 @@ export const useStore = create<StoreState>((set, get) => ({
     if (!p) return;
     const o = opts || {};
     if (optionsOf(p).length && !variantExists(p, o)) {
-      get().toast_("That combination isn’t available");
+      get().toast_("chrome.toast.comboUnavailable");
       return;
     }
     if (variantStatus(p, o) === "out" || p.status === "out") {
-      get().toast_("“" + p.title + "” is sold out");
+      get().toast_("chrome.toast.soldOutNamed", { title: p.title });
       return;
     }
     const cu: CartCustom | null =
@@ -487,7 +510,7 @@ export const useStore = create<StoreState>((set, get) => ({
         : { pid, opts: o, custom: cu, qty: n, disc: d };
       return { cart: c };
     });
-    get().toast_(p.title + " added to cart");
+    get().toast_("chrome.toast.addedNamed", { title: p.title });
   },
   inc: (key) =>
     set((s) => {
@@ -563,7 +586,7 @@ export const useStore = create<StoreState>((set, get) => ({
     const p = s.index[s.selected];
     if (!p) return;
     if (!variantExists(p, s.sel)) {
-      s.toast_("That combination isn’t available");
+      s.toast_("chrome.toast.comboUnavailable");
       return;
     }
     if (
@@ -571,11 +594,11 @@ export const useStore = create<StoreState>((set, get) => ({
       variantStatus(p, s.sel) === "na" ||
       p.status === "out"
     ) {
-      s.toast_("This option is sold out");
+      s.toast_("chrome.toast.optionSoldOut");
       return;
     }
     if (s.customOn && !s.customText.trim()) {
-      s.toast_("Add your personalization text");
+      s.toast_("chrome.toast.needPersonalization");
       return;
     }
     const custom: CartCustom | null =
@@ -590,7 +613,7 @@ export const useStore = create<StoreState>((set, get) => ({
     const p = s.index[s.selected];
     if (!p) return;
     if (!variantExists(p, s.sel)) {
-      s.toast_("That combination isn’t available");
+      s.toast_("chrome.toast.comboUnavailable");
       return;
     }
     if (
@@ -598,11 +621,11 @@ export const useStore = create<StoreState>((set, get) => ({
       variantStatus(p, s.sel) === "na" ||
       p.status === "out"
     ) {
-      s.toast_("This option is sold out");
+      s.toast_("chrome.toast.optionSoldOut");
       return;
     }
     if (s.customOn && !s.customText.trim()) {
-      s.toast_("Add your personalization text");
+      s.toast_("chrome.toast.needPersonalization");
       return;
     }
     const custom: CartCustom | null =
@@ -613,7 +636,7 @@ export const useStore = create<StoreState>((set, get) => ({
     set({ qty: 1 });
     get().goCheckout();
   },
-  notify: () => get().toast_("We’ll email you when it’s back"),
+  notify: () => get().toast_("chrome.toast.backInStock"),
 
   openReview: () =>
     set({
@@ -631,20 +654,24 @@ export const useStore = create<StoreState>((set, get) => ({
   submitReview: () => {
     const s = get();
     if (s.reviewRating < 1) {
-      s.toast_("Pick a star rating");
+      s.toast_("chrome.toast.pickRating");
       return;
     }
     if (!s.reviewBody.trim()) {
-      s.toast_("Add a few words to your review");
+      s.toast_("chrome.toast.reviewTooShort");
       return;
     }
     const id = s.selected;
     set((st) => {
       const ur = { ...st.userReviews };
       const arr = (ur[id] || []).slice();
+      /* An untitled review is stored untitled. The placeholder headline is a
+       * rendering decision, so it is made — and translated — where the review
+       * is drawn, not frozen into the record in whatever language happened to
+       * be selected at the moment it was posted. */
       arr.unshift({
         rating: st.reviewRating,
-        title: st.reviewTitle.trim() || "My review",
+        title: st.reviewTitle.trim(),
         body: st.reviewBody.trim(),
       });
       ur[id] = arr;
@@ -657,19 +684,24 @@ export const useStore = create<StoreState>((set, get) => ({
         reviewBody: "",
       };
     });
-    s.toast_("Thanks — your review is live!");
+    s.toast_("chrome.toast.reviewPosted");
   },
 
   setPromoDraft: (v) => set({ promoDraft: v }),
   applyPromo: () => {
     const code = (get().promoDraft || "").trim().toUpperCase();
-    if (code === "WELCOME10") {
+    if (code === PROMO_CODE) {
       set({ promoOn: true });
-      get().toast_("Promo WELCOME10 applied — 10% off");
+      get().toast_("chrome.toast.promoApplied", {
+        code,
+        // The discount is a rate, not the string "10%": `Intl` writes it
+        // "10 %" for fr-FR and "١٠٪" for ar-EG.
+        pct: fmtNumber(PROMO_RATE, { style: "percent" }),
+      });
     } else if (!code) {
-      get().toast_("Enter a promo code");
+      get().toast_("chrome.toast.promoEmpty");
     } else {
-      get().toast_("That code isn’t valid");
+      get().toast_("chrome.toast.promoInvalid");
     }
   },
   removePromo: () => set({ promoOn: false, promoDraft: "" }),
@@ -685,7 +717,7 @@ export const useStore = create<StoreState>((set, get) => ({
   gotoStep: (i) => {
     if (i <= get().coStep) set({ coStep: i, errs: {} });
   },
-  onLogin: () => get().toast_("Demo store — guest checkout only"),
+  onLogin: () => get().toast_("chrome.toast.guestOnly"),
   coNext: () => {
     const e = validateStep(get().coStep, get().form);
     if (Object.keys(e).length) {
@@ -725,7 +757,9 @@ export const useStore = create<StoreState>((set, get) => ({
       shipMethod: get().ship,
       promoOn: get().promoOn,
       email: f.email || "you@email.com",
-      name: (f.first + " " + f.last).trim() || "Guest",
+      /* No copy in the store: an empty name lets <Confirm> fall back through
+       * the bundle. This used to hard-code the English word "Guest". */
+      name: (f.first + " " + f.last).trim(),
       addr: (f.addr || "") + (f.apt ? ", " + f.apt : ""),
       city: [f.city, f.zip].filter(Boolean).join(", "),
       country: f.country,
@@ -758,7 +792,7 @@ export const useStore = create<StoreState>((set, get) => ({
       });
       return { cart: c, drawer: true };
     });
-    get().toast_("Added to cart");
+    get().toast_("chrome.toast.addedToCart");
   },
-  viewOrder: (number) => get().toast_("Order #" + number + " details"),
+  viewOrder: (number) => get().toast_("chrome.toast.orderDetails", { number }),
 }));

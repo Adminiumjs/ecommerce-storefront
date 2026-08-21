@@ -1,6 +1,7 @@
 // The product card used in Featured, Listing, and "You might also like".
 
 import type { Product } from "../data/types.ts";
+import { useI18n } from "../i18n";
 import { catName, statusMeta } from "../lib/catalog.ts";
 import { money } from "../lib/format.ts";
 import { hexToRgba } from "../lib/placeholders.ts";
@@ -15,6 +16,7 @@ export interface ProductCardProps {
 }
 
 export function ProductCard({ product: p }: ProductCardProps) {
+  const { t, number } = useI18n();
   const cats = useStore((s) => s.cats);
   const ratings = useStore((s) => s.ratings);
   const userReviews = useStore((s) => s.userReviews);
@@ -55,7 +57,8 @@ export function ProductCard({ product: p }: ProductCardProps) {
             e.stopPropagation();
             add(p.id, 1);
           }}
-          title={out ? "Sold out" : "Add to cart"}
+          title={out ? sm.label : t("chrome.card.addToCart")}
+          aria-label={out ? sm.label : t("chrome.card.addToCart")}
           style={{
             position: "absolute",
             top: "11px",
@@ -121,7 +124,10 @@ export function ProductCard({ product: p }: ProductCardProps) {
               fontFamily: "'JetBrains Mono',monospace",
             }}
           >
-            {rt.avgLabel} ({rt.count})
+            {t("chrome.rating.summary", {
+              avg: rt.avgLabel,
+              count: number(rt.count),
+            })}
           </span>
         </div>
         <div

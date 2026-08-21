@@ -1,7 +1,8 @@
 // Home: hero, new-arrivals banner, featured grid, shop-by-category tiles,
 // value-props strip, and the promo banner.
 
-import { FREE_SHIP, HERO_IMAGE } from "../data/demo.ts";
+import { BRAND, FREE_SHIP, HERO_IMAGE, PROMO_CODE, PROMO_RATE } from "../data/demo.ts";
+import { useI18n } from "../i18n";
 import { catCount } from "../lib/catalog.ts";
 import { money } from "../lib/format.ts";
 import { hexToRgba, phBg, phIconCol } from "../lib/placeholders.ts";
@@ -9,34 +10,40 @@ import { useStore } from "../state/store.ts";
 import { Icon } from "../components/Icon.tsx";
 import { ProductCard } from "../components/ProductCard.tsx";
 import { ProductImage } from "../components/ProductImage.tsx";
+import { forwardArrow, rich } from "./shared.tsx";
 
 const CAT_TINTS = ["#6f74c4", "#7d9166", "#b0836a", "#869162"];
 
-const VALUE_PROPS = [
-  {
-    icon: "truck",
-    title: "Free 2-day shipping",
-    sub: "On every order over " + money(FREE_SHIP) + ", delivered fast.",
-  },
-  {
-    icon: "shield-check",
-    title: "2-year warranty",
-    sub: "We stand behind everything we make.",
-  },
-  {
-    icon: "refresh-ccw",
-    title: "30-day returns",
-    sub: "Not right? Send it back, no questions.",
-  },
-];
-
 export function Home() {
+  const { t, number, dir } = useI18n();
   const theme = useStore((s) => s.theme);
   const products = useStore((s) => s.products);
   const cats = useStore((s) => s.cats);
   const goCat = useStore((s) => s.goCat);
 
   const featured = products.filter((p) => p.feat);
+  const fwd = forwardArrow(dir);
+
+  /* Built per render, not at module load. As a module-level const this array
+   * called `money()` once, before <I18nProvider> had mounted — so the amount
+   * froze as "$75.00" and stayed that way through every language switch. */
+  const VALUE_PROPS = [
+    {
+      icon: "truck",
+      title: t("screens.home.freeShipping"),
+      sub: t("screens.home.vpShipSub", { amount: money(FREE_SHIP) }),
+    },
+    {
+      icon: "shield-check",
+      title: t("screens.home.vpWarranty"),
+      sub: t("screens.home.vpWarrantySub"),
+    },
+    {
+      icon: "refresh-ccw",
+      title: t("screens.home.returns"),
+      sub: t("screens.home.vpReturnsSub"),
+    },
+  ];
 
   return (
     <main
@@ -84,7 +91,7 @@ export function Home() {
             }}
           >
             <Icon name="sparkles" size={13} />
-            New season · gear &amp; essentials
+            {t("screens.home.heroBadge")}
           </span>
           <h1
             style={{
@@ -95,9 +102,7 @@ export function Home() {
               lineHeight: 1.02,
             }}
           >
-            Everyday gear,
-            <br />
-            built to last.
+            {rich(t("screens.home.heroTitle"), { br: <br /> })}
           </h1>
           <p
             style={{
@@ -108,8 +113,7 @@ export function Home() {
               maxWidth: "440px",
             }}
           >
-            Thoughtfully made tools, apparel, and home goods for people who care
-            how things are built. Free shipping over {money(FREE_SHIP)}.
+            {t("screens.home.heroBody", { amount: money(FREE_SHIP) })}
           </p>
           <div
             style={{
@@ -136,8 +140,8 @@ export function Home() {
                 cursor: "pointer",
               }}
             >
-              Shop new arrivals
-              <Icon name="arrow-right" size={17} />
+              {t("screens.home.shopNewArrivals")}
+              <Icon name={fwd} size={17} />
             </button>
             <button
               className="sf-gi"
@@ -156,7 +160,7 @@ export function Home() {
                 cursor: "pointer",
               }}
             >
-              Browse gear
+              {t("screens.home.browseGear")}
             </button>
           </div>
           <div
@@ -178,7 +182,7 @@ export function Home() {
               }}
             >
               <Icon name="truck" size={15} color="var(--pos)" />
-              Free 2-day shipping
+              {t("screens.home.freeShipping")}
             </span>
             <span
               style={{
@@ -191,7 +195,7 @@ export function Home() {
               }}
             >
               <Icon name="refresh-ccw" size={15} color="var(--pos)" />
-              30-day returns
+              {t("screens.home.returns")}
             </span>
           </div>
         </div>
@@ -205,7 +209,7 @@ export function Home() {
         >
           <ProductImage
             src={HERO_IMAGE}
-            alt="Northline gear, out on location"
+            alt={t("screens.home.heroAlt", { brand: BRAND })}
             tint="#6f74c4"
           />
         </div>
@@ -258,7 +262,7 @@ export function Home() {
               }}
             >
               <Icon name="star" size={12} color="var(--accent)" />
-              Just landed
+              {t("screens.home.justLanded")}
             </span>
             <h3
               style={{
@@ -269,7 +273,7 @@ export function Home() {
                 lineHeight: 1.08,
               }}
             >
-              New arrivals are here
+              {t("screens.home.arrivalsTitle")}
             </h3>
             <p
               style={{
@@ -280,8 +284,7 @@ export function Home() {
                 maxWidth: "440px",
               }}
             >
-              Fresh gear, apparel, and home goods just dropped. Be first to shop
-              the latest additions to the Northline lineup.
+              {t("screens.home.arrivalsBody", { brand: BRAND })}
             </p>
             <button
               className="sf-btn"
@@ -301,8 +304,8 @@ export function Home() {
                 cursor: "pointer",
               }}
             >
-              Shop new arrivals
-              <Icon name="arrow-right" size={16} />
+              {t("screens.home.shopNewArrivals")}
+              <Icon name={fwd} size={16} />
             </button>
           </div>
         </div>
@@ -327,7 +330,7 @@ export function Home() {
               letterSpacing: "-.02em",
             }}
           >
-            Featured
+            {t("screens.home.featured")}
           </h2>
           <button
             className="sf-link"
@@ -345,8 +348,8 @@ export function Home() {
               cursor: "pointer",
             }}
           >
-            View all
-            <Icon name="arrow-right" size={15} />
+            {t("screens.home.viewAll")}
+            <Icon name={fwd} size={15} />
           </button>
         </div>
         <div
@@ -381,7 +384,7 @@ export function Home() {
               letterSpacing: "-.02em",
             }}
           >
-            Shop by category
+            {t("screens.home.shopByCategory")}
           </h2>
         </div>
         <div
@@ -448,7 +451,11 @@ export function Home() {
                       marginTop: "2px",
                     }}
                   >
-                    {catCount(products, c.slug)} products
+                    {t(
+                      "screens.home.catProducts",
+                      { count: number(catCount(products, c.slug)) },
+                      catCount(products, c.slug),
+                    )}
                   </div>
                 </div>
                 <span
@@ -566,7 +573,7 @@ export function Home() {
                 opacity: 0.8,
               }}
             >
-              Limited time
+              {t("screens.home.limitedTime")}
             </div>
             <h3
               style={{
@@ -578,7 +585,9 @@ export function Home() {
                 lineHeight: 1.1,
               }}
             >
-              Members get 10% off — and early access to drops.
+              {t("screens.home.promoTitle", {
+                pct: number(PROMO_RATE, { style: "percent" }),
+              })}
             </h3>
             <p
               style={{
@@ -589,19 +598,21 @@ export function Home() {
                 lineHeight: 1.5,
               }}
             >
-              Join the Northline list. Use code{" "}
-              <span
-                style={{
-                  fontFamily: "'JetBrains Mono',monospace",
-                  fontWeight: 700,
-                  background: "rgba(255,255,255,.18)",
-                  padding: "2px 8px",
-                  borderRadius: "6px",
-                }}
-              >
-                WELCOME10
-              </span>{" "}
-              at checkout.
+              {rich(t("screens.home.promoBody", { brand: BRAND }), {
+                code: (
+                  <span
+                    style={{
+                      fontFamily: "'JetBrains Mono',monospace",
+                      fontWeight: 700,
+                      background: "rgba(255,255,255,.18)",
+                      padding: "2px 8px",
+                      borderRadius: "6px",
+                    }}
+                  >
+                    {PROMO_CODE}
+                  </span>
+                ),
+              })}
             </p>
           </div>
           <button
@@ -626,8 +637,8 @@ export function Home() {
               flexShrink: 0,
             }}
           >
-            Shop the sale
-            <Icon name="arrow-right" size={17} />
+            {t("screens.home.shopTheSale")}
+            <Icon name={fwd} size={17} />
           </button>
         </div>
       </section>

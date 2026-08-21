@@ -1,9 +1,11 @@
 // 404 — reachable only if `view` is ever set to an unknown value.
 
+import { useT } from "../i18n";
 import { useStore } from "../state/store.ts";
 import { Icon } from "../components/Icon.tsx";
 
 export function NotFound() {
+  const t = useT();
   const go = useStore((s) => s.go);
   const goCat = useStore((s) => s.goCat);
 
@@ -37,7 +39,7 @@ export function NotFound() {
           letterSpacing: "-.02em",
         }}
       >
-        We can’t find that page
+        {t("screens.notFound.title")}
       </h1>
       <p
         style={{
@@ -48,8 +50,7 @@ export function NotFound() {
           maxWidth: "380px",
         }}
       >
-        The link may be broken or the product may have sold out. Let’s get you
-        back to the good stuff.
+        {t("screens.notFound.body")}
       </p>
       <div
         style={{
@@ -78,7 +79,7 @@ export function NotFound() {
           }}
         >
           <Icon name="home" size={17} />
-          Back home
+          {t("screens.notFound.backHome")}
         </button>
         <button
           className="sf-gi"
@@ -97,7 +98,7 @@ export function NotFound() {
             cursor: "pointer",
           }}
         >
-          Shop all
+          {t("chrome.header.shopAll")}
         </button>
       </div>
     </main>

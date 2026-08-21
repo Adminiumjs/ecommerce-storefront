@@ -20,6 +20,7 @@ import type {
   ShipMethod,
   Stock,
 } from "../data/types.ts";
+import { t } from "../i18n/ambient";
 
 export type VariantStatus = Stock | "na";
 
@@ -101,11 +102,22 @@ export function optLabel(p: Product, opts: OptionSelection): string {
     .join(" · ");
 }
 
+/**
+ * "Engraved: “AVA” + logo" — the cart's one-line summary of a personalisation.
+ *
+ * Assembled from a message rather than by `+`, because the pieces do not keep
+ * their English order everywhere: fr-FR needs a no-break space before the colon
+ * and guillemets around the text, de-DE and cs-CZ want „low-high“ quotes, da-DK
+ * »guillemets pointing out«, and zh-TW 「corner brackets」. The engraving verb
+ * itself stays as the merchant wrote it — it is catalogue data, so it arrives
+ * as a `{verb}` the translator places but does not rewrite.
+ */
 export function customLabel(p: Product, custom: CartCustom | null): string {
   if (!p.custom || !custom || !custom.text) return "";
-  return (
-    p.custom.verb + ': “' + custom.text + '”' + (custom.logo ? " + logo" : "")
-  );
+  const key = custom.logo
+    ? "chrome.cart.personalizationLogo"
+    : "chrome.cart.personalization";
+  return t(key, { verb: p.custom.verb, text: custom.text });
 }
 
 /** The default option selection for a PDP — falls back to the first existing

@@ -2,6 +2,7 @@
 // selected product's `size` option.
 
 import type { Product } from "../data/types.ts";
+import { useT, type TFunction } from "../i18n";
 import { useStore } from "../state/store.ts";
 import { Icon } from "./Icon.tsx";
 
@@ -11,13 +12,21 @@ interface SizeGuide {
   rows: string[][];
 }
 
-export function sizeGuideVM(p: Product): SizeGuide | null {
+/**
+ * Takes `t` rather than reaching for one: this is a plain function, and the
+ * only caller is a component that already holds the hook.
+ *
+ * The shoe table's headers are sizing SYSTEMS — US, EU, CM — and are the same
+ * tokens in every language, the way a shoe box prints them. The apparel table's
+ * headers name body measurements, which is ordinary prose, so those translate.
+ */
+export function sizeGuideVM(p: Product, t: TFunction): SizeGuide | null {
   const o = (p.options || []).find((x) => x.key === "size");
   if (!o) return null;
   const shoe = /US|shoe/i.test(o.name);
   return shoe
     ? {
-        title: "Shoe size guide",
+        title: t("chrome.sizeGuide.shoe"),
         cols: ["US", "EU", "CM"],
         rows: [
           ["8", "41", "26.0"],
@@ -28,8 +37,12 @@ export function sizeGuideVM(p: Product): SizeGuide | null {
         ],
       }
     : {
-        title: "Apparel size guide",
-        cols: ["Size", "Chest", "Length"],
+        title: t("chrome.sizeGuide.apparel"),
+        cols: [
+          t("chrome.sizeGuide.colSize"),
+          t("chrome.sizeGuide.colChest"),
+          t("chrome.sizeGuide.colLength"),
+        ],
         rows: [
           ["S", '36"', '27"'],
           ["M", '39"', '28"'],
@@ -40,6 +53,7 @@ export function sizeGuideVM(p: Product): SizeGuide | null {
 }
 
 export function SizeGuideModal() {
+  const t = useT();
   const open = useStore((s) => s.sizeGuideOpen);
   const selected = useStore((s) => s.selected);
   const index = useStore((s) => s.index);
@@ -47,7 +61,7 @@ export function SizeGuideModal() {
 
   if (!open) return null;
   const p = index[selected];
-  const guide = p ? sizeGuideVM(p) : null;
+  const guide = p ? sizeGuideVM(p, t) : null;
   if (!guide) return null;
 
   return (
@@ -101,6 +115,7 @@ export function SizeGuideModal() {
           <button
             className="sf-gi"
             onClick={close}
+            aria-label={t("chrome.close")}
             style={{
               width: "34px",
               height: "34px",
@@ -194,7 +209,7 @@ export function SizeGuideModal() {
               size={14}
               style={{ flexShrink: 0, marginTop: "1px" }}
             />
-            Measurements are approximate. Between sizes? We recommend sizing up.
+            {t("chrome.sizeGuide.note")}
           </div>
         </div>
       </div>

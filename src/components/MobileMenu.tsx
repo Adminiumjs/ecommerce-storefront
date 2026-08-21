@@ -1,11 +1,13 @@
 // Mobile menu — a top sheet with search + category nav. Opened by the header
 // hamburger below the 900px breakpoint.
 
+import { useI18n } from "../i18n";
 import { catCount } from "../lib/catalog.ts";
 import { useStore } from "../state/store.ts";
 import { Icon } from "./Icon.tsx";
 
 export function MobileMenu() {
+  const { t, number } = useI18n();
   const menu = useStore((s) => s.menu);
   const cats = useStore((s) => s.cats);
   const products = useStore((s) => s.products);
@@ -48,11 +50,12 @@ export function MobileMenu() {
           <span
             style={{ fontWeight: 800, fontSize: "15px", letterSpacing: "-.01em" }}
           >
-            Menu
+            {t("chrome.menu.title")}
           </span>
           <button
             className="sf-gi"
             onClick={closeMenu}
+            aria-label={t("chrome.menu.close")}
             style={{
               width: "36px",
               height: "36px",
@@ -75,7 +78,7 @@ export function MobileMenu() {
             size={17}
             style={{
               position: "absolute",
-              left: "13px",
+              insetInlineStart: "13px",
               top: "50%",
               transform: "translateY(-50%)",
               color: "var(--fg-subtle)",
@@ -88,10 +91,12 @@ export function MobileMenu() {
             onKeyDown={(e) => {
               if (e.key === "Enter") submitSearch();
             }}
-            placeholder="Search products…"
+            placeholder={t("chrome.menu.searchPlaceholder")}
+            aria-label={t("chrome.header.searchAria")}
             style={{
               width: "100%",
-              padding: "12px 14px 12px 40px",
+              paddingBlock: "12px",
+              paddingInline: "40px 14px",
               borderRadius: "12px",
               border: "1px solid var(--border-strong)",
               background: "var(--surface-2)",
@@ -120,7 +125,7 @@ export function MobileMenu() {
             }}
           >
             <Icon name="store" size={18} color="var(--accent)" />
-            Shop all
+            {t("chrome.header.shopAll")}
           </button>
           {cats.map((c) => (
             <button
@@ -151,7 +156,7 @@ export function MobileMenu() {
                   color: "var(--fg-subtle)",
                 }}
               >
-                {catCount(products, c.slug)}
+                {number(catCount(products, c.slug))}
               </span>
             </button>
           ))}

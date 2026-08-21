@@ -3,6 +3,7 @@
 // and load-more pagination.
 
 import type { Product } from "../data/types.ts";
+import { useI18n, type MessageKey } from "../i18n";
 import { catName } from "../lib/catalog.ts";
 import { money } from "../lib/format.ts";
 import { ratingFor } from "../lib/ratings.ts";
@@ -11,12 +12,18 @@ import { useStore } from "../state/store.ts";
 import { Icon } from "../components/Icon.tsx";
 import { ProductCard } from "../components/ProductCard.tsx";
 
-const SORTS: [Sort, string][] = [
-  ["featured", "Featured"],
-  ["price-asc", "Price: low to high"],
-  ["price-desc", "Price: high to low"],
-  ["name", "Name: A–Z"],
+/* Keys, not copy: this table is built once at module load, so an English label
+ * here would outlive every language switch. */
+const SORTS: [Sort, MessageKey][] = [
+  ["featured", "screens.listing.sortFeatured"],
+  ["price-asc", "screens.listing.sortPriceAsc"],
+  ["price-desc", "screens.listing.sortPriceDesc"],
+  ["name", "screens.listing.sortName"],
 ];
+
+/** The price slider's fixed bounds — shown as money, not as a bare "$200". */
+const PRICE_MIN = 0;
+const PRICE_MAX = 200;
 
 function rowStyle(active: boolean): React.CSSProperties {
   return {
@@ -66,6 +73,7 @@ function Radio({ active }: { active: boolean }) {
 }
 
 export function Listing() {
+  const { t, number } = useI18n();
   const s = useStore();
   const {
     cat,
@@ -108,19 +116,19 @@ export function Listing() {
   const total = list.length;
   const visible = list.slice(0, shown);
   const title = ql
-    ? "Results for “" + q + "”"
+    ? t("screens.listing.resultsFor", { q })
     : cat === "all"
-      ? "All products"
+      ? t("chrome.footer.allProducts")
       : catName(cats, cat);
   const crumb = ql
-    ? "Search"
+    ? t("screens.listing.search")
     : cat === "all"
-      ? "All products"
+      ? t("chrome.footer.allProducts")
       : catName(cats, cat);
-  const sortLabel = (SORTS.find((x) => x[0] === sort) || SORTS[0])[1];
+  const sortLabel = t((SORTS.find((x) => x[0] === sort) || SORTS[0])[1]);
 
   const catRows = [
-    { slug: "all", name: "All products", count: products.length },
+    { slug: "all", name: t("chrome.footer.allProducts"), count: products.length },
     ...cats.map((c) => ({
       slug: c.slug,
       name: c.name,
@@ -129,23 +137,33 @@ export function Listing() {
   ];
 
   const availRows: [typeof avail, string][] = [
-    ["all", "All items"],
-    ["in", "In stock only"],
+    ["all", t("screens.listing.availAll")],
+    ["in", t("screens.listing.availIn")],
   ];
+  /* The threshold is a NUMBER, formatted per locale — "4.5 & up" hard-coded an
+   * en-US decimal point, which reads wrong anywhere that writes 4,5. */
   const ratingRows: [number, string][] = [
-    [0, "All ratings"],
-    [4.5, "4.5 & up"],
-    [4, "4.0 & up"],
-    [3, "3.0 & up"],
+    [0, t("screens.listing.ratingAll")],
+    ...[4.5, 4, 3].map(
+      (r): [number, string] => [
+        r,
+        t("screens.listing.ratingAndUp", {
+          rating: number(r, { minimumFractionDigits: 1 }),
+        }),
+      ],
+    ),
   ];
 
   const showClear =
     !!ql ||
     cat !== "all" ||
     avail !== "all" ||
-    pmax < 200 ||
+    pmax < PRICE_MAX ||
     minRating > 0;
-  const priceLabel = pmax >= 200 ? "Any" : "Up to " + money(pmax);
+  const priceLabel =
+    pmax >= PRICE_MAX
+      ? t("screens.listing.priceAny")
+      : t("screens.listing.priceUpTo", { amount: money(pmax) });
 
   return (
     <main
@@ -176,7 +194,7 @@ export function Listing() {
             fontWeight: 600,
           }}
         >
-          Home
+          {t("screens.listing.home")}
         </button>
         <span style={{ margin: "0 7px" }}>/</span>
         {crumb}
@@ -204,7 +222,7 @@ export function Listing() {
           <div
             style={{ fontSize: "13px", color: "var(--fg-muted)", marginTop: "5px" }}
           >
-            {total + (total === 1 ? " product" : " products")}
+            {t("screens.home.catProducts", { count: number(total) }, total)}
           </div>
         </div>
         <div
@@ -232,7 +250,7 @@ export function Listing() {
             }}
           >
             <Icon name="sliders-horizontal" size={15} />
-            Filters
+            {t("screens.listing.filters")}
           </button>
           <div style={{ position: "relative" }}>
             <button
@@ -297,7 +315,7 @@ export function Listing() {
                           cursor: "pointer",
                         }}
                       >
-                        <span style={{ flex: 1, textAlign: "start" }}>{label}</span>
+                        <span style={{ flex: 1, textAlign: "start" }}>{t(label)}</span>
                         {active && (
                           <Icon name="check" size={15} color="var(--accent)" />
                         )}
@@ -332,7 +350,7 @@ export function Listing() {
                   marginBottom: "10px",
                 }}
               >
-                Category
+                {t("screens.listing.category")}
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
                 {catRows.map((c) => {
@@ -379,7 +397,7 @@ export function Listing() {
                     color: "var(--fg-subtle)",
                   }}
                 >
-                  Max price
+                  {t("screens.listing.maxPrice")}
                 </span>
                 <span
                   style={{
@@ -394,8 +412,8 @@ export function Listing() {
               </div>
               <input
                 type="range"
-                min={0}
-                max={200}
+                min={PRICE_MIN}
+                max={PRICE_MAX}
                 step={5}
                 value={pmax}
                 onChange={(e) => s.setPmax(Number(e.target.value))}
@@ -411,8 +429,8 @@ export function Listing() {
                   fontFamily: "'JetBrains Mono',monospace",
                 }}
               >
-                <span>$0</span>
-                <span>$200</span>
+                <span>{money(PRICE_MIN)}</span>
+                <span>{money(PRICE_MAX)}</span>
               </div>
             </div>
             <div style={{ height: "1px", background: "var(--border)" }} />
@@ -428,7 +446,7 @@ export function Listing() {
                   marginBottom: "10px",
                 }}
               >
-                Availability
+                {t("screens.listing.availability")}
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
                 {availRows.map(([key, label]) => {
@@ -459,7 +477,7 @@ export function Listing() {
                   marginBottom: "10px",
                 }}
               >
-                Rating
+                {t("screens.listing.rating")}
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "1px" }}>
                 {ratingRows.map(([r, label]) => {
@@ -509,7 +527,7 @@ export function Listing() {
                 }}
               >
                 <Icon name="x" size={14} />
-                Clear all filters
+                {t("screens.listing.clearAll")}
               </button>
             )}
           </div>
@@ -597,7 +615,9 @@ export function Listing() {
               <div
                 style={{ fontSize: "17px", fontWeight: 800, letterSpacing: "-.01em" }}
               >
-                {ql ? "No results for “" + q + "”" : "Nothing matches those filters"}
+                {ql
+                  ? t("screens.listing.noResultsFor", { q })
+                  : t("screens.listing.noMatches")}
               </div>
               <div
                 style={{
@@ -608,8 +628,7 @@ export function Listing() {
                   lineHeight: 1.5,
                 }}
               >
-                Try widening your price range or clearing filters to see
-                everything in the shop.
+                {t("screens.listing.noMatchesBody")}
               </div>
               <button
                 className="sf-btn"
@@ -626,7 +645,7 @@ export function Listing() {
                   cursor: "pointer",
                 }}
               >
-                Clear filters
+                {t("screens.listing.clearFilters")}
               </button>
             </div>
           ) : (
@@ -654,7 +673,10 @@ export function Listing() {
                   }}
                 >
                   <div style={{ fontSize: "12.5px", color: "var(--fg-subtle)" }}>
-                    Showing {visible.length} of {total}
+                    {t("screens.listing.showingOf", {
+                      shown: number(visible.length),
+                      total: number(total),
+                    })}
                   </div>
                   <button
                     className="sf-gi"
@@ -670,7 +692,7 @@ export function Listing() {
                       cursor: "pointer",
                     }}
                   >
-                    Load more
+                    {t("screens.listing.loadMore")}
                   </button>
                 </div>
               )}

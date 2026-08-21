@@ -1,6 +1,7 @@
 // Quantity stepper — minus / qty / plus, in three sizes (PDP 44 / cart 34 /
 // drawer 30). Digits are mono.
 
+import { useI18n } from "../i18n";
 import { Icon } from "./Icon.tsx";
 
 export interface QtyStepperProps {
@@ -26,6 +27,7 @@ export function QtyStepper({
   fontSize = 13,
   iconSize = 14,
 }: QtyStepperProps) {
+  const { t, number } = useI18n();
   const h = height ?? size;
   const btn: React.CSSProperties = {
     width: size + "px",
@@ -48,10 +50,16 @@ export function QtyStepper({
         overflow: "hidden",
       }}
     >
-      <button className="sf-gi" onClick={onDec} style={btn}>
+      <button
+        className="sf-gi"
+        onClick={onDec}
+        aria-label={t("chrome.qty.decrease")}
+        style={btn}
+      >
         <Icon name="minus" size={iconSize} />
       </button>
       <span
+        aria-label={t("chrome.qty.label")}
         style={{
           minWidth: size + "px",
           textAlign: "center",
@@ -60,9 +68,14 @@ export function QtyStepper({
           fontWeight: 600,
         }}
       >
-        {qty}
+        {number(qty)}
       </span>
-      <button className="sf-gi" onClick={onInc} style={btn}>
+      <button
+        className="sf-gi"
+        onClick={onInc}
+        aria-label={t("chrome.qty.increase")}
+        style={btn}
+      >
         <Icon name="plus" size={iconSize} />
       </button>
     </div>

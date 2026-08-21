@@ -2,6 +2,8 @@
 // shots), price + variant status, option matrix, personalization accordion,
 // qty + add/buy, details/specs, bundle, reviews, and related products.
 
+import { BUNDLE_OFF } from "../data/demo.ts";
+import { useI18n, type MessageKey } from "../i18n";
 import { catName, statusMeta } from "../lib/catalog.ts";
 import { money } from "../lib/format.ts";
 import { hexToRgba } from "../lib/placeholders.ts";
@@ -24,13 +26,15 @@ import { StarRating } from "../components/StarRating.tsx";
 const ANGLES = ["158deg", "32deg", "108deg", "205deg"];
 const ROTS = [0, -8, 7, -4];
 
-const TRUST = [
-  { icon: "truck", label: "Free 2-day shipping" },
-  { icon: "refresh-ccw", label: "30-day returns" },
-  { icon: "shield-check", label: "2-year warranty" },
+/* Keys, not copy — this table is built once at module load. */
+const TRUST: { icon: string; label: MessageKey }[] = [
+  { icon: "truck", label: "screens.home.freeShipping" },
+  { icon: "refresh-ccw", label: "screens.home.returns" },
+  { icon: "shield-check", label: "screens.home.vpWarranty" },
 ];
 
 export function Product() {
+  const { t, number } = useI18n();
   const index = useStore((s) => s.index);
   const products = useStore((s) => s.products);
   const cats = useStore((s) => s.cats);
@@ -72,18 +76,18 @@ export function Product() {
 
   const sm =
     vstat === "na"
-      ? { label: "Unavailable", col: "var(--fg-subtle)" }
+      ? { label: t("screens.product.unavailable"), col: "var(--fg-subtle)" }
       : out
-        ? { label: "Sold out", col: "var(--fg-subtle)" }
+        ? { label: t("chrome.status.out"), col: "var(--fg-subtle)" }
         : statusMeta(vstat);
   const stockNote =
     vstat === "na"
-      ? "That combination isn’t available — try another option."
+      ? t("screens.product.noteUnavailable")
       : out
-        ? "This option is currently out of stock."
+        ? t("screens.product.noteOut")
         : low
-          ? "Only a few left — order soon."
-          : "In stock, ready to ship today.";
+          ? t("screens.product.noteLow")
+          : t("screens.product.noteIn");
   const stockIcon = out ? "x-circle" : low ? "alert-circle" : "check-circle-2";
 
   // gallery
@@ -148,7 +152,7 @@ export function Product() {
   const bundleRegular = bundleItems
     ? bundleItems.reduce((a, x) => a + x.price, 0)
     : 0;
-  const bundlePrice = bundleRegular * 0.85;
+  const bundlePrice = bundleRegular * (1 - BUNDLE_OFF);
   const bundleSave = bundleRegular - bundlePrice;
 
   const rt = ratingFor(p.id, ratings, userReviews);
@@ -184,7 +188,7 @@ export function Product() {
             fontWeight: 600,
           }}
         >
-          Home
+          {t("screens.listing.home")}
         </button>
         <span style={{ margin: "0 7px" }}>/</span>
         <button
@@ -511,7 +515,7 @@ export function Product() {
                     >
                       <Icon name="eye" size={15} color="var(--accent)" />
                       <span style={{ fontSize: "12px", color: "var(--fg-muted)" }}>
-                        Preview
+                        {t("screens.product.preview")}
                       </span>
                       <span
                         style={{
@@ -541,7 +545,7 @@ export function Product() {
                     >
                       <Checkbox on={customLogo} />
                       <span style={{ fontSize: "12.5px", color: "var(--fg-muted)" }}>
-                        Add my logo — we’ll email a proof before printing
+                        {t("screens.product.addLogo")}
                       </span>
                     </button>
                   )}
@@ -560,8 +564,7 @@ export function Product() {
                       size={13}
                       style={{ flexShrink: 0, marginTop: "2px" }}
                     />
-                    Personalized items are made to order and aren’t eligible for
-                    return.
+                    {t("screens.product.personalizedNote")}
                   </div>
                 </div>
               )}
@@ -635,7 +638,7 @@ export function Product() {
                   </button>
                 </div>
                 <span style={{ fontSize: "12.5px", color: "var(--fg-subtle)" }}>
-                  Qty
+                  {t("screens.product.qty")}
                 </span>
               </div>
               <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
@@ -660,7 +663,7 @@ export function Product() {
                   }}
                 >
                   <Icon name="shopping-bag" size={18} />
-                  Add to cart
+                  {t("chrome.card.addToCart")}
                 </button>
                 <button
                   className="sf-gi"
@@ -683,7 +686,7 @@ export function Product() {
                   }}
                 >
                   <Icon name="zap" size={18} />
-                  Buy now
+                  {t("screens.product.buyNow")}
                 </button>
               </div>
             </>
@@ -716,7 +719,7 @@ export function Product() {
                 }}
               >
                 <Icon name="ban" size={18} />
-                Sold out
+                {t("chrome.status.out")}
               </button>
               <button
                 className="sf-gi"
@@ -739,7 +742,7 @@ export function Product() {
                 }}
               >
                 <Icon name="bell" size={18} />
-                Notify me when back
+                {t("screens.product.notifyMe")}
               </button>
             </div>
           )}
@@ -767,7 +770,7 @@ export function Product() {
                 }}
               >
                 <Icon name={tr.icon} size={16} color="var(--pos)" />
-                {tr.label}
+                {t(tr.label)}
               </span>
             ))}
           </div>
@@ -793,7 +796,7 @@ export function Product() {
               letterSpacing: "-.02em",
             }}
           >
-            Details
+            {t("screens.product.details")}
           </h2>
           <p
             style={{
@@ -816,7 +819,7 @@ export function Product() {
               letterSpacing: "-.02em",
             }}
           >
-            Specifications
+            {t("screens.product.specifications")}
           </h2>
           <div
             style={{
@@ -879,7 +882,7 @@ export function Product() {
                 letterSpacing: "-.02em",
               }}
             >
-              Buy the bundle &amp; save
+              {t("screens.product.bundleTitle")}
             </h2>
           </div>
           <div
@@ -983,16 +986,24 @@ export function Product() {
                 }}
               >
                 <Icon name="tag" size={13} />
-                Save {money(bundleSave)} · 15% off
+                {t("screens.product.bundleSave", {
+                  amount: money(bundleSave),
+                  pct: number(BUNDLE_OFF, { style: "percent" }),
+                })}
               </span>
               <button
                 className="sf-btn"
                 onClick={() => {
                   bundleItems.forEach((x) =>
-                    add(x.id, 1, defaultSel(x), null, 0.15),
+                    add(x.id, 1, defaultSel(x), null, BUNDLE_OFF),
                   );
                   openDrawer();
-                  toast("Bundle added — you saved " + money(bundleSave));
+                  /* A KEY plus params — this used to hand the store a finished
+                   * English sentence, which the toast then printed verbatim in
+                   * every language because the lookup missed and fell back. */
+                  toast("screens.product.bundleAddedToast", {
+                    amount: money(bundleSave),
+                  });
                 }}
                 style={{
                   display: "inline-flex",
@@ -1010,7 +1021,11 @@ export function Product() {
                 }}
               >
                 <Icon name="shopping-bag" size={16} />
-                Add {bundleItems.length} to cart
+                {t(
+                  "screens.product.addNToCart",
+                  { count: number(bundleItems.length) },
+                  bundleItems.length,
+                )}
               </button>
             </div>
           </div>
@@ -1038,7 +1053,7 @@ export function Product() {
               letterSpacing: "-.02em",
             }}
           >
-            You might also like
+            {t("screens.product.related")}
           </h2>
         </div>
         <div

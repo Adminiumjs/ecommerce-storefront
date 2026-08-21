@@ -2,8 +2,14 @@
 // revisitable stepper, per-step validation, a demo Stripe-Elements-style card
 // field, and a sticky order summary.
 
-import { FREE_SHIP, SHIP_EXPRESS, SHIP_OVERNIGHT } from "../data/demo.ts";
+import {
+  FREE_SHIP,
+  SHIP_EXPRESS,
+  SHIP_OVERNIGHT,
+  SHIP_STANDARD,
+} from "../data/demo.ts";
 import type { ShipMethod } from "../data/types.ts";
+import { useI18n, type MessageKey } from "../i18n";
 import { money } from "../lib/format.ts";
 import { hexToRgba } from "../lib/placeholders.ts";
 import { cartArr, computeTotals, subtotalOf } from "../lib/pricing.ts";
@@ -12,14 +18,24 @@ import { useStore } from "../state/store.ts";
 import { Checkbox } from "../components/Checkbox.tsx";
 import { Icon } from "../components/Icon.tsx";
 import { ProductImage } from "../components/ProductImage.tsx";
+import { backArrow, forwardArrow, rich } from "./shared.tsx";
 
-const STEP_LABELS = ["Contact", "Shipping", "Delivery", "Payment"];
-const NEXT_LABELS = [
-  "Continue to shipping",
-  "Continue to delivery",
-  "Continue to payment",
+/* Keys, not copy: these tables are built once at module load. */
+const STEP_LABELS: MessageKey[] = [
+  "screens.checkout.stepContact",
+  "screens.checkout.stepShipping",
+  "screens.checkout.stepDelivery",
+  "screens.checkout.stepPayment",
 ];
-const COUNTRIES = ["United States", "Canada", "United Kingdom", "Australia"];
+const NEXT_LABELS: MessageKey[] = [
+  "screens.checkout.nextShipping",
+  "screens.checkout.nextDelivery",
+  "screens.checkout.nextPayment",
+];
+/* ISO 3166 codes, not English names. `Intl.DisplayNames` renders each one in
+ * the reader's language, so the picker says "Vereinigte Staaten" in de-DE
+ * without a translator touching this list. */
+const COUNTRY_CODES = ["US", "CA", "GB", "AU"];
 
 function fieldStyle(err: string): React.CSSProperties {
   return {
@@ -35,6 +51,7 @@ function fieldStyle(err: string): React.CSSProperties {
 }
 
 export function Checkout() {
+  const { t, number, locale, dir } = useI18n();
   const st = useStore();
   const {
     form: f,
@@ -50,7 +67,9 @@ export function Checkout() {
 
   const lines = cartArr(cart, index);
   const sub = subtotalOf(lines);
-  const t = computeTotals(lines, ship, promoOn);
+  const tot = computeTotals(lines, ship, promoOn);
+
+  const countryNames = new Intl.DisplayNames([locale], { type: "region" });
 
   const field = (name: keyof Form) => ({
     value: f[name],
@@ -61,9 +80,9 @@ export function Checkout() {
   });
 
   const cardErr = e.card
-    ? "Enter a valid card number"
+    ? t("screens.checkout.errCard")
     : e.exp || e.cvc
-      ? "Check the expiry date and security code"
+      ? t("screens.checkout.errExpCvc")
       : "";
 
   const dopts: {
@@ -74,15 +93,20 @@ export function Checkout() {
   }[] = [
     {
       key: "standard",
-      name: "Standard",
-      desc: "3–5 business days",
-      fee: sub >= FREE_SHIP ? "Free" : money(6),
+      name: t("screens.checkout.methodStandard"),
+      desc: t("screens.checkout.descStandard"),
+      fee: sub >= FREE_SHIP ? t("screens.summary.free") : money(SHIP_STANDARD),
     },
-    { key: "express", name: "Express", desc: "2 business days", fee: money(SHIP_EXPRESS) },
+    {
+      key: "express",
+      name: t("screens.checkout.methodExpress"),
+      desc: t("screens.checkout.descExpress"),
+      fee: money(SHIP_EXPRESS),
+    },
     {
       key: "overnight",
-      name: "Overnight",
-      desc: "Next business day",
+      name: t("screens.checkout.methodOvernight"),
+      desc: t("screens.checkout.descOvernight"),
       fee: money(SHIP_OVERNIGHT),
     },
   ];
@@ -193,7 +217,7 @@ export function Checkout() {
                         border: done || active ? "none" : "1px solid var(--border-strong)",
                       }}
                     >
-                      {done ? <Icon name="check" size={15} /> : i + 1}
+                      {done ? <Icon name="check" size={15} /> : number(i + 1)}
                     </span>
                     <span
                       style={{
@@ -207,7 +231,7 @@ export function Checkout() {
                         whiteSpace: "nowrap",
                       }}
                     >
-                      {lbl}
+                      {t(lbl)}
                     </span>
                   </button>
                   {i < 3 && (
@@ -241,25 +265,28 @@ export function Checkout() {
                 }}
               >
                 <h2 style={{ margin: 0, fontSize: "20px", fontWeight: 800, letterSpacing: "-.02em" }}>
-                  Contact
+                  {t("screens.checkout.stepContact")}
                 </h2>
                 <span style={{ fontSize: "13px", color: "var(--fg-muted)" }}>
-                  Have an account?{" "}
-                  <button
-                    className="sf-link"
-                    onClick={st.onLogin}
-                    style={{
-                      border: "none",
-                      background: "transparent",
-                      color: "var(--accent)",
-                      fontWeight: 700,
-                      fontSize: "13px",
-                      cursor: "pointer",
-                      padding: 0,
-                    }}
-                  >
-                    Log in
-                  </button>
+                  {rich(t("screens.checkout.haveAccount"), {
+                    login: (
+                      <button
+                        className="sf-link"
+                        onClick={st.onLogin}
+                        style={{
+                          border: "none",
+                          background: "transparent",
+                          color: "var(--accent)",
+                          fontWeight: 700,
+                          fontSize: "13px",
+                          cursor: "pointer",
+                          padding: 0,
+                        }}
+                      >
+                        {t("screens.checkout.logIn")}
+                      </button>
+                    ),
+                  })}
                 </span>
               </div>
               <div>
@@ -271,13 +298,13 @@ export function Checkout() {
                     marginBottom: "7px",
                   }}
                 >
-                  Email address
+                  {t("chrome.footer.emailAria")}
                 </label>
                 <input
                   className="sf-fld"
                   value={f.email}
                   onChange={(ev) => st.setField("email", ev.target.value)}
-                  placeholder="you@email.com"
+                  placeholder={t("chrome.footer.emailPlaceholder")}
                   style={fieldStyle(e.email || "")}
                 />
                 {e.email && (
@@ -311,7 +338,7 @@ export function Checkout() {
               >
                 <Checkbox on={optIn} />
                 <span style={{ fontSize: "13px", color: "var(--fg-muted)", lineHeight: 1.45 }}>
-                  Email me order updates and the occasional offer.
+                  {t("screens.checkout.optIn")}
                 </span>
               </button>
               <div
@@ -331,8 +358,7 @@ export function Checkout() {
                   style={{ flexShrink: 0, marginTop: "1px" }}
                 />
                 <span style={{ fontSize: "12.5px", color: "var(--fg-muted)", lineHeight: 1.5 }}>
-                  You’re checking out as a guest. We’ll email a receipt and let
-                  you create an account after.
+                  {t("screens.checkout.guestNote")}
                 </span>
               </div>
             </div>
@@ -344,7 +370,7 @@ export function Checkout() {
               style={{ display: "flex", flexDirection: "column", gap: "16px" }}
             >
               <h2 style={{ margin: 0, fontSize: "20px", fontWeight: 800, letterSpacing: "-.02em" }}>
-                Shipping address
+                {t("screens.checkout.shippingAddress")}
               </h2>
               <div
                 style={{
@@ -353,11 +379,28 @@ export function Checkout() {
                   gap: "14px",
                 }}
               >
-                <LabelledField name="first" label="First name" placeholder="Ava" />
-                <LabelledField name="last" label="Last name" placeholder="Reyes" />
+                <LabelledField
+                  name="first"
+                  label={t("screens.checkout.firstName")}
+                  placeholder="Ava"
+                />
+                <LabelledField
+                  name="last"
+                  label={t("screens.checkout.lastName")}
+                  placeholder="Reyes"
+                />
               </div>
-              <LabelledField name="addr" label="Street address" placeholder="118 Larkin St" />
-              <LabelledField name="apt" label="Apartment, suite" placeholder="Apt 4" optional />
+              <LabelledField
+                name="addr"
+                label={t("screens.checkout.streetAddress")}
+                placeholder="118 Larkin St"
+              />
+              <LabelledField
+                name="apt"
+                label={t("screens.checkout.apartment")}
+                placeholder="Apt 4"
+                optional
+              />
               <div
                 style={{
                   display: "grid",
@@ -365,8 +408,16 @@ export function Checkout() {
                   gap: "14px",
                 }}
               >
-                <LabelledField name="city" label="City" placeholder="San Francisco" />
-                <LabelledField name="zip" label="ZIP / Postal code" placeholder="94102" />
+                <LabelledField
+                  name="city"
+                  label={t("screens.checkout.city")}
+                  placeholder="San Francisco"
+                />
+                <LabelledField
+                name="zip"
+                label={t("screens.checkout.zip")}
+                placeholder="94102"
+              />
               </div>
               <div>
                 <label
@@ -377,7 +428,7 @@ export function Checkout() {
                     marginBottom: "7px",
                   }}
                 >
-                  Country
+                  {t("screens.checkout.country")}
                 </label>
                 <select
                   value={f.country}
@@ -394,9 +445,9 @@ export function Checkout() {
                     cursor: "pointer",
                   }}
                 >
-                  {COUNTRIES.map((co) => (
+                  {COUNTRY_CODES.map((co) => (
                     <option key={co} value={co}>
-                      {co}
+                      {countryNames.of(co) ?? co}
                     </option>
                   ))}
                 </select>
@@ -410,7 +461,7 @@ export function Checkout() {
               style={{ display: "flex", flexDirection: "column", gap: "16px" }}
             >
               <h2 style={{ margin: 0, fontSize: "20px", fontWeight: 800, letterSpacing: "-.02em" }}>
-                Delivery method
+                {t("screens.checkout.deliveryMethod")}
               </h2>
               <div style={{ display: "flex", flexDirection: "column", gap: "11px" }}>
                 {dopts.map((d) => {
@@ -497,7 +548,7 @@ export function Checkout() {
                 }}
               >
                 <h2 style={{ margin: 0, fontSize: "20px", fontWeight: 800, letterSpacing: "-.02em" }}>
-                  Payment
+                  {t("screens.checkout.stepPayment")}
                 </h2>
                 <span
                   style={{
@@ -513,7 +564,7 @@ export function Checkout() {
                   }}
                 >
                   <Icon name="lock" size={13} />
-                  Secured by Stripe
+                  {t("screens.checkout.securedByStripe")}
                 </span>
               </div>
               <div>
@@ -525,7 +576,7 @@ export function Checkout() {
                     marginBottom: "7px",
                   }}
                 >
-                  Card information
+                  {t("screens.checkout.cardInformation")}
                 </label>
                 <div
                   style={{
@@ -591,7 +642,7 @@ export function Checkout() {
                       className="sf-fld"
                       value={f.exp}
                       onChange={(ev) => st.setField("exp", ev.target.value)}
-                      placeholder="MM / YY"
+                      placeholder={t("screens.checkout.expiryPlaceholder")}
                       style={{
                         flex: 1,
                         minWidth: 0,
@@ -609,7 +660,7 @@ export function Checkout() {
                       className="sf-fld"
                       value={f.cvc}
                       onChange={(ev) => st.setField("cvc", ev.target.value)}
-                      placeholder="CVC"
+                      placeholder={t("screens.checkout.cvcPlaceholder")}
                       style={{
                         flex: 1,
                         minWidth: 0,
@@ -640,7 +691,11 @@ export function Checkout() {
                   </div>
                 )}
               </div>
-              <LabelledField name="name" label="Name on card" placeholder="Ava Reyes" />
+              <LabelledField
+                name="name"
+                label={t("screens.checkout.nameOnCard")}
+                placeholder="Ava Reyes"
+              />
               <button
                 onClick={st.toggleBilling}
                 style={{
@@ -656,7 +711,7 @@ export function Checkout() {
               >
                 <Checkbox on={billingSame} />
                 <span style={{ fontSize: "13px", color: "var(--fg-muted)" }}>
-                  Billing address same as shipping
+                  {t("screens.checkout.billingSame")}
                 </span>
               </button>
               <div
@@ -676,11 +731,13 @@ export function Checkout() {
                   style={{ flexShrink: 0, marginTop: "1px" }}
                 />
                 <span style={{ fontSize: "12.5px", color: "var(--fg-muted)", lineHeight: 1.5 }}>
-                  <span style={{ fontWeight: 700, color: "var(--fg)" }}>
-                    This is a demo.
-                  </span>{" "}
-                  No real card is charged — the field mimics Stripe Elements for
-                  the storefront example.
+                  {rich(t("screens.checkout.demoNote"), {
+                    lead: (
+                      <span style={{ fontWeight: 700, color: "var(--fg)" }}>
+                        {t("screens.checkout.demoNoteLead")}
+                      </span>
+                    ),
+                  })}
                 </span>
               </div>
             </div>
@@ -706,8 +763,10 @@ export function Checkout() {
                 cursor: "pointer",
               }}
             >
-              <Icon name="arrow-left" size={16} />
-              {step === 0 ? "Back to cart" : "Back"}
+              <Icon name={backArrow(dir)} size={16} />
+              {step === 0
+                ? t("chrome.header.backToCart")
+                : t("screens.checkout.back")}
             </button>
             {step < 3 ? (
               <button
@@ -729,8 +788,8 @@ export function Checkout() {
                   cursor: "pointer",
                 }}
               >
-                {NEXT_LABELS[step] || "Continue"}
-                <Icon name="arrow-right" size={16} />
+                {t(NEXT_LABELS[step] ?? "screens.checkout.continue")}
+                <Icon name={forwardArrow(dir)} size={16} />
               </button>
             ) : (
               <button
@@ -753,7 +812,7 @@ export function Checkout() {
                 }}
               >
                 <Icon name="lock" size={16} />
-                Pay {money(t.total)}
+                {t("screens.checkout.pay", { amount: money(tot.total) })}
               </button>
             )}
           </div>
@@ -778,7 +837,7 @@ export function Checkout() {
                 marginBottom: "16px",
               }}
             >
-              Order summary
+              {t("screens.summary.title")}
             </div>
             <div
               style={{
@@ -873,12 +932,12 @@ export function Checkout() {
                   fontSize: "14px",
                 }}
               >
-                <span style={{ color: "var(--fg-muted)" }}>Subtotal</span>
+                <span style={{ color: "var(--fg-muted)" }}>{t("chrome.cart.subtotal")}</span>
                 <span style={{ fontFamily: "'JetBrains Mono',monospace", fontWeight: 600 }}>
-                  {money(t.sub)}
+                  {money(tot.sub)}
                 </span>
               </div>
-              {t.disc > 0 && (
+              {tot.disc > 0 && (
                 <div
                   style={{
                     display: "flex",
@@ -887,7 +946,7 @@ export function Checkout() {
                     fontSize: "14px",
                   }}
                 >
-                  <span style={{ color: "var(--pos)", fontWeight: 600 }}>Discount</span>
+                  <span style={{ color: "var(--pos)", fontWeight: 600 }}>{t("screens.summary.discount")}</span>
                   <span
                     style={{
                       fontFamily: "'JetBrains Mono',monospace",
@@ -895,7 +954,7 @@ export function Checkout() {
                       color: "var(--pos)",
                     }}
                   >
-                    −{money(t.disc)}
+                    −{money(tot.disc)}
                   </span>
                 </div>
               )}
@@ -907,15 +966,15 @@ export function Checkout() {
                   fontSize: "14px",
                 }}
               >
-                <span style={{ color: "var(--fg-muted)" }}>Shipping</span>
+                <span style={{ color: "var(--fg-muted)" }}>{t("screens.summary.shipping")}</span>
                 <span
                   style={{
                     fontFamily: "'JetBrains Mono',monospace",
                     fontWeight: 600,
-                    color: t.shipFree ? "var(--pos)" : undefined,
+                    color: tot.shipFree ? "var(--pos)" : undefined,
                   }}
                 >
-                  {t.shipFree ? "Free" : money(t.ship)}
+                  {tot.shipFree ? t("screens.summary.free") : money(tot.ship)}
                 </span>
               </div>
               <div
@@ -926,9 +985,9 @@ export function Checkout() {
                   fontSize: "14px",
                 }}
               >
-                <span style={{ color: "var(--fg-muted)" }}>Tax (est.)</span>
+                <span style={{ color: "var(--fg-muted)" }}>{t("screens.summary.taxEst")}</span>
                 <span style={{ fontFamily: "'JetBrains Mono',monospace", fontWeight: 600 }}>
-                  {money(t.tax)}
+                  {money(tot.tax)}
                 </span>
               </div>
             </div>
@@ -940,7 +999,7 @@ export function Checkout() {
                 justifyContent: "space-between",
               }}
             >
-              <span style={{ fontSize: "15px", fontWeight: 800 }}>Total</span>
+              <span style={{ fontSize: "15px", fontWeight: 800 }}>{t("screens.summary.total")}</span>
               <span
                 style={{
                   fontFamily: "'JetBrains Mono',monospace",
@@ -949,7 +1008,7 @@ export function Checkout() {
                   letterSpacing: "-.02em",
                 }}
               >
-                {money(t.total)}
+                {money(tot.total)}
               </span>
             </div>
             <div
@@ -964,8 +1023,13 @@ export function Checkout() {
               }}
             >
               <Icon name="lock" size={13} />
-              Encrypted &amp; secure · powered by{" "}
-              <span style={{ fontWeight: 700, color: "var(--fg-muted)" }}>Stripe</span>
+              {rich(t("screens.checkout.encryptedPoweredBy"), {
+                stripe: (
+                  <span style={{ fontWeight: 700, color: "var(--fg-muted)" }}>
+                    Stripe
+                  </span>
+                ),
+              })}
             </div>
           </div>
         </aside>

@@ -2,6 +2,7 @@
 // User-submitted reviews are merged into the seeded aggregate live.
 
 import type { RatingSeed, Review, UserReview } from "../data/types.ts";
+import { number as fmtNumber, relative, t } from "../i18n/ambient";
 import { hashId } from "./format.ts";
 
 export interface RatingInfo {
@@ -23,7 +24,21 @@ export function ratingFor(
     cnt++;
   });
   const avg = cnt ? sum / cnt : b[0];
-  return { avg, count: cnt, avgLabel: avg.toFixed(1) };
+  /*
+   * `toFixed(1)` always emits a `.` — an en-US decimal separator baked into a
+   * number the whole store reads ("4.7" beside the stars, on every card, in the
+   * reviews module). Half the supported locales write it `4,7`. `Intl` picks
+   * the separator; the one-decimal precision (and its half-away-from-zero
+   * rounding, which is what `toFixed` did) is preserved exactly.
+   */
+  return {
+    avg,
+    count: cnt,
+    avgLabel: fmtNumber(avg, {
+      minimumFractionDigits: 1,
+      maximumFractionDigits: 1,
+    }),
+  };
 }
 
 /** Distribution buckets (5→1 star) as percentages, keyed off the avg tier. */
@@ -34,9 +49,12 @@ export function distFor(avg: number): number[] {
   return [34, 30, 21, 9, 6];
 }
 
-export interface ReviewRow extends Review {
+export interface ReviewRow extends Omit<Review, "ago"> {
   key: string;
   mine: boolean;
+  /** Already rendered for the active locale — the seed's `ago` offset formatted
+   * through `Intl.RelativeTimeFormat`, or "Just now" for the shopper's own. */
+  date: string;
 }
 
 export function reviewsFor(
@@ -46,9 +64,11 @@ export function reviewsFor(
 ): ReviewRow[] {
   const ur: ReviewRow[] = (userReviews[id] || []).map((r, i) => ({
     key: "u" + i,
+    /* The demo shopper's name and initials are seeded persona data and stay
+     * as written; the timestamp beside them is chrome. */
     name: "Ava Reyes",
     initials: "AR",
-    date: "Just now",
+    date: t("chrome.review.justNow"),
     verified: true,
     mine: true,
     rating: r.rating,
@@ -71,7 +91,15 @@ export function reviewsFor(
     pool[(h + 3) % pool.length],
     pool[(h + 6) % pool.length],
   ];
+  /* The seed stores an offset, not a sentence: the timestamp is rendered here
+   * through `Intl.RelativeTimeFormat`, so a pooled review reads "2 weeks ago"
+   * in en-US and "منذ أسبوعين" in ar-EG from the same data. */
   return ur.concat(
-    picks.map((r, i) => ({ ...r, key: "p" + i, mine: false })),
+    picks.map(({ ago, ...r }, i) => ({
+      ...r,
+      key: "p" + i,
+      mine: false,
+      date: relative(...ago),
+    })),
   );
 }

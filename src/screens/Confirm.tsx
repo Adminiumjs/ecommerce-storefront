@@ -2,34 +2,39 @@
 // timeline, and continue/track CTAs. Renders standalone from the seeded order.
 
 import type { ShipMethod } from "../data/types.ts";
+import { useI18n, type MessageKey } from "../i18n";
 import { money } from "../lib/format.ts";
 import { hexToRgba } from "../lib/placeholders.ts";
 import { confTotals, normItems } from "../lib/pricing.ts";
 import { useStore } from "../state/store.ts";
 import { Icon } from "../components/Icon.tsx";
 import { ProductImage } from "../components/ProductImage.tsx";
+import { rich } from "./shared.tsx";
 
-const METHOD_LABEL: Record<ShipMethod, string> = {
-  standard: "Standard shipping",
-  express: "Express shipping",
-  overnight: "Overnight shipping",
+/* Keys, not copy. These maps are evaluated once at module load, so an English
+ * string here outlives every language switch. */
+const METHOD_LABEL: Record<ShipMethod, MessageKey> = {
+  standard: "screens.ship.standard",
+  express: "screens.ship.express",
+  overnight: "screens.ship.overnight",
 };
-const ETA: Record<ShipMethod, string> = {
-  standard: "Arrives in 3–5 business days",
-  express: "Arrives in 2 business days",
-  overnight: "Arrives next business day",
+const ETA: Record<ShipMethod, MessageKey> = {
+  standard: "screens.eta.standard",
+  express: "screens.eta.express",
+  overnight: "screens.eta.overnight",
 };
 
 export function Confirm() {
+  const { t } = useI18n();
   const index = useStore((s) => s.index);
   const lastOrder = useStore((s) => s.lastOrder);
   const goCat = useStore((s) => s.goCat);
   const go = useStore((s) => s.go);
 
   const o = lastOrder!;
-  const t = confTotals(o, index);
+  const tot = confTotals(o, index);
   const m = (o.shipMethod || o.ship || "standard") as ShipMethod;
-  const eta = ETA[m];
+  const eta = t(ETA[m]);
 
   const items = normItems(o.items, index).map((it, idx) => {
     const p = index[it.pid];
@@ -39,26 +44,26 @@ export function Confirm() {
   const steps = [
     {
       icon: "check-circle-2",
-      title: "Order confirmed",
-      desc: "We’ve received your order and payment.",
+      title: t("screens.confirm.step1Title"),
+      desc: t("screens.confirm.step1Desc"),
       state: "done",
     },
     {
       icon: "package",
-      title: "Packed with care",
-      desc: "Usually ships within 1 business day.",
+      title: t("screens.confirm.step2Title"),
+      desc: t("screens.confirm.step2Desc"),
       state: "active",
     },
     {
       icon: "truck",
-      title: "On its way",
-      desc: "You’ll get a tracking link by email.",
+      title: t("screens.confirm.step3Title"),
+      desc: t("screens.confirm.step3Desc"),
       state: "todo",
     },
-    { icon: "home", title: "Delivered", desc: eta, state: "todo" },
+    { icon: "home", title: t("screens.confirm.step4Title"), desc: eta, state: "todo" },
   ];
 
-  const confFirst = (o.name || "there").split(" ")[0];
+  const confFirst = (o.name || t("screens.confirm.customerFallback")).split(" ")[0];
 
   return (
     <main
@@ -93,7 +98,7 @@ export function Confirm() {
             letterSpacing: "-.03em",
           }}
         >
-          Thank you, {confFirst}!
+          {t("screens.confirm.thanks", { name: confFirst })}
         </h1>
         <p
           style={{
@@ -104,18 +109,22 @@ export function Confirm() {
             maxWidth: "520px",
           }}
         >
-          Your order{" "}
-          <span
-            style={{
-              fontFamily: "'JetBrains Mono',monospace",
-              fontWeight: 700,
-              color: "var(--accent)",
-            }}
-          >
-            #{o.number}
-          </span>{" "}
-          is confirmed. We’ve emailed a receipt to{" "}
-          <span style={{ fontWeight: 700, color: "var(--fg)" }}>{o.email}</span>.
+          {rich(t("screens.confirm.receiptLine"), {
+            number: (
+              <span
+                style={{
+                  fontFamily: "'JetBrains Mono',monospace",
+                  fontWeight: 700,
+                  color: "var(--accent)",
+                }}
+              >
+                #{o.number}
+              </span>
+            ),
+            email: (
+              <span style={{ fontWeight: 700, color: "var(--fg)" }}>{o.email}</span>
+            ),
+          })}
         </p>
       </div>
 
@@ -138,7 +147,7 @@ export function Confirm() {
             }}
           >
             <div style={{ fontSize: "15px", fontWeight: 800, letterSpacing: "-.01em", marginBottom: "16px" }}>
-              Order summary
+              {t("screens.summary.title")}
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: "14px", marginBottom: "16px" }}>
               {items.map((it) => (
@@ -204,7 +213,7 @@ export function Confirm() {
                         marginTop: "3px",
                       }}
                     >
-                      {money(it.unit)} each
+                      {t("chrome.cart.unitEach", { price: money(it.unit) })}
                     </div>
                   </div>
                   <span style={{ fontFamily: "'JetBrains Mono',monospace", fontWeight: 600, fontSize: "14px" }}>
@@ -216,32 +225,32 @@ export function Confirm() {
             <div style={{ height: "1px", background: "var(--border)", marginBottom: "14px" }} />
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13.5px" }}>
-                <span style={{ color: "var(--fg-muted)" }}>Subtotal</span>
-                <span style={{ fontFamily: "'JetBrains Mono',monospace", fontWeight: 600 }}>{money(t.sub)}</span>
+                <span style={{ color: "var(--fg-muted)" }}>{t("chrome.cart.subtotal")}</span>
+                <span style={{ fontFamily: "'JetBrains Mono',monospace", fontWeight: 600 }}>{money(tot.sub)}</span>
               </div>
-              {t.disc > 0 && (
+              {tot.disc > 0 && (
                 <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13.5px" }}>
-                  <span style={{ color: "var(--pos)", fontWeight: 600 }}>Discount</span>
+                  <span style={{ color: "var(--pos)", fontWeight: 600 }}>{t("screens.summary.discount")}</span>
                   <span style={{ fontFamily: "'JetBrains Mono',monospace", fontWeight: 600, color: "var(--pos)" }}>
-                    −{money(t.disc)}
+                    −{money(tot.disc)}
                   </span>
                 </div>
               )}
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13.5px" }}>
-                <span style={{ color: "var(--fg-muted)" }}>Shipping</span>
+                <span style={{ color: "var(--fg-muted)" }}>{t("screens.summary.shipping")}</span>
                 <span
                   style={{
                     fontFamily: "'JetBrains Mono',monospace",
                     fontWeight: 600,
-                    color: t.shipFree ? "var(--pos)" : undefined,
+                    color: tot.shipFree ? "var(--pos)" : undefined,
                   }}
                 >
-                  {t.shipFree ? "Free" : money(t.ship)}
+                  {tot.shipFree ? t("screens.summary.free") : money(tot.ship)}
                 </span>
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", fontSize: "13.5px" }}>
-                <span style={{ color: "var(--fg-muted)" }}>Tax</span>
-                <span style={{ fontFamily: "'JetBrains Mono',monospace", fontWeight: 600 }}>{money(t.tax)}</span>
+                <span style={{ color: "var(--fg-muted)" }}>{t("screens.summary.tax")}</span>
+                <span style={{ fontFamily: "'JetBrains Mono',monospace", fontWeight: 600 }}>{money(tot.tax)}</span>
               </div>
               <div
                 style={{
@@ -253,7 +262,7 @@ export function Confirm() {
                   borderTop: "1px solid var(--border)",
                 }}
               >
-                <span style={{ fontSize: "14.5px", fontWeight: 800 }}>Total paid</span>
+                <span style={{ fontSize: "14.5px", fontWeight: 800 }}>{t("screens.summary.totalPaid")}</span>
                 <span
                   style={{
                     fontFamily: "'JetBrains Mono',monospace",
@@ -262,7 +271,7 @@ export function Confirm() {
                     letterSpacing: "-.02em",
                   }}
                 >
-                  {money(t.total)}
+                  {money(tot.total)}
                 </span>
               </div>
             </div>
@@ -289,7 +298,7 @@ export function Confirm() {
                 }}
               >
                 <Icon name="map-pin" size={14} />
-                Shipping to
+                {t("screens.confirm.shippingTo")}
               </div>
               <div style={{ fontSize: "13.5px", fontWeight: 700 }}>{o.name}</div>
               <div style={{ fontSize: "12.5px", color: "var(--fg-muted)", lineHeight: 1.5, marginTop: "3px" }}>
@@ -313,9 +322,9 @@ export function Confirm() {
                 }}
               >
                 <Icon name="truck" size={14} />
-                Delivery
+                {t("screens.confirm.delivery")}
               </div>
-              <div style={{ fontSize: "13.5px", fontWeight: 700 }}>{METHOD_LABEL[m]}</div>
+              <div style={{ fontSize: "13.5px", fontWeight: 700 }}>{t(METHOD_LABEL[m])}</div>
               <div style={{ fontSize: "12.5px", color: "var(--fg-muted)", lineHeight: 1.5, marginTop: "3px" }}>
                 {eta}
               </div>
@@ -334,7 +343,7 @@ export function Confirm() {
             }}
           >
             <div style={{ fontSize: "15px", fontWeight: 800, letterSpacing: "-.01em", marginBottom: "18px" }}>
-              What happens next
+              {t("screens.confirm.whatsNext")}
             </div>
             {steps.map((s, i, arr) => {
               const on = s.state !== "todo";
@@ -401,8 +410,11 @@ export function Confirm() {
           >
             <Icon name="mail" size={17} color="var(--accent)" style={{ flexShrink: 0, marginTop: "1px" }} />
             <span style={{ fontSize: "12.5px", color: "var(--fg-muted)", lineHeight: 1.5 }}>
-              A confirmation with your receipt and tracking link is on the way to{" "}
-              <span style={{ fontWeight: 700, color: "var(--fg)" }}>{o.email}</span>.
+              {rich(t("screens.confirm.emailNote"), {
+                email: (
+                  <span style={{ fontWeight: 700, color: "var(--fg)" }}>{o.email}</span>
+                ),
+              })}
             </span>
           </div>
         </div>
@@ -435,7 +447,7 @@ export function Confirm() {
           }}
         >
           <Icon name="store" size={17} />
-          Continue shopping
+          {t("screens.continueShopping")}
         </button>
         <button
           className="sf-gi"
@@ -455,7 +467,7 @@ export function Confirm() {
           }}
         >
           <Icon name="package-search" size={17} />
-          View order status
+          {t("screens.confirm.viewOrderStatus")}
         </button>
       </div>
     </main>

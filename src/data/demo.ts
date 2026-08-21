@@ -10,6 +10,10 @@ import type {
   Review,
 } from "./types.ts";
 
+/** The shop's name. A proper noun — never translated, but substituted into
+ * messages as `{brand}` so a translator controls where it lands in a sentence. */
+export const BRAND = "Northline";
+
 export const FREE_SHIP = 75;
 export const PROMO_CODE = "WELCOME10";
 export const PROMO_RATE = 0.1;
@@ -567,12 +571,17 @@ export const PRODUCTS: Product[] = [
   },
 ];
 
+/* `placed` is an ISO date, not a display string. It used to read "Jul 14, 2026",
+ * which is an en-US rendering baked into the seed — the month name, the comma,
+ * and the month-before-day order are all the reader's conventions, not the
+ * order's. The screens format it through the runtime's `date()`, so cs-CZ gets
+ * "14. 7. 2026" and ar-EG "١٤‏/٧‏/٢٠٢٦" from the same data. */
 export const ORDERS: Order[] = [
   {
     number: "1039",
     total: 167.44,
     status: "shipped",
-    placed: "Jul 14, 2026",
+    placed: "2026-07-14",
     items: [
       ["hoodie-tf", 1],
       ["beanie-mr", 1],
@@ -583,7 +592,7 @@ export const ORDERS: Order[] = [
     number: "1031",
     total: 83.62,
     status: "paid",
-    placed: "Jun 30, 2026",
+    placed: "2026-06-30",
     items: [
       ["deskmat-xl", 1],
       ["mouse-m1", 1],
@@ -593,7 +602,7 @@ export const ORDERS: Order[] = [
     number: "1024",
     total: 57.53,
     status: "refunded",
-    placed: "Jun 12, 2026",
+    placed: "2026-06-12",
     items: [
       ["candle-04", 1],
       ["tote-l", 1],
@@ -624,7 +633,7 @@ export const REVIEWPOOL: Review[] = [
   {
     name: "Maya K.",
     initials: "MK",
-    date: "2 weeks ago",
+    ago: [-2, "week"],
     verified: true,
     rating: 5,
     title: "Exactly what I hoped for",
@@ -633,7 +642,7 @@ export const REVIEWPOOL: Review[] = [
   {
     name: "Devin R.",
     initials: "DR",
-    date: "1 month ago",
+    ago: [-1, "month"],
     verified: true,
     rating: 5,
     title: "My new daily driver",
@@ -642,7 +651,7 @@ export const REVIEWPOOL: Review[] = [
   {
     name: "Priya S.",
     initials: "PS",
-    date: "3 weeks ago",
+    ago: [-3, "week"],
     verified: true,
     rating: 4,
     title: "Great, with one small nit",
@@ -651,7 +660,7 @@ export const REVIEWPOOL: Review[] = [
   {
     name: "Tom B.",
     initials: "TB",
-    date: "2 months ago",
+    ago: [-2, "month"],
     verified: true,
     rating: 5,
     title: "Worth every dollar",
@@ -660,7 +669,7 @@ export const REVIEWPOOL: Review[] = [
   {
     name: "Lena M.",
     initials: "LM",
-    date: "5 days ago",
+    ago: [-5, "day"],
     verified: false,
     rating: 4,
     title: "Solid buy",
@@ -669,7 +678,7 @@ export const REVIEWPOOL: Review[] = [
   {
     name: "Chris A.",
     initials: "CA",
-    date: "6 weeks ago",
+    ago: [-6, "week"],
     verified: true,
     rating: 5,
     title: "Genuinely impressed",
@@ -678,7 +687,7 @@ export const REVIEWPOOL: Review[] = [
   {
     name: "Sofia D.",
     initials: "SD",
-    date: "1 week ago",
+    ago: [-1, "week"],
     verified: true,
     rating: 3,
     title: "Good, runs a touch small",
@@ -687,7 +696,7 @@ export const REVIEWPOOL: Review[] = [
   {
     name: "Noah W.",
     initials: "NW",
-    date: "3 months ago",
+    ago: [-3, "month"],
     verified: true,
     rating: 5,
     title: "Gift-worthy",

@@ -2,6 +2,7 @@
 // seeded history, each with status, item thumbs, total, and view/buy-again.
 
 import type { Order, OrderStatus } from "../data/types.ts";
+import { useI18n, type MessageKey } from "../i18n";
 import { money } from "../lib/format.ts";
 import { hexToRgba } from "../lib/placeholders.ts";
 import { confTotals, normItems } from "../lib/pricing.ts";
@@ -9,14 +10,23 @@ import { useStore } from "../state/store.ts";
 import { Icon } from "../components/Icon.tsx";
 import { ProductImage } from "../components/ProductImage.tsx";
 
-const STATUS_META: Record<OrderStatus, [string, string, string, string]> = {
-  pending: ["Pending", "clock", "var(--warn)", "var(--warn-soft)"],
-  paid: ["Paid", "check-circle-2", "var(--pos)", "var(--pos-soft)"],
-  shipped: ["Shipped", "truck", "var(--accent)", "var(--accent-soft)"],
-  refunded: ["Refunded", "rotate-ccw", "var(--fg-subtle)", "var(--surface-3)"],
+/* Icon + colour are presentation and stay here; the LABEL is copy and moved to
+ * the bundle. Keeping the English word in this table meant every locale got an
+ * English status pill, because a map like this is built once at module load. */
+const STATUS_META: Record<OrderStatus, [MessageKey, string, string, string]> = {
+  pending: ["screens.account.status.pending", "clock", "var(--warn)", "var(--warn-soft)"],
+  paid: ["screens.account.status.paid", "check-circle-2", "var(--pos)", "var(--pos-soft)"],
+  shipped: ["screens.account.status.shipped", "truck", "var(--accent)", "var(--accent-soft)"],
+  refunded: [
+    "screens.account.status.refunded",
+    "rotate-ccw",
+    "var(--fg-subtle)",
+    "var(--surface-3)",
+  ],
 };
 
 export function Account() {
+  const { t, number, date } = useI18n();
   const index = useStore((s) => s.index);
   const seedOrders = useStore((s) => s.seedOrders);
   const lastOrder = useStore((s) => s.lastOrder);
@@ -24,8 +34,11 @@ export function Account() {
   const viewOrder = useStore((s) => s.viewOrder);
   const buyAgain = useStore((s) => s.buyAgain);
 
+  /* An empty `placed` marks the order just completed in this session — it is
+   * rendered as "Just now" rather than a date. It used to carry the literal
+   * English string, which then printed verbatim inside an Arabic page. */
   const list: Order[] = [];
-  if (lastOrder) list.push({ ...lastOrder, status: "paid", placed: "Just now" });
+  if (lastOrder) list.push({ ...lastOrder, status: "paid", placed: "" });
   seedOrders.forEach((o) => {
     if (!lastOrder || o.number !== lastOrder.number) list.push(o);
   });
@@ -85,7 +98,7 @@ export function Account() {
       <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
         <Icon name="package-search" size={18} color="var(--accent)" />
         <h2 style={{ margin: 0, fontSize: "16px", fontWeight: 800, letterSpacing: "-.01em" }}>
-          Order history
+          {t("screens.account.orderHistory")}
         </h2>
         <span
           style={{
@@ -94,7 +107,11 @@ export function Account() {
             color: "var(--fg-subtle)",
           }}
         >
-          {list.length + (list.length === 1 ? " order" : " orders")}
+          {t(
+            "screens.account.orderCount",
+            { count: number(list.length) },
+            list.length,
+          )}
         </span>
       </div>
       <div style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
@@ -130,7 +147,11 @@ export function Account() {
                     #{o.number}
                   </div>
                   <div style={{ fontSize: "12px", color: "var(--fg-subtle)", marginTop: "2px" }}>
-                    Placed {o.placed}
+                    {t("screens.account.placed", {
+                      date: o.placed
+                        ? date(new Date(o.placed), { dateStyle: "medium" })
+                        : t("chrome.review.justNow"),
+                    })}
                   </div>
                 </div>
                 <span
@@ -147,7 +168,7 @@ export function Account() {
                   }}
                 >
                   <Icon name={sm[1]} size={13} />
-                  {sm[0]}
+                  {t(sm[0])}
                 </span>
               </div>
               <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
@@ -171,7 +192,7 @@ export function Account() {
                   ))}
                 </div>
                 <span style={{ fontSize: "12.5px", color: "var(--fg-muted)" }}>
-                  {count + (count === 1 ? " item" : " items")}
+                  {t("chrome.cart.itemCount", { count: number(count) }, count)}
                 </span>
               </div>
               <div
@@ -187,7 +208,9 @@ export function Account() {
                 }}
               >
                 <div style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
-                  <span style={{ fontSize: "12px", color: "var(--fg-subtle)" }}>Total</span>
+                  <span style={{ fontSize: "12px", color: "var(--fg-subtle)" }}>
+                    {t("screens.account.total")}
+                  </span>
                   <span style={{ fontFamily: "'JetBrains Mono',monospace", fontWeight: 700, fontSize: "16px" }}>
                     {money(total)}
                   </span>
@@ -207,7 +230,7 @@ export function Account() {
                       cursor: "pointer",
                     }}
                   >
-                    View details
+                    {t("screens.account.viewDetails")}
                   </button>
                   <button
                     className="sf-btn"
@@ -227,7 +250,7 @@ export function Account() {
                     }}
                   >
                     <Icon name="rotate-ccw" size={14} />
-                    Buy again
+                    {t("screens.account.buyAgain")}
                   </button>
                 </div>
               </div>

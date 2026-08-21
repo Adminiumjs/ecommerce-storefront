@@ -3,16 +3,21 @@
 
 import { STAR_COLOR } from "../data/demo.ts";
 import type { Product } from "../data/types.ts";
+import { useI18n } from "../i18n";
 import { distFor, ratingFor, reviewsFor } from "../lib/ratings.ts";
 import { useStore } from "../state/store.ts";
 import { Icon } from "./Icon.tsx";
 import { StarRating } from "./StarRating.tsx";
+
+/** Ratings in this store are always out of five. */
+const MAX_STARS = 5;
 
 export interface ReviewsModuleProps {
   product: Product;
 }
 
 export function ReviewsModule({ product: p }: ReviewsModuleProps) {
+  const { t, number } = useI18n();
   const ratings = useStore((s) => s.ratings);
   const reviewPool = useStore((s) => s.reviewPool);
   const userReviews = useStore((s) => s.userReviews);
@@ -46,7 +51,7 @@ export function ReviewsModule({ product: p }: ReviewsModuleProps) {
             letterSpacing: "-.02em",
           }}
         >
-          Ratings &amp; reviews
+          {t("chrome.reviews.heading")}
         </h2>
         <button
           className="sf-gi"
@@ -67,7 +72,7 @@ export function ReviewsModule({ product: p }: ReviewsModuleProps) {
           }}
         >
           <Icon name="pencil-line" size={15} />
-          Write a review
+          {t("chrome.review.write")}
         </button>
       </div>
       <div
@@ -91,7 +96,7 @@ export function ReviewsModule({ product: p }: ReviewsModuleProps) {
               {rt.avgLabel}
             </span>
             <span style={{ fontSize: "14px", color: "var(--fg-muted)" }}>
-              out of 5
+              {t("chrome.reviews.outOf", { max: number(MAX_STARS) })}
             </span>
           </div>
           <div style={{ marginTop: "11px" }}>
@@ -100,7 +105,11 @@ export function ReviewsModule({ product: p }: ReviewsModuleProps) {
           <div
             style={{ fontSize: "13px", color: "var(--fg-muted)", marginTop: "9px" }}
           >
-            Based on {rt.count} reviews
+            {t(
+              "chrome.reviews.basedOn",
+              { count: number(rt.count) },
+              rt.count,
+            )}
           </div>
           <div
             style={{
@@ -123,7 +132,7 @@ export function ReviewsModule({ product: p }: ReviewsModuleProps) {
                     width: "24px",
                   }}
                 >
-                  {d.star}★
+                  {t("chrome.reviews.starTier", { n: number(d.star) })}
                 </span>
                 <div
                   style={{
@@ -152,7 +161,10 @@ export function ReviewsModule({ product: p }: ReviewsModuleProps) {
                     textAlign: "end",
                   }}
                 >
-                  {d.pct}%
+                  {/* A share of the ratings, so it goes through `Intl`'s
+                      percent style rather than a literal "%" — fr-FR wants a
+                      no-break space before the sign, ar-EG the Arabic one. */}
+                  {number(d.pct / 100, { style: "percent" })}
                 </span>
               </div>
             ))}
@@ -209,7 +221,7 @@ export function ReviewsModule({ product: p }: ReviewsModuleProps) {
                         }}
                       >
                         <Icon name="badge-check" size={11} />
-                        Verified
+                        {t("chrome.reviews.verified")}
                       </span>
                     )}
                   </div>
@@ -226,7 +238,9 @@ export function ReviewsModule({ product: p }: ReviewsModuleProps) {
                 <StarRating avg={r.rating} size={13} gap={2} />
               </div>
               <div style={{ fontSize: "14px", fontWeight: 700, marginTop: "11px" }}>
-                {r.title}
+                {/* An untitled review is stored untitled — the stand-in
+                    headline is chosen here, in the reader's language. */}
+                {r.title || t("chrome.review.defaultTitle")}
               </div>
               <p
                 style={{
