@@ -13,303 +13,255 @@
     "key": "mft.ecommerce.desc",
     "fallback": "A complete e-commerce storefront with an admin dashboard for catalog, orders, customers, and revenue — backed by your own database."
   },
-  "categories": ["commerce"],
-
+  "categories": [
+    "commerce"
+  ],
   "compatibility": {
     "minAdminiumVersion": "1.0.0",
-    "engines": ["postgres", "mysql", "sqlite"],
-    "requires": ["realtime", "file-storage"]
+    "engines": [
+      "postgres",
+      "mysql",
+      "sqlite"
+    ],
+    "requires": [
+      "realtime",
+      "file-storage"
+    ]
   },
-
   "requiredSchema": {
     "tables": [
       {
         "ref": "products",
-        "table": "products",
-        "label": { "key": "mft.ecommerce.tbl.products", "fallback": "Products" },
-        "primaryKey": ["id"],
         "columns": [
-          { "name": "id", "type": "int", "role": "pk" },
-          { "name": "title", "type": "text", "required": true, "display": "title" },
-          { "name": "sku", "type": "text", "required": true, "unique": true },
-          { "name": "price", "type": "money", "required": true },
-          { "name": "image_url", "type": "image" },
           {
-            "name": "status",
+            "ref": "id",
+            "type": "int",
+            "role": "pk"
+          },
+          {
+            "ref": "title",
+            "type": "text"
+          },
+          {
+            "ref": "sku",
+            "type": "text"
+          },
+          {
+            "ref": "price",
+            "type": "money"
+          },
+          {
+            "ref": "image_url",
+            "type": "text",
+            "semantic": "image"
+          },
+          {
+            "ref": "status",
             "type": "enum",
-            "default": "active",
-            "values": [
-              { "value": "draft", "label": "Draft", "tone": "neutral" },
-              { "value": "active", "label": "Active", "tone": "success" },
-              { "value": "archived", "label": "Archived", "tone": "muted" }
+            "enum": [
+              "[object Object]",
+              "[object Object]",
+              "[object Object]"
             ]
           },
-          { "name": "created_at", "type": "timestamp", "default": "now", "role": "created" }
+          {
+            "ref": "created_at",
+            "type": "timestamptz"
+          }
         ]
       },
       {
         "ref": "categories",
-        "table": "categories",
-        "label": { "key": "mft.ecommerce.tbl.categories", "fallback": "Categories" },
-        "primaryKey": ["id"],
         "columns": [
-          { "name": "id", "type": "int", "role": "pk" },
-          { "name": "name", "type": "text", "required": true, "display": "title" },
-          { "name": "slug", "type": "text", "required": true, "unique": true }
+          {
+            "ref": "id",
+            "type": "int",
+            "role": "pk"
+          },
+          {
+            "ref": "name",
+            "type": "text"
+          },
+          {
+            "ref": "slug",
+            "type": "text"
+          }
         ]
       },
       {
         "ref": "product_categories",
-        "table": "product_categories",
-        "label": { "key": "mft.ecommerce.tbl.product_categories", "fallback": "Product categories" },
-        "primaryKey": ["product_id", "category_id"],
-        "join": true,
         "columns": [
-          { "name": "product_id", "type": "ref", "ref": "products", "onDelete": "cascade" },
-          { "name": "category_id", "type": "ref", "ref": "categories", "onDelete": "cascade" }
+          {
+            "ref": "product_id",
+            "type": "fk",
+            "references": "products"
+          },
+          {
+            "ref": "category_id",
+            "type": "fk",
+            "references": "categories"
+          }
         ]
       },
       {
         "ref": "customers",
-        "table": "customers",
-        "label": { "key": "mft.ecommerce.tbl.customers", "fallback": "Customers" },
-        "primaryKey": ["id"],
         "columns": [
-          { "name": "id", "type": "int", "role": "pk" },
-          { "name": "name", "type": "text", "required": true, "display": "title" },
-          { "name": "email", "type": "email", "required": true, "unique": true },
-          { "name": "created_at", "type": "timestamp", "default": "now", "role": "created" }
+          {
+            "ref": "id",
+            "type": "int",
+            "role": "pk"
+          },
+          {
+            "ref": "name",
+            "type": "text"
+          },
+          {
+            "ref": "email",
+            "type": "text",
+            "semantic": "email"
+          },
+          {
+            "ref": "created_at",
+            "type": "timestamptz"
+          }
         ]
       },
       {
         "ref": "orders",
-        "table": "orders",
-        "label": { "key": "mft.ecommerce.tbl.orders", "fallback": "Orders" },
-        "primaryKey": ["id"],
         "columns": [
-          { "name": "id", "type": "int", "role": "pk" },
-          { "name": "number", "type": "text", "required": true, "unique": true, "display": "title" },
-          { "name": "customer_id", "type": "ref", "ref": "customers", "onDelete": "restrict", "required": true },
-          { "name": "total", "type": "money", "required": true },
           {
-            "name": "status",
+            "ref": "id",
+            "type": "int",
+            "role": "pk"
+          },
+          {
+            "ref": "number",
+            "type": "text"
+          },
+          {
+            "ref": "customer_id",
+            "type": "fk",
+            "references": "customers"
+          },
+          {
+            "ref": "total",
+            "type": "money"
+          },
+          {
+            "ref": "status",
             "type": "enum",
-            "default": "pending",
-            "values": [
-              { "value": "pending", "label": "Pending", "tone": "warning" },
-              { "value": "paid", "label": "Paid", "tone": "success" },
-              { "value": "shipped", "label": "Shipped", "tone": "info" },
-              { "value": "refunded", "label": "Refunded", "tone": "danger" }
+            "enum": [
+              "[object Object]",
+              "[object Object]",
+              "[object Object]",
+              "[object Object]"
             ]
           },
-          { "name": "placed_at", "type": "timestamp", "default": "now", "role": "created" }
+          {
+            "ref": "placed_at",
+            "type": "timestamptz"
+          }
         ]
       },
       {
         "ref": "order_items",
-        "table": "order_items",
-        "label": { "key": "mft.ecommerce.tbl.order_items", "fallback": "Order items" },
-        "primaryKey": ["id"],
         "columns": [
-          { "name": "id", "type": "int", "role": "pk" },
-          { "name": "order_id", "type": "ref", "ref": "orders", "onDelete": "cascade", "required": true },
-          { "name": "product_id", "type": "ref", "ref": "products", "required": true },
-          { "name": "qty", "type": "int", "required": true },
-          { "name": "unit_price", "type": "money", "required": true }
+          {
+            "ref": "id",
+            "type": "int",
+            "role": "pk"
+          },
+          {
+            "ref": "order_id",
+            "type": "fk",
+            "references": "orders"
+          },
+          {
+            "ref": "product_id",
+            "type": "fk",
+            "references": "products"
+          },
+          {
+            "ref": "qty",
+            "type": "int"
+          },
+          {
+            "ref": "unit_price",
+            "type": "money"
+          }
         ]
       }
     ]
   },
-
   "pages": [
     {
-      "key": "shop-dashboard",
-      "title": { "key": "mft.ecommerce.page.dashboard", "fallback": "Dashboard" },
-      "path": "/",
-      "type": "page-dashboard",
-      "icon": "layout-dashboard",
-      "nav": { "group": "manifest:ecommerce-shop", "order": 1 },
-      "blocks": [
-        {
-          "kind": "kpi",
-          "key": "revenue",
-          "label": { "key": "mft.ecommerce.kpi.revenue", "fallback": "Revenue" },
-          "source": "orders",
-          "metric": "sum",
-          "field": "total",
-          "format": "money",
-          "filter": { "status": ["paid", "shipped"] }
-        },
-        {
-          "kind": "chart",
-          "key": "orders-over-time",
-          "label": { "key": "mft.ecommerce.chart.orders", "fallback": "Orders over time" },
-          "source": "orders",
-          "chart": "line",
-          "x": { "field": "placed_at", "bucket": "week" },
-          "y": { "agg": "count" }
-        },
-        {
-          "kind": "recent-orders",
-          "key": "recent-orders",
-          "label": { "key": "mft.ecommerce.block.recent", "fallback": "Recent orders" },
-          "source": "orders",
-          "limit": 8,
-          "orderBy": { "field": "placed_at", "dir": "desc" },
-          "columns": ["number", "customer_id", "total", "status", "placed_at"]
-        }
-      ]
-    },
-    {
-      "key": "shop-products",
-      "title": { "key": "mft.ecommerce.page.products", "fallback": "Products" },
-      "path": "/products",
-      "type": "page-crud",
-      "icon": "package",
-      "source": "products",
-      "view": "card-gallery",
-      "nav": { "group": "manifest:ecommerce-shop", "order": 2 },
-      "card": {
-        "image": "image_url",
-        "title": "title",
-        "subtitle": "sku",
-        "badge": "status",
-        "meta": "price"
+      "ref": "shop-dashboard",
+      "template": "page-dashboard",
+      "title": {
+        "key": "mft.ecommerce.page.dashboard",
+        "fallback": "Dashboard"
       },
-      "columns": ["image_url", "title", "sku", "price", "status"],
-      "search": ["title", "sku"],
-      "filters": ["status"],
-      "create": true,
-      "edit": true
-    },
-    {
-      "key": "shop-orders",
-      "title": { "key": "mft.ecommerce.page.orders", "fallback": "Orders" },
-      "path": "/orders",
-      "type": "page-queue-inbox",
-      "icon": "receipt",
-      "source": "orders",
-      "nav": { "group": "manifest:ecommerce-shop", "order": 3 },
-      "tabs": {
-        "field": "status",
-        "values": ["pending", "paid", "shipped", "refunded"],
-        "default": "pending"
-      },
-      "list": {
-        "title": "number",
-        "subtitle": "customer_id",
-        "meta": "total",
-        "timestamp": "placed_at",
-        "badge": "status"
-      },
-      "detail": {
-        "title": "number",
-        "fields": ["customer_id", "total", "status", "placed_at"],
-        "lineItems": {
-          "source": "order_items",
-          "foreignKey": "order_id",
-          "columns": ["product_id", "qty", "unit_price"]
-        },
-        "actions": [
-          { "key": "mark-paid", "label": "Mark paid", "set": { "status": "paid" } },
-          { "key": "mark-shipped", "label": "Mark shipped", "set": { "status": "shipped" } },
-          { "key": "refund", "label": "Refund", "set": { "status": "refunded" }, "tone": "danger" }
-        ]
+      "nav": {
+        "group": "manifest:ecommerce-shop",
+        "icon": "layout-dashboard",
+        "order": 1
       }
     },
     {
-      "key": "shop-customers",
-      "title": { "key": "mft.ecommerce.page.customers", "fallback": "Customers" },
-      "path": "/customers",
-      "type": "page-directory",
-      "icon": "users",
-      "source": "customers",
-      "nav": { "group": "manifest:ecommerce-shop", "order": 4 },
-      "directory": {
-        "title": "name",
-        "subtitle": "email",
-        "timestamp": "created_at"
+      "ref": "shop-products",
+      "template": "page-crud",
+      "title": {
+        "key": "mft.ecommerce.page.products",
+        "fallback": "Products"
       },
-      "search": ["name", "email"],
-      "related": [
-        { "source": "orders", "foreignKey": "customer_id", "label": "Orders" }
-      ]
-    }
-  ],
-
-  "roles": [
+      "nav": {
+        "group": "manifest:ecommerce-shop",
+        "icon": "package",
+        "order": 2
+      }
+    },
     {
-      "key": "shop-staff",
-      "name": { "key": "mft.ecommerce.role.staff", "fallback": "Shop staff" },
-      "description": {
-        "key": "mft.ecommerce.role.staff.desc",
-        "fallback": "Read and update products and orders; no access to settings or customers."
+      "ref": "shop-orders",
+      "template": "page-queue-inbox",
+      "title": {
+        "key": "mft.ecommerce.page.orders",
+        "fallback": "Orders"
       },
-      "permissions": [
-        { "resource": "products", "actions": ["read", "update"] },
-        { "resource": "orders", "actions": ["read", "update"] }
-      ]
+      "nav": {
+        "group": "manifest:ecommerce-shop",
+        "icon": "receipt",
+        "order": 3
+      }
+    },
+    {
+      "ref": "shop-customers",
+      "template": "page-directory",
+      "title": {
+        "key": "mft.ecommerce.page.customers",
+        "fallback": "Customers"
+      },
+      "nav": {
+        "group": "manifest:ecommerce-shop",
+        "icon": "users",
+        "order": 4
+      }
     }
   ],
-
-  "settings": [
-    {
-      "key": "store_name",
-      "type": "text",
-      "label": { "key": "mft.ecommerce.set.store_name", "fallback": "Store name" },
-      "required": true
-    },
-    {
-      "key": "currency",
-      "type": "enum",
-      "label": { "key": "mft.ecommerce.set.currency", "fallback": "Currency" },
-      "options": ["USD", "EUR", "GBP"],
-      "default": "USD"
-    },
-    {
-      "key": "tax_rate",
-      "type": "number",
-      "label": { "key": "mft.ecommerce.set.tax_rate", "fallback": "Tax rate" },
-      "min": 0,
-      "max": 1,
-      "step": 0.001
-    },
-    {
-      "key": "allow_guest_checkout",
-      "type": "boolean",
-      "label": { "key": "mft.ecommerce.set.guest_checkout", "fallback": "Allow guest checkout" },
-      "default": true
-    },
-    {
-      "key": "logo",
-      "type": "file",
-      "label": { "key": "mft.ecommerce.set.logo", "fallback": "Store logo" },
-      "accept": "image/*"
-    },
-    {
-      "key": "stripe_publishable_key",
-      "type": "text",
-      "label": { "key": "mft.ecommerce.set.stripe_pk", "fallback": "Stripe publishable key" }
-    },
-    {
-      "key": "stripe_secret_key",
-      "type": "text",
-      "label": { "key": "mft.ecommerce.set.stripe_sk", "fallback": "Stripe secret key" },
-      "secret": true
-    }
+  "capabilities": [
+    "payments",
+    "file-storage",
+    "email-delivery",
+    "realtime"
   ],
-
-  "capabilities": ["payments", "file-storage", "email-delivery", "realtime"],
-
-  "frontend": {
-    "kind": "spa",
-    "root": ".",
-    "buildCommand": "npm run build",
-    "buildOutput": "dist",
-    "entry": "index.html",
-    "routes": {
-      "storefront": "/",
-      "admin": "/studio"
+  "kind": "app",
+  "frontends": [
+    {
+      "side": "customer",
+      "kind": "spa",
+      "entry": "index.html",
+      "routes": {
+        "storefront": "/"
+      }
     }
-  }
+  ]
 }
