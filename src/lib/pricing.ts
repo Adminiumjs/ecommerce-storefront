@@ -222,12 +222,45 @@ export interface Totals {
   total: number;
 }
 
+/**
+ * WHAT THE SHOP IS CHARGING FOR DELIVERY, when a carrier quoted it instead.
+ *
+ * ── A FOURTH ARGUMENT, NOT A FOURTH `ShipMethod` ───────────────────────────
+ *
+ * `ShipMethod` is a CLOSED three-member union and it is baked into
+ * `Order.shipMethod`, `Order.ship`, `shipFee`, `confTotals` and two
+ * `Record<ShipMethod, MessageKey>` maps on the confirmation screen. A carrier
+ * rate is not one of the three and cannot be made into one: widening the union
+ * would demand a message key and an ETA string for a service whose name and
+ * transit time belong to whoever sells it, in whichever language the reader is
+ * using, and neither is something this app can write down.
+ *
+ * So the choice sits BESIDE the band rather than inside it, which is also what
+ * the two hosts that had this seam first do. Exactly one of the two is in
+ * effect at a time — choosing a carrier deselects the shop's own bands and
+ * choosing a band drops the carrier — and this parameter is how the one in
+ * effect reaches the arithmetic.
+ *
+ * `null` MEANS THE SHOP'S OWN BAND, which is the base state and the state of
+ * every build with nothing connected. A number means a carrier's own price, in
+ * MAJOR units, already converted from the minor units the seam quotes in (see
+ * `add-ons/records.ts`, which is the only place that conversion happens).
+ *
+ * ── AND IT IS NEVER FREE ───────────────────────────────────────────────────
+ *
+ * `shipFree` stays false for a carrier quote however small it is. The flag does
+ * not mean "zero"; it means THE SHOP WAIVED IT, which is this shop's own
+ * free-delivery threshold and is a promise about this shop's own band. A
+ * carrier's price is a third party's invoice, and a shop that showed it as
+ * waived would be telling the customer it had absorbed a cost it had not.
+ */
 export function computeTotals(
   lines: CartLineView[],
   ship: ShipMethod,
   promoOn: boolean,
+  carrierFee: number | null = null,
 ): Totals {
-  const fee = shipFee(subtotalOf(lines), ship);
+  const fee = carrierFee ?? shipFee(subtotalOf(lines), ship);
 
   /*
    * Round every component to the cent, then derive the total FROM THE ROUNDED
@@ -254,7 +287,7 @@ export function computeTotals(
     sub,
     disc,
     ship: fee,
-    shipFree: fee === 0,
+    shipFree: carrierFee === null && fee === 0,
     tax,
     /* The goods portion is clamped at zero — a discount larger than the basket
      * must not produce a negative bill — but shipping is still charged. */

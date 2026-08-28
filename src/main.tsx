@@ -39,13 +39,37 @@ async function boot(): Promise<void> {
     }
   }
 
-  const [{ App }, { applyTheme, useStore }] = await Promise.all([
+  const [{ App }, { applyTheme, useStore }, { demoAddOns }] = await Promise.all([
     import("./app/App.tsx"),
     import("./state/store.ts"),
+    import("./add-ons/registry.ts"),
   ]);
 
   // Apply the persisted / OS-preferred theme before first paint.
   applyTheme(useStore.getState().theme);
+
+  /*
+   * REGISTER THE ADD-ONS BEFORE FIRST PAINT, and note what registering is not.
+   *
+   * It is not switching one on. The store's `enabled` set starts EMPTY and
+   * stays empty until somebody presses Connect in the manage drawer, so a shop
+   * that has never touched it renders exactly as it did before this seam
+   * existed — three delivery bands the shop sets itself, and a promise of a
+   * tracking e-mail on the order. That is 24 D6 stated as behaviour rather than
+   * as an intention, and `add-ons/slotRender.test.tsx` is what holds it.
+   *
+   * It IS where an add-on's eight-locale strings arrive: importing
+   * `registry.ts` runs `registerAddOnMessages` at module load, which throws
+   * naming the add-on, the locale and the key on a bundle that is not complete.
+   * That happens on this line, on every boot, before the first render reads a
+   * message bundle.
+   *
+   * In CONNECTED MODE (Phase B) this list comes from `GET /api/v1/add-ons` and
+   * the bundles are `import()`ed with their hashes. Only the source of the list
+   * changes; `registerAddOns` and every surface below it stay exactly as they
+   * are — the same seam rule `setDataSource` above follows.
+   */
+  useStore.getState().registerAddOns(demoAddOns());
 
   createRoot(container as HTMLElement).render(
     <StrictMode>

@@ -1,7 +1,7 @@
 // Footer: brand + newsletter block, three link columns, and the bottom bar with
 // the Adminium credit + demo domain chip + payment chips.
 
-import { BRAND, PROMO_RATE } from "../lib/shop.ts";
+import { BRAND, PROMO_RATE, SHIP_FROM } from "../lib/shop.ts";
 import { useI18n } from "../i18n";
 import { useStore } from "../state/store.ts";
 import { Icon } from "./Icon.tsx";
@@ -27,7 +27,7 @@ const CREDIT_YEAR = new Date(2026, 0, 1);
 const SLOT = "\u0000";
 
 export function Footer() {
-  const { t, number, date } = useI18n();
+  const { t, number, date, locale } = useI18n();
   const news = useStore((s) => s.news);
   const setNews = useStore((s) => s.setNews);
   const newsSubmit = useStore((s) => s.newsSubmit);
@@ -36,7 +36,23 @@ export function Footer() {
   const go = useStore((s) => s.go);
   const toast = useStore((s) => s.toast_);
 
+  const openAddOns = useStore((s) => s.openAddOns);
+
   const demo = () => toast("chrome.toast.demoLink");
+
+  /* Read once: the address is a merchant setting, so it does not change while
+     the page is open, and `locale` is the only reason the country's NAME does. */
+  const shipFromCity = SHIP_FROM.city.trim();
+  /* Guarded, because `DisplayNames.of("")` THROWS rather than returning
+     undefined — and an empty country is the ordinary connected-mode state, not
+     an exotic one. The `??` covers the other half: a code `Intl` does not know
+     comes back undefined, and the code itself is better on the page than a
+     blank line. */
+  const countryName =
+    SHIP_FROM.country === ""
+      ? ""
+      : new Intl.DisplayNames([locale], { type: "region" }).of(SHIP_FROM.country) ??
+        SHIP_FROM.country;
 
   /*
    * `id` is the React key, and it is deliberately not the label: a translated
@@ -233,6 +249,65 @@ export function Footer() {
                 {t("chrome.footer.subscribe")}
               </button>
             </div>
+            {/*
+              WHERE THE SHOP POSTS FROM, on the one page of a storefront where a
+              reader already goes looking for it.
+
+              A footer is where a shop's address lives — under the brand, beside
+              the company links, next to the small print — so this is the place
+              it belongs whether or not anything ever prices a parcel from it.
+
+              RENDERED ONLY WHEN THERE IS ONE. `Shop.shipFrom` is a merchant
+              setting and a connected shop whose scope exposes no
+              `shop_settings` row gets every field blank on purpose (see
+              `NO_POLICY` in `data/adminiumSource.ts`). Drawing the heading with
+              nothing under it would be a hole; drawing nothing is a footer that
+              simply does not state an address, which is what a shop that has
+              not entered one honestly has. The city is the test because it is
+              the field a label cannot do without and the one an operator fills
+              in first.
+             */}
+            {shipFromCity !== "" && (
+              <div style={{ marginTop: "16px" }}>
+                <div
+                  style={{
+                    fontSize: "11px",
+                    fontWeight: 700,
+                    letterSpacing: ".05em",
+                    textTransform: "uppercase",
+                    color: "var(--fg-subtle)",
+                    marginBottom: "5px",
+                  }}
+                >
+                  {t("chrome.footer.shipsFrom")}
+                </div>
+                <address
+                  style={{
+                    margin: 0,
+                    fontStyle: "normal",
+                    fontSize: "12.5px",
+                    color: "var(--fg-muted)",
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {/* The street lines are the merchant's own text and are
+                      rendered in the order they were typed — an address is not
+                      a sentence and nothing here reorders one. */}
+                  {SHIP_FROM.lines.map((line) => (
+                    <div key={line}>{line}</div>
+                  ))}
+                  <div>
+                    {shipFromCity}
+                    {SHIP_FROM.postcode === "" ? "" : " " + SHIP_FROM.postcode}
+                  </div>
+                  {/* The country as the reader's own language names it, out of
+                      the code the field actually stores. `Intl.DisplayNames`
+                      returns undefined for a code it does not know, and the
+                      code itself is a better thing to print than nothing. */}
+                  {SHIP_FROM.country !== "" && <div>{countryName}</div>}
+                </address>
+              </div>
+            )}
           </div>
           {cols.map((col) => (
             <div key={col.id}>
@@ -292,6 +367,39 @@ export function Footer() {
             </span>
             {creditAfter}
           </span>
+          {/*
+            THE ONE CONTROL IN THIS BUNDLE ADDRESSED TO THE SHOP OWNER.
+
+            In the bottom bar beside the platform credit rather than in one of
+            the three link columns above, because those columns are the shop's
+            own navigation and a shopper has no use for this. The drawer itself
+            says which half of the product it belongs to.
+
+            It is NOT gated on the demo build. A self-hosted storefront is the
+            shop owner's own site, and a switch that existed only in the demo
+            would be a switch the person who actually runs a shop could not
+            reach — with `settings.add-on.panel` then declared hosted by a build
+            that mounts it nowhere.
+           */}
+          <button
+            className="sf-link"
+            onClick={openAddOns}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "6px",
+              border: "none",
+              background: "transparent",
+              padding: 0,
+              fontSize: "12px",
+              fontWeight: 700,
+              color: "var(--fg-subtle)",
+              cursor: "pointer",
+            }}
+          >
+            <Icon name="cable" size={13} />
+            {t("addon.host.manage.open")}
+          </button>
           <span
             dir="ltr"
             style={{

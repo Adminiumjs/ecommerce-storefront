@@ -5,6 +5,16 @@
 import { create } from "zustand";
 import { PROMO_CODE, PROMO_RATE } from "../lib/shop.ts";
 import { source } from "../data/source.ts";
+import {
+  applyAddOnSettings,
+  createRegistry,
+  type AddOn,
+  type AddOnRegistry,
+  type AddOnSettings,
+  type DeliveryChoice,
+} from "../add-ons/vendor/host/index.ts";
+import { DEFAULT_ADD_ON_SETTINGS } from "../add-ons/registry.ts";
+import { carrierFeeMajor } from "../add-ons/records.ts";
 import { number as fmtNumber, t as tr } from "../i18n/ambient";
 import type {
   Cart,
@@ -209,11 +219,64 @@ export interface StoreState {
   // checkout
   coStep: number;
   ship: ShipMethod;
+  /**
+   * THE CARRIER'S RATE THE SHOPPER PICKED, BESIDE `ship` RATHER THAN INSIDE IT.
+   *
+   * ── WHY THIS IS NOT A FOURTH `ShipMethod` ────────────────────────────────
+   *
+   * `ShipMethod` is a closed three-member union and it is baked into
+   * `Order.shipMethod`, `Order.ship`, `shipFee`, `confTotals` and two
+   * `Record<ShipMethod, MessageKey>` maps on the confirmation screen. A rate an
+   * add-on quoted has a name and a transit time that belong to whoever sells
+   * it, in whichever language the reader is using — neither of which this app
+   * can write a message key for. Widening the union would demand both.
+   *
+   * So the two live side by side and EXACTLY ONE IS IN EFFECT: choosing a
+   * carrier leaves `ship` where it was and takes over the delivery line
+   * (`getTotals` below); choosing one of the shop's own bands sets this back to
+   * null. The screen renders the same rule — a band is drawn as selected only
+   * while this is null — so a shopper can never be shown two ways of getting
+   * one parcel, which is exactly what a widened union would have permitted.
+   *
+   * `DeliveryChoice` is the seam's own shape and the only one that crosses it
+   * in BOTH directions: the fill constructs it, the host stores it here, and
+   * the host hands the same object back down so the fill can draw which of its
+   * rows is selected. `choice.addOn` is what stops a second delivery company's
+   * rows lighting up because the first one's did — the host does not scope it,
+   * because the host does not know which add-on drew which row.
+   */
+  carrier: DeliveryChoice | null;
   form: Form;
   errs: Record<string, string>;
   optIn: boolean;
   billingSame: boolean;
   lastOrder: Order | null;
+
+  // add-ons
+  /**
+   * THE FIVE FIELDS THE SEAM NEEDS, and one this app added.
+   *
+   * `registry` boots EMPTY and is filled at bootstrap by `registerAddOns`,
+   * rather than being built here from `demoAddOns()`. `add-ons/registry.ts`
+   * records the three reasons; the one that mattered to this retrofit is that
+   * an empty registry is a valid state, so the whole seam was installable and
+   * green before a single carrier rate existed.
+   */
+  registry: AddOnRegistry;
+  /** Which add-ons are switched on. The one set every fill is gated by. */
+  enabled: Set<string>;
+  /**
+   * Saved settings, keyed by add-on key and OPAQUE to this app.
+   *
+   * The host holds an add-on's values and never reads inside one. The two
+   * `secret: true` settings the delivery add-on declares are absent by
+   * construction rather than by omission (24 D15): they live in its server
+   * half, its `register()` does not put them in `settings`, and a store the
+   * browser can read is precisely where a key must never appear.
+   */
+  addOnSettings: AddOnSettings;
+  /** Is the manage drawer open? This app's own, not part of the seam. */
+  addOnsOpen: boolean;
 
   // derived
   getLines(): CartLineView[];
@@ -294,6 +357,8 @@ export interface StoreState {
   // checkout
   setField(name: keyof Form, val: string): void;
   setShip(m: ShipMethod): void;
+  /** Take a rate an add-on quoted, or drop back to the shop's own bands. */
+  chooseCarrier(choice: DeliveryChoice | null): void;
   toggleOptIn(): void;
   toggleBilling(): void;
   gotoStep(i: number): void;
@@ -305,6 +370,20 @@ export interface StoreState {
   // account
   buyAgain(o: Order): void;
   viewOrder(number: string): void;
+
+  // add-ons
+  registerAddOns(addOns: readonly AddOn[]): void;
+  toggleAddOn(key: string): void;
+  connectAddOn(key: string): void;
+  disconnectAddOn(key: string): void;
+  /**
+   * `Record<string, unknown>` and not a typed patch: the host holds an add-on's
+   * settings and never reads inside one. The add-on's own settings panel is
+   * what calls this, with its own machine keys.
+   */
+  patchAddOnSettings(addOn: string, patch: Record<string, unknown>): void;
+  openAddOns(): void;
+  closeAddOns(): void;
 }
 
 /**
@@ -384,11 +463,22 @@ export const useStore = create<StoreState>((set, get) => ({
 
   coStep: 0,
   ship: "standard",
+  carrier: null,
   form: EMPTY_FORM,
   errs: {},
   optIn: true,
   billingSame: true,
   lastOrder: SEED_ORDER,
+
+  /*
+   * EMPTY, and `app/App.tsx` fills it at bootstrap. See `add-ons/registry.ts`:
+   * this shape is what makes the seam installable before any add-on exists, and
+   * what keeps every screen's module graph free of every add-on bundle.
+   */
+  registry: createRegistry([]),
+  enabled: new Set<string>(),
+  addOnSettings: DEFAULT_ADD_ON_SETTINGS,
+  addOnsOpen: false,
 
   getLines: () => cartArr(get().cart, get().index),
   getCount: () => countLines(cartArr(get().cart, get().index)),
@@ -397,6 +487,10 @@ export const useStore = create<StoreState>((set, get) => ({
       cartArr(get().cart, get().index),
       get().ship,
       get().promoOn,
+      // The carrier's price when one is chosen, in this app's own units. `null`
+      // — the base state, and every build with nothing connected — means the
+      // shop's own band, which is what `shipFee` has always answered.
+      carrierFeeMajor(get().carrier),
     ),
 
   toast_: (msg, params) => {
@@ -713,7 +807,24 @@ export const useStore = create<StoreState>((set, get) => ({
       form: { ...st.form, [name]: val },
       errs: { ...st.errs, [name]: "" },
     })),
-  setShip: (m) => set({ ship: m }),
+  /*
+   * Choosing one of the shop's own bands DROPS a carrier's quote, because a
+   * customer cannot have picked two ways of getting one parcel. The inverse is
+   * in `chooseCarrier`, and the screen draws the same rule so the two cannot
+   * disagree about which row is lit.
+   */
+  setShip: (m) => set({ ship: m, carrier: null }),
+
+  /**
+   * Take a rate an add-on quoted.
+   *
+   * `ship` IS LEFT EXACTLY WHERE IT WAS, which is deliberate and is the whole
+   * reason this is a second field rather than a widened union: the shop's own
+   * band is still the thing a disconnect falls back to, and rewriting it here
+   * would mean a customer who tried a carrier and changed their mind silently
+   * lost the band they had picked first.
+   */
+  chooseCarrier: (choice) => set({ carrier: choice }),
   toggleOptIn: () => set((s) => ({ optIn: !s.optIn })),
   toggleBilling: () => set((s) => ({ billingSame: !s.billingSame })),
   gotoStep: (i) => {
@@ -753,10 +864,22 @@ export const useStore = create<StoreState>((set, get) => ({
       customLabel: x.customLabel,
     }));
     const t = get().getTotals();
+    const carrier = get().carrier;
     const order: Order = {
       number: "1042",
       items,
       shipMethod: get().ship,
+      /*
+       * WHAT THE CUSTOMER ACTUALLY CHOSE, kept beside the band rather than
+       * instead of it. `shipMethod` above stays whatever the shop's own picker
+       * held, so an order placed with a carrier still records the band it would
+       * otherwise have gone by — and `Confirm` renders the carrier's own label
+       * when there is one and falls through to the band's message key when
+       * there is not. That fall-through is what makes an order placed before
+       * anything was connected, and an order placed after a disconnect, read
+       * identically.
+       */
+      ...(carrier === null ? {} : { carrier: { ...carrier } }),
       promoOn: get().promoOn,
       email: f.email || "you@email.com",
       /* No copy in the store: an empty name lets <Confirm> fall back through
@@ -774,7 +897,9 @@ export const useStore = create<StoreState>((set, get) => ({
         total: t.total,
       },
     };
-    set({ lastOrder: order, view: "confirm", cart: {}, coStep: 0, errs: {} });
+    // The basket is emptied, so the quote against it goes with it: a rate is
+    // priced for a parcel, and the next basket is a different parcel.
+    set({ lastOrder: order, view: "confirm", cart: {}, coStep: 0, errs: {}, carrier: null });
     toTop();
   },
 
@@ -797,4 +922,103 @@ export const useStore = create<StoreState>((set, get) => ({
     get().toast_("chrome.toast.addedToCart");
   },
   viewOrder: (number) => get().toast_("chrome.toast.orderDetails", { number }),
+
+  // ── add-ons ──────────────────────────────────────────────────────────────
+
+  registerAddOns: (addOns) => {
+    set({ registry: createRegistry(addOns) });
+    // PUSHED, never polled — see `patchAddOnSettings`. An add-on registered
+    // after the shop has already changed a setting must start from the changed
+    // value, not from its own default.
+    applyAddOnSettings(addOns, get().addOnSettings);
+  },
+
+  /**
+   * The drawer's one control per add-on, so the two states can never disagree.
+   *
+   * ── AND WHY THERE IS NO SEPARATE `credentialled` SET HERE ────────────────
+   *
+   * The seam distinguishes CONNECTED from ENABLED because they are different
+   * facts: a credential is a thing you have, switching an add-on on is a
+   * decision you made, and a disconnect revokes the first while keeping the
+   * data (24 D16). Both hosts that had this seam first keep two sets.
+   *
+   * THIS HOST CANNOT HOLD A CREDENTIAL AT ALL, so here the two facts coincide.
+   * It is a static customer-facing bundle with no server half of its own: 24
+   * D15 says a secret never reaches the browser, the delivery add-on's two
+   * `secret: true` settings live in its server module, and this app has no
+   * place to put one and never asks for one. A `credentialled` set here would
+   * be a set that is always exactly `enabled` — state nobody could ever be
+   * wrong about, which is its own kind of lie.
+   *
+   * WHAT WOULD CHANGE THIS: a connect flow that reaches a server. When this app
+   * is served BY Adminium (`surface.ts`'s hosted modes) the credential lives on
+   * that server and the two facts come apart again — and that is the moment to
+   * add the second set, with a screen that can show the difference.
+   */
+  toggleAddOn: (key) => {
+    if (get().enabled.has(key)) get().disconnectAddOn(key);
+    else get().connectAddOn(key);
+  },
+
+  connectAddOn: (key) =>
+    set((s) => {
+      const enabled = new Set(s.enabled);
+      enabled.add(key);
+      return { enabled };
+    }),
+
+  /**
+   * DISCONNECT REMOVES SURFACES, NEVER DATA (24 D16).
+   *
+   * What goes: the add-on's fills stop rendering, so its rate rows and its
+   * tracking panel are gone from the moment the set changes, and the shop's own
+   * words are back in both places.
+   *
+   * What stays: everything the customer has made. The basket, the promo code,
+   * the address they typed, the order they placed and the settings the shop
+   * chose are all still here if it reconnects. The drawer says all of this in
+   * words, in the add-on's own two keys, BEFORE anything happens.
+   *
+   * THE ONE THING THAT DOES GO IS THE QUOTE, and the difference is worth
+   * naming. A rate row is not a thing the customer made; it is A PRICE A
+   * DISCONNECTED COMPANY QUOTED, still sitting on a basket nobody has paid for,
+   * and leaving it would let this shop bill for a delivery it can no longer
+   * book. The basket goes back to the shop's own band — which is where a shop
+   * with no carrier connected always was, and is exactly the base state D6 asks
+   * for rather than a plausible neighbouring one.
+   *
+   * Scoped by add-on key, because a second delivery company's quote is not this
+   * one's to drop.
+   */
+  disconnectAddOn: (key) =>
+    set((s) => {
+      const enabled = new Set(s.enabled);
+      enabled.delete(key);
+      return {
+        enabled,
+        ...(s.carrier?.addOn === key ? { carrier: null } : {}),
+      };
+    }),
+
+  patchAddOnSettings: (addOn, patch) => {
+    const addOnSettings = {
+      ...get().addOnSettings,
+      [addOn]: { ...(get().addOnSettings[addOn] ?? {}), ...patch },
+    };
+    set({ addOnSettings });
+    /*
+     * THE HOST PUSHES; AN ADD-ON DOES NOT POLL. Its engines are handed settings
+     * rather than a store, so a rate quoted a second after the shop moved the
+     * cut-off has to be priced off the new one. An add-on that read this store
+     * would be coupled to this app's state shape, which is the coupling every
+     * other decision in this seam exists to prevent — and one that read it on a
+     * timer would be worse, because the version that works is indistinguishable
+     * from the version that is one tick stale.
+     */
+    applyAddOnSettings(get().registry.all, addOnSettings);
+  },
+
+  openAddOns: () => set({ addOnsOpen: true }),
+  closeAddOns: () => set({ addOnsOpen: false }),
 }));

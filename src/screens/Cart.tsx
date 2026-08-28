@@ -13,6 +13,7 @@ import {
   subtotalOf,
 } from "../lib/pricing.ts";
 import { useStore } from "../state/store.ts";
+import { carrierFeeMajor } from "../add-ons/records.ts";
 import { Icon } from "../components/Icon.tsx";
 import { ProductImage } from "../components/ProductImage.tsx";
 import { QtyStepper } from "../components/QtyStepper.tsx";
@@ -36,12 +37,23 @@ export function Cart() {
   const setPromoDraft = useStore((s) => s.setPromoDraft);
   const applyPromo = useStore((s) => s.applyPromo);
   const removePromo = useStore((s) => s.removePromo);
+  const carrier = useStore((s) => s.carrier);
 
   const lines = cartArr(cart, index);
   const cnt = countLines(lines);
   const sub = subtotalOf(lines);
-  const tot = computeTotals(lines, ship, promoOn);
-  const free = tot.ship === 0 && sub > 0;
+  /*
+   * The same arithmetic the checkout does, including a carrier's rate if the
+   * shopper picked one and then came back here. The two screens showing
+   * different delivery lines for one basket is the defect this argument
+   * threading exists to prevent, and it is the one a reader would meet first:
+   * pressing Back from the delivery step lands exactly here.
+   */
+  const tot = computeTotals(lines, ship, promoOn, carrierFeeMajor(carrier));
+  /* `tot.shipFree`, not `ship === 0`: a carrier quoting nothing is not this
+     shop waiving its own charge, and only the first is the free-delivery
+     promise this banner is about. */
+  const free = tot.shipFree && sub > 0;
 
   return (
     <main

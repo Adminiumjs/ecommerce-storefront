@@ -5,6 +5,7 @@
 import type {
   Category,
   Order,
+  PostalAddress,
   Product,
   RatingSeed,
   Review,
@@ -22,6 +23,37 @@ export const BUNDLE_OFF = 0.15;
 export const SHIP_EXPRESS = 12;
 export const SHIP_OVERNIGHT = 28;
 export const SHIP_STANDARD = 6;
+
+/**
+ * WHERE THE SHOP POSTS FROM.
+ *
+ * ── AN INVENTED STREET IN A REAL CITY, AND WHY THAT IS THE RIGHT MIX ───────
+ *
+ * The city and the postcode are real Portland ones because a delivery estimate
+ * is arithmetic on a route, and a route between two places that do not exist
+ * cannot be sanity-checked by anybody reading the screen. The street is
+ * invented and belongs to no real firm — the same rule the review names and the
+ * customer names in this file already follow.
+ *
+ * `US` and not "United States": the postcode is checked AGAINST the country by
+ * whatever prices the journey, so this field is machine-read and the rest is
+ * label text. See `PostalAddress` in `types.ts`.
+ *
+ * IT IS SEED DATA, WHICH MEANS IT IS NOT AUTOMATICALLY TRUE OF A REAL SHOP.
+ * It reaches screens through `Shop.shipFrom` and never by direct import, for
+ * the reason `lib/shop.ts` opens with: a connected storefront that printed
+ * NORTHLINE, PORTLAND on somebody else's parcels would look completely correct
+ * while being completely wrong. `data/adminiumSource.ts` reads the merchant's
+ * own row when the scope exposes one and shows a visible blank when it does
+ * not, which is the same trade every other merchant setting here makes.
+ */
+export const SHIP_FROM: PostalAddress = {
+  name: BRAND,
+  lines: ["1400 NW Kearney St", "Suite 210"],
+  city: "Portland, OR",
+  postcode: "97209",
+  country: "US",
+};
 
 /** Amber used for star glyphs — a brand/demo literal, not a theme token. */
 

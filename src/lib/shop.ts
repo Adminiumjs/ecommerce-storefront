@@ -23,3 +23,5 @@ export const TAX_RATE = SHOP.taxRate;
 export const SHIP_STANDARD = SHOP.ship.standard;
 export const SHIP_EXPRESS = SHOP.ship.express;
 export const SHIP_OVERNIGHT = SHOP.ship.overnight;
+/** Where the shop posts from. Through the seam, never out of the seed. */
+export const SHIP_FROM = SHOP.shipFrom;

@@ -39,7 +39,7 @@
 
 import { createPublicClient, type PublicClient } from "@adminiumjs/public-client";
 
-import type { Category, Order, Product, RatingSeed, Review } from "./types.ts";
+import type { Category, Order, PostalAddress, Product, RatingSeed, Review } from "./types.ts";
 import type { Customer, DataSource, Shop } from "./source.ts";
 
 /* --------------------------------------------------------------- the wire */
@@ -66,6 +66,32 @@ interface WireProductCategory {
 }
 
 /**
+ * The one merchant setting that DOES have a home in the schema now.
+ *
+ * `shop_settings` is a single-row table added alongside the shop's own address
+ * — see `db/schema.sql`. Every column is nullable because the row exists before
+ * anybody has filled it in, and this app reads a half-filled one as half-filled
+ * rather than as absent: see `addressOf` below.
+ */
+interface WireShopSettings {
+  ship_from_name: string | null;
+  ship_from_line1: string | null;
+  ship_from_line2: string | null;
+  ship_from_city: string | null;
+  ship_from_postcode: string | null;
+  ship_from_country: string | null;
+}
+
+/** An address with every field visibly blank — see `NO_POLICY`. */
+const NO_ADDRESS: PostalAddress = {
+  name: "",
+  lines: [],
+  city: "",
+  postcode: "",
+  country: "",
+};
+
+/**
  * WS-I G-1 — the merchant's commerce policy, which has no home in the schema.
  *
  * Every number is ZERO and the brand and promo code are empty, deliberately.
@@ -82,6 +108,22 @@ const NO_POLICY: Omit<Shop, "heroImage"> = {
   bundleOff: 0,
   taxRate: 0,
   ship: { standard: 0, express: 0, overnight: 0 },
+  /*
+   * WHERE THE SHOP POSTS FROM, when nobody has said.
+   *
+   * Blank rather than the seed's Portland address, and this is the member where
+   * the argument above stops being about money and starts being about a parcel.
+   * A connected shop carrying the demo's origin would price every delivery from
+   * a city it has never traded in and print that city on anything that reads
+   * the field — and it would look completely correct, because an address that
+   * exists always does.
+   *
+   * Unlike the rest of NO_POLICY this one is a FALLBACK rather than a verdict:
+   * `shop_settings` exists in `db/schema.sql`, so a scope that exposes it gets
+   * the merchant's own address and never reaches this constant. See
+   * `SHOP_SETTINGS_COLUMNS`.
+   */
+  shipFrom: NO_ADDRESS,
 };
 
 /** WS-I G-3: `categories` has no icon column, so every tab wears the same one. */
@@ -100,6 +142,70 @@ const REQUIRED = {
   categories: ["id", "name", "slug"],
   productCategories: ["product_id", "category_id"],
 };
+
+/**
+ * `shop_settings`, WANTED BUT NOT REQUIRED — and the distinction is the whole
+ * decision.
+ *
+ * ── WHY THIS IS NOT A FOURTH ENTRY IN `REQUIRED` ───────────────────────────
+ *
+ * `assertRefs` is all-or-nothing: a scope missing one column of one ref throws,
+ * `loadSnapshot` returns null, and the app falls back to the demo catalog. That
+ * is exactly right for the three refs above, because a storefront with no
+ * products is not a storefront. It is exactly wrong for this one. `shop_settings`
+ * is NEW — every scope configured before it existed lacks it — so putting it in
+ * `REQUIRED` would turn every currently-working connected shop into a demo shop
+ * overnight, silently, and the operator's evidence would be a console warning
+ * about a column they have never heard of.
+ *
+ * A sibling repo widened its own `REQUIRED` for the same feature and was right
+ * to: it added COLUMNS to a table it already required, so a scope that had been
+ * narrowed to exclude them was already a scope the operator had edited. Adding
+ * a whole ref is a different act, and copying the sibling's diff rather than
+ * its reasoning would have shipped the outage.
+ *
+ * So the read is CONDITIONAL on the scope exposing every column below, and a
+ * scope that does not gets `NO_POLICY.shipFrom` — the visible blank, which is
+ * what the rest of this app's merchant policy already shows. The cost is that
+ * an operator who exposes four of the six columns is treated as exposing none;
+ * that is stated rather than hidden, and it is the safe direction: a partial
+ * address on a parcel is worse than an obviously missing one.
+ */
+const SHOP_SETTINGS_COLUMNS = [
+  "ship_from_name",
+  "ship_from_line1",
+  "ship_from_line2",
+  "ship_from_city",
+  "ship_from_postcode",
+  "ship_from_country",
+];
+
+/**
+ * The merchant's own posting address, or the visible blank.
+ *
+ * ── A HALF-FILLED ROW IS HALF-FILLED, NOT ABSENT ───────────────────────────
+ *
+ * `db/schema.sql` gives every column a default so the seeded row is complete,
+ * but a connected tenant's table is created from `manifest.json`, whose column
+ * vocabulary has nowhere to put a default or a CHECK. So a scope really can
+ * hand this function four fields out of six. Reading that as "no address" would
+ * quietly discard a city and a postcode somebody typed; carrying the gaps
+ * through makes them visible wherever the address is drawn, which is an office
+ * job somebody can see and fix.
+ *
+ * `line2` is genuinely optional — a one-line address is ordinary — so an empty
+ * one is dropped rather than carried as a blank line on a label.
+ */
+function addressOf(row: WireShopSettings | undefined): PostalAddress {
+  if (row === undefined) return NO_ADDRESS;
+  return {
+    name: row.ship_from_name ?? "",
+    lines: [row.ship_from_line1 ?? "", row.ship_from_line2 ?? ""].filter((l) => l !== ""),
+    city: row.ship_from_city ?? "",
+    postcode: row.ship_from_postcode ?? "",
+    country: row.ship_from_country ?? "",
+  };
+}
 
 export interface Snapshot {
   products: Product[];
@@ -165,6 +271,20 @@ export async function loadSnapshot(client: PublicClient): Promise<Snapshot | nul
       listAll<WireProductCategory>(client, "productCategories", cap("productCategories"), 50_000),
     ]);
 
+    /*
+     * The shop's own address, when the scope has one to give. Read AFTER the
+     * catalog and on its own rather than inside the `Promise.all`, because a
+     * ref the scope does not carry must not be able to reject the batch that
+     * fetches the products — the whole point of it being optional.
+     */
+    const settingsScope = config.refs["shopSettings"];
+    const hasSettings =
+      settingsScope !== undefined &&
+      SHOP_SETTINGS_COLUMNS.every((column) => settingsScope.expose.includes(column));
+    const shopSettings = hasSettings
+      ? (await client.list<WireShopSettings>("shopSettings", { limit: 1 })).data[0]
+      : undefined;
+
     const slugOf = new Map<number, string>(categories.map((c) => [c.id, c.slug]));
 
     /* A product belongs to many categories in the database and to exactly one
@@ -218,6 +338,10 @@ export async function loadSnapshot(client: PublicClient): Promise<Snapshot | nul
         // The one merchant setting that CAN be derived from real data: the
         // hero wears the first product's photograph rather than an empty frame.
         heroImage: mapped.find((p) => p.image.length > 0)?.image ?? "",
+        // And the one that now has a column of its own. `addressOf(undefined)`
+        // is `NO_ADDRESS`, so a scope without the ref lands exactly where
+        // `NO_POLICY` already put it — one code path, not two.
+        shipFrom: addressOf(shopSettings),
       },
     };
   } catch (error) {

@@ -14,7 +14,11 @@
     "demo:status": "node db/demo.mjs status",
     "demo:import": "node db/demo.mjs import",
     "demo:wipe": "node db/demo.mjs wipe",
-    "demo:reset": "node db/demo.mjs reset"
+    "demo:reset": "node db/demo.mjs reset",
+    "add-ons:status": "bash scripts/sync-add-ons.sh status",
+    "add-ons:sync": "bash scripts/sync-add-ons.sh sync",
+    "host-kit:status": "bash scripts/host-kit.sh status",
+    "host-kit:install": "bash scripts/host-kit.sh install"
   },
   "dependencies": {
     "@adminiumjs/public-client": "^0.2.2",
@@ -28,6 +32,7 @@
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.4",
+    "jsdom": "^29.1.1",
     "typescript": "^5.7.2",
     "vite": "^7.0.0",
     "vitest": "^2.1.9",

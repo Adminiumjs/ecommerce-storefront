@@ -59,9 +59,9 @@
             "ref": "status",
             "type": "enum",
             "enum": [
-              "[object Object]",
-              "[object Object]",
-              "[object Object]"
+              "draft",
+              "active",
+              "archived"
             ]
           },
           {
@@ -151,10 +151,10 @@
             "ref": "status",
             "type": "enum",
             "enum": [
-              "[object Object]",
-              "[object Object]",
-              "[object Object]",
-              "[object Object]"
+              "pending",
+              "paid",
+              "shipped",
+              "refunded"
             ]
           },
           {
@@ -188,6 +188,46 @@
           {
             "ref": "unit_price",
             "type": "money"
+          }
+        ]
+      },
+      {
+        "ref": "shop_settings",
+        "columns": [
+          {
+            "ref": "id",
+            "type": "int",
+            "role": "pk"
+          },
+          {
+            "ref": "ship_from_name",
+            "type": "text",
+            "nullable": true
+          },
+          {
+            "ref": "ship_from_line1",
+            "type": "text",
+            "nullable": true
+          },
+          {
+            "ref": "ship_from_line2",
+            "type": "text",
+            "nullable": true
+          },
+          {
+            "ref": "ship_from_city",
+            "type": "text",
+            "nullable": true
+          },
+          {
+            "ref": "ship_from_postcode",
+            "type": "text",
+            "nullable": true
+          },
+          {
+            "ref": "ship_from_country",
+            "type": "text",
+            "nullable": true
           }
         ]
       }
@@ -244,6 +284,19 @@
         "group": "manifest:ecommerce-shop",
         "icon": "users",
         "order": 4
+      }
+    },
+    {
+      "ref": "shop-settings",
+      "template": "page-crud",
+      "title": {
+        "key": "mft.ecommerce.page.settings",
+        "fallback": "Shop settings"
+      },
+      "nav": {
+        "group": "manifest:ecommerce-shop",
+        "icon": "store",
+        "order": 5
       }
     }
   ],

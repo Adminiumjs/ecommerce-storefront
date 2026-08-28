@@ -4,6 +4,15 @@
 
 import { FREE_SHIP, SHIP_EXPRESS, SHIP_OVERNIGHT, SHIP_STANDARD } from "../lib/shop.ts";
 import type { ShipMethod } from "../data/types.ts";
+import { AddOnSlot } from "../add-ons/slot.tsx";
+import {
+  carrierFeeMajor,
+  checkoutDestination,
+  checkoutItems,
+  shopOrigin,
+  SHOP_CLOCK,
+  SHOP_CURRENCY,
+} from "../add-ons/records.ts";
 import { useI18n, type MessageKey } from "../i18n";
 import { money } from "../lib/format.ts";
 import { hexToRgba } from "../lib/placeholders.ts";
@@ -58,11 +67,14 @@ export function Checkout() {
     billingSame,
     cart,
     index,
+    carrier,
   } = st;
 
   const lines = cartArr(cart, index);
   const sub = subtotalOf(lines);
-  const tot = computeTotals(lines, ship, promoOn);
+  /* The carrier's price when the shopper picked one, this shop's own band when
+     they did not. One of the two, never both — see `state/store.ts`. */
+  const tot = computeTotals(lines, ship, promoOn, carrierFeeMajor(carrier));
 
   const countryNames = new Intl.DisplayNames([locale], { type: "region" });
 
@@ -460,7 +472,12 @@ export function Checkout() {
               </h2>
               <div style={{ display: "flex", flexDirection: "column", gap: "11px" }}>
                 {dopts.map((d) => {
-                  const sel = ship === d.key;
+                  /* Selected only while the SHOP is the one delivering it.
+                     Choosing a carrier below deselects all three, because a
+                     customer cannot have picked two ways of getting one parcel
+                     — and the store enforces the same rule from the other end,
+                     so the picture and the price cannot disagree. */
+                  const sel = carrier === null && ship === d.key;
                   return (
                     <button
                       key={d.key}
@@ -526,6 +543,100 @@ export function Checkout() {
                   );
                 })}
               </div>
+
+              {/*
+                SLOT — live carrier rates, beside the shop's own bands.
+
+                The three rows above are what this shop charges. These are what
+                somebody else would charge, quoted for THIS basket, and choosing
+                one deselects all three above. That arrangement is the whole
+                reason `carrier` is a second field rather than a fourth
+                `ShipMethod`: see `state/store.ts`.
+
+                IT SPEAKS WHEN EMPTY. A shopper who reads three rows and then a
+                gap is being shown a broken page; a shopper who reads three rows
+                and then one sentence saying the shop posts everything itself is
+                being shown a finished one — which is also the true answer to
+                the question this screen invites.
+               */}
+              <AddOnSlot
+                slot="checkout.delivery.methods"
+                payload={{
+                  /*
+                   * THE BASKET AS NEUTRAL LINES — a key, a label already in the
+                   * reader's language, a quantity and what one costs. Not this
+                   * app's `CartLineView`, which carries a variant matrix, a
+                   * bundle discount and a personalisation label that mean
+                   * nothing outside this shop.
+                   */
+                  items: checkoutItems(lines),
+                  /*
+                   * WHERE THE SHOP POSTS FROM. Required by the payload, and a
+                   * shop knows its own address — it is on its own paperwork.
+                   * Through `lib/shop.ts`, so a connected storefront quotes
+                   * from the MERCHANT's address rather than from the seed's.
+                   */
+                  origin: shopOrigin(),
+                  /*
+                   * AND WHERE IT IS GOING, which at a till the shop usually has
+                   * not asked yet — except that this one has: step 1 is the
+                   * address, and step 2 is this. `checkoutDestination` returns
+                   * nothing while the two fields a route needs are not both
+                   * filled, and an add-on handed nothing quotes domestically
+                   * and says so rather than pretending to know the route.
+                   */
+                  destination: checkoutDestination(f),
+                  /* What the goods come to, before delivery — for a customs
+                     line or an insured value, both of which are the quoter's
+                     business rather than ours. */
+                  total: { amount: Math.round(tot.sub * 100), currency: SHOP_CURRENCY },
+                  /*
+                   * WHEN THIS SHOP THINKS IT IS. "Arrives Friday" counts from
+                   * today, and an add-on that counted from a pin of its own
+                   * would agree with one shop and no other. `readyOn` is
+                   * deliberately absent: this shop posts from stock, so its
+                   * ready day IS today, and the payload's own comment says
+                   * passing `now.iso` and passing nothing must mean the same.
+                   */
+                  now: SHOP_CLOCK,
+                  /*
+                   * The host's record, handed back down so the fill draws the
+                   * selection rather than remembering one of its own — and
+                   * scoped by add-on key inside the fill, so a second delivery
+                   * company's rows do not light up because the first one's did.
+                   */
+                  chosen: carrier,
+                  onChoose: st.chooseCarrier,
+                }}
+                fallback={
+                  <div
+                    style={{
+                      border: "1px dashed var(--border-strong)",
+                      borderRadius: "13px",
+                      padding: "15px 16px",
+                    }}
+                  >
+                    <div style={{ fontSize: "13.5px", fontWeight: 700 }}>
+                      {t("addon.host.checkout.slotTitle")}
+                    </div>
+                    <div
+                      style={{
+                        fontSize: "12.5px",
+                        color: "var(--fg-muted)",
+                        lineHeight: 1.5,
+                        marginTop: "3px",
+                      }}
+                    >
+                      {t("addon.host.checkout.slotEmpty")}
+                    </div>
+                  </div>
+                }
+                wrap={(children) => (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "11px" }}>
+                    {children}
+                  </div>
+                )}
+              />
             </div>
           )}
 
@@ -961,7 +1072,17 @@ export function Checkout() {
                   fontSize: "14px",
                 }}
               >
-                <span style={{ color: "var(--fg-muted)" }}>{t("screens.summary.shipping")}</span>
+                {/*
+                  THE SERVICE'S OWN NAME WHEN SOMEBODY ELSE IS CARRYING IT.
+
+                  `carrier.label` arrives already translated, because the words
+                  for a delivery service belong to whoever sells it — this app
+                  renders the string as it stands and has no key for it. With
+                  nothing chosen the row reads exactly as it always has.
+                 */}
+                <span style={{ color: "var(--fg-muted)" }}>
+                  {carrier === null ? t("screens.summary.shipping") : carrier.label}
+                </span>
                 <span
                   style={{
                     fontFamily: "'JetBrains Mono',monospace",

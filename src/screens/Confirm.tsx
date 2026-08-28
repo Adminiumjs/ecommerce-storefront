@@ -7,6 +7,8 @@ import { money } from "../lib/format.ts";
 import { hexToRgba } from "../lib/placeholders.ts";
 import { confTotals, normItems } from "../lib/pricing.ts";
 import { useStore } from "../state/store.ts";
+import { AddOnSlot } from "../add-ons/slot.tsx";
+import { outboundOrderFor, SHOP_CLOCK } from "../add-ons/records.ts";
 import { Icon } from "../components/Icon.tsx";
 import { ProductImage } from "../components/ProductImage.tsx";
 import { rich } from "./shared.tsx";
@@ -25,7 +27,7 @@ const ETA: Record<ShipMethod, MessageKey> = {
 };
 
 export function Confirm() {
-  const { t } = useI18n();
+  const { t, date } = useI18n();
   const index = useStore((s) => s.index);
   const lastOrder = useStore((s) => s.lastOrder);
   const goCat = useStore((s) => s.goCat);
@@ -34,7 +36,20 @@ export function Confirm() {
   const o = lastOrder!;
   const tot = confTotals(o, index);
   const m = (o.shipMethod || o.ship || "standard") as ShipMethod;
-  const eta = t(ETA[m]);
+  /*
+   * WHOSE WORDS DESCRIBE THE DELIVERY.
+   *
+   * An order carries the shop's own band always, and a quoted service as well
+   * when the customer chose one. When it does, that service's own label and its
+   * own estimated date are what this page shows — already translated, because
+   * the words for a delivery service belong to whoever sells it and this app
+   * has no message key for them. When it does not, every line below falls
+   * through to the band's keys exactly as it always has, which is what makes an
+   * order placed before anything was connected and an order placed after a
+   * disconnect read identically.
+   */
+  const eta = o.carrier === undefined ? t(ETA[m]) : date(new Date(o.carrier.estimatedDelivery));
+  const deliveryLabel = o.carrier === undefined ? t(METHOD_LABEL[m]) : o.carrier.label;
 
   const items = normItems(o.items, index).map((it, idx) => {
     const p = index[it.pid];
@@ -324,7 +339,7 @@ export function Confirm() {
                 <Icon name="truck" size={14} />
                 {t("screens.confirm.delivery")}
               </div>
-              <div style={{ fontSize: "13.5px", fontWeight: 700 }}>{t(METHOD_LABEL[m])}</div>
+              <div style={{ fontSize: "13.5px", fontWeight: 700 }}>{deliveryLabel}</div>
               <div style={{ fontSize: "12.5px", color: "var(--fg-muted)", lineHeight: 1.5, marginTop: "3px" }}>
                 {eta}
               </div>
@@ -398,25 +413,88 @@ export function Confirm() {
               );
             })}
           </div>
-          <div
-            style={{
-              display: "flex",
-              gap: "9px",
-              padding: "14px 16px",
-              borderRadius: "14px",
-              background: "var(--accent-soft)",
-              border: "1px solid color-mix(in srgb, var(--accent) 22%, transparent)",
+          {/*
+            SLOT — where this order actually is, instead of a promise about it.
+
+            THE FALLBACK IS THE SCREEN THIS PAGE HAS ALWAYS HAD, unchanged to
+            the pixel: the note saying a tracking link will be e-mailed. That is
+            a finished screen and not an apology — a real shop with no carrier
+            integration does exactly that — which is why it is the fallback
+            rather than something a retrofit deleted (24 D6).
+
+            THE HEADING IS IN `wrap`, NOT ABOVE THE SLOT, and that placement is
+            the D6 detail worth copying. `wrap` runs only when something is
+            actually filling the slot, so a shop with nothing connected does not
+            grow a "Tracking" heading over the note it already had. A heading
+            rendered unconditionally would have made the unconnected screen
+            visibly different from the one this app shipped before the seam —
+            which is precisely the claim D6 makes and the one a reviewer
+            switching the add-on off is checking.
+           */}
+          <AddOnSlot
+            slot="order.dispatch.panel"
+            payload={{
+              /*
+               * THE ORDER AS SOMETHING THAT HAS TO LEAVE A BUILDING — a
+               * reference both sides already use, the lines, where it came from
+               * and where it is going. `add-ons/records.ts` is where this app's
+               * `Order` becomes that, and it is the host's job because the host
+               * is the only party that knows both shapes.
+               */
+              order: outboundOrderFor(o, index, tot.total),
+              /*
+               * Required, and it is the field this surface cannot be honest
+               * without: "has today's van gone?" is a question about the SHOP's
+               * clock, and an add-on answering it from its own would be telling
+               * this shop about somebody else's Tuesday.
+               */
+              now: SHOP_CLOCK,
             }}
-          >
-            <Icon name="mail" size={17} color="var(--accent)" style={{ flexShrink: 0, marginTop: "1px" }} />
-            <span style={{ fontSize: "12.5px", color: "var(--fg-muted)", lineHeight: 1.5 }}>
-              {rich(t("screens.confirm.emailNote"), {
-                email: (
-                  <span style={{ fontWeight: 700, color: "var(--fg)" }}>{o.email}</span>
-                ),
-              })}
-            </span>
-          </div>
+            fallback={
+              <div
+                style={{
+                  display: "flex",
+                  gap: "9px",
+                  padding: "14px 16px",
+                  borderRadius: "14px",
+                  background: "var(--accent-soft)",
+                  border: "1px solid color-mix(in srgb, var(--accent) 22%, transparent)",
+                }}
+              >
+                <Icon name="mail" size={17} color="var(--accent)" style={{ flexShrink: 0, marginTop: "1px" }} />
+                <span style={{ fontSize: "12.5px", color: "var(--fg-muted)", lineHeight: 1.5 }}>
+                  {rich(t("screens.confirm.emailNote"), {
+                    email: (
+                      <span style={{ fontWeight: 700, color: "var(--fg)" }}>{o.email}</span>
+                    ),
+                  })}
+                </span>
+              </div>
+            }
+            wrap={(children) => (
+              <div
+                style={{
+                  border: "1px solid var(--border)",
+                  borderRadius: "18px",
+                  background: "var(--surface)",
+                  boxShadow: "var(--shadow)",
+                  padding: "22px",
+                }}
+              >
+                <div
+                  style={{
+                    fontSize: "15px",
+                    fontWeight: 800,
+                    letterSpacing: "-.01em",
+                    marginBottom: "14px",
+                  }}
+                >
+                  {t("addon.host.order.panelTitle")}
+                </div>
+                {children}
+              </div>
+            )}
+          />
         </div>
       </div>
 

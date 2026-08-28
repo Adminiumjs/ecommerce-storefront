@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import { useStore } from "../state/store.ts";
 import { useI18n } from "../i18n";
 import { setAmbient } from "../i18n/ambient";
+import { AddOnsDrawer } from "../components/AddOnsDrawer.tsx";
 import { CartDrawer } from "../components/CartDrawer.tsx";
 import { Footer } from "../components/Footer.tsx";
 import { Header } from "../components/Header.tsx";
@@ -60,6 +61,7 @@ export function App() {
   const closeMenu = useStore((s) => s.closeMenu);
   const closeReview = useStore((s) => s.closeReview);
   const closeSizeGuide = useStore((s) => s.closeSizeGuide);
+  const closeAddOns = useStore((s) => s.closeAddOns);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -68,11 +70,12 @@ export function App() {
         closeMenu();
         closeReview();
         closeSizeGuide();
+        closeAddOns();
       }
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [closeDrawer, closeMenu, closeReview, closeSizeGuide]);
+  }, [closeDrawer, closeMenu, closeReview, closeSizeGuide, closeAddOns]);
 
   return (
     <>
@@ -81,6 +84,10 @@ export function App() {
       <SizeGuideModal />
       <MobileMenu />
       <CartDrawer />
+      {/* Mounted at the shell rather than inside the footer that opens it, so a
+          drawer opened from the cart survives the trip to the checkout — which
+          is where its whole point, the delivery rates, is. */}
+      <AddOnsDrawer />
       <Header />
       <Screen />
       {view !== "checkout" && <Footer />}

@@ -98,6 +98,17 @@ INSERT INTO order_items (order_id, product_id, qty, unit_price) VALUES
   (11, 7,  1,  34.00),
   (12, 1,  1, 129.00);
 
+-- The merchant's own posting address ----------------------------------------
+
+-- The same address as `SHIP_FROM` in src/data/demo.ts, which is the file this
+-- seed mirrors. The street is invented; the city and the postcode are real
+-- Portland ones, so a delivery estimate quoted against them can be sanity
+-- checked by somebody who knows the country.
+INSERT INTO shop_settings
+  (id, ship_from_name, ship_from_line1, ship_from_line2,
+   ship_from_city, ship_from_postcode, ship_from_country) VALUES
+  (1, 'Northline', '1400 NW Kearney St', 'Suite 210', 'Portland, OR', '97209', 'US');
+
 -- Advance serial sequences past the explicit ids above ----------------------
 
 SELECT setval('categories_id_seq', (SELECT max(id) FROM categories));
@@ -105,3 +116,4 @@ SELECT setval('products_id_seq',   (SELECT max(id) FROM products));
 SELECT setval('customers_id_seq',  (SELECT max(id) FROM customers));
 SELECT setval('orders_id_seq',     (SELECT max(id) FROM orders));
 SELECT setval('order_items_id_seq',(SELECT max(id) FROM order_items));
+SELECT setval('shop_settings_id_seq', (SELECT max(id) FROM shop_settings));

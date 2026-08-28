@@ -33,6 +33,7 @@ import {
   RATINGS,
   REVIEWPOOL,
   SHIP_EXPRESS,
+  SHIP_FROM,
   SHIP_OVERNIGHT,
   SHIP_STANDARD,
   TAX_RATE,
@@ -40,6 +41,7 @@ import {
 import type {
   Category,
   Order,
+  PostalAddress,
   Product,
   RatingSeed,
   Review,
@@ -69,6 +71,26 @@ export interface Shop {
   taxRate: number;
   /** What each shipping method costs. */
   ship: { standard: number; express: number; overnight: number };
+  /**
+   * WHERE THE SHOP POSTS FROM — the merchant's own address.
+   *
+   * The odd one out on this interface in one respect and not in another. Every
+   * other member here is a NUMBER OR A WORD the merchant chose; this one is a
+   * place. What makes it belong is the same thing that makes the tax rate
+   * belong: it is a fact about the shop rather than about the catalogue, the
+   * app has no column for it, and reading it from the seed while the products
+   * come from a real merchant's database is precisely the failure this whole
+   * interface was extracted to stop.
+   *
+   * NOT OPTIONAL, and that is a deliberate cost. Every shop that posts things
+   * has an address; making the field optional would let a caller mount a
+   * delivery surface having thought about it not at all, and the value of a
+   * blank address is that it is VISIBLY blank rather than absent. The connected
+   * source supplies an empty one when the scope exposes no `shop_settings`,
+   * which is the same visible-zero argument `NO_POLICY` records for the rest of
+   * this interface.
+   */
+  shipFrom: PostalAddress;
 }
 
 export interface DataSource {
@@ -102,6 +124,12 @@ export const demoSource: DataSource = {
     bundleOff: BUNDLE_OFF,
     taxRate: TAX_RATE,
     ship: { standard: SHIP_STANDARD, express: SHIP_EXPRESS, overnight: SHIP_OVERNIGHT },
+    // Copied to the depth the value actually has: the address holds an array,
+    // and a shared `lines` would hand every caller the same one out of the
+    // seed. `getShop()` is called at module scope by `lib/shop.ts` and again
+    // by anything that wants the address later, so "nobody mutates it today"
+    // is not a property worth relying on.
+    shipFrom: { ...SHIP_FROM, lines: [...SHIP_FROM.lines] },
   }),
 };
 

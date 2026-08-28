@@ -42,7 +42,22 @@ const MIRRORED: readonly (readonly [string, () => number])[] = [
  * omitted: an unexplained absence is indistinguishable from an oversight, and
  * this is the line where somebody notices the app grew a reader for one.
  */
-const SQL_ONLY: readonly string[] = ["orders", "product_categories", "customers", "order_items"];
+const SQL_ONLY: readonly string[] = [
+  "orders",
+  "product_categories",
+  "customers",
+  "order_items",
+  /*
+   * `shop_settings` is a SINGLE-ROW settings table, not a collection, so there
+   * is nothing on the TypeScript side to count: the app reads it as one address
+   * (`Shop.shipFrom`) and `src/data/demo.ts` holds one constant. Listed here
+   * rather than mapped, because a count of 1 against a constant would assert
+   * that the seed inserts exactly one row and nothing about what is in it —
+   * which is the same guarantee this file already says it does not make, dressed
+   * up as one it does.
+   */
+  "shop_settings",
+];
 
 /**
  * Tables seeded by an `INSERT … SELECT`, whose row count is not in the text.
