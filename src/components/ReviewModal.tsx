@@ -1,7 +1,7 @@
 // Write-a-review modal — tap-to-rate stars + title + body, posted live to the
 // selected product's review list.
 
-import { STAR_COLOR } from "../data/demo.ts";
+import { STAR_COLOR } from "../lib/brand.ts";
 import { useI18n, type MessageKey } from "../i18n";
 import { useStore } from "../state/store.ts";
 import { Icon } from "./Icon.tsx";

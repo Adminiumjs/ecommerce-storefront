@@ -2,12 +2,7 @@
 // revisitable stepper, per-step validation, a demo Stripe-Elements-style card
 // field, and a sticky order summary.
 
-import {
-  FREE_SHIP,
-  SHIP_EXPRESS,
-  SHIP_OVERNIGHT,
-  SHIP_STANDARD,
-} from "../data/demo.ts";
+import { FREE_SHIP, SHIP_EXPRESS, SHIP_OVERNIGHT, SHIP_STANDARD } from "../lib/shop.ts";
 import type { ShipMethod } from "../data/types.ts";
 import { useI18n, type MessageKey } from "../i18n";
 import { money } from "../lib/format.ts";
@@ -564,7 +559,7 @@ export function Checkout() {
                   }}
                 >
                   <Icon name="lock" size={13} />
-                  {t("screens.checkout.securedByStripe")}
+                  {t("screens.checkout.demoPaymentBadge")}
                 </span>
               </div>
               <div>
@@ -1023,10 +1018,10 @@ export function Checkout() {
               }}
             >
               <Icon name="lock" size={13} />
-              {rich(t("screens.checkout.encryptedPoweredBy"), {
-                stripe: (
+              {rich(t("screens.summary.noChargeNote"), {
+                lead: (
                   <span style={{ fontWeight: 700, color: "var(--fg-muted)" }}>
-                    Stripe
+                    {t("screens.summary.noChargeLead")}
                   </span>
                 ),
               })}

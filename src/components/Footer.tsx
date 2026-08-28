@@ -1,7 +1,7 @@
 // Footer: brand + newsletter block, three link columns, and the bottom bar with
 // the Adminium credit + demo domain chip + payment chips.
 
-import { BRAND, PROMO_RATE } from "../data/demo.ts";
+import { BRAND, PROMO_RATE } from "../lib/shop.ts";
 import { useI18n } from "../i18n";
 import { useStore } from "../state/store.ts";
 import { Icon } from "./Icon.tsx";

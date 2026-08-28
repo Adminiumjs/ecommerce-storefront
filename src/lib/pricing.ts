@@ -8,7 +8,7 @@ import {
   SHIP_OVERNIGHT,
   SHIP_STANDARD,
   TAX_RATE,
-} from "../data/demo.ts";
+} from "./shop.ts";
 import type {
   Cart,
   CartCustom,

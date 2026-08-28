@@ -1,7 +1,7 @@
 // Home: hero, new-arrivals banner, featured grid, shop-by-category tiles,
 // value-props strip, and the promo banner.
 
-import { BRAND, FREE_SHIP, HERO_IMAGE, PROMO_CODE, PROMO_RATE } from "../data/demo.ts";
+import { BRAND, FREE_SHIP, HERO_IMAGE, PROMO_CODE, PROMO_RATE } from "../lib/shop.ts";
 import { useI18n } from "../i18n";
 import { catCount } from "../lib/catalog.ts";
 import { money } from "../lib/format.ts";

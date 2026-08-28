@@ -1,7 +1,7 @@
 // The clipped-overlay star technique from the comp: a grey five-star row with
 // an amber five-star row absolutely positioned on top, clipped to avg%.
 
-import { STAR_COLOR } from "../data/demo.ts";
+import { STAR_COLOR } from "../lib/brand.ts";
 import { useI18n } from "../i18n";
 
 /** Stars are always out of five — the denominator of every rating in the app. */

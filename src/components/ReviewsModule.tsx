@@ -1,7 +1,7 @@
 // Ratings & reviews: average + distribution bars on the left, the review list
 // on the right. User-submitted reviews appear first, tagged "mine".
 
-import { STAR_COLOR } from "../data/demo.ts";
+import { STAR_COLOR } from "../lib/brand.ts";
 import type { Product } from "../data/types.ts";
 import { useI18n } from "../i18n";
 import { distFor, ratingFor, reviewsFor } from "../lib/ratings.ts";

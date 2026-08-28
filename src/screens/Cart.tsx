@@ -1,7 +1,7 @@
 // Cart page: line items on the left, a sticky order-summary aside with the
 // free-shipping progress bar, promo input, and checkout CTA on the right.
 
-import { BUNDLE_OFF, FREE_SHIP, PROMO_CODE } from "../data/demo.ts";
+import { BUNDLE_OFF, FREE_SHIP, PROMO_CODE } from "../lib/shop.ts";
 import { useI18n } from "../i18n";
 import { catName } from "../lib/catalog.ts";
 import { money } from "../lib/format.ts";
@@ -621,10 +621,10 @@ export function Cart() {
                 }}
               >
                 <Icon name="lock" size={13} />
-                {rich(t("screens.cart.securePoweredBy"), {
-                  stripe: (
+                {rich(t("screens.summary.noChargeNote"), {
+                  lead: (
                     <span style={{ fontWeight: 700, color: "var(--fg-muted)" }}>
-                      Stripe
+                      {t("screens.summary.noChargeLead")}
                     </span>
                   ),
                 })}

@@ -2,7 +2,7 @@
 // shots), price + variant status, option matrix, personalization accordion,
 // qty + add/buy, details/specs, bundle, reviews, and related products.
 
-import { BUNDLE_OFF } from "../data/demo.ts";
+import { BUNDLE_OFF } from "../lib/shop.ts";
 import { useI18n, type MessageKey } from "../i18n";
 import { catName, statusMeta } from "../lib/catalog.ts";
 import { money } from "../lib/format.ts";

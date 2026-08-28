@@ -1,6 +1,6 @@
 // Right-side cart drawer with empty + filled states.
 
-import { FREE_SHIP } from "../data/demo.ts";
+import { FREE_SHIP } from "../lib/shop.ts";
 import { useI18n } from "../i18n";
 import { money } from "../lib/format.ts";
 import { hexToRgba } from "../lib/placeholders.ts";

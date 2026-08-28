@@ -24,7 +24,6 @@ export const SHIP_OVERNIGHT = 28;
 export const SHIP_STANDARD = 6;
 
 /** Amber used for star glyphs — a brand/demo literal, not a theme token. */
-export const STAR_COLOR = "#f5a623";
 
 /** Build a verified Unsplash image URL from a photo id. */
 const img = (id: string): string =>

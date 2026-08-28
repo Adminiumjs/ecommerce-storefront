@@ -3,8 +3,8 @@
 // top-level App switches on `view`.
 
 import { create } from "zustand";
-import { PROMO_CODE, PROMO_RATE } from "../data/demo.ts";
-import { demoSource } from "../data/source.ts";
+import { PROMO_CODE, PROMO_RATE } from "../lib/shop.ts";
+import { source } from "../data/source.ts";
 import { number as fmtNumber, t as tr } from "../i18n/ambient";
 import type {
   Cart,
@@ -74,7 +74,9 @@ export interface ToastMsg {
   t: number;
 }
 
-const src = demoSource;
+/* The seam, not the seed. `demoSource` here meant a connected build read the
+ * demo catalog no matter what the server said — the swap had nowhere to land. */
+const src = source;
 const products = src.getProducts();
 const index = indexBy(products);
 
