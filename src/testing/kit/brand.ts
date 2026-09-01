@@ -85,9 +85,22 @@ import { codeOf, ownShippedFiles, relativeTo, shippedFiles } from './files.ts';
  * thirteenth firm would then pass in the host that had heard of it and fail in
  * the one that had not, which is 24 D21 broken by a route nobody looks down.
  * A thirteenth firm belongs here, where all twelve hosts get it.
+ *
+ * ── AND ONE TOKEN GETS A NARROWER BOUNDARY THAN `\b` ───────────────────────
+ *
+ * Found by the fifth consumer (31-T07): its seeded status history says a bad
+ * deploy "rejected fresh sign-ups", and `\bups\b` matched it — a hyphen is a
+ * word boundary to a regex and the middle of a word to English, so every
+ * hyphenated compound ending in "-ups" (sign-ups, follow-ups, mock-ups,
+ * pick-ups) read as the parcel company. The exclusion is scoped to that ONE
+ * token rather than applied to the list: a hyphen before `dhl` is not English
+ * at all — it is `shipping-dhl` in a path, which is precisely a mention this
+ * gate must go on refusing outside the one allowed line. So `ups` alone
+ * refuses a letter-hyphen prefix, "UPS" on its own still bites, and the
+ * self-test holds all three directions.
  */
 export const COMPANY_NAMES =
-  /\b(dhl|canva|royal ?mail|stripe|mailchimp|fedex|ups|dpd|hermes|paypal|klarna|sendgrid|shopify)\b/i;
+  /\b(dhl|canva|royal ?mail|stripe|mailchimp|fedex|dpd|hermes|paypal|klarna|sendgrid|shopify)\b|(?<![A-Za-z]-)\bups\b/i;
 
 /**
  * The one line a host source may hold a company name on: the vendored import.
@@ -248,6 +261,13 @@ export function brandGuard(config: HostFacts): void {
       expect(bites("    name: 'Royal Mail Shipping',")).toBe(1);
       expect(bites("const carrier = 'DHL';")).toBe(1);
       expect(bites("    name: 'A second delivery company',")).toBe(0);
+      // A hyphenated compound is one English word, whatever a regex thinks a
+      // boundary is. "sign-ups" named a parcel company to the first draft of
+      // this rule, on the fifth consumer's seeded status history — while a real
+      // mention, which touches no hyphen, still bites.
+      expect(bites('  text: "A bad deploy rejected fresh sign-ups.",')).toBe(0);
+      expect(bites("  note: 'hand the follow-ups to whoever is on shift',")).toBe(0);
+      expect(bites("  carrier = 'UPS';")).toBe(1);
 
       const leaf = basename(config.vendorDir);
       expect(

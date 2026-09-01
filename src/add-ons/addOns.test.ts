@@ -158,6 +158,7 @@ describe("ecommerce-storefront · registration, and what it is not", () => {
       "checkout.delivery.methods",
       "order.dispatch.actions",
       "order.dispatch.panel",
+      "record.actions", // 31 O4: the return-label fill; renders null for any entity but "return"
       "settings.add-on.panel",
     ]);
   });

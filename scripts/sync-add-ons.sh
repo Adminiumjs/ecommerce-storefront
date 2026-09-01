@@ -135,7 +135,7 @@ FILES_shipping_dhl=(
   demo-carrier.ts settings.ts runtime.ts index.ts
   i18n/strings.ts i18n/t.ts
   ui/atoms.tsx ui/labels.ts ui/DispatchAction.tsx ui/DeliveryMethods.tsx
-  ui/SettingsPanel.tsx ui/TrackingPanel.tsx
+  ui/SettingsPanel.tsx ui/TrackingPanel.tsx ui/ReturnLabel.tsx
 )
 # Modules that must never be reachable from the browser half (D15), and the
 # server ENTRY POINTS a manifest's `provides[].server` names. The delivery
