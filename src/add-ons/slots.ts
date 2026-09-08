@@ -1,9 +1,9 @@
 /**
  * THE SLOTS THIS STOREFRONT MOUNTS, and what it draws where nothing fills one.
  *
- * ── THREE OF TWELVE, AND THE BOUNDARY IS STRUCTURAL ────────────────────────
+ * ── THREE OF THIRTEEN, AND THE BOUNDARY IS STRUCTURAL ──────────────────────
  *
- * `vendor/host/slots.ts` carries the CLOSED REGISTRY — twelve ids, every place
+ * `vendor/host/slots.ts` carries the CLOSED REGISTRY — thirteen ids, every place
  * in any Adminium app an add-on may reach. This list is three of them, and the
  * three are not a preference about how much to do in one go. They are what a
  * CUSTOMER frontend can honestly host.
@@ -53,9 +53,9 @@ import { HOSTED_SLOTS as SLOT_REGISTRY, type SlotEmptyBehaviour, type SlotId } f
  * `vendor/host/slots.ts` exports the closed registry under the name
  * `HOSTED_SLOTS`, which is the same identifier this file uses for the three ids
  * the app actually mounts — and importing the wrong one silently widens every
- * check in the kit: the mounts guard would demand mounts for twelve ids, the
- * empty-behaviour table below would need twelve rows, and the payload generic
- * would accept ids no screen here draws. The rename is at the import so the
+ * check in the kit: the mounts guard would demand mounts for every id in the
+ * registry, the empty-behaviour table below would need a row for each, and the
+ * payload generic would accept ids no screen here draws. The rename is at the import so the
  * mistake cannot be made by autocomplete, and `guards/mounts.ts` asserts this
  * list is a strict subset of the registry so it is a named failure if it ever
  * is.

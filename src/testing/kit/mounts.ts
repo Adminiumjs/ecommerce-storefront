@@ -44,10 +44,10 @@
  * `vendor/host/slots.ts` exports the CLOSED REGISTRY under the name
  * `HOSTED_SLOTS`, which is the same identifier a host uses for the five or nine
  * it actually mounts. Importing the wrong one silently WIDENS every slot check
- * in this package — the mounts guard would demand mounts for twelve ids, the
- * empty-behaviour table would need twelve rows, and the payload generic would
- * accept ids the host never draws. `config.ts` promises this guard names that
- * mistake, and it does, below.
+ * in this package — the mounts guard would demand mounts for every id in the
+ * registry, the empty-behaviour table would need a row for each, and the
+ * payload generic would accept ids the host never draws. `config.ts` promises
+ * this guard names that mistake, and it does, below.
  */
 
 import { HOSTED_SLOTS, type SlotId } from '../../add-ons/vendor/host/index.ts';
@@ -163,12 +163,13 @@ export function mountsGuard<S extends SlotId>(
        * The check is set EQUALITY with the registry, not a count. It is safe
        * today because the registry deliberately carries ids NO example app
        * mounts — `record.editor.panel`, whose host is Adminium's generated
-       * dashboard, and `record.actions`, which ships unfilled — so a host
-       * claiming all twelve has imported the wrong constant rather than built
-       * an extraordinary app.
+       * dashboard, `record.actions`, which ships unfilled, and `shell.overlay`,
+       * which two of the seven hosts declare and none of them mounts — so a
+       * host claiming the whole registry has imported the wrong constant
+       * rather than built an extraordinary app.
        *
        * WHAT WOULD CHANGE THIS: a host that genuinely mounts every id in the
-       * registry. It does not exist and cannot until those two ids have an
+       * registry. It does not exist and cannot until those ids have an
        * example-app home, and when one does, this case is the thing to delete
        * rather than to widen — the mis-import would then need catching by
        * identity at the import site instead.
