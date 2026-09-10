@@ -111,6 +111,25 @@ export {
 } from './label-pairing.ts';
 
 export {
+  claimIn,
+  deliveryClaimsGuard,
+  droppedLabels,
+  unlabelledClaims,
+  CLAIM_PATTERNS,
+  type ClaimFinding,
+  type DeliveryClaimScope,
+} from './delivery-claims.ts';
+
+export {
+  recordPayloadFindings,
+  recordPayloadGuard,
+  RECORD_ACTIONS,
+  REQUIRED_PAYLOAD_MEMBERS,
+  type PayloadFinding,
+  type RecordPayloadScope,
+} from './record-payload.ts';
+
+export {
   discoveredFacts,
   factsFrom,
   factsGuard,

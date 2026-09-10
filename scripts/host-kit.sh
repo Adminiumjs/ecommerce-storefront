@@ -145,10 +145,12 @@ FILES_guards=(
   files.ts
   lexicon.ts
   brand.ts
+  delivery-claims.ts
   facts.ts
   label-pairing.ts
   mounts.ts
   payload-casts.ts
+  record-payload.ts
   styles.ts
   tier.ts
   vendored.ts

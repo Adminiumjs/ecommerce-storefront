@@ -137,6 +137,22 @@ export const TIER_1_GUARDS: readonly GuardEntry[] = [
       'BSD) leaving a tree of unresolvable imports the sync’s own status reports green',
   },
   {
+    symbol: 'deliveryClaimsGuard',
+    what: 'the build-mode rule over every claim about a delivery (34 D19)',
+    closes:
+      'copy telling a reader something was emailed, sent, printed or downloaded by a build ' +
+      'that does none of it — and the demo label that survives in English and is dropped in ' +
+      'the other seven, which tells those readers it happened',
+  },
+  {
+    symbol: 'recordPayloadGuard',
+    what: 'what a `record.actions` mount hands over (34 §5.3)',
+    closes:
+      'a mount with no record for the fill to draw from, and a projection typed out at the ' +
+      'mount site — which puts one add-on’s slot ids inside a host screen and undoes the ' +
+      'inversion that makes the add-on portable',
+  },
+  {
     symbol: 'stylesGuard',
     what: 'the two-condition rule pair in the host’s stylesheet',
     closes:

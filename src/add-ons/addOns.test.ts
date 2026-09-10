@@ -23,6 +23,8 @@ import {
   labelPairingSourceGuard,
   lexiconGuard,
   payloadCastsGuard,
+  deliveryClaimsGuard,
+  recordPayloadGuard,
   stylesGuard,
   tierGuard,
   vendoredGuard,
@@ -37,6 +39,28 @@ import { PRODUCTS } from "../data/demo.ts";
 import { HOSTED_SLOTS as SLOT_REGISTRY, SLOT_FILL } from "./vendor/host/index.ts";
 import { MESSAGES } from "../i18n/messages/index.ts";
 import { LOCALE_TAGS } from "../i18n/locales";
+
+/**
+ * Claims about a delivery this app makes, each answered (34 D19, §6.2).
+ *
+ * Two of the three are the loudest unlabelled claim in this fleet, and they are
+ * the reason this storefront is in 34f at all: a build that sends no mail tells
+ * a customer their receipt has been emailed. §6.2's fix is that both become
+ * build-mode truth read from the document row's `delivery` — which needs the
+ * document client, and therefore 34-T21b's release. Until then the debt is
+ * written down here rather than left to be discovered on a customer's screen.
+ */
+const DELIVERY_CLAIMS: Record<string, string> = {
+  // A stage name in the confirmation's progress strip — step three of three —
+  // not a statement that anything was dispatched.
+  'screens.confirm.step3Title': 'a progress-step name, not a claim about a delivery',
+
+  'screens.confirm.receiptLine':
+    'no mail is sent by any build today — §6.2 makes this read the row’s `delivery`; blocked on 34-T21b',
+  'screens.confirm.emailNote':
+    'no mail is sent by any build today — §6.2 makes this read the row’s `delivery`; blocked on 34-T21b',
+};
+
 
 /*
  * The bundle the gate reads is the MERGED one — this app's own copy plus every
@@ -95,6 +119,18 @@ stylesGuard(hostKit);
  * suite faster, this is what says so out loud instead of four suites quietly
  * finding nothing.
  */
+/*
+ * 34 D19. This app labels no simulation — it has no demo-marker convention at
+ * all — so every claim it makes has to be answered in `claimsDeclared`, by
+ * name, with the argument being made.
+ */
+deliveryClaimsGuard(hostKit, {
+  bundleFor: (locale) => MESSAGES[locale as never] ?? {},
+  demoLabels: {},
+  claimsDeclared: DELIVERY_CLAIMS,
+});
+recordPayloadGuard(hostKit);
+
 tierGuard(hostKit);
 
 // ── and this app's own claims about the seam ────────────────────────────────
