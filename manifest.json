@@ -258,6 +258,9 @@
         "group": "manifest:ecommerce-shop",
         "icon": "package",
         "order": 2
+      },
+      "bindings": {
+        "rows": "products"
       }
     },
     {
@@ -271,11 +274,14 @@
         "group": "manifest:ecommerce-shop",
         "icon": "receipt",
         "order": 3
+      },
+      "bindings": {
+        "rows": "orders"
       }
     },
     {
       "ref": "shop-customers",
-      "template": "page-directory",
+      "template": "page-crud",
       "title": {
         "key": "mft.ecommerce.page.customers",
         "fallback": "Customers"
@@ -284,6 +290,9 @@
         "group": "manifest:ecommerce-shop",
         "icon": "users",
         "order": 4
+      },
+      "bindings": {
+        "rows": "customers"
       }
     },
     {
@@ -297,6 +306,9 @@
         "group": "manifest:ecommerce-shop",
         "icon": "store",
         "order": 5
+      },
+      "bindings": {
+        "rows": "shop_settings"
       }
     }
   ],
