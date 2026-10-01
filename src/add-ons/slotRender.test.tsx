@@ -15,13 +15,13 @@
  * A slot is recorded here only when REACT CALLS THE COMPONENT. That is a
  * different question from the grep's, not a sharper one.
  *
- * ── AND THE OTHER HALF: D6, PROVED BY RENDERING TWICE ──────────────────────
+ * ── AND THE OTHER HALF: THE EMPTY STATE, PROVED BY RENDERING TWICE ─────────
  *
  * `renderEverySurface` runs the whole app twice — once with NOTHING connected
  * and once with everything — and both passes matter for different reasons. The
  * second reaches a slot that only exists once an add-on is switched on (the
  * settings panel lives inside a card in the manage drawer, and a drawer with no
- * connected add-on correctly has no card). The FIRST is the D6 claim itself:
+ * connected add-on correctly has no card). The FIRST is the empty-state claim:
  * with an empty `enabled` set every mount still happens and every one of them
  * is handed the host's own words, so the app a shopper meets is the app that
  * shipped before this seam existed.
@@ -29,8 +29,8 @@
  * WHY A DOM AND NOT `renderToStaticMarkup`: zustand v5 serves
  * `getInitialState()` as its server snapshot, so a server render shows the
  * state the store was BORN in and no amount of driving it has any effect.
- * `jsdom` is a devDependency and ships in nothing (25 D11 is about runtime
- * dependencies — see `host-kit.config.ts`).
+ * `jsdom` is a devDependency and ships in nothing (the no-new-dependency rule
+ * is about runtime dependencies — see `host-kit.config.ts`).
  */
 
 import { act, type ReactNode } from "react";
@@ -58,8 +58,8 @@ const { mounts } = vi.hoisted(() => ({ mounts: [] as SlotMountRecord[] }));
  * never be mistaken for paint. This suite is about the mount sites a screen
  * offers and the empty states it hands them, not about what an add-on draws:
  * the fills have their own suites in their own package, and letting them render
- * here would make this app's D6 behaviour depend on which add-ons happened to
- * be vendored on the day.
+ * here would make this app's empty-state behaviour depend on which add-ons
+ * happened to be vendored on the day.
  */
 vi.mock("./slot.tsx", () => ({
   AddOnSlot: (props: { slot: string; fallback?: ReactNode }) => {
@@ -170,8 +170,8 @@ mountsGuard(hostKit, {
     mounts.length = 0;
   },
   renderEverySurface: () => {
-    // Pass one: NOTHING CONNECTED. This is the D6 state and the state every
-    // shopper meets in a shipped demo.
+    // Pass one: NOTHING CONNECTED. This is the honest empty state and the
+    // state every shopper meets in a shipped demo.
     for (const key of DEMO_KEYS) useStore.getState().disconnectAddOn(key);
     renderEverySurface();
     // Pass two: everything connected, which is the only way to reach a slot

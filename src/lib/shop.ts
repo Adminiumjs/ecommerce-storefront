@@ -1,7 +1,7 @@
 // The merchant's own settings, read once through the seam.
 //
 // Every constant here used to be imported straight from `data/demo.ts` by the
-// pricing engine, the store and five screens. That is §5.1's caveat (a): rows
+// pricing engine, the store and five screens. That is the seam's caveat: rows
 // behind the seam do nothing for code that reaches around it. A connected
 // storefront kept the demo's 8.5% tax, the demo's promo code, the demo's
 // shipping prices and the demo's name while every product on the page came from

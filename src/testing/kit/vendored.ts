@@ -69,10 +69,11 @@ export interface VendoredGuardOptions {
    * The bare specifiers a vendored file may still name after the rewrite.
    *
    * `config.ts` has no field for this and deliberately so: it is not a fact
-   * about the host's LAYOUT, it is the host's runtime dependency list (24 D7),
-   * and a host that adds one has made a decision that belongs in the diff where
-   * the dependency was added. The default is the four every example app already
-   * carries; a host passing a fifth is saying so where a reviewer sees it.
+   * about the host's LAYOUT, it is the host's runtime dependency list, which no
+   * add-on may grow, and a host that adds one has made a decision that belongs
+   * in the diff where the dependency was added. The default is the four every
+   * example app already carries; a host passing a fifth is saying so where a
+   * reviewer sees it.
    */
   allowedBareSpecifiers?: readonly string[];
 }

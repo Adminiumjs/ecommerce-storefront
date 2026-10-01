@@ -75,7 +75,7 @@ export type EveryHostedSlotIsInTheRegistry = Extract<
 >;
 
 /**
- * WHAT THIS APP DRAWS WHERE NOTHING FILLS EACH SLOT (24 D6, D19).
+ * WHAT THIS APP DRAWS WHERE NOTHING FILLS EACH SLOT.
  *
  * `speaks` — a real empty state IN WORDS, where a reader has something to be
  * told. `silent` — nothing at all, not a dashed box and not a muted heading,
@@ -101,13 +101,13 @@ export const SLOT_EMPTY_BEHAVIOUR: Readonly<Record<HostedSlotId, SlotEmptyBehavi
    */
   "checkout.delivery.methods": "speaks",
   /*
-   * SPEAKS, and this is the mount where D6 does the most work. With nothing
-   * connected the confirmation page has always promised a tracking e-mail and
-   * left it there, which is a finished screen — a real shop with no carrier
-   * integration does exactly that. So the empty state is not an apology for a
-   * missing add-on; it is that promise, kept where it always was, under a
-   * heading the panel would otherwise occupy. Silence here would leave a
-   * labelled card with a hole in it.
+   * SPEAKS, and this is the mount where the empty state does the most work.
+   * With nothing connected the confirmation page has always promised a
+   * tracking e-mail and left it there, which is a finished screen — a real
+   * shop with no carrier integration does exactly that. So the empty state is
+   * not an apology for a missing add-on; it is that promise, kept where it
+   * always was, under a heading the panel would otherwise occupy. Silence here
+   * would leave a labelled card with a hole in it.
    */
   "order.dispatch.panel": "speaks",
   /*

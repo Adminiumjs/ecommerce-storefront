@@ -28,12 +28,12 @@
  * ── AND THE ASSERTION THAT USED TO SIT BESIDE IT AND WAS ACTIVELY WRONG ─────
  *
  * The same suite also asserted the OPPOSITE direction — that `HOSTED_SLOTS`
- * contains every fill of every registered add-on — which forbids the thing
- * 24 D21 claims. One add-on declares six fills; one host mounts five slots,
- * five of which that add-on does not fill. Registering a perfectly good
- * portable add-on there would have turned a LIVE app's suite red while the app
- * itself ran faultlessly, and the only way to keep it green would have been to
- * stop the add-on being portable.
+ * contains every fill of every registered add-on — which forbids the very thing
+ * portability promises: that an add-on runs unchanged in any host. One add-on
+ * declares six fills; one host mounts five slots, five of which that add-on
+ * does not fill. Registering a perfectly good portable add-on there would have
+ * turned a LIVE app's suite red while the app itself ran faultlessly, and the
+ * only way to keep it green would have been to stop the add-on being portable.
  *
  * A fill for a slot the host does not mount simply does not render, AND THAT IS
  * PORTABILITY. Nothing in this file asserts anything about which slots an
@@ -138,12 +138,12 @@ export function mountProblems<S extends SlotId>(
   };
 }
 
-/** DECLARE THE MOUNT SUITE for one host (24 §5.4, D6, D21). */
+/** DECLARE THE MOUNT SUITE for one host. */
 export function mountsGuard<S extends SlotId>(
   config: HostKitConfig<S>,
   fixtures: MountFixtures,
 ): void {
-  describe(`${config.appKey} · every slot it hosts is really mounted (24 §5.4)`, () => {
+  describe(`${config.appKey} · every slot it hosts is really mounted`, () => {
     it('names only slots the closed registry has', () => {
       expect(
         mountProblems(config, []).unknownIds,

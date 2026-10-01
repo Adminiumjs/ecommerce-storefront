@@ -8,8 +8,8 @@
  *
  * ── WHY THE CRITERION'S OWN GREP PROVED NOTHING ─────────────────────────────
  *
- * 24 AC5 says nothing in the host app names a carrier, and the grep the
- * criterion prescribes is "dhl". That is exactly the name the print works did
+ * The acceptance criterion says nothing in the host app names a carrier, and
+ * the grep it prescribes is "dhl". That is exactly the name the print works did
  * NOT contain, so the criterion passed and proved nothing. What the works DID
  * contain, until a suite of this shape existed, was
  *
@@ -54,8 +54,8 @@
  *
  * `zod` rides along for the reason the repo it came from gives: the vendored
  * manifest validator imports it, it is a devDependency, and it is a runtime
- * dependency the host does not carry (24 D7). Both are reachable only by an
- * import from a screen, which is what this looks for.
+ * dependency the host does not carry. Both are reachable only by an import
+ * from a screen, which is what this looks for.
  */
 
 import { basename } from 'node:path';
@@ -69,11 +69,11 @@ import { codeOf, ownShippedFiles, relativeTo, shippedFiles } from './files.ts';
  * THE FIRMS A SHOP WOULD PLAUSIBLY REACH FOR.
  *
  * Word-anchored, and here the anchor is right — unlike the vocabulary ban,
- * where 17 §2's own grep is a substring run and an anchored copy would be
- * strictly weaker than the gate it stands for. This rule has no gate behind it
- * to be weaker than; what it has is a shop that says "ups" inside "groups" and
- * "dpd" inside nothing at all. `\b` is what keeps the report readable, and a
- * report nobody skims is the only kind that gets acted on.
+ * where the release sweep's own grep is a substring run and an anchored copy
+ * would be strictly weaker than the gate it stands for. This rule has no gate
+ * behind it to be weaker than; what it has is a shop that says "ups" inside
+ * "groups" and "dpd" inside nothing at all. `\b` is what keeps the report
+ * readable, and a report nobody skims is the only kind that gets acted on.
  *
  * IT IS NOT A COMPLETE LIST OF COMPANIES AND CANNOT BE. Naming every firm on
  * earth is the `ONE_SHOP_WORDS` problem again: the honest statement is that
@@ -83,13 +83,14 @@ import { codeOf, ownShippedFiles, relativeTo, shippedFiles } from './files.ts';
  *
  * A HOST MAY NOT ADD TO IT, for `config.ts`'s reason: an add-on that named a
  * thirteenth firm would then pass in the host that had heard of it and fail in
- * the one that had not, which is 24 D21 broken by a route nobody looks down.
- * A thirteenth firm belongs here, where all twelve hosts get it.
+ * the one that had not — an add-on no longer running unchanged in any host,
+ * broken by a route nobody looks down. A thirteenth firm belongs here, where
+ * all twelve hosts get it.
  *
  * ── AND ONE TOKEN GETS A NARROWER BOUNDARY THAN `\b` ───────────────────────
  *
- * Found by the fifth consumer (31-T07): its seeded status history says a bad
- * deploy "rejected fresh sign-ups", and `\bups\b` matched it — a hyphen is a
+ * Found by the fifth consumer: its seeded status history says a bad deploy
+ * "rejected fresh sign-ups", and `\bups\b` matched it — a hyphen is a
  * word boundary to a regex and the middle of a word to English, so every
  * hyphenated compound ending in "-ups" (sign-ups, follow-ups, mock-ups,
  * pick-ups) read as the parcel company. The exclusion is scoped to that ONE
@@ -221,7 +222,7 @@ export function guardHalfImportsIn(source: string, guardDir: string): string[] {
 
 /** DECLARE THE BRAND SUITE for one host. */
 export function brandGuard(config: HostFacts): void {
-  describe(`${config.appKey} · the host names no company (24 AC5)`, () => {
+  describe(`${config.appKey} · the host names no company`, () => {
     const allowedLine = vendorImportLine(config);
 
     it('has host sources to read', () => {

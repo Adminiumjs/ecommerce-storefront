@@ -77,7 +77,7 @@
 # WHAT IS DELIBERATELY NOT COPIED, and none of it is an oversight:
 #   *.test.ts(x)   the monorepo runs its own suites; re-running them here would
 #                  assert the copy rather than the thing (and the conformance
-#                  suites pull in zod, which the host does not carry — 24 D7).
+#                  suites pull in zod, which the host does not carry).
 #   src/testing/   the copied conformance harness and build helpers, same
 #                  reason. The shared package's `testing/` entry point — where
 #                  its zod validators live — is never vendored either.
@@ -87,7 +87,7 @@
 #                  a STRICT SUBSET of the registry, asserted by the kit's mounts
 #                  guard, because this app hosts three of the twelve.
 #   src/carrier.ts src/http.ts src/server.ts src/server/artwork-source.ts
-#                  the SERVER halves. Secrets are server-only (24 D15) and the
+#                  the SERVER halves. Secrets are server-only and the
 #                  client bundle must not be able to reach the module that holds
 #                  them. `status` fails if one ever appears under vendor/.
 #   vite-env.d.ts  ambient Vite types the host already has.
@@ -137,7 +137,7 @@ FILES_shipping_dhl=(
   ui/atoms.tsx ui/labels.ts ui/DispatchAction.tsx ui/DeliveryMethods.tsx
   ui/SettingsPanel.tsx ui/TrackingPanel.tsx ui/ReturnLabel.tsx
 )
-# Modules that must never be reachable from the browser half (D15), and the
+# Modules that must never be reachable from the browser half, and the
 # server ENTRY POINTS a manifest's `provides[].server` names. The delivery
 # add-on's `carrier.ts` and `http.ts` hold the real transport and the credential
 # it authenticates with; a copy of either under `vendor/` would put a secret one
@@ -341,7 +341,8 @@ cmd_status() {
       done < <(cd "$dest" && find . -type f | sed 's|^\./||' | sort)
 
       if [ "$key" != host ]; then
-        # D15: the server half must not be reachable from a browser bundle.
+        # Secrets stay server-side: the server half must not be reachable from a
+        # browser bundle.
         for f in "${FORBIDDEN[@]}"; do
           [ -e "$dest/$f" ] && { state="SECRET-LEAK $f"; drift=1; }
         done

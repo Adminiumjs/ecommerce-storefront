@@ -1,7 +1,7 @@
 /*
  * Design tokens for adminium.dev — a faithful, hand-inlined mirror of
  * @adminium/tokens (packages/tokens/src/{tokens,accents}.css in the product
- * monorepo). Values are canonical; see 02-design-system.md §1.
+ * monorepo). Values are canonical.
  *
  * This file is copied rather than imported because the website is a separate
  * repo and @adminium/tokens is not yet on npm. When it is published, replace
@@ -22,7 +22,7 @@
 :root {
   color-scheme: light;
 
-  /* Neutral surfaces + text (02-design-system.md §1.1) */
+  /* Neutral surfaces + text */
   --bg: #f6f6f8;
   --surface: #ffffff;
   --surface-2: #fafafa;
@@ -50,7 +50,7 @@
   --shadow-lg: 0 12px 34px rgba(20, 20, 35, 0.13);
   --scrim: rgba(10, 10, 15, 0.5);
 
-  /* Accent — indigo, per-theme pair resolved into --accent (02 §1.2) */
+  /* Accent — indigo, per-theme pair resolved into --accent */
   --accent-light: #4f46e5;
   --accent-dark: #99a5ff;
   --accent: var(--accent-light);

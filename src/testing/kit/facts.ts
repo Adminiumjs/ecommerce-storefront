@@ -19,7 +19,8 @@
  * registration alone, turned that host's egress gate red on an address it had
  * never heard of; making the add-on pass required editing a list in the app
  * RECEIVING it. A host that must be edited before a portable add-on passes its
- * gates makes 24 D21 false by a route nobody would look down.
+ * gates breaks the promise that an add-on runs unchanged in any host, by a
+ * route nobody would look down.
  *
  * AND SILENTLY IN THE OTHER, WHICH IS WORSE. A host's "no credential reached
  * the browser" gate was a list of the two add-ons that happened to exist when
@@ -196,9 +197,9 @@ export interface FactsGuardOptions {
   modules?: Readonly<Record<string, AddOnFactsModule>>;
 }
 
-/** DECLARE THE DISCOVERY SUITE for one host (24 AC20, D21). */
+/** DECLARE THE DISCOVERY SUITE for one host. */
 export function factsGuard(config: HostFacts, options: FactsGuardOptions = {}): void {
-  describe(`${config.appKey} · an add-on brings its own facts with it (24 AC20, D21)`, () => {
+  describe(`${config.appKey} · an add-on brings its own facts with it`, () => {
     const facts = factsFrom(options.modules ?? VENDORED_FACTS);
 
     it('reads a declaration off every add-on this host vendors', () => {

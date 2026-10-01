@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * Connected mode (28-public-surface.md §5.2, 28-T28).
+ * Connected mode.
  *
  * ── WHY THIS DRIVES A REAL CLIENT ──────────────────────────────────────────
  * `createPublicClient` takes an injectable `fetch`, so these run the SHIPPED
@@ -12,7 +12,8 @@
  * This repo's schema cannot express options, variants, reviews, ratings, specs,
  * descriptions or a featured flag, and it has no home for the merchant's tax
  * rate, promo code or shipping prices. Those absences are pinned below so that
- * 28-T36 filling one of them BREAKS a test rather than passing unnoticed.
+ * a schema change filling one of them BREAKS a test rather than passing
+ * unnoticed.
  */
 
 import { describe, expect, it } from "vitest";
@@ -127,7 +128,7 @@ describe("the catalog", () => {
   it("files a product under one category, stably, when the join says many", async () => {
     const snap = await snapshot();
     // Two rows for product 1; the lowest category id wins so the product does
-    // not move tabs between page loads. WS-I G-2.
+    // not move tabs between page loads. Gap G-2.
     expect(snap!.products[0]!.cat).toBe("gear");
     expect(snap!.products[1]!.cat).toBe("apparel");
   });
@@ -137,7 +138,7 @@ describe("the catalog", () => {
     const second = await snapshot();
     expect(first!.products[0]!.tint).toBe(second!.products[0]!.tint);
     expect(first!.products[0]!.tint).toMatch(/^#[0-9a-f]{6}$/);
-    // WS-I G-3: neither table has an icon column.
+    // Gap G-3: neither table has an icon column.
     expect(first!.products[0]!.icon).toBe("package");
     expect(first!.categories[0]!.icon).toBe("tag");
   });
@@ -155,8 +156,8 @@ describe("the catalog", () => {
 describe("what this schema cannot say is left empty, not invented", () => {
   it("ships no description, specs, options, variants or featured flag", async () => {
     const product = (await snapshot())!.products[0]!;
-    // WS-I G-5. If 28-T36 gives any of these a column, this test should fail —
-    // that is what makes the gap visible rather than forgotten.
+    // Gap G-5. If the schema gives any of these a column, this test should
+    // fail — that is what makes the gap visible rather than forgotten.
     expect(product.blurb).toBe("");
     expect(product.desc).toBe("");
     expect(product.specs).toEqual([]);
@@ -168,7 +169,7 @@ describe("what this schema cannot say is left empty, not invented", () => {
 
   it("charges nothing it cannot read, rather than the demo's rates", async () => {
     const shop = snapshotSource((await snapshot())!).getShop();
-    // WS-I G-1. The wrong number here is money: the alternative is an 8.5% tax
+    // Gap G-1. The wrong number here is money: the alternative is an 8.5% tax
     // and a working WELCOME10 against a merchant who set neither.
     expect(shop.taxRate).toBe(0);
     expect(shop.promoCode).toBe("");

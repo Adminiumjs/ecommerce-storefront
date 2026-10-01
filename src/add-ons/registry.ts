@@ -1,9 +1,9 @@
 /**
- * The static list this storefront registers at startup (24 §5.9).
+ * The static list this storefront registers at startup.
  *
  * ── THE IMPORT BELOW IS THE ONLY PLACE THIS APP NAMES AN ADD-ON ────────────
  *
- * Acceptance criterion 5, and it is grep-checked rather than promised: no
+ * A rule of the seam, and it is grep-checked rather than promised: no
  * shipped file outside `./vendor/` and the registration line above mentions a
  * company or an add-on's key. Their settings, their defaults, the words on
  * their forms, their eight-locale strings, their seeded activity and what their
@@ -24,9 +24,9 @@
  *   1. THE SEAM LANDS BEFORE ANY ADD-ON DOES. With an empty registry every slot
  *      draws its fallback and the app is unchanged on screen, so the mount
  *      points, the CSS pair and every guard were installable, reviewable and
- *      green before a single carrier rate existed. That is also the D6 check
- *      worth having, and it is not hypothetical here: it is what
- *      `slotRender.test.tsx` asserts.
+ *      green before a single carrier rate existed. That is also the
+ *      empty-state check worth having, and it is not hypothetical here: it is
+ *      what `slotRender.test.tsx` asserts.
  *   2. THE STORE STOPS IMPORTING ADD-ON BUNDLES. Every screen imports the
  *      store; under the other arrangement every screen's module graph contains
  *      every add-on.
@@ -87,7 +87,7 @@ export function demoAddOns(): AddOn[] {
  * What every add-on starts from, keyed by add-on key and OPAQUE to this app.
  *
  * The credentialled add-on's two `secret: true` settings are absent by
- * CONSTRUCTION rather than by omission (24 D15): they live in its server half,
+ * CONSTRUCTION rather than by omission: they live in its server half,
  * `register()` does not put them in `settings`, and a store the browser can
  * read is precisely where a key must never appear. Nothing here ever holds one.
  */

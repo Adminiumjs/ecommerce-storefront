@@ -4,15 +4,14 @@
  * The GUARD half: suites import this; nothing that ships may.
  */
 /**
- * WHEREVER A COMPANY IS NAMED, THE LINE IS ON THE SAME SCREEN (24 AC6) — both
- * halves of it, because neither half can see what the other does.
+ * WHEREVER A COMPANY IS NAMED, THE LINE IS ON THE SAME SCREEN — both halves
+ * of it, because neither half can see what the other does.
  *
  * ── THE RULE ────────────────────────────────────────────────────────────────
  *
- * AC6, as amended 2026-08-09, is about a READER: a surface that names a real
- * company carries the line saying Adminium is not affiliated with it. Not a
- * page further in, not at the foot of a list — on the surface where the reader
- * meets the name.
+ * The rule is about a READER: a surface that names a real company carries the
+ * line saying Adminium is not affiliated with it. Not a page further in, not at
+ * the foot of a list — on the surface where the reader meets the name.
  *
  * ── AND WHY IT TAKES TWO GUARDS ─────────────────────────────────────────────
  *
@@ -29,7 +28,7 @@
  * screen that named a company was an add-on's tile reading *"Bring it from
  * Canva — choose a design from your account…"*, and a DOM scan of that screen
  * for "affiliat" came back EMPTY: the line existed one press further in, inside
- * the flow the tile opens, which is precisely the arrangement the amendment was
+ * the flow the tile opens, which is precisely the arrangement the rule was
  * written against. It cannot cover a surface the tour does not reach.
  *
  * A host at tier 1 gets the first. A host with a DOM gets both, and `tier.ts`
@@ -182,7 +181,7 @@ export function affiliationFindings(
 
 /** DECLARE THE SOURCE HALF (tier 1 — no DOM). */
 export function labelPairingSourceGuard(config: HostFacts): void {
-  describe(`${config.appKey} · no host surface names an add-on without the line (24 AC6)`, () => {
+  describe(`${config.appKey} · no host surface names an add-on without the line`, () => {
     it('has components to read', () => {
       const components = ownShippedFiles(config).filter((file) => file.endsWith('.tsx'));
       expect(
@@ -312,7 +311,7 @@ export function labelPairingRenderedGuard(
   const selectors = selectorsFor(config);
   const marks = (options.facts ?? discoveredFacts()).marks;
 
-  describe(`${config.appKey} · no surface names a company without the line (24 AC6)`, () => {
+  describe(`${config.appKey} · no surface names a company without the line`, () => {
     it('has marks to look for, from the add-ons rather than from here', () => {
       /*
        * THE GUARD ON THE GUARD. A glob that stopped matching, or a package that

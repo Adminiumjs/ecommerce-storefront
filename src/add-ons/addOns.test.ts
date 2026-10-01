@@ -41,14 +41,15 @@ import { MESSAGES } from "../i18n/messages/index.ts";
 import { LOCALE_TAGS } from "../i18n/locales";
 
 /**
- * Claims about a delivery this app makes, each answered (34 D19, §6.2).
+ * Claims about a delivery this app makes, each answered.
  *
  * Two of the three are the loudest unlabelled claim in this fleet, and they are
- * the reason this storefront is in 34f at all: a build that sends no mail tells
- * a customer their receipt has been emailed. §6.2's fix is that both become
+ * the reason this storefront was retrofitted at all: a build that sends no mail
+ * tells a customer their receipt has been emailed. The fix is that both become
  * build-mode truth read from the document row's `delivery` — which needs the
- * document client, and therefore 34-T21b's release. Until then the debt is
- * written down here rather than left to be discovered on a customer's screen.
+ * document client, and therefore a release that carries it. Until then the
+ * debt is written down here rather than left to be discovered on a customer's
+ * screen.
  */
 const DELIVERY_CLAIMS: Record<string, string> = {
   // A stage name in the confirmation's progress strip — step three of three —
@@ -74,7 +75,7 @@ demoAddOns();
 // ── the seven that need no DOM ──────────────────────────────────────────────
 
 /**
- * The vocabulary ban, SCOPED BY 31 D4: add-on-contributed strings FAIL,
+ * The vocabulary ban, SCOPED BY A RULING: add-on-contributed strings FAIL,
  * pre-existing host copy is reported as DEBT.
  *
  * That scoping is a ruling and not a softening, and this host is the reason it
@@ -120,9 +121,9 @@ stylesGuard(hostKit);
  * finding nothing.
  */
 /*
- * 34 D19. This app labels no simulation — it has no demo-marker convention at
- * all — so every claim it makes has to be answered in `claimsDeclared`, by
- * name, with the argument being made.
+ * This app labels no simulation — it has no demo-marker convention at all — so
+ * every claim it makes has to be answered in `claimsDeclared`, by name, with
+ * the argument being made.
  */
 deliveryClaimsGuard(hostKit, {
   bundleFor: (locale) => MESSAGES[locale as never] ?? {},
@@ -182,10 +183,11 @@ describe("ecommerce-storefront · what this host claims about its own slots", ()
 describe("ecommerce-storefront · registration, and what it is not", () => {
   it("registers the delivery add-on and switches nothing on", () => {
     /*
-     * 24 D6, stated at the point where it would be easiest to break. Registering
-     * is not enabling: the store's `enabled` set starts empty, so every slot
-     * draws its fallback and the app is exactly what it was before this seam
-     * existed. `slotRender.test.tsx` proves the same thing by rendering.
+     * The app works with nothing connected, stated at the point where it would
+     * be easiest to break. Registering is not enabling: the store's `enabled`
+     * set starts empty, so every slot draws its fallback and the app is exactly
+     * what it was before this seam existed. `slotRender.test.tsx` proves the
+     * same thing by rendering.
      */
     expect(DEMO_KEYS).toEqual(["shipping-dhl"]);
     const registered = demoAddOns();
@@ -194,14 +196,15 @@ describe("ecommerce-storefront · registration, and what it is not", () => {
       "checkout.delivery.methods",
       "order.dispatch.actions",
       "order.dispatch.panel",
-      "record.actions", // 31 O4: the return-label fill; renders null for any entity but "return"
+      "record.actions", // the return-label fill; renders null for any entity but "return"
       "settings.add-on.panel",
     ]);
   });
 
   it("holds no secret, because the add-on never offered one", () => {
     /*
-     * 24 D15, asserted over the thing that would actually carry a leak: the
+     * Secrets are server-only, asserted over the thing that would actually
+     * carry a leak: the
      * default settings document, which is what the store holds and what a
      * browser can therefore read. The two `secret: true` settings the add-on's
      * manifest declares are absent by CONSTRUCTION — its `register()` does not
@@ -292,7 +295,7 @@ describe("ecommerce-storefront · the till bills in one currency", () => {
 });
 
 describe("ecommerce-storefront · the host copy this retrofit did not write", () => {
-  it("records the pre-existing debt rather than failing on it (31 D4)", () => {
+  it("records the pre-existing debt rather than failing on it", () => {
     /*
      * THE DEBT LIST, PRINTED. `lexiconGuard` above reports this without failing;
      * this case exists so the number is in the log of every run rather than

@@ -44,7 +44,7 @@ import { useStore } from "../state/store.ts";
 import { Icon } from "./Icon.tsx";
 
 /**
- * THE NOT-AFFILIATED LINE, as its own component (24 AC6).
+ * THE NOT-AFFILIATED LINE, as its own component.
  *
  * A component and not an inline paragraph because the source half of the
  * affiliation gate looks for exactly this: any of this app's own `.tsx` files
@@ -124,8 +124,8 @@ function AddOnCard({ addOn }: { addOn: AddOn }) {
     >
       <div style={{ display: "flex", alignItems: "flex-start", gap: "13px" }}>
         {/*
-          THREE LETTERS ON A NEUTRAL TILE — never a mark, drawn or traced (24
-          D12). The letters are the add-on's own `monogram`; this app does not
+          THREE LETTERS ON A NEUTRAL TILE — never a mark, drawn or traced.
+          The letters are the add-on's own `monogram`; this app does not
           know what they spell and has no image of anybody's logo anywhere.
          */}
         <span
@@ -197,7 +197,7 @@ function AddOnCard({ addOn }: { addOn: AddOn }) {
       </div>
 
       {/*
-        WHAT A DISCONNECT COSTS, IN WORDS, BEFORE IT HAPPENS (24 D16).
+        WHAT A DISCONNECT COSTS, IN WORDS, BEFORE IT HAPPENS.
 
         Both sentences are the ADD-ON's — it is the only party that knows what
         it leaves behind — and they are rendered whether or not it is currently

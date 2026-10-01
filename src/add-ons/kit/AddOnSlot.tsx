@@ -8,7 +8,7 @@
  *
  * Screens never reach into the registry themselves. They render `<AddOnSlot>`
  * and hand it what to show when nothing is there — which is how the same
- * component serves both empty-state behaviours (24 D6):
+ * component serves both empty-state behaviours:
  *
  *   `fallback` given  → the slot SPEAKS: a real, honest empty state in words,
  *                       used where a person has something to be told.
@@ -22,8 +22,8 @@
  *
  * ── WHY THIS IS A FACTORY AND NOT A COMPONENT ───────────────────────────────
  *
- * [31-T04.] Both hosts declare this as a plain exported component, and both
- * copies reach out of the seam twice on the way: `className="mp-slot-fill"` is a
+ * Both hosts declare this as a plain exported component, and both copies
+ * reach out of the seam twice on the way: `className="mp-slot-fill"` is a
  * literal, and `useStore` is imported from `../state/store.ts`. Those two lines
  * are the reason the file could only ever be installed by hand-editing it, and a
  * copy that must be edited to be installed is a fork from the first keystroke —

@@ -9,14 +9,14 @@
  * ── THE DEFECT, AT ITS THIRD DEPTH ──────────────────────────────────────────
  *
  * [Added 2026-08-11, wave 4b round 6. Mirrored byte for byte into both hosts as
- * `src/add-ons/slotContent.ts`. Moved into the kit 2026-08-28, 31-T04, with
- * nothing but this paragraph changed — it is the ONE file of the seam that never
- * drifted, and `diff print-shop maker-shop` on it was empty on the day it was
- * lifted. That is not luck: it is the only module in the seam carrying no host
- * token at all — no class prefix, no store import, no slot union — which is
- * exactly the property the rest of the kit had to be given by hand. A reader
- * wondering why the other files needed a config and this one did not has the
- * answer in that sentence.]
+ * `src/add-ons/slotContent.ts`. Moved into the kit 2026-08-28 with nothing but
+ * this paragraph changed — it is the ONE file of the seam that never drifted,
+ * and `diff print-shop maker-shop` on it was empty on the day it was lifted.
+ * That is not luck: it is the only module in the seam carrying no host token at
+ * all — no class prefix, no store import, no slot union — which is exactly the
+ * property the rest of the kit had to be given by hand. A reader wondering why
+ * the other files needed a config and this one did not has the answer in that
+ * sentence.]
  *
  * A host surface renders every fill, then renders its OWN content after them,
  * and one sibling rule decides which the reader sees:

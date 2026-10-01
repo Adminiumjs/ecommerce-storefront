@@ -19,8 +19,8 @@
  *
  *   `guards/lexicon.ts` SPELLS EVERY BANNED WORD. A barrel that re-exported it
  *   would put that list one ordinary `import { … } from '…/kit'` away from a
- *   screen — and the release grep (17 §2) reads the BUILT BUNDLE, so the
- *   failure would arrive as a red release rather than a red test.
+ *   screen — and the release grep reads the BUILT BUNDLE, so the failure would
+ *   arrive as a red release rather than a red test.
  *
  *   The guards pull in `node:fs`, a TypeScript parser and — in the tier-2 half
  *   — `@testing-library/react`. None of that belongs in a browser bundle, and a

@@ -4,8 +4,7 @@
  * The GUARD half: suites import this; nothing that ships may.
  */
 /**
- * A SCREEN MAY NOT SAY SOMETHING WAS DELIVERED UNLESS SOMETHING WAS
- * (34-invoices-add-on.md D19, §6.4; 34-T28).
+ * A SCREEN MAY NOT SAY SOMETHING WAS DELIVERED UNLESS SOMETHING WAS.
  *
  * ── THE RULE ────────────────────────────────────────────────────────────────
  *
@@ -24,7 +23,7 @@
  * the fixtures this guard was written from:
  *
  *     support-desk  an invoice toast reading "Downloading {file}" for a file
- *                   that was never written (Appendix A exhibit 4). 34-T28b
+ *                   that was never written, found by an audit. The fix
  *                   removed the button rather than labelling it.
  *     storefront    `screens.confirm.receiptLine` — "We've emailed a receipt
  *                   to {email}", from a build that sends no mail
@@ -227,7 +226,7 @@ export function droppedLabels(config: HostFacts, scope: DeliveryClaimScope): Cla
  * Tier 1: it reads bundles and a config, and needs no DOM.
  */
 export function deliveryClaimsGuard(config: HostFacts, scope: DeliveryClaimScope): void {
-  describe(`${config.appKey} · build-mode claims about delivery (34 D19)`, () => {
+  describe(`${config.appKey} · build-mode claims about delivery`, () => {
     it('has bundles to read, in every locale this host ships', () => {
       /*
        * THE GUARD ON THE GUARD. Every case below is an absence over a bundle,

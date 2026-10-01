@@ -20,7 +20,7 @@
  *
  * Every function below would be written exactly the same way against a second
  * delivery company, or against none. `src/add-ons/registry.ts` is the only
- * shipped file in this app that names one (24 AC5).
+ * shipped file in this app that names one.
  */
 
 import type {
@@ -63,7 +63,7 @@ export const SHOP_CURRENCY = "USD";
  *
  * A delivery estimate is date arithmetic and every one of its answers is
  * relative to today, so a surface that quotes one has to be told what today is.
- * 24 D11: no `Date.now()` and no bare `new Date()` in a demo, because a demo
+ * So: no `Date.now()` and no bare `new Date()` in a demo, because a demo
  * whose dates move is a demo nobody can screenshot or assert — "arrives Friday"
  * is a different sentence every day of the week, and a comparison against a
  * seeded order is a different comparison every morning.

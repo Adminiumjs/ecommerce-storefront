@@ -55,8 +55,9 @@ async function boot(): Promise<void> {
    * stays empty until somebody presses Connect in the manage drawer, so a shop
    * that has never touched it renders exactly as it did before this seam
    * existed — three delivery bands the shop sets itself, and a promise of a
-   * tracking e-mail on the order. That is 24 D6 stated as behaviour rather than
-   * as an intention, and `add-ons/slotRender.test.tsx` is what holds it.
+   * tracking e-mail on the order. That is the empty state stated as behaviour
+   * rather than as an intention, and `add-ons/slotRender.test.tsx` is what
+   * holds it.
    *
    * It IS where an add-on's eight-locale strings arrive: importing
    * `registry.ts` runs `registerAddOnMessages` at module load, which throws

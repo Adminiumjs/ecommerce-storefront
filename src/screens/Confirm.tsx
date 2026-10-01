@@ -420,16 +420,17 @@ export function Confirm() {
             the pixel: the note saying a tracking link will be e-mailed. That is
             a finished screen and not an apology — a real shop with no carrier
             integration does exactly that — which is why it is the fallback
-            rather than something a retrofit deleted (24 D6).
+            rather than something a retrofit deleted.
 
             THE HEADING IS IN `wrap`, NOT ABOVE THE SLOT, and that placement is
-            the D6 detail worth copying. `wrap` runs only when something is
-            actually filling the slot, so a shop with nothing connected does not
-            grow a "Tracking" heading over the note it already had. A heading
-            rendered unconditionally would have made the unconnected screen
-            visibly different from the one this app shipped before the seam —
-            which is precisely the claim D6 makes and the one a reviewer
-            switching the add-on off is checking.
+            the empty-state detail worth copying. `wrap` runs only when
+            something is actually filling the slot, so a shop with nothing
+            connected does not grow a "Tracking" heading over the note it
+            already had. A heading rendered unconditionally would have made
+            the unconnected screen visibly different from the one this app
+            shipped before the seam —
+            which is precisely the claim the empty state makes and the one a
+            reviewer switching the add-on off is checking.
            */}
           <AddOnSlot
             slot="order.dispatch.panel"

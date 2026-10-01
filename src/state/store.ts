@@ -270,7 +270,7 @@ export interface StoreState {
    *
    * The host holds an add-on's values and never reads inside one. The two
    * `secret: true` settings the delivery add-on declares are absent by
-   * construction rather than by omission (24 D15): they live in its server
+   * construction rather than by omission: they live in its server
    * half, its `register()` does not put them in `settings`, and a store the
    * browser can read is precisely where a key must never appear.
    */
@@ -941,11 +941,11 @@ export const useStore = create<StoreState>((set, get) => ({
    * The seam distinguishes CONNECTED from ENABLED because they are different
    * facts: a credential is a thing you have, switching an add-on on is a
    * decision you made, and a disconnect revokes the first while keeping the
-   * data (24 D16). Both hosts that had this seam first keep two sets.
+   * data. Both hosts that had this seam first keep two sets.
    *
    * THIS HOST CANNOT HOLD A CREDENTIAL AT ALL, so here the two facts coincide.
-   * It is a static customer-facing bundle with no server half of its own: 24
-   * D15 says a secret never reaches the browser, the delivery add-on's two
+   * It is a static customer-facing bundle with no server half of its own: a
+   * secret never reaches the browser, the delivery add-on's two
    * `secret: true` settings live in its server module, and this app has no
    * place to put one and never asks for one. A `credentialled` set here would
    * be a set that is always exactly `enabled` — state nobody could ever be
@@ -969,7 +969,7 @@ export const useStore = create<StoreState>((set, get) => ({
     }),
 
   /**
-   * DISCONNECT REMOVES SURFACES, NEVER DATA (24 D16).
+   * DISCONNECT REMOVES SURFACES, NEVER DATA.
    *
    * What goes: the add-on's fills stop rendering, so its rate rows and its
    * tracking panel are gone from the moment the set changes, and the shop's own
@@ -985,8 +985,8 @@ export const useStore = create<StoreState>((set, get) => ({
    * DISCONNECTED COMPANY QUOTED, still sitting on a basket nobody has paid for,
    * and leaving it would let this shop bill for a delivery it can no longer
    * book. The basket goes back to the shop's own band — which is where a shop
-   * with no carrier connected always was, and is exactly the base state D6 asks
-   * for rather than a plausible neighbouring one.
+   * with no carrier connected always was, and is exactly the base state an
+   * empty slot asks for rather than a plausible neighbouring one.
    *
    * Scoped by add-on key, because a second delivery company's quote is not this
    * one's to drop.

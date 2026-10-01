@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 /**
- * A `DataSource` backed by a real Adminium instance (28-public-surface.md §5.2,
- * 28-T28 wave 2).
+ * A `DataSource` backed by a real Adminium instance.
  *
  * ── READS DO NOT BECOME ASYNC ──────────────────────────────────────────────
  * `loadSnapshot` fetches the read-set once, before React mounts, and hands back
@@ -16,8 +15,9 @@
  * column. A connected build therefore shows a real catalog with real titles,
  * prices and photographs — and no options, no reviews, no specs and no
  * description. That is not a mapping bug to work around; it is the honest
- * distance between this app and its own DDL, and closing it is 28-T36's job for
- * this repo. Every gap is marked G-n below and asserted in the tests.
+ * distance between this app and its own DDL, and closing it means adding the
+ * missing columns to this repo's schema. Every gap is marked G-n below and
+ * asserted in the tests.
  *
  * ── IDENTITY IS THE SKU, BECAUSE THERE IS NO SLUG ──────────────────────────
  * The app addresses a product by a slug (`"kb-k2"`); the database's only stable
@@ -25,7 +25,7 @@
  * consistent — order lines reach products by foreign key, never by name — but
  * unlike hotel-reservations or factory-ops the app's own identifier is not in
  * the database, so a merchant who re-SKUs a product changes its identity. That
- * is the argument for a `slug` column, and it is WS-I part 1 verbatim.
+ * is the argument for a `slug` column.
  *
  * ── NO ORDER HISTORY, AND THAT IS THE POINT ────────────────────────────────
  * G-6. The account view is EMPTY in connected mode and the customer is blank,
@@ -34,7 +34,7 @@
  * it is every customer's name, e-mail and purchase history on a public page.
  * The read-set below therefore does not even ASK for `orders`, `orderItems` or
  * `customers` — a scope that cannot be read cannot leak. It comes back when the
- * claim flow lands (§3.4, gated on O2).
+ * claim flow lands.
  */
 
 import { createPublicClient, type PublicClient } from "@adminiumjs/public-client";
@@ -92,13 +92,13 @@ const NO_ADDRESS: PostalAddress = {
 };
 
 /**
- * WS-I G-1 — the merchant's commerce policy, which has no home in the schema.
+ * G-1 — the merchant's commerce policy, which has no home in the schema.
  *
  * Every number is ZERO and the brand and promo code are empty, deliberately.
  * The alternative is to carry the demo's: an 8.5% tax, a $6 shipping charge and
  * a working `WELCOME10` against a real merchant's catalog. The wrong number
  * here is money, and a visible zero is the only version of this that argues for
- * §5.5's settings record instead of quietly looking right.
+ * a settings record instead of quietly looking right.
  */
 const NO_POLICY: Omit<Shop, "heroImage"> = {
   brand: "",
@@ -126,9 +126,9 @@ const NO_POLICY: Omit<Shop, "heroImage"> = {
   shipFrom: NO_ADDRESS,
 };
 
-/** WS-I G-3: `categories` has no icon column, so every tab wears the same one. */
+/** G-3: `categories` has no icon column, so every tab wears the same one. */
 const DEFAULT_CATEGORY_ICON = "tag";
-/** WS-I G-3: nor does `products`. */
+/** G-3: nor does `products`. */
 const DEFAULT_PRODUCT_ICON = "package";
 
 /**
@@ -290,7 +290,7 @@ export async function loadSnapshot(client: PublicClient): Promise<Snapshot | nul
     /* A product belongs to many categories in the database and to exactly one
      * on the storefront, which filters by a single tab. The lowest category id
      * wins — an arbitrary rule, but a STABLE one, so a product does not move
-     * tabs between page loads. WS-I G-2. */
+     * tabs between page loads. G-2. */
     const catOf = new Map<number, number>();
     for (const row of links) {
       const held = catOf.get(row.product_id);
@@ -303,7 +303,7 @@ export async function loadSnapshot(client: PublicClient): Promise<Snapshot | nul
        * not the app's (`in` / `low` / `out`). They are different facts with the
        * same column name, and conflating them would put drafts on the shop
        * floor. Only `active` is for sale, and the schema carries no stock level
-       * at all — so everything on sale reads as in stock. WS-I G-4. */
+       * at all — so everything on sale reads as in stock. G-4. */
       if (row.status !== "active") continue;
       const categoryId = catOf.get(row.id);
       mapped.push({
@@ -316,7 +316,7 @@ export async function loadSnapshot(client: PublicClient): Promise<Snapshot | nul
         icon: DEFAULT_PRODUCT_ICON,
         tint: tintFor(row.sku),
         image: row.image_url ?? "",
-        /* WS-I G-5 — none of these has a column: no blurb, no description, no
+        /* G-5 — none of these has a column: no blurb, no description, no
          * spec table, no options, no variants, no personalisation, and nothing
          * to mark a product featured. They are empty rather than invented, so
          * the product page is visibly bare instead of quietly fictional. */
@@ -353,7 +353,7 @@ export async function loadSnapshot(client: PublicClient): Promise<Snapshot | nul
 /**
  * A stable, muted backdrop for a product photo while it loads.
  *
- * Presentation, not data (WS-I G-3): there is no tint column. Derived from the
+ * Presentation, not data (G-3): there is no tint column. Derived from the
  * SKU so a product keeps the same backdrop between loads and adding one does
  * not recolour the rest.
  */
@@ -386,7 +386,7 @@ export function snapshotSource(snap: Snapshot): DataSource {
   return {
     getProducts: () => snap.products.map((p) => ({ ...p, specs: [...p.specs] })),
     getCategories: () => snap.categories.map((c) => ({ ...c })),
-    // WS-I G-5: no ratings table, no reviews table. The module renders its own
+    // G-5: no ratings table, no reviews table. The module renders its own
     // empty state, which is the truth about this deployment.
     getRatings: (): Record<string, RatingSeed> => ({}),
     getReviewPool: (): Review[] => [],

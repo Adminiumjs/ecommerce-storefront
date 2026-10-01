@@ -46,14 +46,15 @@
  * ── AND WHAT IS DELIBERATELY NOT PARAMETERISED ──────────────────────────────
  *
  * The banned-word list, the company regex and the idea×language table. They are
- * facts about a RELEASE RULE (17 §2) and about LANGUAGES, not about a shop, and
- * `maker-shop/src/testing/lexicon.ts` already records what happens when a host
- * is allowed to hold its own: registering a portable add-on turned that host's
- * vocabulary gate red until somebody edited a list in `src/testing/`, because
- * Czech "pro kterou" was carved out in one host and not the other. A host that
- * must be edited before a portable add-on passes its gates makes 24 D21 false
- * by a route nobody would look down. The lists live in the kit, every host gets
- * all of them, and a host may ADD nothing.
+ * facts about a RELEASE RULE (the no-monetisation-words sweep) and about
+ * LANGUAGES, not about a shop, and `maker-shop/src/testing/lexicon.ts` already
+ * records what happens when a host is allowed to hold its own: registering a
+ * portable add-on turned that host's vocabulary gate red until somebody edited
+ * a list in `src/testing/`, because Czech "pro kterou" was carved out in one
+ * host and not the other. A host that must be edited before a portable add-on
+ * passes its gates breaks the promise that an add-on runs unchanged in any
+ * host, by a route nobody would look down. The lists live in the kit, every
+ * host gets all of them, and a host may ADD nothing.
  */
 
 import type { SlotEmptyBehaviour, SlotId } from '../vendor/host/index.ts';
@@ -61,7 +62,7 @@ import type { SlotEmptyBehaviour, SlotId } from '../vendor/host/index.ts';
 /**
  * WHICH GUARDS A HOST IS ACTUALLY RUNNING — declared, not inferred.
  *
- * ── THE RULING (31-T04) ─────────────────────────────────────────────────────
+ * ── THE RULING ──────────────────────────────────────────────────────────────
  *
  * Six of the eleven guards need nothing but `node:fs` and a TypeScript parser.
  * The other five need a DOM, because the defects they close are defects about
@@ -86,12 +87,12 @@ import type { SlotEmptyBehaviour, SlotId } from '../vendor/host/index.ts';
  * exemption list is where nine of wave 4b's holes came from. The fix is one
  * word in this file or one line out of `package.json`.
  *
- * ADDING `jsdom` DOES NOT BREACH 25 D11. That rule says an add-on ships no
- * RUNTIME dependency its host lacks — it is about what reaches a browser. A
- * `devDependencies` entry used by `vitest run` reaches no bundle, and both
- * hosts that already have the seam have carried `jsdom` since wave 4b with no
- * change to what they ship. Anybody about to "fix" this by deleting it should
- * read this paragraph and the README's TIER table first.
+ * ADDING `jsdom` DOES NOT BREACH THE NO-NEW-DEPENDENCY RULE. That rule says an
+ * add-on ships no RUNTIME dependency its host lacks — it is about what reaches
+ * a browser. A `devDependencies` entry used by `vitest run` reaches no bundle,
+ * and both hosts that already have the seam have carried `jsdom` since wave 4b
+ * with no change to what they ship. Anybody about to "fix" this by deleting it
+ * should read this paragraph and the README's TIER table first.
  */
 export type HostKitTier = 1 | 2;
 

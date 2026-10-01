@@ -41,7 +41,7 @@
  * .toHaveLength(7)` turned "register one more add-on" into a red suite on a
  * faultless live app. Nothing here counts anything.
  *
- * ── AND ADDING `jsdom` DOES NOT BREACH 25 D11 ───────────────────────────────
+ * ── AND ADDING `jsdom` DOES NOT BREACH THE NO-NEW-DEPENDENCY RULE ───────────
  *
  * That rule says an add-on ships no RUNTIME dependency its host lacks — it is
  * about what reaches a browser. A `devDependencies` entry used by `vitest run`
@@ -238,9 +238,9 @@ export function guardsNotWired(config: HostFacts, guards: readonly GuardEntry[])
   return guards.filter((guard) => !suites.some((code) => code.includes(guard.symbol)));
 }
 
-/** DECLARE THE TIER SUITE for one host (31-T04). */
+/** DECLARE THE TIER SUITE for one host. */
 export function tierGuard(config: HostFacts): void {
-  describe(`${config.appKey} · the guards this host installed (31-T04)`, () => {
+  describe(`${config.appKey} · the guards this host installed`, () => {
     const declared = declaredDependencies(config.rootDir);
     const hasDom = TIER_2_DEPENDENCIES.dom.some((name) => declared.has(name));
     const hasDriver = TIER_2_DEPENDENCIES.driver.some((name) => declared.has(name));

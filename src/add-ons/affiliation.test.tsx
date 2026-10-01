@@ -1,5 +1,5 @@
 /**
- * WHEREVER A COMPANY IS NAMED, THE LINE IS ON THE SAME SCREEN (24 AC6) — and
+ * WHEREVER A COMPANY IS NAMED, THE LINE IS ON THE SAME SCREEN — and
  * the mount component's own render behaviour, driven.
  *
  * @vitest-environment jsdom

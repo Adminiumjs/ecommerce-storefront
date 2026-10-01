@@ -92,7 +92,8 @@ export const hostKit: HostKitConfig<HostedSlotId> = {
    * `react-dom/client` and `act` with no testing library at all, which is what
    * this app's own slot suites do.
    *
-   * That dependency does not breach 25 D11. The rule is about what reaches a
+   * That dependency does not breach the no-new-dependency rule, which is about
+   * what reaches a
    * BROWSER; a devDependency `vitest` uses reaches no bundle, and `vite build`
    * output is unchanged by it.
    *

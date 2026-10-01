@@ -43,8 +43,8 @@
 # `INSTALL_LAYOUT` in `src/config.ts` records the argument in full. The short
 # version: `guards/lexicon.ts` spells every banned word, so vendoring it into
 # `src/add-ons/` would put that list one ordinary import away from a screen, and
-# the failure would be a red release (17 §2 greps the built bundle) rather than a
-# red test.
+# the failure would be a red release (the release sweep greps the built bundle)
+# rather than a red test.
 #
 # NOT COPIED, and none of it is an oversight:
 #   *.test.ts(x)       the kit runs its own suites; re-running them in a host

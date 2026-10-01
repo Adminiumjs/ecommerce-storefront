@@ -1,4 +1,4 @@
--- Ecommerce Storefront — PostgreSQL schema (§10.1 contract).
+-- Ecommerce Storefront — PostgreSQL schema.
 --
 -- This is the real database that backs the full self-host stack: the storefront
 -- reads it (through Adminium's records API) and the auto-generated Adminium admin
@@ -75,7 +75,7 @@ CREATE TABLE order_items (
 -- Everything else here is catalogue, customers and orders. The shop's own
 -- commerce policy — its tax rate, its free-shipping threshold, its promo code,
 -- what each delivery band costs — has never had a column, which is recorded at
--- length as WS-I G-1 in `src/data/adminiumSource.ts`: a connected storefront
+-- length as gap G-1 in `src/data/adminiumSource.ts`: a connected storefront
 -- shows zeroes there rather than the demo's numbers, because a wrong number in
 -- that position is money. This table is the first of those settings to get a
 -- home, and it got one because an address is the one of them that CANNOT be

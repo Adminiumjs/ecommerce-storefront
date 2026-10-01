@@ -4,17 +4,16 @@
  * The GUARD half: suites import this; nothing that ships may.
  */
 /**
- * A `record.actions` MOUNT HANDS OVER A RECORD, NOT A GUESS
- * (34-invoices-add-on.md §5.3, §6.4; 34-T28).
+ * A `record.actions` MOUNT HANDS OVER A RECORD, NOT A GUESS.
  *
  * ── THE INVERSION THIS PROTECTS ─────────────────────────────────────────────
  *
- * §5.3 settles the mapping the holiday-calendars way: THE HOST PROJECTS, THE
- * ADD-ON VALIDATES. The add-on ships no per-host mapping — one for a till's
- * `sale` shape would name the host inside a portable package — so the host
- * projects its own record into the outline's slot ids at the mount site, and
- * `subjectFromHost` refuses a typed `MISSING_SLOT` for any `required` slot that
- * did not arrive.
+ * The invoices add-on settles the mapping the holiday-calendars way: THE HOST
+ * PROJECTS, THE ADD-ON VALIDATES. The add-on ships no per-host mapping — one
+ * for a till's `sale` shape would name the host inside a portable package — so
+ * the host projects its own record into the outline's slot ids at the mount
+ * site, and `subjectFromHost` refuses a typed `MISSING_SLOT` for any `required`
+ * slot that did not arrive.
  *
  * That refusal is the real check, and it is the ADD-ON's. What a host-side
  * guard can add is the half the refusal never sees: a mount that never hands
@@ -33,7 +32,7 @@
  *   · does every `record.actions` mount name an entity and a record?
  *   · is the record a PROJECTION — a call — rather than an object literal
  *     typed out at the mount site, which is a host hardcoding one add-on's
- *     slot ids into a screen and the thing §5.3's inversion exists to prevent?
+ *     slot ids into a screen and the thing that inversion exists to prevent?
  *   · does every entity it mounts for appear in the host's own served list, so
  *     a screen cannot quietly offer documents for a record type nobody decided
  *     to serve?
@@ -158,7 +157,7 @@ export function recordPayloadFindings(
         /*
          * A `record` written out at the mount site is a host typing an add-on's
          * slot ids into its own screen. It compiles, it renders, and it is the
-         * thing §5.3's inversion exists to prevent — the day a second kind
+         * thing the inversion exists to prevent — the day a second kind
          * arrives, or a slot is renamed, that literal is the copy nobody
          * remembers. A projection is a call, and a call has one definition.
          */
@@ -198,7 +197,7 @@ export interface RecordPayloadScope {
 
 /** DECLARE THE RECORD-PAYLOAD SUITE for one host. Tier 1: source only, no DOM. */
 export function recordPayloadGuard(config: HostFacts, scope: RecordPayloadScope = {}): void {
-  describe(`${config.appKey} · what a record.actions mount hands over (34 §5.3)`, () => {
+  describe(`${config.appKey} · what a record.actions mount hands over`, () => {
     const served = scope.servedEntities ?? [];
     const files = ownShippedFiles(config)
       .filter((file) => file.endsWith('.tsx'))

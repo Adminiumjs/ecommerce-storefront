@@ -125,7 +125,7 @@ export interface UserReview {
  * It is copied and not IMPORTED even though a vendored copy of that seam now
  * sits in `src/add-ons/vendor/host/`, and the direction of the dependency is
  * the reason: `data/` is what this app is, and `add-ons/` is a thing that may
- * be switched off entirely (24 D6). A shop's own address is not conditional on
+ * be switched off entirely. A shop's own address is not conditional on
  * an add-on being connected, so the type that carries it may not be either.
  *
  * The one deliberate difference is that `lines` is mutable here and readonly
@@ -181,7 +181,7 @@ export type ShipMethod = "standard" | "express" | "overnight";
  * constructs it, the host stores it, and the host hands the same object back
  * down so the fill can draw which of its rows is selected. Copying the shape
  * rather than importing it keeps `data/` free of a dependency on a layer that
- * may be switched off entirely (24 D6), and keeps the assignment a
+ * may be switched off entirely, and keeps the assignment a
  * pass-through.
  *
  * `amount` IS IN MAJOR UNITS, and that is worth stating because the seam's
