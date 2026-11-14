@@ -1,6 +1,8 @@
 # Ecommerce Storefront
 
 > **This app will be reworked in Q4 2026.** Until then it is kept as it is and may not show what
+
+[![Adminium on StartupScores](https://startupscores.com/badge/adminium.svg?style=shield&v=combo&theme=dark)](https://startupscores.com/open-source/adminium)
 > the newest Adminium can do.
 
 A complete, production-shaped e-commerce storefront — built with Vite + React +
