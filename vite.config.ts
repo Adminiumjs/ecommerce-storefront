@@ -2,8 +2,6 @@ import { defineConfig, type UserConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
 import { surfaceJsonPlugin } from "./surface-emit.ts";
-import { demoJsonPlugin } from "./demo-emit.ts";
-import { CARD_MESSAGES, DEMO_CARD } from "./src/demo/card.ts";
 import { MESSAGES } from "./src/i18n/messages/index.ts";
 import { APP_KEY, APP_LABEL_KEY, SURFACE_NAV } from "./src/surface-nav.ts";
 
@@ -18,9 +16,7 @@ const FLAGS = [
   "VITE_ADMINIUM_SURFACE_SIDE",
   "VITE_ADMINIUM_API_BASE_URL",
   "VITE_ADMINIUM_PUBLISHABLE_KEY",
-  "VITE_ADMINIUM_ORDER_KEY",
-  "VITE_ADMINIUM_DESIGN_KEY",
-] as const;
+  ] as const;
 const define = Object.fromEntries(FLAGS.map((name) => [`import.meta.env.${name}`, JSON.stringify(process.env[name] ?? "")]));
 
 /**
@@ -41,7 +37,7 @@ interface ViteWithVitest extends UserConfig {
 
 // https://vite.dev/config/
 // `base` defaults to "/" (root deploy). The `build:demo` script overrides it
-// with --base=/demo/maker-shop/app/, where the website frames the demo.
+// with --base=/demo/ecommerce-storefront/app/, where the website frames the demo.
 const config: ViteWithVitest = {
   define,
   plugins: [
@@ -52,13 +48,7 @@ const config: ViteWithVitest = {
      * nothing, so the demo and standalone builds stay as they were.
      */
     surfaceJsonPlugin({ appKey: APP_KEY, appLabelKey: APP_LABEL_KEY, nav: SURFACE_NAV, messages: MESSAGES }),
-    /*
-     * `demo.json` beside the demo build's `index.html`, for the website's demo
-     * card: the shopper's screens and the studio's, the shortcuts, the two
-     * people, the clock and the add-ons, in the card's eight languages. Only a
-     * `/demo/` build writes it.
-     */
-    demoJsonPlugin({ ...DEMO_CARD, messages: CARD_MESSAGES }),
+    // `demo.json` for the website's demo card comes with the demo build (the round's T12).
   ],
   /*
    * How long a suite may take, here rather than as a flag on the command
@@ -84,15 +74,6 @@ const config: ViteWithVitest = {
         manualChunks(id) {
           if (/node_modules\/(react|react-dom|scheduler)\//.test(id)) return "react";
           if (id.includes("node_modules/lucide-react")) return "icons";
-          /*
-           * The vendored Customiser's editor in a chunk of its own: it is
-           * another repo's code, reviewed there, and `builtOutput.test.ts`
-           * tells it from this app's by the chunk's provenance, which a chunk
-           * that mixed the two would not have. Its 3D preview (`stage3d.js`)
-           * is left to the editor's own `import()`, so it still loads only
-           * when a shopper turns the piece round.
-           */
-          if (id.endsWith("/vendor/customiser/index.js")) return "customiser";
           return undefined;
         },
       },
