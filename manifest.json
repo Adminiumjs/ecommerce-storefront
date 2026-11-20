@@ -1400,7 +1400,7 @@
             },
             "unique": true,
             "rules": {
-              "normalize": "code"
+              "normalize": "trim"
             }
           },
           {

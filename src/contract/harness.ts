@@ -43,7 +43,7 @@ export function missing(): string | null {
 }
 
 /** Why the checks that need an add-on cannot run here, or null when they can: its build has every file its manifest names. */
-export function missingAddOn(key = "customiser"): string | null {
+export function missingAddOn(key = "inventory"): string | null {
   const dir = addOnDir(key);
   if (!existsSync(join(dir, "manifest.json"))) return `no ${key} add-on in ${ADD_ONS_REPO}`;
   const manifest = JSON.parse(read(join(dir, "manifest.json"))) as { addOn?: { slots?: { client?: string }[] } };
@@ -105,7 +105,7 @@ const bundle = (files: Record<string, Buffer>): Bundle => {
  * The version the app asks of an add-on (`addOns.requires[].range` `>=x.y.z`), and the
  * version the checkout carries.
  */
-export function addOnVersions(key = "customiser"): { floor: string | null; checkout: string } {
+export function addOnVersions(key: string): { floor: string | null; checkout: string } {
   const app = JSON.parse(read(join(REPO, "manifest.json"))) as { addOns?: { requires?: { key: string; range: string }[]; suggests?: { key: string; range: string }[] } };
   const range = [...(app.addOns?.requires ?? []), ...(app.addOns?.suggests ?? [])].find((r) => r.key === key)?.range ?? "";
   // `>=1.0.19` or `^1.0.19`: either way the release named is the floor.
@@ -127,14 +127,14 @@ const newer = (a: string, b: string) => {
  * checkout is packed as it — a rehearsal of the release, said in the test's
  * name — rather than failing on a number nobody has stamped yet.
  */
-export function packedAddOnVersion(key = "customiser"): { version: string; rehearsed: boolean } {
+export function packedAddOnVersion(key: string): { version: string; rehearsed: boolean } {
   const { floor, checkout } = addOnVersions(key);
   if (floor !== null && newer(floor, checkout)) return { version: floor, rehearsed: true };
   return { version: checkout, rehearsed: false };
 }
 
 /** An add-on, packed as its release packs it: `files[]`, the name rewritten, no dev-only fields. */
-export function addOnBundle(key = "customiser"): Bundle & { key: string; version: string } {
+export function addOnBundle(key: string): Bundle & { key: string; version: string } {
   const dir = addOnDir(key);
   const pkg = JSON.parse(read(join(dir, "package.json"))) as Record<string, unknown> & { name: string; version: string; files: string[] };
   const files: Record<string, Buffer> = {};
@@ -224,20 +224,20 @@ export interface BootOptions {
 }
 
 export async function boot(engine: Engine, port: number, now: number, options: BootOptions = {}): Promise<Server> {
-  const clockFile = join(tmpdir(), `maker-contract-clock-${String(port)}`);
+  const clockFile = join(tmpdir(), `northline-contract-clock-${String(port)}`);
   const checkout = options.adminium ?? ADMINIUM_REPO;
   const env: NodeJS.ProcessEnv = {
     ...process.env,
     // An add-on packed from a checkout has no catalogue to vouch for its bytes:
     // a developer's server runs it by name. Ignored in production.
-    ADMINIUM_ADD_ON_DEV_TRUST: "customiser,invoices",
+    ADMINIUM_ADD_ON_DEV_TRUST: "inventory,offers,invoices,forms,shipping-dhl,barcode-labels",
     E2E_ENGINE: engine,
     E2E_PORT: String(port),
     E2E_SMTP_PORT: String(port + 1),
     E2E_SINK_PORT: String(port + 2),
     E2E_FAKE_LLM_PORT: "0",
     // Its own database, so a contract never meets another run's rows (`CONTRACT_DB_SUFFIX` keeps two checkouts' runs apart).
-    E2E_DATABASE: options.database ?? `maker_contract_${engine}${process.env["CONTRACT_DB_SUFFIX"] ?? ""}`,
+    E2E_DATABASE: options.database ?? `northline_contract_${engine}${process.env["CONTRACT_DB_SUFFIX"] ?? ""}`,
     CONTRACT_NOW: String(now),
     CONTRACT_CLOCK_FILE: clockFile,
     NODE_OPTIONS: [process.env["NODE_OPTIONS"] ?? "", `--import=${pathToFileURL(fileURLToPath(new URL("./clock.mjs", import.meta.url))).href}`, ...(process.env["CONTRACT_ENGINE_RELEASE"] === undefined ? [] : [`--import=${pathToFileURL(fileURLToPath(new URL("./engine-release.mjs", import.meta.url))).href}`])].join(" ").trim(),
@@ -411,7 +411,7 @@ export const until = async <T>(read: () => Promise<T | undefined>, label: string
  * fails, or fails once and waits to try again, stops the contract with what
  * it said.
  */
-export async function addSample(caller: Caller, app = "maker"): Promise<void> {
+export async function addSample(caller: Caller, app = "ecommerce-shop"): Promise<void> {
   const { jobId } = ok(await caller.post<{ jobId: string }>(`/api/v1/apps/${app}/sample-data`));
   await until(async () => {
     const job = ok(await caller.get<{ data: { status: string; attempts: number; lastError: string | null } }>(`/api/v1/jobs/${encodeURIComponent(jobId)}`)).data;

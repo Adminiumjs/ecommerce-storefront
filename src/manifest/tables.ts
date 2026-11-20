@@ -428,7 +428,7 @@ export const TABLES: Table[] = [
       copied("product_slug", 80, "Product web address", follow("product_id", "slug")),
       { ...copied("combo", 140, "Combination", {}), unique: true, rules: { formula: { join: ["product_slug", "/", "colour_code", "/", "size_code"] } } },
       // The truth for a SKU everywhere: labels, packing slips, Inventory's item.
-      text("sku", 40, "SKU", { unique: true, rules: { normalize: "code" } }),
+      text("sku", 40, "SKU", { unique: true, rules: { normalize: "trim" } }),
       price("price_delta", "Price difference", { ...opt, rules: { validation: { min: 0 } } }),
       money("base_price", "Product price", follow("product_id", "price")),
       money("price", "Price", { formula: { add: ["base_price", c0("price_delta")] } }),
