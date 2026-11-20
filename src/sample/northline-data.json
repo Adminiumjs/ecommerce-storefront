@@ -1,0 +1,6143 @@
+{
+ "CATEGORIES": [
+  {
+   "id": "packs",
+   "name": "Packs & bags",
+   "icon": "backpack"
+  },
+  {
+   "id": "clothing",
+   "name": "Clothing",
+   "icon": "shirt"
+  },
+  {
+   "id": "footwear",
+   "name": "Footwear",
+   "icon": "footprints"
+  },
+  {
+   "id": "camp",
+   "name": "Camp",
+   "icon": "tent"
+  }
+ ],
+ "CLOSURES": [
+  {
+   "iso": "2026-09-07",
+   "name": "Labor Day"
+  }
+ ],
+ "CODES": {
+  "TRAIL15": {
+   "percent": 15,
+   "on": "packs",
+   "label": "15% off packs & bags",
+   "until": "2026-08-31",
+   "guests": true,
+   "firstOrder": false
+  },
+  "WELCOME10": {
+   "percent": 10,
+   "on": null,
+   "label": "10% off your first order",
+   "until": null,
+   "guests": false,
+   "firstOrder": true
+  }
+ },
+ "COLOURS": {
+  "slate": {
+   "label": "Slate",
+   "hex": "#4b5563"
+  },
+  "moss": {
+   "label": "Moss",
+   "hex": "#5f7a4a"
+  },
+  "ember": {
+   "label": "Ember",
+   "hex": "#c2410c"
+  },
+  "sand": {
+   "label": "Sand",
+   "hex": "#c8b48a"
+  },
+  "glacier": {
+   "label": "Glacier",
+   "hex": "#7fa7b8"
+  },
+  "pine": {
+   "label": "Pine",
+   "hex": "#2f5d50"
+  }
+ },
+ "CUSTOMERS": [
+  {
+   "id": 1,
+   "name": "Priya Raman",
+   "email": "priya.r@example.com",
+   "city": "Portland",
+   "state": "OR",
+   "zip": "97214",
+   "line1": "3410 Fir Ave",
+   "account": true,
+   "news": true,
+   "newsAgreed": "2026-08-14"
+  },
+  {
+   "id": 2,
+   "name": "Marcus Hale",
+   "email": "marcus.h@example.com",
+   "city": "Seattle",
+   "state": "WA",
+   "zip": "98103",
+   "line1": "4791 Spruce Way",
+   "account": true,
+   "news": false,
+   "newsAgreed": null
+  },
+  {
+   "id": 3,
+   "name": "Lena Ortiz",
+   "email": "lena.o@example.com",
+   "city": "Oakland",
+   "state": "CA",
+   "zip": "94610",
+   "line1": "1233 Oak St",
+   "account": false,
+   "news": false,
+   "newsAgreed": null
+  },
+  {
+   "id": 4,
+   "name": "Sam Whitaker",
+   "email": "sam.w@example.com",
+   "city": "Bend",
+   "state": "OR",
+   "zip": "97701",
+   "line1": "387 Alder Way",
+   "account": true,
+   "news": false,
+   "newsAgreed": null
+  },
+  {
+   "id": 5,
+   "name": "Noor Haddad",
+   "email": "noor.h@example.com",
+   "city": "Brooklyn",
+   "state": "NY",
+   "zip": "11215",
+   "line1": "423 Maple Way",
+   "account": true,
+   "news": true,
+   "newsAgreed": "2026-07-25"
+  },
+  {
+   "id": 6,
+   "name": "Jonah Park",
+   "email": "jonah.p@example.com",
+   "city": "Boise",
+   "state": "ID",
+   "zip": "83702",
+   "line1": "1065 Larch Way",
+   "account": false,
+   "news": false,
+   "newsAgreed": null
+  },
+  {
+   "id": 7,
+   "name": "Ines Duarte",
+   "email": "ines.d@example.com",
+   "city": "Denver",
+   "state": "CO",
+   "zip": "80205",
+   "line1": "558 Spruce St",
+   "account": true,
+   "news": false,
+   "newsAgreed": null
+  },
+  {
+   "id": 8,
+   "name": "Theo Brandt",
+   "email": "theo.b@example.com",
+   "city": "Eugene",
+   "state": "OR",
+   "zip": "97401",
+   "line1": "1307 Larch St",
+   "account": true,
+   "news": false,
+   "newsAgreed": null
+  },
+  {
+   "id": 9,
+   "name": "Hana Sato",
+   "email": "hana.s@example.com",
+   "city": "Tacoma",
+   "state": "WA",
+   "zip": "98402",
+   "line1": "240 Spruce Rd",
+   "account": false,
+   "news": true,
+   "newsAgreed": "2026-07-30"
+  },
+  {
+   "id": 10,
+   "name": "Grace Okafor",
+   "email": "grace.o@example.com",
+   "city": "Sacramento",
+   "state": "CA",
+   "zip": "95816",
+   "line1": "3503 Alder St",
+   "account": true,
+   "news": false,
+   "newsAgreed": null
+  },
+  {
+   "id": 11,
+   "name": "Ruth Ellison",
+   "email": "ruth.e@example.com",
+   "city": "Anchorage",
+   "state": "AK",
+   "zip": "99501",
+   "line1": "4043 Cedar St",
+   "account": true,
+   "news": false,
+   "newsAgreed": null
+  },
+  {
+   "id": 12,
+   "name": "Diego Morales",
+   "email": "diego.m@example.com",
+   "city": "Austin",
+   "state": "TX",
+   "zip": "78704",
+   "line1": "167 Fir St",
+   "account": false,
+   "news": false,
+   "newsAgreed": null
+  },
+  {
+   "id": 13,
+   "name": "Mei Lin",
+   "email": "mei.l@example.com",
+   "city": "San Diego",
+   "state": "CA",
+   "zip": "92104",
+   "line1": "3919 Birch Way",
+   "account": true,
+   "news": true,
+   "newsAgreed": "2026-07-21"
+  },
+  {
+   "id": 14,
+   "name": "Owen Price",
+   "email": "owen.p@example.com",
+   "city": "Salem",
+   "state": "OR",
+   "zip": "97301",
+   "line1": "3998 Birch Ave",
+   "account": true,
+   "news": false,
+   "newsAgreed": null
+  },
+  {
+   "id": 15,
+   "name": "Clara Novak",
+   "email": "clara.n@example.com",
+   "city": "Spokane",
+   "state": "WA",
+   "zip": "99201",
+   "line1": "2060 Larch Ave",
+   "account": false,
+   "news": false,
+   "newsAgreed": null
+  },
+  {
+   "id": 16,
+   "name": "Ade Bello",
+   "email": "ade.b@example.com",
+   "city": "Chicago",
+   "state": "IL",
+   "zip": "60614",
+   "line1": "804 Cedar Ave",
+   "account": true,
+   "news": false,
+   "newsAgreed": null
+  },
+  {
+   "id": 17,
+   "name": "Freya Lund",
+   "email": "freya.l@example.com",
+   "city": "Missoula",
+   "state": "MT",
+   "zip": "59801",
+   "line1": "1321 Alder St",
+   "account": true,
+   "news": true,
+   "newsAgreed": "2026-08-11"
+  },
+  {
+   "id": 18,
+   "name": "Kai Akana",
+   "email": "kai.a@example.com",
+   "city": "Honolulu",
+   "state": "HI",
+   "zip": "96813",
+   "line1": "2011 Oak Way",
+   "account": false,
+   "news": false,
+   "newsAgreed": null
+  },
+  {
+   "id": 19,
+   "name": "Tom Reyes",
+   "email": "tom.r@example.com",
+   "city": "Portland",
+   "state": "OR",
+   "zip": "97212",
+   "line1": "4110 Larch St",
+   "account": true,
+   "news": false,
+   "newsAgreed": null
+  },
+  {
+   "id": 20,
+   "name": "Ana Petrova",
+   "email": "ana.p@example.com",
+   "city": "Boulder",
+   "state": "CO",
+   "zip": "80302",
+   "line1": "3962 Oak Rd",
+   "account": true,
+   "news": false,
+   "newsAgreed": null
+  },
+  {
+   "id": 21,
+   "name": "Leo Fischer",
+   "email": "leo.f@example.com",
+   "city": "Bellingham",
+   "state": "WA",
+   "zip": "98225",
+   "line1": "4531 Larch Rd",
+   "account": false,
+   "news": true,
+   "newsAgreed": "2026-07-24"
+  },
+  {
+   "id": 22,
+   "name": "Zoe Carter",
+   "email": "zoe.c@example.com",
+   "city": "Los Angeles",
+   "state": "CA",
+   "zip": "90026",
+   "line1": "3817 Fir St",
+   "account": true,
+   "news": false,
+   "newsAgreed": null
+  },
+  {
+   "id": 23,
+   "name": "Ravi Menon",
+   "email": "ravi.m@example.com",
+   "city": "Ithaca",
+   "state": "NY",
+   "zip": "14850",
+   "line1": "4948 Spruce St",
+   "account": true,
+   "news": false,
+   "newsAgreed": null
+  },
+  {
+   "id": 24,
+   "name": "Ella Brooks",
+   "email": "ella.b@example.com",
+   "city": "Hood River",
+   "state": "OR",
+   "zip": "97031",
+   "line1": "392 Alder Ave",
+   "account": false,
+   "news": false,
+   "newsAgreed": null
+  }
+ ],
+ "GIFT_AMOUNTS": [
+  "25.00",
+  "50.00",
+  "100.00"
+ ],
+ "GIFT_CARDS": [
+  {
+   "code_last4": "M4TD",
+   "amount": "100.00",
+   "balance": "100.00",
+   "to": "Hana Sato",
+   "bought_by": "Leo Fischer",
+   "order": "NL-1013",
+   "on": "2026-07-27"
+  },
+  {
+   "code_last4": "7Q2K",
+   "amount": "50.00",
+   "balance": "50.00",
+   "to": "Theo Brandt",
+   "bought_by": "Ella Brooks",
+   "order": "NL-1029",
+   "on": "2026-08-03"
+  },
+  {
+   "code_last4": "X9PB",
+   "amount": "25.00",
+   "balance": "25.00",
+   "to": "Ravi Menon",
+   "bought_by": "Noor Haddad",
+   "order": "NL-1054",
+   "on": "2026-08-14"
+  }
+ ],
+ "GUIDES": {
+  "apparel": {
+   "title": "Apparel",
+   "cols": [
+    "Size",
+    "Chest (in)",
+    "Chest (cm)",
+    "Length (in)",
+    "Length (cm)"
+   ],
+   "rows": [
+    [
+     "XS",
+     "33–35",
+     "84–89",
+     "26.75",
+     "68"
+    ],
+    [
+     "S",
+     "35.5–37.5",
+     "90–95",
+     "27.5",
+     "70"
+    ],
+    [
+     "M",
+     "37.75–39.75",
+     "96–101",
+     "28.25",
+     "72"
+    ],
+    [
+     "L",
+     "40–42",
+     "102–107",
+     "29.25",
+     "74"
+    ],
+    [
+     "XL",
+     "42.5–44.5",
+     "108–113",
+     "30",
+     "76"
+    ]
+   ]
+  },
+  "waist": {
+   "title": "Waist",
+   "cols": [
+    "Size",
+    "Waist (in)",
+    "Waist (cm)",
+    "Inside leg (in)"
+   ],
+   "rows": [
+    [
+     "30",
+     "30",
+     "76",
+     "7"
+    ],
+    [
+     "32",
+     "32",
+     "81",
+     "7"
+    ],
+    [
+     "34",
+     "34",
+     "86",
+     "7.25"
+    ],
+    [
+     "36",
+     "36",
+     "91",
+     "7.25"
+    ]
+   ]
+  },
+  "shoe": {
+   "title": "Shoes",
+   "cols": [
+    "US size",
+    "Foot length (in)",
+    "Foot length (cm)"
+   ],
+   "rows": [
+    [
+     "7",
+     "9.85",
+     "25.0"
+    ],
+    [
+     "8",
+     "10.15",
+     "25.8"
+    ],
+    [
+     "9",
+     "10.5",
+     "26.7"
+    ],
+    [
+     "10",
+     "10.8",
+     "27.5"
+    ],
+    [
+     "11",
+     "11.2",
+     "28.4"
+    ],
+    [
+     "12",
+     "11.5",
+     "29.2"
+    ]
+   ]
+  },
+  "pack": {
+   "title": "Packs",
+   "cols": [
+    "Size",
+    "Back length (in)",
+    "Back length (cm)"
+   ],
+   "rows": [
+    [
+     "S/M",
+     "15.75–18",
+     "40–46"
+    ],
+    [
+     "M/L",
+     "18–20.5",
+     "46–52"
+    ]
+   ]
+  },
+  "socks": {
+   "title": "Socks",
+   "cols": [
+    "Size",
+    "US shoe size"
+   ],
+   "rows": [
+    [
+     "S/M",
+     "5–8.5"
+    ],
+    [
+     "L/XL",
+     "9–13"
+    ]
+   ]
+  }
+ },
+ "NEXT_NUMBER": "NL-1067",
+ "NOW": {
+  "iso": "2026-08-18",
+  "time": "11:40",
+  "label": "Tue 18 Aug · 11:40"
+ },
+ "ORDERS": [
+  {
+   "number": "NL-1001",
+   "placed": "2026-07-21T09:02",
+   "customer": 3,
+   "name": "Lena Ortiz",
+   "email": "lena.o@example.com",
+   "ship": {
+    "line1": "1233 Oak St",
+    "city": "Oakland",
+    "state": "CA",
+    "zip": "94610"
+   },
+   "service": "express",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-07-21T09:06",
+   "method": "wallet",
+   "shipsBy": "2026-07-21",
+   "shippedOn": "2026-07-21",
+   "arrives": [
+    "2026-07-23",
+    "2026-07-23"
+   ],
+   "tracking": "JD0146038788055599",
+   "lines": [
+    {
+     "sku": "NL-BSH-SLA-XS",
+     "qty": 1,
+     "each": "189.00",
+     "line": "189.00",
+     "discount": "0.00",
+     "tax": "13.70"
+    },
+    {
+     "sku": "NL-DRY20-EMB",
+     "qty": 1,
+     "each": "32.00",
+     "line": "32.00",
+     "discount": "0.00",
+     "tax": "2.32"
+    },
+    {
+     "sku": "NL-BSH-EMB-XL",
+     "qty": 1,
+     "each": "199.00",
+     "line": "199.00",
+     "discount": "0.00",
+     "tax": "14.43"
+    }
+   ],
+   "gifts": [],
+   "goods": "420.00",
+   "discount": "0.00",
+   "net": "420.00",
+   "shipping": "18.00",
+   "tax": "30.45",
+   "giftsTotal": "0.00",
+   "total": "468.45"
+  },
+  {
+   "number": "NL-1002",
+   "placed": "2026-07-21T23:39",
+   "customer": 13,
+   "name": "Mei Lin",
+   "email": "mei.l@example.com",
+   "ship": {
+    "line1": "3919 Birch Way",
+    "city": "San Diego",
+    "state": "CA",
+    "zip": "92104"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-07-21T23:40",
+   "method": "wallet",
+   "shipsBy": "2026-07-22",
+   "shippedOn": "2026-07-22",
+   "arrives": [
+    "2026-07-27",
+    "2026-07-29"
+   ],
+   "tracking": "JD0146085552827333",
+   "lines": [
+    {
+     "sku": "NL-TAL-7",
+     "qty": 1,
+     "each": "139.00",
+     "line": "139.00",
+     "discount": "0.00",
+     "tax": "10.08"
+    }
+   ],
+   "gifts": [],
+   "goods": "139.00",
+   "discount": "0.00",
+   "net": "139.00",
+   "shipping": "0.00",
+   "tax": "10.08",
+   "giftsTotal": "0.00",
+   "total": "149.08"
+  },
+  {
+   "number": "NL-1003",
+   "placed": "2026-07-22T09:46",
+   "customer": 11,
+   "name": "Ruth Ellison",
+   "email": "ruth.e@example.com",
+   "ship": {
+    "line1": "4043 Cedar St",
+    "city": "Anchorage",
+    "state": "AK",
+    "zip": "99501"
+   },
+   "service": "express",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-07-22T09:50",
+   "method": "wallet",
+   "shipsBy": "2026-07-22",
+   "shippedOn": "2026-07-22",
+   "arrives": [
+    "2026-07-24",
+    "2026-07-24"
+   ],
+   "tracking": "JD0146035146635936",
+   "lines": [
+    {
+     "sku": "NL-MER-SLA-M",
+     "qty": 2,
+     "each": "75.00",
+     "line": "150.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "150.00",
+   "discount": "0.00",
+   "net": "150.00",
+   "shipping": "34.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "184.00"
+  },
+  {
+   "number": "NL-1004",
+   "placed": "2026-07-22T22:22",
+   "customer": 13,
+   "name": "Mei Lin",
+   "email": "mei.l@example.com",
+   "ship": {
+    "line1": "3919 Birch Way",
+    "city": "San Diego",
+    "state": "CA",
+    "zip": "92104"
+   },
+   "service": "express",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-07-22T22:25",
+   "method": "card",
+   "shipsBy": "2026-07-23",
+   "shippedOn": "2026-07-23",
+   "arrives": [
+    "2026-07-27",
+    "2026-07-27"
+   ],
+   "tracking": "JD0146065801313928",
+   "lines": [
+    {
+     "sku": "NL-TSH-SLA-36",
+     "qty": 2,
+     "each": "58.00",
+     "line": "116.00",
+     "discount": "0.00",
+     "tax": "8.41"
+    }
+   ],
+   "gifts": [],
+   "goods": "116.00",
+   "discount": "0.00",
+   "net": "116.00",
+   "shipping": "18.00",
+   "tax": "8.41",
+   "giftsTotal": "0.00",
+   "total": "142.41"
+  },
+  {
+   "number": "NL-1005",
+   "placed": "2026-07-23T08:58",
+   "customer": 22,
+   "name": "Zoe Carter",
+   "email": "zoe.c@example.com",
+   "ship": {
+    "line1": "3817 Fir St",
+    "city": "Los Angeles",
+    "state": "CA",
+    "zip": "90026"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-07-23T09:00",
+   "method": "wallet",
+   "shipsBy": "2026-07-23",
+   "shippedOn": "2026-07-23",
+   "arrives": [
+    "2026-07-28",
+    "2026-07-30"
+   ],
+   "tracking": "JD0146096420173612",
+   "lines": [
+    {
+     "sku": "NL-BSH-EMB-S",
+     "qty": 1,
+     "each": "189.00",
+     "line": "189.00",
+     "discount": "0.00",
+     "tax": "13.70"
+    }
+   ],
+   "gifts": [],
+   "goods": "189.00",
+   "discount": "0.00",
+   "net": "189.00",
+   "shipping": "0.00",
+   "tax": "13.70",
+   "giftsTotal": "0.00",
+   "total": "202.70"
+  },
+  {
+   "number": "NL-1006",
+   "placed": "2026-07-23T22:10",
+   "customer": 18,
+   "name": "Kai Akana",
+   "email": "kai.a@example.com",
+   "ship": {
+    "line1": "2011 Oak Way",
+    "city": "Honolulu",
+    "state": "HI",
+    "zip": "96813"
+   },
+   "service": "express",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-07-23T22:12",
+   "method": "card",
+   "shipsBy": "2026-07-24",
+   "shippedOn": "2026-07-24",
+   "arrives": [
+    "2026-07-28",
+    "2026-07-28"
+   ],
+   "tracking": "JD0146079386465869",
+   "lines": [
+    {
+     "sku": "NL-LOF-LONG",
+     "qty": 1,
+     "each": "269.00",
+     "line": "269.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-RDG28-EMB",
+     "qty": 2,
+     "each": "129.00",
+     "line": "258.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "527.00",
+   "discount": "0.00",
+   "net": "527.00",
+   "shipping": "34.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "561.00"
+  },
+  {
+   "number": "NL-1007",
+   "placed": "2026-07-24T07:54",
+   "customer": 21,
+   "name": "Leo Fischer",
+   "email": "leo.f@example.com",
+   "ship": {
+    "line1": "4531 Larch Rd",
+    "city": "Bellingham",
+    "state": "WA",
+    "zip": "98225"
+   },
+   "service": "overnight",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-07-24T07:58",
+   "method": "card",
+   "shipsBy": "2026-07-24",
+   "shippedOn": "2026-07-24",
+   "arrives": [
+    "2026-07-27",
+    "2026-07-27"
+   ],
+   "tracking": "JD0146037265500130",
+   "lines": [
+    {
+     "sku": "NL-HIP-SLA",
+     "qty": 1,
+     "each": "45.00",
+     "line": "45.00",
+     "discount": "0.00",
+     "tax": "2.93"
+    }
+   ],
+   "gifts": [],
+   "goods": "45.00",
+   "discount": "0.00",
+   "net": "45.00",
+   "shipping": "35.00",
+   "tax": "2.93",
+   "giftsTotal": "0.00",
+   "total": "82.93"
+  },
+  {
+   "number": "NL-1008",
+   "placed": "2026-07-24T21:54",
+   "customer": 10,
+   "name": "Grace Okafor",
+   "email": "grace.o@example.com",
+   "ship": {
+    "line1": "3503 Alder St",
+    "city": "Sacramento",
+    "state": "CA",
+    "zip": "95816"
+   },
+   "service": "overnight",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-07-24T21:55",
+   "method": "card",
+   "shipsBy": "2026-07-27",
+   "shippedOn": "2026-07-27",
+   "arrives": [
+    "2026-07-28",
+    "2026-07-28"
+   ],
+   "tracking": "JD0146062553618294",
+   "lines": [
+    {
+     "sku": "NL-TSH-SLA-32",
+     "qty": 1,
+     "each": "58.00",
+     "line": "58.00",
+     "discount": "0.00",
+     "tax": "4.21"
+    }
+   ],
+   "gifts": [],
+   "goods": "58.00",
+   "discount": "0.00",
+   "net": "58.00",
+   "shipping": "35.00",
+   "tax": "4.21",
+   "giftsTotal": "0.00",
+   "total": "97.21"
+  },
+  {
+   "number": "NL-1009",
+   "placed": "2026-07-25T08:32",
+   "customer": 5,
+   "name": "Noor Haddad",
+   "email": "noor.h@example.com",
+   "ship": {
+    "line1": "423 Maple Way",
+    "city": "Brooklyn",
+    "state": "NY",
+    "zip": "11215"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-07-25T08:36",
+   "method": "card",
+   "shipsBy": "2026-07-27",
+   "shippedOn": "2026-07-27",
+   "arrives": [
+    "2026-07-30",
+    "2026-08-03"
+   ],
+   "tracking": "JD0146095987132967",
+   "lines": [
+    {
+     "sku": "NL-BEA-SLA",
+     "qty": 1,
+     "each": "28.00",
+     "line": "28.00",
+     "discount": "0.00",
+     "tax": "1.12"
+    },
+    {
+     "sku": "NL-SLD-SLA-L",
+     "qty": 2,
+     "each": "42.00",
+     "line": "84.00",
+     "discount": "0.00",
+     "tax": "3.36"
+    }
+   ],
+   "gifts": [],
+   "goods": "112.00",
+   "discount": "0.00",
+   "net": "112.00",
+   "shipping": "0.00",
+   "tax": "4.48",
+   "giftsTotal": "0.00",
+   "total": "116.48"
+  },
+  {
+   "number": "NL-1010",
+   "placed": "2026-07-26T08:20",
+   "customer": 3,
+   "name": "Lena Ortiz",
+   "email": "lena.o@example.com",
+   "ship": {
+    "line1": "1233 Oak St",
+    "city": "Oakland",
+    "state": "CA",
+    "zip": "94610"
+   },
+   "service": "express",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-07-26T08:21",
+   "method": "card",
+   "shipsBy": "2026-07-27",
+   "shippedOn": "2026-07-27",
+   "arrives": [
+    "2026-07-29",
+    "2026-07-29"
+   ],
+   "tracking": "JD0146077389671924",
+   "lines": [
+    {
+     "sku": "NL-CAS45-MOS-SM",
+     "qty": 1,
+     "each": "219.00",
+     "line": "219.00",
+     "discount": "0.00",
+     "tax": "15.88"
+    }
+   ],
+   "gifts": [],
+   "goods": "219.00",
+   "discount": "0.00",
+   "net": "219.00",
+   "shipping": "18.00",
+   "tax": "15.88",
+   "giftsTotal": "0.00",
+   "total": "252.88"
+  },
+  {
+   "number": "NL-1011",
+   "placed": "2026-07-26T18:48",
+   "customer": 5,
+   "name": "Noor Haddad",
+   "email": "noor.h@example.com",
+   "ship": {
+    "line1": "423 Maple Way",
+    "city": "Brooklyn",
+    "state": "NY",
+    "zip": "11215"
+   },
+   "service": "overnight",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-07-26T18:51",
+   "method": "card",
+   "shipsBy": "2026-07-27",
+   "shippedOn": "2026-07-27",
+   "arrives": [
+    "2026-07-28",
+    "2026-07-28"
+   ],
+   "tracking": "JD0146078171958190",
+   "lines": [
+    {
+     "sku": "NL-BTL-EMB",
+     "qty": 1,
+     "each": "34.00",
+     "line": "34.00",
+     "discount": "0.00",
+     "tax": "1.36"
+    }
+   ],
+   "gifts": [],
+   "goods": "34.00",
+   "discount": "0.00",
+   "net": "34.00",
+   "shipping": "35.00",
+   "tax": "1.36",
+   "giftsTotal": "0.00",
+   "total": "70.36"
+  },
+  {
+   "number": "NL-1012",
+   "placed": "2026-07-27T07:04",
+   "customer": 24,
+   "name": "Ella Brooks",
+   "email": "ella.b@example.com",
+   "ship": {
+    "line1": "392 Alder Ave",
+    "city": "Hood River",
+    "state": "OR",
+    "zip": "97031"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-07-27T07:07",
+   "method": "card",
+   "shipsBy": "2026-07-27",
+   "shippedOn": "2026-07-27",
+   "arrives": [
+    "2026-07-30",
+    "2026-08-03"
+   ],
+   "tracking": "JD0146076534741866",
+   "lines": [
+    {
+     "sku": "NL-SLD-MOS-L",
+     "qty": 1,
+     "each": "42.00",
+     "line": "42.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-BEA-SLA",
+     "qty": 1,
+     "each": "28.00",
+     "line": "28.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-FIR-SAN-M",
+     "qty": 1,
+     "each": "89.00",
+     "line": "89.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "159.00",
+   "discount": "0.00",
+   "net": "159.00",
+   "shipping": "0.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "159.00"
+  },
+  {
+   "number": "NL-1013",
+   "placed": "2026-07-27T19:12",
+   "customer": 21,
+   "name": "Leo Fischer",
+   "email": "leo.f@example.com",
+   "ship": {
+    "line1": "4531 Larch Rd",
+    "city": "Bellingham",
+    "state": "WA",
+    "zip": "98225"
+   },
+   "service": null,
+   "code": null,
+   "state": "gift_sent",
+   "paidAt": "2026-07-27T19:14",
+   "method": "card",
+   "shipsBy": "2026-07-28",
+   "shippedOn": null,
+   "arrives": null,
+   "tracking": null,
+   "lines": [],
+   "gifts": [
+    {
+     "amount": "100.00",
+     "to": "Hana Sato",
+     "toEmail": "hana.s@example.com",
+     "message": "Happy birthday, Hana!"
+    }
+   ],
+   "goods": "0.00",
+   "discount": "0.00",
+   "net": "0.00",
+   "shipping": "0.00",
+   "tax": "0.00",
+   "giftsTotal": "100.00",
+   "total": "100.00"
+  },
+  {
+   "number": "NL-1014",
+   "placed": "2026-07-27T19:52",
+   "customer": 14,
+   "name": "Owen Price",
+   "email": "owen.p@example.com",
+   "ship": {
+    "line1": "3998 Birch Ave",
+    "city": "Salem",
+    "state": "OR",
+    "zip": "97301"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-07-27T19:55",
+   "method": "card",
+   "shipsBy": "2026-07-28",
+   "shippedOn": "2026-07-28",
+   "arrives": [
+    "2026-07-31",
+    "2026-08-04"
+   ],
+   "tracking": "JD0146014769284812",
+   "lines": [
+    {
+     "sku": "NL-RMB-11",
+     "qty": 1,
+     "each": "189.00",
+     "line": "189.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "189.00",
+   "discount": "0.00",
+   "net": "189.00",
+   "shipping": "0.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "189.00"
+  },
+  {
+   "number": "NL-1015",
+   "placed": "2026-07-27T20:52",
+   "customer": 18,
+   "name": "Kai Akana",
+   "email": "kai.a@example.com",
+   "ship": {
+    "line1": "2011 Oak Way",
+    "city": "Honolulu",
+    "state": "HI",
+    "zip": "96813"
+   },
+   "service": "express",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-07-27T20:56",
+   "method": "wallet",
+   "shipsBy": "2026-07-28",
+   "shippedOn": "2026-07-28",
+   "arrives": [
+    "2026-07-30",
+    "2026-07-30"
+   ],
+   "tracking": "JD0146051096046741",
+   "lines": [
+    {
+     "sku": "NL-MER-GLA-XL",
+     "qty": 1,
+     "each": "75.00",
+     "line": "75.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-FIR-SAN-XL",
+     "qty": 1,
+     "each": "89.00",
+     "line": "89.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "164.00",
+   "discount": "0.00",
+   "net": "164.00",
+   "shipping": "34.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "198.00"
+  },
+  {
+   "number": "NL-1016",
+   "placed": "2026-07-28T05:48",
+   "customer": 6,
+   "name": "Jonah Park",
+   "email": "jonah.p@example.com",
+   "ship": {
+    "line1": "1065 Larch Way",
+    "city": "Boise",
+    "state": "ID",
+    "zip": "83702"
+   },
+   "service": "express",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-07-28T05:52",
+   "method": "card",
+   "shipsBy": "2026-07-28",
+   "shippedOn": "2026-07-28",
+   "arrives": [
+    "2026-07-30",
+    "2026-07-30"
+   ],
+   "tracking": "JD0146075112309628",
+   "lines": [
+    {
+     "sku": "NL-BSH-EMB-S",
+     "qty": 1,
+     "each": "189.00",
+     "line": "189.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "189.00",
+   "discount": "0.00",
+   "net": "189.00",
+   "shipping": "18.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "207.00"
+  },
+  {
+   "number": "NL-1017",
+   "placed": "2026-07-28T17:50",
+   "customer": 16,
+   "name": "Ade Bello",
+   "email": "ade.b@example.com",
+   "ship": {
+    "line1": "804 Cedar Ave",
+    "city": "Chicago",
+    "state": "IL",
+    "zip": "60614"
+   },
+   "service": "standard",
+   "code": "WELCOME10",
+   "state": "shipped",
+   "paidAt": "2026-07-28T17:52",
+   "method": "card",
+   "shipsBy": "2026-07-29",
+   "shippedOn": "2026-07-29",
+   "arrives": [
+    "2026-08-03",
+    "2026-08-05"
+   ],
+   "tracking": "JD0146011175095152",
+   "lines": [
+    {
+     "sku": "NL-DUF60-SLA",
+     "qty": 1,
+     "each": "149.00",
+     "line": "149.00",
+     "discount": "14.90",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "149.00",
+   "discount": "14.90",
+   "net": "134.10",
+   "shipping": "0.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "134.10"
+  },
+  {
+   "number": "NL-1018",
+   "placed": "2026-07-29T05:30",
+   "customer": 19,
+   "name": "Tom Reyes",
+   "email": "tom.r@example.com",
+   "ship": {
+    "line1": "4110 Larch St",
+    "city": "Portland",
+    "state": "OR",
+    "zip": "97212"
+   },
+   "service": "express",
+   "code": "WELCOME10",
+   "state": "shipped",
+   "paidAt": "2026-07-29T05:31",
+   "method": "card",
+   "shipsBy": "2026-07-29",
+   "shippedOn": "2026-07-29",
+   "arrives": [
+    "2026-07-31",
+    "2026-07-31"
+   ],
+   "tracking": "JD0146023137437846",
+   "lines": [
+    {
+     "sku": "NL-TAL-8",
+     "qty": 1,
+     "each": "139.00",
+     "line": "139.00",
+     "discount": "13.90",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-STV",
+     "qty": 1,
+     "each": "69.00",
+     "line": "69.00",
+     "discount": "6.90",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "208.00",
+   "discount": "20.80",
+   "net": "187.20",
+   "shipping": "18.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "205.20"
+  },
+  {
+   "number": "NL-1019",
+   "placed": "2026-07-29T18:15",
+   "customer": 12,
+   "name": "Diego Morales",
+   "email": "diego.m@example.com",
+   "ship": {
+    "line1": "167 Fir St",
+    "city": "Austin",
+    "state": "TX",
+    "zip": "78704"
+   },
+   "service": "express",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-07-29T18:19",
+   "method": "wallet",
+   "shipsBy": "2026-07-30",
+   "shippedOn": "2026-07-30",
+   "arrives": [
+    "2026-08-03",
+    "2026-08-03"
+   ],
+   "tracking": "JD0146090483379315",
+   "lines": [
+    {
+     "sku": "NL-RMB-9",
+     "qty": 2,
+     "each": "189.00",
+     "line": "378.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-BSH-EMB-XL",
+     "qty": 1,
+     "each": "199.00",
+     "line": "199.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "577.00",
+   "discount": "0.00",
+   "net": "577.00",
+   "shipping": "18.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "595.00"
+  },
+  {
+   "number": "NL-1020",
+   "placed": "2026-07-30T06:52",
+   "customer": 9,
+   "name": "Hana Sato",
+   "email": "hana.s@example.com",
+   "ship": {
+    "line1": "240 Spruce Rd",
+    "city": "Tacoma",
+    "state": "WA",
+    "zip": "98402"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-07-30T06:56",
+   "method": "wallet",
+   "shipsBy": "2026-07-30",
+   "shippedOn": "2026-07-30",
+   "arrives": [
+    "2026-08-04",
+    "2026-08-06"
+   ],
+   "tracking": "JD0146035013564053",
+   "lines": [
+    {
+     "sku": "NL-MUG-MOS",
+     "qty": 1,
+     "each": "22.00",
+     "line": "22.00",
+     "discount": "0.00",
+     "tax": "1.43"
+    }
+   ],
+   "gifts": [],
+   "goods": "22.00",
+   "discount": "0.00",
+   "net": "22.00",
+   "shipping": "7.00",
+   "tax": "1.43",
+   "giftsTotal": "0.00",
+   "total": "30.43"
+  },
+  {
+   "number": "NL-1021",
+   "placed": "2026-07-30T17:15",
+   "customer": 22,
+   "name": "Zoe Carter",
+   "email": "zoe.c@example.com",
+   "ship": {
+    "line1": "3817 Fir St",
+    "city": "Los Angeles",
+    "state": "CA",
+    "zip": "90026"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-07-30T17:16",
+   "method": "card",
+   "shipsBy": "2026-07-31",
+   "shippedOn": "2026-07-31",
+   "arrives": [
+    "2026-08-05",
+    "2026-08-07"
+   ],
+   "tracking": "JD0146027030463349",
+   "lines": [
+    {
+     "sku": "NL-RDG28-EMB",
+     "qty": 1,
+     "each": "129.00",
+     "line": "129.00",
+     "discount": "0.00",
+     "tax": "9.35"
+    },
+    {
+     "sku": "NL-BEA-EMB",
+     "qty": 1,
+     "each": "28.00",
+     "line": "28.00",
+     "discount": "0.00",
+     "tax": "2.03"
+    }
+   ],
+   "gifts": [],
+   "goods": "157.00",
+   "discount": "0.00",
+   "net": "157.00",
+   "shipping": "0.00",
+   "tax": "11.38",
+   "giftsTotal": "0.00",
+   "total": "168.38"
+  },
+  {
+   "number": "NL-1022",
+   "placed": "2026-07-31T04:35",
+   "customer": 5,
+   "name": "Noor Haddad",
+   "email": "noor.h@example.com",
+   "ship": {
+    "line1": "423 Maple Way",
+    "city": "Brooklyn",
+    "state": "NY",
+    "zip": "11215"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "cancelled_customer",
+   "paidAt": "2026-07-31T04:37",
+   "method": "card",
+   "shipsBy": "2026-07-31",
+   "shippedOn": null,
+   "arrives": null,
+   "tracking": null,
+   "lines": [
+    {
+     "sku": "NL-TAL-10",
+     "qty": 1,
+     "each": "139.00",
+     "line": "139.00",
+     "discount": "0.00",
+     "tax": "5.56"
+    }
+   ],
+   "gifts": [],
+   "goods": "139.00",
+   "discount": "0.00",
+   "net": "139.00",
+   "shipping": "0.00",
+   "tax": "5.56",
+   "giftsTotal": "0.00",
+   "total": "144.56"
+  },
+  {
+   "number": "NL-1023",
+   "placed": "2026-07-31T16:52",
+   "customer": 19,
+   "name": "Tom Reyes",
+   "email": "tom.r@example.com",
+   "ship": {
+    "line1": "4110 Larch St",
+    "city": "Portland",
+    "state": "OR",
+    "zip": "97212"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-07-31T16:55",
+   "method": "card",
+   "shipsBy": "2026-08-03",
+   "shippedOn": "2026-08-03",
+   "arrives": [
+    "2026-08-06",
+    "2026-08-10"
+   ],
+   "tracking": "JD0146050222786609",
+   "lines": [
+    {
+     "sku": "NL-TSH-SAN-32",
+     "qty": 1,
+     "each": "58.00",
+     "line": "58.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "58.00",
+   "discount": "0.00",
+   "net": "58.00",
+   "shipping": "7.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "65.00"
+  },
+  {
+   "number": "NL-1024",
+   "placed": "2026-08-01T15:02",
+   "customer": 19,
+   "name": "Tom Reyes",
+   "email": "tom.r@example.com",
+   "ship": {
+    "line1": "4110 Larch St",
+    "city": "Portland",
+    "state": "OR",
+    "zip": "97212"
+   },
+   "service": "express",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-01T15:03",
+   "method": "card",
+   "shipsBy": "2026-08-03",
+   "shippedOn": "2026-08-03",
+   "arrives": [
+    "2026-08-05",
+    "2026-08-05"
+   ],
+   "tracking": "JD0146022725938750",
+   "lines": [
+    {
+     "sku": "NL-RMB-8",
+     "qty": 1,
+     "each": "189.00",
+     "line": "189.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "189.00",
+   "discount": "0.00",
+   "net": "189.00",
+   "shipping": "18.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "207.00"
+  },
+  {
+   "number": "NL-1025",
+   "placed": "2026-08-02T03:12",
+   "customer": 23,
+   "name": "Ravi Menon",
+   "email": "ravi.m@example.com",
+   "ship": {
+    "line1": "4948 Spruce St",
+    "city": "Ithaca",
+    "state": "NY",
+    "zip": "14850"
+   },
+   "service": "express",
+   "code": "WELCOME10",
+   "state": "shipped",
+   "paidAt": "2026-08-02T03:16",
+   "method": "card",
+   "shipsBy": "2026-08-03",
+   "shippedOn": "2026-08-03",
+   "arrives": [
+    "2026-08-05",
+    "2026-08-05"
+   ],
+   "tracking": "JD0146064624723313",
+   "lines": [
+    {
+     "sku": "NL-RMB-7",
+     "qty": 1,
+     "each": "189.00",
+     "line": "189.00",
+     "discount": "18.90",
+     "tax": "6.80"
+    }
+   ],
+   "gifts": [],
+   "goods": "189.00",
+   "discount": "18.90",
+   "net": "170.10",
+   "shipping": "18.00",
+   "tax": "6.80",
+   "giftsTotal": "0.00",
+   "total": "194.90"
+  },
+  {
+   "number": "NL-1026",
+   "placed": "2026-08-02T14:34",
+   "customer": 23,
+   "name": "Ravi Menon",
+   "email": "ravi.m@example.com",
+   "ship": {
+    "line1": "4948 Spruce St",
+    "city": "Ithaca",
+    "state": "NY",
+    "zip": "14850"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-02T14:36",
+   "method": "wallet",
+   "shipsBy": "2026-08-03",
+   "shippedOn": "2026-08-03",
+   "arrives": [
+    "2026-08-06",
+    "2026-08-10"
+   ],
+   "tracking": "JD0146013957410304",
+   "lines": [
+    {
+     "sku": "NL-LOF-REGULAR",
+     "qty": 2,
+     "each": "249.00",
+     "line": "498.00",
+     "discount": "0.00",
+     "tax": "19.92"
+    }
+   ],
+   "gifts": [],
+   "goods": "498.00",
+   "discount": "0.00",
+   "net": "498.00",
+   "shipping": "0.00",
+   "tax": "19.92",
+   "giftsTotal": "0.00",
+   "total": "517.92"
+  },
+  {
+   "number": "NL-1027",
+   "placed": "2026-08-03T02:00",
+   "customer": 12,
+   "name": "Diego Morales",
+   "email": "diego.m@example.com",
+   "ship": {
+    "line1": "167 Fir St",
+    "city": "Austin",
+    "state": "TX",
+    "zip": "78704"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-03T02:03",
+   "method": "wallet",
+   "shipsBy": "2026-08-03",
+   "shippedOn": "2026-08-03",
+   "arrives": [
+    "2026-08-06",
+    "2026-08-10"
+   ],
+   "tracking": "JD0146093881583847",
+   "lines": [
+    {
+     "sku": "NL-TAL-12",
+     "qty": 1,
+     "each": "139.00",
+     "line": "139.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-SLD-SLA-L",
+     "qty": 1,
+     "each": "42.00",
+     "line": "42.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "181.00",
+   "discount": "0.00",
+   "net": "181.00",
+   "shipping": "0.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "181.00"
+  },
+  {
+   "number": "NL-1028",
+   "placed": "2026-08-03T02:11",
+   "customer": 9,
+   "name": "Hana Sato",
+   "email": "hana.s@example.com",
+   "ship": {
+    "line1": "240 Spruce Rd",
+    "city": "Tacoma",
+    "state": "WA",
+    "zip": "98402"
+   },
+   "service": "express",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-03T02:12",
+   "method": "wallet",
+   "shipsBy": "2026-08-03",
+   "shippedOn": "2026-08-03",
+   "arrives": [
+    "2026-08-05",
+    "2026-08-05"
+   ],
+   "tracking": "JD0146028158183036",
+   "lines": [
+    {
+     "sku": "NL-MER-GLA-S",
+     "qty": 1,
+     "each": "75.00",
+     "line": "75.00",
+     "discount": "0.00",
+     "tax": "4.88"
+    }
+   ],
+   "gifts": [],
+   "goods": "75.00",
+   "discount": "0.00",
+   "net": "75.00",
+   "shipping": "18.00",
+   "tax": "4.88",
+   "giftsTotal": "0.00",
+   "total": "97.88"
+  },
+  {
+   "number": "NL-1029",
+   "placed": "2026-08-03T08:47",
+   "customer": 24,
+   "name": "Ella Brooks",
+   "email": "ella.b@example.com",
+   "ship": {
+    "line1": "392 Alder Ave",
+    "city": "Hood River",
+    "state": "OR",
+    "zip": "97031"
+   },
+   "service": null,
+   "code": null,
+   "state": "gift_sent",
+   "paidAt": "2026-08-03T08:49",
+   "method": "wallet",
+   "shipsBy": "2026-08-03",
+   "shippedOn": null,
+   "arrives": null,
+   "tracking": null,
+   "lines": [],
+   "gifts": [
+    {
+     "amount": "50.00",
+     "to": "Theo Brandt",
+     "toEmail": "theo.b@example.com",
+     "message": "For the new boots."
+    }
+   ],
+   "goods": "0.00",
+   "discount": "0.00",
+   "net": "0.00",
+   "shipping": "0.00",
+   "tax": "0.00",
+   "giftsTotal": "50.00",
+   "total": "50.00"
+  },
+  {
+   "number": "NL-1030",
+   "placed": "2026-08-03T13:48",
+   "customer": 12,
+   "name": "Diego Morales",
+   "email": "diego.m@example.com",
+   "ship": {
+    "line1": "167 Fir St",
+    "city": "Austin",
+    "state": "TX",
+    "zip": "78704"
+   },
+   "service": "express",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-03T13:52",
+   "method": "card",
+   "shipsBy": "2026-08-03",
+   "shippedOn": "2026-08-03",
+   "arrives": [
+    "2026-08-05",
+    "2026-08-05"
+   ],
+   "tracking": "JD0146023183495394",
+   "lines": [
+    {
+     "sku": "NL-TAL-10",
+     "qty": 1,
+     "each": "139.00",
+     "line": "139.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-RMB-8",
+     "qty": 2,
+     "each": "189.00",
+     "line": "378.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-BSH-SLA-S",
+     "qty": 1,
+     "each": "189.00",
+     "line": "189.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "706.00",
+   "discount": "0.00",
+   "net": "706.00",
+   "shipping": "18.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "724.00"
+  },
+  {
+   "number": "NL-1031",
+   "placed": "2026-08-04T03:13",
+   "customer": 15,
+   "name": "Clara Novak",
+   "email": "clara.n@example.com",
+   "ship": {
+    "line1": "2060 Larch Ave",
+    "city": "Spokane",
+    "state": "WA",
+    "zip": "99201"
+   },
+   "service": "express",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-04T03:15",
+   "method": "card",
+   "shipsBy": "2026-08-04",
+   "shippedOn": "2026-08-04",
+   "arrives": [
+    "2026-08-06",
+    "2026-08-06"
+   ],
+   "tracking": "JD0146059302912844",
+   "lines": [
+    {
+     "sku": "NL-TSH-SLA-34",
+     "qty": 1,
+     "each": "58.00",
+     "line": "58.00",
+     "discount": "0.00",
+     "tax": "3.77"
+    }
+   ],
+   "gifts": [],
+   "goods": "58.00",
+   "discount": "0.00",
+   "net": "58.00",
+   "shipping": "18.00",
+   "tax": "3.77",
+   "giftsTotal": "0.00",
+   "total": "79.77"
+  },
+  {
+   "number": "NL-1032",
+   "placed": "2026-08-04T14:33",
+   "customer": 11,
+   "name": "Ruth Ellison",
+   "email": "ruth.e@example.com",
+   "ship": {
+    "line1": "4043 Cedar St",
+    "city": "Anchorage",
+    "state": "AK",
+    "zip": "99501"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-04T14:34",
+   "method": "card",
+   "shipsBy": "2026-08-05",
+   "shippedOn": "2026-08-05",
+   "arrives": [
+    "2026-08-10",
+    "2026-08-12"
+   ],
+   "tracking": "JD0146025428148934",
+   "lines": [
+    {
+     "sku": "NL-FIR-SLA-XL",
+     "qty": 1,
+     "each": "89.00",
+     "line": "89.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-RMB-8",
+     "qty": 1,
+     "each": "189.00",
+     "line": "189.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-MER-GLA-L",
+     "qty": 1,
+     "each": "75.00",
+     "line": "75.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "353.00",
+   "discount": "0.00",
+   "net": "353.00",
+   "shipping": "16.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "369.00"
+  },
+  {
+   "number": "NL-1033",
+   "placed": "2026-08-05T02:28",
+   "customer": 8,
+   "name": "Theo Brandt",
+   "email": "theo.b@example.com",
+   "ship": {
+    "line1": "1307 Larch St",
+    "city": "Eugene",
+    "state": "OR",
+    "zip": "97401"
+   },
+   "service": "express",
+   "code": "TRAIL15",
+   "state": "shipped",
+   "paidAt": "2026-08-05T02:32",
+   "method": "card",
+   "shipsBy": "2026-08-05",
+   "shippedOn": "2026-08-05",
+   "arrives": [
+    "2026-08-07",
+    "2026-08-07"
+   ],
+   "tracking": "JD0146045460657997",
+   "lines": [
+    {
+     "sku": "NL-CAS45-SLA-SM",
+     "qty": 1,
+     "each": "219.00",
+     "line": "219.00",
+     "discount": "32.85",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-DRY20-GLA",
+     "qty": 2,
+     "each": "32.00",
+     "line": "64.00",
+     "discount": "9.60",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "283.00",
+   "discount": "42.45",
+   "net": "240.55",
+   "shipping": "18.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "258.55"
+  },
+  {
+   "number": "NL-1034",
+   "placed": "2026-08-05T13:06",
+   "customer": 11,
+   "name": "Ruth Ellison",
+   "email": "ruth.e@example.com",
+   "ship": {
+    "line1": "4043 Cedar St",
+    "city": "Anchorage",
+    "state": "AK",
+    "zip": "99501"
+   },
+   "service": "express",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-05T13:10",
+   "method": "card",
+   "shipsBy": "2026-08-05",
+   "shippedOn": "2026-08-05",
+   "arrives": [
+    "2026-08-07",
+    "2026-08-07"
+   ],
+   "tracking": "JD0146055088329946",
+   "lines": [
+    {
+     "sku": "NL-BSH-SLA-S",
+     "qty": 1,
+     "each": "189.00",
+     "line": "189.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "189.00",
+   "discount": "0.00",
+   "net": "189.00",
+   "shipping": "34.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "223.00"
+  },
+  {
+   "number": "NL-1035",
+   "placed": "2026-08-06T01:13",
+   "customer": 16,
+   "name": "Ade Bello",
+   "email": "ade.b@example.com",
+   "ship": {
+    "line1": "804 Cedar Ave",
+    "city": "Chicago",
+    "state": "IL",
+    "zip": "60614"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-06T01:17",
+   "method": "card",
+   "shipsBy": "2026-08-06",
+   "shippedOn": "2026-08-06",
+   "arrives": [
+    "2026-08-11",
+    "2026-08-13"
+   ],
+   "tracking": "JD0146073881105074",
+   "lines": [
+    {
+     "sku": "NL-BSH-EMB-M",
+     "qty": 1,
+     "each": "189.00",
+     "line": "189.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-CAS45-SLA-ML",
+     "qty": 1,
+     "each": "219.00",
+     "line": "219.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "408.00",
+   "discount": "0.00",
+   "net": "408.00",
+   "shipping": "0.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "408.00"
+  },
+  {
+   "number": "NL-1036",
+   "placed": "2026-08-06T13:36",
+   "customer": 15,
+   "name": "Clara Novak",
+   "email": "clara.n@example.com",
+   "ship": {
+    "line1": "2060 Larch Ave",
+    "city": "Spokane",
+    "state": "WA",
+    "zip": "99201"
+   },
+   "service": "express",
+   "code": "TRAIL15",
+   "state": "shipped",
+   "paidAt": "2026-08-06T13:40",
+   "method": "card",
+   "shipsBy": "2026-08-06",
+   "shippedOn": "2026-08-06",
+   "arrives": [
+    "2026-08-10",
+    "2026-08-10"
+   ],
+   "tracking": "JD0146074422231677",
+   "lines": [
+    {
+     "sku": "NL-DRY20-GLA",
+     "qty": 1,
+     "each": "32.00",
+     "line": "32.00",
+     "discount": "4.80",
+     "tax": "1.77"
+    },
+    {
+     "sku": "NL-TAL-7",
+     "qty": 2,
+     "each": "139.00",
+     "line": "278.00",
+     "discount": "0.00",
+     "tax": "18.07"
+    }
+   ],
+   "gifts": [],
+   "goods": "310.00",
+   "discount": "4.80",
+   "net": "305.20",
+   "shipping": "18.00",
+   "tax": "19.84",
+   "giftsTotal": "0.00",
+   "total": "343.04"
+  },
+  {
+   "number": "NL-1037",
+   "placed": "2026-08-06T23:29",
+   "customer": 12,
+   "name": "Diego Morales",
+   "email": "diego.m@example.com",
+   "ship": {
+    "line1": "167 Fir St",
+    "city": "Austin",
+    "state": "TX",
+    "zip": "78704"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-06T23:32",
+   "method": "card",
+   "shipsBy": "2026-08-07",
+   "shippedOn": "2026-08-07",
+   "arrives": [
+    "2026-08-12",
+    "2026-08-14"
+   ],
+   "tracking": "JD0146027668119329",
+   "lines": [
+    {
+     "sku": "NL-FIR-MOS-M",
+     "qty": 1,
+     "each": "89.00",
+     "line": "89.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-BSH-EMB-L",
+     "qty": 2,
+     "each": "189.00",
+     "line": "378.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "467.00",
+   "discount": "0.00",
+   "net": "467.00",
+   "shipping": "0.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "467.00"
+  },
+  {
+   "number": "NL-1038",
+   "placed": "2026-08-07T13:34",
+   "customer": 12,
+   "name": "Diego Morales",
+   "email": "diego.m@example.com",
+   "ship": {
+    "line1": "167 Fir St",
+    "city": "Austin",
+    "state": "TX",
+    "zip": "78704"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-07T13:38",
+   "method": "card",
+   "shipsBy": "2026-08-07",
+   "shippedOn": "2026-08-07",
+   "arrives": [
+    "2026-08-12",
+    "2026-08-14"
+   ],
+   "tracking": "JD0146017893171145",
+   "lines": [
+    {
+     "sku": "NL-FIR-SLA-L",
+     "qty": 1,
+     "each": "89.00",
+     "line": "89.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-MER-SLA-XL",
+     "qty": 1,
+     "each": "75.00",
+     "line": "75.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "164.00",
+   "discount": "0.00",
+   "net": "164.00",
+   "shipping": "0.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "164.00"
+  },
+  {
+   "number": "NL-1039",
+   "placed": "2026-08-09T01:25",
+   "customer": 21,
+   "name": "Leo Fischer",
+   "email": "leo.f@example.com",
+   "ship": {
+    "line1": "4531 Larch Rd",
+    "city": "Bellingham",
+    "state": "WA",
+    "zip": "98225"
+   },
+   "service": "express",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-09T01:27",
+   "method": "card",
+   "shipsBy": "2026-08-10",
+   "shippedOn": "2026-08-10",
+   "arrives": [
+    "2026-08-12",
+    "2026-08-12"
+   ],
+   "tracking": "JD0146024171493263",
+   "lines": [
+    {
+     "sku": "NL-SLD-MOS-L",
+     "qty": 1,
+     "each": "42.00",
+     "line": "42.00",
+     "discount": "0.00",
+     "tax": "2.73"
+    }
+   ],
+   "gifts": [],
+   "goods": "42.00",
+   "discount": "0.00",
+   "net": "42.00",
+   "shipping": "18.00",
+   "tax": "2.73",
+   "giftsTotal": "0.00",
+   "total": "62.73"
+  },
+  {
+   "number": "NL-1040",
+   "placed": "2026-08-09T13:02",
+   "customer": 23,
+   "name": "Ravi Menon",
+   "email": "ravi.m@example.com",
+   "ship": {
+    "line1": "4948 Spruce St",
+    "city": "Ithaca",
+    "state": "NY",
+    "zip": "14850"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "cancelled_staff",
+   "paidAt": "2026-08-09T13:03",
+   "method": "card",
+   "shipsBy": "2026-08-10",
+   "shippedOn": null,
+   "arrives": null,
+   "tracking": null,
+   "lines": [
+    {
+     "sku": "NL-TAL-8",
+     "qty": 1,
+     "each": "139.00",
+     "line": "139.00",
+     "discount": "0.00",
+     "tax": "5.56"
+    },
+    {
+     "sku": "NL-FIR-SAN-M",
+     "qty": 1,
+     "each": "89.00",
+     "line": "89.00",
+     "discount": "0.00",
+     "tax": "3.56"
+    },
+    {
+     "sku": "NL-BSH-SLA-L",
+     "qty": 1,
+     "each": "189.00",
+     "line": "189.00",
+     "discount": "0.00",
+     "tax": "7.56"
+    }
+   ],
+   "gifts": [],
+   "goods": "417.00",
+   "discount": "0.00",
+   "net": "417.00",
+   "shipping": "0.00",
+   "tax": "16.68",
+   "giftsTotal": "0.00",
+   "total": "433.68"
+  },
+  {
+   "number": "NL-1041",
+   "placed": "2026-08-09T21:30",
+   "customer": 20,
+   "name": "Ana Petrova",
+   "email": "ana.p@example.com",
+   "ship": {
+    "line1": "3962 Oak Rd",
+    "city": "Boulder",
+    "state": "CO",
+    "zip": "80302"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-09T21:32",
+   "method": "card",
+   "shipsBy": "2026-08-10",
+   "shippedOn": "2026-08-10",
+   "arrives": [
+    "2026-08-13",
+    "2026-08-17"
+   ],
+   "tracking": "JD0146010033391227",
+   "lines": [
+    {
+     "sku": "NL-SLD-SLA-S",
+     "qty": 1,
+     "each": "42.00",
+     "line": "42.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-TAL-8",
+     "qty": 1,
+     "each": "139.00",
+     "line": "139.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-BEA-MOS",
+     "qty": 2,
+     "each": "28.00",
+     "line": "56.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "237.00",
+   "discount": "0.00",
+   "net": "237.00",
+   "shipping": "0.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "237.00"
+  },
+  {
+   "number": "NL-1042",
+   "placed": "2026-08-09T23:03",
+   "customer": 19,
+   "name": "Tom Reyes",
+   "email": "tom.r@example.com",
+   "ship": {
+    "line1": "4110 Larch St",
+    "city": "Portland",
+    "state": "OR",
+    "zip": "97212"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-09T23:04",
+   "method": "wallet",
+   "shipsBy": "2026-08-10",
+   "shippedOn": "2026-08-10",
+   "arrives": [
+    "2026-08-13",
+    "2026-08-17"
+   ],
+   "tracking": "JD0146071500624132",
+   "lines": [
+    {
+     "sku": "NL-FIR-SLA-M",
+     "qty": 1,
+     "each": "89.00",
+     "line": "89.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-BEA-MOS",
+     "qty": 1,
+     "each": "28.00",
+     "line": "28.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "117.00",
+   "discount": "0.00",
+   "net": "117.00",
+   "shipping": "0.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "117.00"
+  },
+  {
+   "number": "NL-1043",
+   "placed": "2026-08-10T11:30",
+   "customer": 7,
+   "name": "Ines Duarte",
+   "email": "ines.d@example.com",
+   "ship": {
+    "line1": "558 Spruce St",
+    "city": "Denver",
+    "state": "CO",
+    "zip": "80205"
+   },
+   "service": "overnight",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-10T11:33",
+   "method": "wallet",
+   "shipsBy": "2026-08-10",
+   "shippedOn": "2026-08-10",
+   "arrives": [
+    "2026-08-11",
+    "2026-08-11"
+   ],
+   "tracking": "JD0146020353750751",
+   "lines": [
+    {
+     "sku": "NL-TAL-7",
+     "qty": 1,
+     "each": "139.00",
+     "line": "139.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-SLD-MOS-M",
+     "qty": 1,
+     "each": "42.00",
+     "line": "42.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "181.00",
+   "discount": "0.00",
+   "net": "181.00",
+   "shipping": "35.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "216.00"
+  },
+  {
+   "number": "NL-1044",
+   "placed": "2026-08-10T11:55",
+   "customer": 10,
+   "name": "Grace Okafor",
+   "email": "grace.o@example.com",
+   "ship": {
+    "line1": "3503 Alder St",
+    "city": "Sacramento",
+    "state": "CA",
+    "zip": "95816"
+   },
+   "service": "express",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-10T11:57",
+   "method": "card",
+   "shipsBy": "2026-08-10",
+   "shippedOn": "2026-08-10",
+   "arrives": [
+    "2026-08-12",
+    "2026-08-12"
+   ],
+   "tracking": "JD0146072463159303",
+   "lines": [
+    {
+     "sku": "NL-BSH-SLA-S",
+     "qty": 1,
+     "each": "189.00",
+     "line": "189.00",
+     "discount": "0.00",
+     "tax": "13.70"
+    },
+    {
+     "sku": "NL-LMP",
+     "qty": 1,
+     "each": "39.00",
+     "line": "39.00",
+     "discount": "0.00",
+     "tax": "2.83"
+    }
+   ],
+   "gifts": [],
+   "goods": "228.00",
+   "discount": "0.00",
+   "net": "228.00",
+   "shipping": "18.00",
+   "tax": "16.53",
+   "giftsTotal": "0.00",
+   "total": "262.53"
+  },
+  {
+   "number": "NL-1045",
+   "placed": "2026-08-10T22:42",
+   "customer": 19,
+   "name": "Tom Reyes",
+   "email": "tom.r@example.com",
+   "ship": {
+    "line1": "4110 Larch St",
+    "city": "Portland",
+    "state": "OR",
+    "zip": "97212"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-10T22:43",
+   "method": "wallet",
+   "shipsBy": "2026-08-11",
+   "shippedOn": "2026-08-11",
+   "arrives": [
+    "2026-08-14",
+    "2026-08-18"
+   ],
+   "tracking": "JD0146088329007610",
+   "lines": [
+    {
+     "sku": "NL-BSH-EMB-M",
+     "qty": 1,
+     "each": "189.00",
+     "line": "189.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-MER-GLA-S",
+     "qty": 1,
+     "each": "75.00",
+     "line": "75.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "264.00",
+   "discount": "0.00",
+   "net": "264.00",
+   "shipping": "0.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "264.00"
+  },
+  {
+   "number": "NL-1046",
+   "placed": "2026-08-11T08:31",
+   "customer": 3,
+   "name": "Lena Ortiz",
+   "email": "lena.o@example.com",
+   "ship": {
+    "line1": "1233 Oak St",
+    "city": "Oakland",
+    "state": "CA",
+    "zip": "94610"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-11T08:35",
+   "method": "card",
+   "shipsBy": "2026-08-11",
+   "shippedOn": "2026-08-11",
+   "arrives": [
+    "2026-08-14",
+    "2026-08-18"
+   ],
+   "tracking": "JD0146044301475931",
+   "lines": [
+    {
+     "sku": "NL-SOX-LXL",
+     "qty": 1,
+     "each": "24.00",
+     "line": "24.00",
+     "discount": "0.00",
+     "tax": "1.74"
+    }
+   ],
+   "gifts": [],
+   "goods": "24.00",
+   "discount": "0.00",
+   "net": "24.00",
+   "shipping": "7.00",
+   "tax": "1.74",
+   "giftsTotal": "0.00",
+   "total": "32.74"
+  },
+  {
+   "number": "NL-1047",
+   "placed": "2026-08-11T20:34",
+   "customer": 17,
+   "name": "Freya Lund",
+   "email": "freya.l@example.com",
+   "ship": {
+    "line1": "1321 Alder St",
+    "city": "Missoula",
+    "state": "MT",
+    "zip": "59801"
+   },
+   "service": "express",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-11T20:38",
+   "method": "card",
+   "shipsBy": "2026-08-12",
+   "shippedOn": "2026-08-12",
+   "arrives": [
+    "2026-08-14",
+    "2026-08-14"
+   ],
+   "tracking": "JD0146080609627585",
+   "lines": [
+    {
+     "sku": "NL-TAL-11",
+     "qty": 1,
+     "each": "139.00",
+     "line": "139.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "139.00",
+   "discount": "0.00",
+   "net": "139.00",
+   "shipping": "18.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "157.00"
+  },
+  {
+   "number": "NL-1048",
+   "placed": "2026-08-12T09:23",
+   "customer": 9,
+   "name": "Hana Sato",
+   "email": "hana.s@example.com",
+   "ship": {
+    "line1": "240 Spruce Rd",
+    "city": "Tacoma",
+    "state": "WA",
+    "zip": "98402"
+   },
+   "service": "standard",
+   "code": "TRAIL15",
+   "state": "shipped",
+   "paidAt": "2026-08-12T09:24",
+   "method": "wallet",
+   "shipsBy": "2026-08-12",
+   "shippedOn": "2026-08-12",
+   "arrives": [
+    "2026-08-17",
+    "2026-08-19"
+   ],
+   "tracking": "JD0146054809571457",
+   "lines": [
+    {
+     "sku": "NL-CAS45-MOS-SM",
+     "qty": 2,
+     "each": "219.00",
+     "line": "438.00",
+     "discount": "65.70",
+     "tax": "24.20"
+    }
+   ],
+   "gifts": [],
+   "goods": "438.00",
+   "discount": "65.70",
+   "net": "372.30",
+   "shipping": "0.00",
+   "tax": "24.20",
+   "giftsTotal": "0.00",
+   "total": "396.50"
+  },
+  {
+   "number": "NL-1049",
+   "placed": "2026-08-12T22:00",
+   "customer": 4,
+   "name": "Sam Whitaker",
+   "email": "sam.w@example.com",
+   "ship": {
+    "line1": "387 Alder Way",
+    "city": "Bend",
+    "state": "OR",
+    "zip": "97701"
+   },
+   "service": "express",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-12T22:02",
+   "method": "card",
+   "shipsBy": "2026-08-13",
+   "shippedOn": "2026-08-13",
+   "arrives": [
+    "2026-08-17",
+    "2026-08-17"
+   ],
+   "tracking": "JD0146079182643731",
+   "lines": [
+    {
+     "sku": "NL-MER-SLA-XL",
+     "qty": 1,
+     "each": "75.00",
+     "line": "75.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "75.00",
+   "discount": "0.00",
+   "net": "75.00",
+   "shipping": "18.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "93.00"
+  },
+  {
+   "number": "NL-1050",
+   "placed": "2026-08-13T08:25",
+   "customer": 3,
+   "name": "Lena Ortiz",
+   "email": "lena.o@example.com",
+   "ship": {
+    "line1": "1233 Oak St",
+    "city": "Oakland",
+    "state": "CA",
+    "zip": "94610"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-13T08:28",
+   "method": "card",
+   "shipsBy": "2026-08-13",
+   "shippedOn": "2026-08-13",
+   "arrives": [
+    "2026-08-18",
+    "2026-08-20"
+   ],
+   "tracking": "JD0146018208402908",
+   "lines": [
+    {
+     "sku": "NL-MER-SLA-L",
+     "qty": 1,
+     "each": "75.00",
+     "line": "75.00",
+     "discount": "0.00",
+     "tax": "5.44"
+    }
+   ],
+   "gifts": [],
+   "goods": "75.00",
+   "discount": "0.00",
+   "net": "75.00",
+   "shipping": "7.00",
+   "tax": "5.44",
+   "giftsTotal": "0.00",
+   "total": "87.44"
+  },
+  {
+   "number": "NL-1051",
+   "placed": "2026-08-13T20:04",
+   "customer": 23,
+   "name": "Ravi Menon",
+   "email": "ravi.m@example.com",
+   "ship": {
+    "line1": "4948 Spruce St",
+    "city": "Ithaca",
+    "state": "NY",
+    "zip": "14850"
+   },
+   "service": "express",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-13T20:08",
+   "method": "card",
+   "shipsBy": "2026-08-14",
+   "shippedOn": "2026-08-14",
+   "arrives": [
+    "2026-08-18",
+    "2026-08-18"
+   ],
+   "tracking": "JD0146086215585380",
+   "lines": [
+    {
+     "sku": "NL-MER-SLA-M",
+     "qty": 1,
+     "each": "75.00",
+     "line": "75.00",
+     "discount": "0.00",
+     "tax": "3.00"
+    },
+    {
+     "sku": "NL-FIR-MOS-XL",
+     "qty": 2,
+     "each": "89.00",
+     "line": "178.00",
+     "discount": "0.00",
+     "tax": "7.12"
+    },
+    {
+     "sku": "NL-BTL-GLA",
+     "qty": 2,
+     "each": "34.00",
+     "line": "68.00",
+     "discount": "0.00",
+     "tax": "2.72"
+    }
+   ],
+   "gifts": [],
+   "goods": "321.00",
+   "discount": "0.00",
+   "net": "321.00",
+   "shipping": "18.00",
+   "tax": "12.84",
+   "giftsTotal": "0.00",
+   "total": "351.84"
+  },
+  {
+   "number": "NL-1052",
+   "placed": "2026-08-14T09:24",
+   "customer": 11,
+   "name": "Ruth Ellison",
+   "email": "ruth.e@example.com",
+   "ship": {
+    "line1": "4043 Cedar St",
+    "city": "Anchorage",
+    "state": "AK",
+    "zip": "99501"
+   },
+   "service": "standard",
+   "code": "TRAIL15",
+   "state": "shipped",
+   "paidAt": "2026-08-14T09:26",
+   "method": "wallet",
+   "shipsBy": "2026-08-14",
+   "shippedOn": "2026-08-14",
+   "arrives": [
+    "2026-08-19",
+    "2026-08-21"
+   ],
+   "tracking": "JD0146032125191423",
+   "lines": [
+    {
+     "sku": "NL-HIP-SLA",
+     "qty": 2,
+     "each": "45.00",
+     "line": "90.00",
+     "discount": "13.50",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-EMB2",
+     "qty": 1,
+     "each": "329.00",
+     "line": "329.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "419.00",
+   "discount": "13.50",
+   "net": "405.50",
+   "shipping": "16.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "421.50"
+  },
+  {
+   "number": "NL-1053",
+   "placed": "2026-08-14T19:07",
+   "customer": 1,
+   "name": "Priya Raman",
+   "email": "priya.r@example.com",
+   "ship": {
+    "line1": "3410 Fir Ave",
+    "city": "Portland",
+    "state": "OR",
+    "zip": "97214"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-14T19:08",
+   "method": "card",
+   "shipsBy": "2026-08-17",
+   "shippedOn": "2026-08-17",
+   "arrives": [
+    "2026-08-20",
+    "2026-08-24"
+   ],
+   "tracking": "JD0146083586063425",
+   "lines": [
+    {
+     "sku": "NL-RMB-9",
+     "qty": 1,
+     "each": "189.00",
+     "line": "189.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-BEA-SLA",
+     "qty": 1,
+     "each": "28.00",
+     "line": "28.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "217.00",
+   "discount": "0.00",
+   "net": "217.00",
+   "shipping": "0.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "217.00"
+  },
+  {
+   "number": "NL-1054",
+   "placed": "2026-08-14T20:05",
+   "customer": 5,
+   "name": "Noor Haddad",
+   "email": "noor.h@example.com",
+   "ship": {
+    "line1": "423 Maple Way",
+    "city": "Brooklyn",
+    "state": "NY",
+    "zip": "11215"
+   },
+   "service": null,
+   "code": null,
+   "state": "gift_sent",
+   "paidAt": "2026-08-14T20:08",
+   "method": "card",
+   "shipsBy": "2026-08-17",
+   "shippedOn": null,
+   "arrives": null,
+   "tracking": null,
+   "lines": [],
+   "gifts": [
+    {
+     "amount": "25.00",
+     "to": "Ravi Menon",
+     "toEmail": "ravi.m@example.com",
+     "message": "Thank you for the weekend."
+    }
+   ],
+   "goods": "0.00",
+   "discount": "0.00",
+   "net": "0.00",
+   "shipping": "0.00",
+   "tax": "0.00",
+   "giftsTotal": "25.00",
+   "total": "25.00"
+  },
+  {
+   "number": "NL-1055",
+   "placed": "2026-08-15T05:58",
+   "customer": 8,
+   "name": "Theo Brandt",
+   "email": "theo.b@example.com",
+   "ship": {
+    "line1": "1307 Larch St",
+    "city": "Eugene",
+    "state": "OR",
+    "zip": "97401"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-15T06:01",
+   "method": "card",
+   "shipsBy": "2026-08-17",
+   "shippedOn": "2026-08-17",
+   "arrives": [
+    "2026-08-20",
+    "2026-08-24"
+   ],
+   "tracking": "JD0146080864342180",
+   "lines": [
+    {
+     "sku": "NL-RMB-12",
+     "qty": 2,
+     "each": "189.00",
+     "line": "378.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-RDG28-MOS",
+     "qty": 1,
+     "each": "129.00",
+     "line": "129.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "507.00",
+   "discount": "0.00",
+   "net": "507.00",
+   "shipping": "0.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "507.00"
+  },
+  {
+   "number": "NL-1056",
+   "placed": "2026-08-15T20:49",
+   "customer": 17,
+   "name": "Freya Lund",
+   "email": "freya.l@example.com",
+   "ship": {
+    "line1": "1321 Alder St",
+    "city": "Missoula",
+    "state": "MT",
+    "zip": "59801"
+   },
+   "service": "standard",
+   "code": "TRAIL15",
+   "state": "shipped",
+   "paidAt": "2026-08-15T20:50",
+   "method": "card",
+   "shipsBy": "2026-08-17",
+   "shippedOn": "2026-08-17",
+   "arrives": [
+    "2026-08-20",
+    "2026-08-24"
+   ],
+   "tracking": "JD0146038665482324",
+   "lines": [
+    {
+     "sku": "NL-RDG28-EMB",
+     "qty": 1,
+     "each": "129.00",
+     "line": "129.00",
+     "discount": "19.35",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-LOF-REGULAR",
+     "qty": 1,
+     "each": "249.00",
+     "line": "249.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "378.00",
+   "discount": "19.35",
+   "net": "358.65",
+   "shipping": "0.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "358.65"
+  },
+  {
+   "number": "NL-1057",
+   "placed": "2026-08-16T05:40",
+   "customer": 10,
+   "name": "Grace Okafor",
+   "email": "grace.o@example.com",
+   "ship": {
+    "line1": "3503 Alder St",
+    "city": "Sacramento",
+    "state": "CA",
+    "zip": "95816"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "shipped",
+   "paidAt": "2026-08-16T05:44",
+   "method": "wallet",
+   "shipsBy": "2026-08-17",
+   "shippedOn": "2026-08-17",
+   "arrives": [
+    "2026-08-20",
+    "2026-08-24"
+   ],
+   "tracking": "JD0146021026341144",
+   "lines": [
+    {
+     "sku": "NL-TSH-SAN-32",
+     "qty": 1,
+     "each": "58.00",
+     "line": "58.00",
+     "discount": "0.00",
+     "tax": "4.21"
+    }
+   ],
+   "gifts": [],
+   "goods": "58.00",
+   "discount": "0.00",
+   "net": "58.00",
+   "shipping": "7.00",
+   "tax": "4.21",
+   "giftsTotal": "0.00",
+   "total": "69.21"
+  },
+  {
+   "number": "NL-1058",
+   "placed": "2026-08-17T09:40",
+   "customer": 4,
+   "name": "Sam Whitaker",
+   "email": "sam.w@example.com",
+   "ship": {
+    "line1": "387 Alder Way",
+    "city": "Bend",
+    "state": "OR",
+    "zip": "97701"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "cancelled_unpaid",
+   "paidAt": null,
+   "method": null,
+   "shipsBy": null,
+   "shippedOn": null,
+   "arrives": null,
+   "tracking": null,
+   "lines": [
+    {
+     "sku": "NL-DUF60-SLA",
+     "qty": 1,
+     "each": "149.00",
+     "line": "149.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "149.00",
+   "discount": "0.00",
+   "net": "149.00",
+   "shipping": "0.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "149.00"
+  },
+  {
+   "number": "NL-1059",
+   "placed": "2026-08-17T14:40",
+   "customer": 7,
+   "name": "Ines Duarte",
+   "email": "ines.d@example.com",
+   "ship": {
+    "line1": "558 Spruce St",
+    "city": "Denver",
+    "state": "CO",
+    "zip": "80205"
+   },
+   "service": "express",
+   "code": "TRAIL15",
+   "state": "packed",
+   "paidAt": "2026-08-17T14:41",
+   "method": "wallet",
+   "shipsBy": "2026-08-18",
+   "shippedOn": null,
+   "arrives": null,
+   "tracking": null,
+   "lines": [
+    {
+     "sku": "NL-RDG28-SLA",
+     "qty": 1,
+     "each": "129.00",
+     "line": "129.00",
+     "discount": "19.35",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-LMP",
+     "qty": 1,
+     "each": "39.00",
+     "line": "39.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "168.00",
+   "discount": "19.35",
+   "net": "148.65",
+   "shipping": "18.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "166.65"
+  },
+  {
+   "number": "NL-1060",
+   "placed": "2026-08-17T15:40",
+   "customer": 14,
+   "name": "Owen Price",
+   "email": "owen.p@example.com",
+   "ship": {
+    "line1": "3998 Birch Ave",
+    "city": "Salem",
+    "state": "OR",
+    "zip": "97301"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "packed",
+   "paidAt": "2026-08-17T15:44",
+   "method": "card",
+   "shipsBy": "2026-08-18",
+   "shippedOn": null,
+   "arrives": null,
+   "tracking": null,
+   "lines": [
+    {
+     "sku": "NL-BTL-GLA",
+     "qty": 2,
+     "each": "34.00",
+     "line": "68.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "68.00",
+   "discount": "0.00",
+   "net": "68.00",
+   "shipping": "7.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "75.00"
+  },
+  {
+   "number": "NL-1061",
+   "placed": "2026-08-17T16:40",
+   "customer": 11,
+   "name": "Ruth Ellison",
+   "email": "ruth.e@example.com",
+   "ship": {
+    "line1": "4043 Cedar St",
+    "city": "Anchorage",
+    "state": "AK",
+    "zip": "99501"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "paid",
+   "paidAt": "2026-08-17T16:41",
+   "method": "wallet",
+   "shipsBy": "2026-08-18",
+   "shippedOn": null,
+   "arrives": null,
+   "tracking": null,
+   "lines": [
+    {
+     "sku": "NL-FIR-SLA-L",
+     "qty": 1,
+     "each": "89.00",
+     "line": "89.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "89.00",
+   "discount": "0.00",
+   "net": "89.00",
+   "shipping": "16.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "105.00"
+  },
+  {
+   "number": "NL-1062",
+   "placed": "2026-08-17T17:40",
+   "customer": 3,
+   "name": "Lena Ortiz",
+   "email": "lena.o@example.com",
+   "ship": {
+    "line1": "1233 Oak St",
+    "city": "Oakland",
+    "state": "CA",
+    "zip": "94610"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "paid",
+   "paidAt": "2026-08-17T17:44",
+   "method": "card",
+   "shipsBy": "2026-08-18",
+   "shippedOn": null,
+   "arrives": null,
+   "tracking": null,
+   "lines": [
+    {
+     "sku": "NL-EMB2",
+     "qty": 1,
+     "each": "329.00",
+     "line": "329.00",
+     "discount": "0.00",
+     "tax": "23.85"
+    },
+    {
+     "sku": "NL-STV",
+     "qty": 1,
+     "each": "69.00",
+     "line": "69.00",
+     "discount": "0.00",
+     "tax": "5.00"
+    },
+    {
+     "sku": "NL-MUG-EMB",
+     "qty": 2,
+     "each": "22.00",
+     "line": "44.00",
+     "discount": "0.00",
+     "tax": "3.20"
+    }
+   ],
+   "gifts": [],
+   "goods": "442.00",
+   "discount": "0.00",
+   "net": "442.00",
+   "shipping": "0.00",
+   "tax": "32.05",
+   "giftsTotal": "0.00",
+   "total": "474.05"
+  },
+  {
+   "number": "NL-1063",
+   "placed": "2026-08-18T08:30",
+   "customer": 10,
+   "name": "Grace Okafor",
+   "email": "grace.o@example.com",
+   "ship": {
+    "line1": "3503 Alder St",
+    "city": "Sacramento",
+    "state": "CA",
+    "zip": "95816"
+   },
+   "service": "overnight",
+   "code": null,
+   "state": "paid",
+   "paidAt": "2026-08-18T08:34",
+   "method": "card",
+   "shipsBy": "2026-08-18",
+   "shippedOn": null,
+   "arrives": null,
+   "tracking": null,
+   "lines": [
+    {
+     "sku": "NL-TAL-9",
+     "qty": 1,
+     "each": "139.00",
+     "line": "139.00",
+     "discount": "0.00",
+     "tax": "10.08"
+    }
+   ],
+   "gifts": [],
+   "goods": "139.00",
+   "discount": "0.00",
+   "net": "139.00",
+   "shipping": "35.00",
+   "tax": "10.08",
+   "giftsTotal": "0.00",
+   "total": "184.08"
+  },
+  {
+   "number": "NL-1064",
+   "placed": "2026-08-18T09:30",
+   "customer": 5,
+   "name": "Noor Haddad",
+   "email": "noor.h@example.com",
+   "ship": {
+    "line1": "423 Maple Way",
+    "city": "Brooklyn",
+    "state": "NY",
+    "zip": "11215"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "paid",
+   "paidAt": "2026-08-18T09:34",
+   "method": "card",
+   "shipsBy": "2026-08-18",
+   "shippedOn": null,
+   "arrives": null,
+   "tracking": null,
+   "lines": [
+    {
+     "sku": "NL-MER-GLA-M",
+     "qty": 2,
+     "each": "75.00",
+     "line": "150.00",
+     "discount": "0.00",
+     "tax": "6.00"
+    },
+    {
+     "sku": "NL-SOX-SM",
+     "qty": 1,
+     "each": "24.00",
+     "line": "24.00",
+     "discount": "0.00",
+     "tax": "0.96"
+    }
+   ],
+   "gifts": [],
+   "goods": "174.00",
+   "discount": "0.00",
+   "net": "174.00",
+   "shipping": "0.00",
+   "tax": "6.96",
+   "giftsTotal": "0.00",
+   "total": "180.96"
+  },
+  {
+   "number": "NL-1065",
+   "placed": "2026-08-18T10:05",
+   "customer": 2,
+   "name": "Marcus Hale",
+   "email": "marcus.h@example.com",
+   "ship": {
+    "line1": "4791 Spruce Way",
+    "city": "Seattle",
+    "state": "WA",
+    "zip": "98103"
+   },
+   "service": "express",
+   "code": "TRAIL15",
+   "state": "paid",
+   "paidAt": "2026-08-18T10:06",
+   "method": "card",
+   "shipsBy": "2026-08-18",
+   "shippedOn": null,
+   "arrives": null,
+   "tracking": null,
+   "lines": [
+    {
+     "sku": "NL-CAS45-MOS-ML",
+     "qty": 1,
+     "each": "219.00",
+     "line": "219.00",
+     "discount": "32.85",
+     "tax": "12.10"
+    }
+   ],
+   "gifts": [],
+   "goods": "219.00",
+   "discount": "32.85",
+   "net": "186.15",
+   "shipping": "18.00",
+   "tax": "12.10",
+   "giftsTotal": "0.00",
+   "total": "216.25"
+  },
+  {
+   "number": "NL-1066",
+   "placed": "2026-08-18T11:31",
+   "customer": 1,
+   "name": "Priya Raman",
+   "email": "priya.r@example.com",
+   "ship": {
+    "line1": "3410 Fir Ave",
+    "city": "Portland",
+    "state": "OR",
+    "zip": "97214"
+   },
+   "service": "standard",
+   "code": null,
+   "state": "paying",
+   "paidAt": null,
+   "method": null,
+   "shipsBy": null,
+   "shippedOn": null,
+   "arrives": null,
+   "tracking": null,
+   "lines": [
+    {
+     "sku": "NL-BSH-EMB-M",
+     "qty": 1,
+     "each": "189.00",
+     "line": "189.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    },
+    {
+     "sku": "NL-BEA-MOS",
+     "qty": 1,
+     "each": "28.00",
+     "line": "28.00",
+     "discount": "0.00",
+     "tax": "0.00"
+    }
+   ],
+   "gifts": [],
+   "goods": "217.00",
+   "discount": "0.00",
+   "net": "217.00",
+   "shipping": "0.00",
+   "tax": "0.00",
+   "giftsTotal": "0.00",
+   "total": "217.00"
+  }
+ ],
+ "PACKER": {
+  "name": "Casey Moll",
+  "role": "packer",
+  "initials": "CM"
+ },
+ "PRODUCTS": [
+  {
+   "id": "ridgeline-28",
+   "name": "Ridgeline 28 Daypack",
+   "cat": "packs",
+   "price": "129.00",
+   "weight": 980,
+   "blurb": "A 28-litre pack for a full day on the trail.",
+   "feat": true,
+   "specs": [
+    [
+     "Volume",
+     "28 L"
+    ],
+    [
+     "Weight",
+     "980 g"
+    ],
+    [
+     "Back length",
+     "40–52 cm"
+    ],
+    [
+     "Fabric",
+     "210D recycled nylon"
+    ]
+   ],
+   "guide": null,
+   "new": false,
+   "options": [
+    {
+     "key": "colour",
+     "name": "Colour",
+     "type": "swatch",
+     "values": [
+      {
+       "id": "slate",
+       "label": "Slate",
+       "hex": "#4b5563"
+      },
+      {
+       "id": "moss",
+       "label": "Moss",
+       "hex": "#5f7a4a"
+      },
+      {
+       "id": "ember",
+       "label": "Ember",
+       "hex": "#c2410c"
+      }
+     ]
+    }
+   ],
+   "description": "A 28-litre pack for a full day on the trail.",
+   "newUntil": null
+  },
+  {
+   "id": "cascade-45",
+   "name": "Cascade 45 Trekking Pack",
+   "cat": "packs",
+   "price": "219.00",
+   "weight": 1650,
+   "blurb": "Carries a weekend: 45 litres, a frame that fits.",
+   "feat": true,
+   "specs": [
+    [
+     "Volume",
+     "45 L"
+    ],
+    [
+     "Weight",
+     "1.65 kg"
+    ],
+    [
+     "Back length",
+     "S/M 40–46 cm · M/L 46–52 cm"
+    ],
+    [
+     "Frame",
+     "Aluminium stay"
+    ]
+   ],
+   "guide": "pack",
+   "new": false,
+   "options": [
+    {
+     "key": "colour",
+     "name": "Colour",
+     "type": "swatch",
+     "values": [
+      {
+       "id": "slate",
+       "label": "Slate",
+       "hex": "#4b5563"
+      },
+      {
+       "id": "moss",
+       "label": "Moss",
+       "hex": "#5f7a4a"
+      }
+     ]
+    },
+    {
+     "key": "size",
+     "name": "Back length",
+     "type": "chip",
+     "values": [
+      {
+       "id": "sm",
+       "label": "S/M"
+      },
+      {
+       "id": "ml",
+       "label": "M/L"
+      }
+     ]
+    }
+   ],
+   "description": "Carries a weekend: 45 litres, a frame that fits.",
+   "newUntil": null
+  },
+  {
+   "id": "trailhead-hip",
+   "name": "Trailhead Hip Pack",
+   "cat": "packs",
+   "price": "45.00",
+   "weight": 210,
+   "blurb": "Phone, keys, a snack — and both hands free.",
+   "feat": false,
+   "specs": [
+    [
+     "Volume",
+     "2.5 L"
+    ],
+    [
+     "Weight",
+     "210 g"
+    ],
+    [
+     "Strap",
+     "70–120 cm"
+    ],
+    [
+     "Fabric",
+     "Recycled nylon"
+    ]
+   ],
+   "guide": null,
+   "new": false,
+   "options": [
+    {
+     "key": "colour",
+     "name": "Colour",
+     "type": "swatch",
+     "values": [
+      {
+       "id": "slate",
+       "label": "Slate",
+       "hex": "#4b5563"
+      },
+      {
+       "id": "ember",
+       "label": "Ember",
+       "hex": "#c2410c"
+      },
+      {
+       "id": "sand",
+       "label": "Sand",
+       "hex": "#c8b48a"
+      }
+     ]
+    }
+   ],
+   "description": "Phone, keys, a snack — and both hands free.",
+   "newUntil": null
+  },
+  {
+   "id": "drybag-20",
+   "name": "Dry Bag 20 L",
+   "cat": "packs",
+   "price": "32.00",
+   "weight": 160,
+   "blurb": "Roll the top three times and it stays dry.",
+   "feat": false,
+   "specs": [
+    [
+     "Volume",
+     "20 L"
+    ],
+    [
+     "Weight",
+     "160 g"
+    ],
+    [
+     "Closure",
+     "Roll-top"
+    ],
+    [
+     "Fabric",
+     "TPU-coated nylon"
+    ]
+   ],
+   "guide": null,
+   "new": false,
+   "options": [
+    {
+     "key": "colour",
+     "name": "Colour",
+     "type": "swatch",
+     "values": [
+      {
+       "id": "ember",
+       "label": "Ember",
+       "hex": "#c2410c"
+      },
+      {
+       "id": "glacier",
+       "label": "Glacier",
+       "hex": "#7fa7b8"
+      }
+     ]
+    }
+   ],
+   "description": "Roll the top three times and it stays dry.",
+   "newUntil": null
+  },
+  {
+   "id": "summit-duffel",
+   "name": "Summit Duffel 60 L",
+   "cat": "packs",
+   "price": "149.00",
+   "weight": 1400,
+   "blurb": "A duffel that turns into a backpack.",
+   "feat": false,
+   "specs": [
+    [
+     "Volume",
+     "60 L"
+    ],
+    [
+     "Weight",
+     "1.4 kg"
+    ],
+    [
+     "Straps",
+     "Removable backpack straps"
+    ],
+    [
+     "Fabric",
+     "840D nylon"
+    ]
+   ],
+   "guide": null,
+   "new": false,
+   "options": [
+    {
+     "key": "colour",
+     "name": "Colour",
+     "type": "swatch",
+     "values": [
+      {
+       "id": "slate",
+       "label": "Slate",
+       "hex": "#4b5563"
+      }
+     ]
+    }
+   ],
+   "description": "A duffel that turns into a backpack.",
+   "newUntil": null
+  },
+  {
+   "id": "basalt-shell",
+   "name": "Basalt Rain Shell",
+   "cat": "clothing",
+   "price": "189.00",
+   "weight": 380,
+   "blurb": "Three layers, taped seams, a hood that turns with you.",
+   "feat": true,
+   "specs": [
+    [
+     "Fabric",
+     "3-layer waterproof, 20,000 mm"
+    ],
+    [
+     "Weight",
+     "380 g (M)"
+    ],
+    [
+     "Fit",
+     "Regular"
+    ],
+    [
+     "Pockets",
+     "2 hand, 1 chest"
+    ]
+   ],
+   "guide": "apparel",
+   "new": true,
+   "options": [
+    {
+     "key": "colour",
+     "name": "Colour",
+     "type": "swatch",
+     "values": [
+      {
+       "id": "slate",
+       "label": "Slate",
+       "hex": "#4b5563"
+      },
+      {
+       "id": "ember",
+       "label": "Ember",
+       "hex": "#c2410c"
+      }
+     ]
+    },
+    {
+     "key": "size",
+     "name": "Size",
+     "type": "chip",
+     "values": [
+      {
+       "id": "xs",
+       "label": "XS"
+      },
+      {
+       "id": "s",
+       "label": "S"
+      },
+      {
+       "id": "m",
+       "label": "M"
+      },
+      {
+       "id": "l",
+       "label": "L"
+      },
+      {
+       "id": "xl",
+       "label": "XL"
+      }
+     ]
+    }
+   ],
+   "description": "A three-layer shell for long wet days. Every seam is taped, the hood turns with your head and stays clear of your eyes, and two pit zips let the heat out on the climb. It packs into its own chest pocket.",
+   "newUntil": "2026-09-15"
+  },
+  {
+   "id": "fir-fleece",
+   "name": "Fir Fleece Pullover",
+   "cat": "clothing",
+   "price": "89.00",
+   "weight": 340,
+   "blurb": "Warm, quick to dry, soft from the first wear.",
+   "feat": true,
+   "specs": [
+    [
+     "Fabric",
+     "Recycled polyester fleece"
+    ],
+    [
+     "Weight",
+     "340 g (M)"
+    ],
+    [
+     "Fit",
+     "Relaxed"
+    ],
+    [
+     "Zip",
+     "Quarter zip"
+    ]
+   ],
+   "guide": "apparel",
+   "new": false,
+   "options": [
+    {
+     "key": "colour",
+     "name": "Colour",
+     "type": "swatch",
+     "values": [
+      {
+       "id": "moss",
+       "label": "Moss",
+       "hex": "#5f7a4a"
+      },
+      {
+       "id": "sand",
+       "label": "Sand",
+       "hex": "#c8b48a"
+      },
+      {
+       "id": "slate",
+       "label": "Slate",
+       "hex": "#4b5563"
+      }
+     ]
+    },
+    {
+     "key": "size",
+     "name": "Size",
+     "type": "chip",
+     "values": [
+      {
+       "id": "s",
+       "label": "S"
+      },
+      {
+       "id": "m",
+       "label": "M"
+      },
+      {
+       "id": "l",
+       "label": "L"
+      },
+      {
+       "id": "xl",
+       "label": "XL"
+      }
+     ]
+    }
+   ],
+   "description": "Warm, quick to dry, soft from the first wear.",
+   "newUntil": null
+  },
+  {
+   "id": "merino-crew",
+   "name": "Merino Base Layer Crew",
+   "cat": "clothing",
+   "price": "75.00",
+   "weight": 180,
+   "blurb": "Merino next to the skin: warm when it's cold, cool when it's not.",
+   "feat": false,
+   "specs": [
+    [
+     "Fabric",
+     "100% merino, 200 g/m²"
+    ],
+    [
+     "Weight",
+     "180 g (M)"
+    ],
+    [
+     "Fit",
+     "Close"
+    ],
+    [
+     "Care",
+     "Machine wash cold"
+    ]
+   ],
+   "guide": "apparel",
+   "new": false,
+   "options": [
+    {
+     "key": "colour",
+     "name": "Colour",
+     "type": "swatch",
+     "values": [
+      {
+       "id": "slate",
+       "label": "Slate",
+       "hex": "#4b5563"
+      },
+      {
+       "id": "glacier",
+       "label": "Glacier",
+       "hex": "#7fa7b8"
+      }
+     ]
+    },
+    {
+     "key": "size",
+     "name": "Size",
+     "type": "chip",
+     "values": [
+      {
+       "id": "s",
+       "label": "S"
+      },
+      {
+       "id": "m",
+       "label": "M"
+      },
+      {
+       "id": "l",
+       "label": "L"
+      },
+      {
+       "id": "xl",
+       "label": "XL"
+      }
+     ]
+    }
+   ],
+   "description": "Merino next to the skin: warm when it's cold, cool when it's not.",
+   "newUntil": null
+  },
+  {
+   "id": "trail-shorts",
+   "name": "Trail Shorts",
+   "cat": "clothing",
+   "price": "58.00",
+   "weight": 220,
+   "blurb": "Stretchy, light, with a zip pocket for keys.",
+   "feat": false,
+   "specs": [
+    [
+     "Fabric",
+     "Nylon / elastane"
+    ],
+    [
+     "Inseam",
+     "18 cm"
+    ],
+    [
+     "Pockets",
+     "2 hand, 1 zip"
+    ],
+    [
+     "Weight",
+     "220 g"
+    ]
+   ],
+   "guide": "waist",
+   "new": false,
+   "options": [
+    {
+     "key": "colour",
+     "name": "Colour",
+     "type": "swatch",
+     "values": [
+      {
+       "id": "sand",
+       "label": "Sand",
+       "hex": "#c8b48a"
+      },
+      {
+       "id": "slate",
+       "label": "Slate",
+       "hex": "#4b5563"
+      }
+     ]
+    },
+    {
+     "key": "size",
+     "name": "Waist",
+     "type": "chip",
+     "values": [
+      {
+       "id": "30",
+       "label": "30"
+      },
+      {
+       "id": "32",
+       "label": "32"
+      },
+      {
+       "id": "34",
+       "label": "34"
+      },
+      {
+       "id": "36",
+       "label": "36"
+      }
+     ]
+    }
+   ],
+   "description": "Stretchy, light, with a zip pocket for keys.",
+   "newUntil": null
+  },
+  {
+   "id": "wool-beanie",
+   "name": "Wool Beanie",
+   "cat": "clothing",
+   "price": "28.00",
+   "weight": 80,
+   "blurb": "Rib-knit merino. One size.",
+   "feat": false,
+   "specs": [
+    [
+     "Fabric",
+     "Merino wool"
+    ],
+    [
+     "Size",
+     "One size"
+    ],
+    [
+     "Weight",
+     "80 g"
+    ],
+    [
+     "Care",
+     "Hand wash"
+    ]
+   ],
+   "guide": null,
+   "new": false,
+   "options": [
+    {
+     "key": "colour",
+     "name": "Colour",
+     "type": "swatch",
+     "values": [
+      {
+       "id": "ember",
+       "label": "Ember",
+       "hex": "#c2410c"
+      },
+      {
+       "id": "moss",
+       "label": "Moss",
+       "hex": "#5f7a4a"
+      },
+      {
+       "id": "slate",
+       "label": "Slate",
+       "hex": "#4b5563"
+      }
+     ]
+    }
+   ],
+   "description": "Rib-knit merino. One size.",
+   "newUntil": null
+  },
+  {
+   "id": "hiking-socks",
+   "name": "Hiking Socks, two pairs",
+   "cat": "clothing",
+   "price": "24.00",
+   "weight": 120,
+   "blurb": "Cushioned where your boots rub.",
+   "feat": false,
+   "specs": [
+    [
+     "Fabric",
+     "Merino blend"
+    ],
+    [
+     "Pairs",
+     "2"
+    ],
+    [
+     "Cushion",
+     "Heel and toe"
+    ],
+    [
+     "Height",
+     "Crew"
+    ]
+   ],
+   "guide": "socks",
+   "new": false,
+   "options": [
+    {
+     "key": "size",
+     "name": "Size",
+     "type": "chip",
+     "values": [
+      {
+       "id": "sm",
+       "label": "S/M"
+      },
+      {
+       "id": "lxl",
+       "label": "L/XL"
+      }
+     ]
+    }
+   ],
+   "description": "Cushioned where your boots rub.",
+   "newUntil": null
+  },
+  {
+   "id": "talus-runner",
+   "name": "Talus Trail Runner",
+   "cat": "footwear",
+   "price": "139.00",
+   "weight": 590,
+   "blurb": "Grippy, light, at home on wet rock.",
+   "feat": true,
+   "specs": [
+    [
+     "Drop",
+     "6 mm"
+    ],
+    [
+     "Weight",
+     "295 g each (US 9)"
+    ],
+    [
+     "Outsole",
+     "4 mm lugs"
+    ],
+    [
+     "Upper",
+     "Recycled mesh"
+    ]
+   ],
+   "guide": "shoe",
+   "new": false,
+   "options": [
+    {
+     "key": "size",
+     "name": "US size",
+     "type": "chip",
+     "values": [
+      {
+       "id": "7",
+       "label": "7"
+      },
+      {
+       "id": "8",
+       "label": "8"
+      },
+      {
+       "id": "9",
+       "label": "9"
+      },
+      {
+       "id": "10",
+       "label": "10"
+      },
+      {
+       "id": "11",
+       "label": "11"
+      },
+      {
+       "id": "12",
+       "label": "12"
+      }
+     ]
+    }
+   ],
+   "description": "Grippy, light, at home on wet rock.",
+   "newUntil": null
+  },
+  {
+   "id": "ridge-mid",
+   "name": "Ridge Mid Hiking Boot",
+   "cat": "footwear",
+   "price": "189.00",
+   "weight": 1180,
+   "blurb": "A waterproof boot you can wear on day one.",
+   "feat": false,
+   "specs": [
+    [
+     "Waterproof",
+     "Membrane lined"
+    ],
+    [
+     "Weight",
+     "590 g each (US 9)"
+    ],
+    [
+     "Outsole",
+     "5 mm lugs"
+    ],
+    [
+     "Upper",
+     "Nubuck leather"
+    ]
+   ],
+   "guide": "shoe",
+   "new": false,
+   "options": [
+    {
+     "key": "size",
+     "name": "US size",
+     "type": "chip",
+     "values": [
+      {
+       "id": "7",
+       "label": "7"
+      },
+      {
+       "id": "8",
+       "label": "8"
+      },
+      {
+       "id": "9",
+       "label": "9"
+      },
+      {
+       "id": "10",
+       "label": "10"
+      },
+      {
+       "id": "11",
+       "label": "11"
+      },
+      {
+       "id": "12",
+       "label": "12"
+      }
+     ]
+    }
+   ],
+   "description": "A waterproof boot you can wear on day one.",
+   "newUntil": null
+  },
+  {
+   "id": "camp-slide",
+   "name": "Camp Slide",
+   "cat": "footwear",
+   "price": "42.00",
+   "weight": 300,
+   "blurb": "For the end of the day.",
+   "feat": false,
+   "specs": [
+    [
+     "Footbed",
+     "EVA"
+    ],
+    [
+     "Weight",
+     "150 g each (M)"
+    ],
+    [
+     "Sizes",
+     "S 6–7 · M 8–9 · L 10–12"
+    ],
+    [
+     "Care",
+     "Rinse clean"
+    ]
+   ],
+   "guide": null,
+   "new": false,
+   "options": [
+    {
+     "key": "colour",
+     "name": "Colour",
+     "type": "swatch",
+     "values": [
+      {
+       "id": "slate",
+       "label": "Slate",
+       "hex": "#4b5563"
+      },
+      {
+       "id": "moss",
+       "label": "Moss",
+       "hex": "#5f7a4a"
+      }
+     ]
+    },
+    {
+     "key": "size",
+     "name": "Size",
+     "type": "chip",
+     "values": [
+      {
+       "id": "s",
+       "label": "S"
+      },
+      {
+       "id": "m",
+       "label": "M"
+      },
+      {
+       "id": "l",
+       "label": "L"
+      }
+     ]
+    }
+   ],
+   "description": "For the end of the day.",
+   "newUntil": null
+  },
+  {
+   "id": "ember-2",
+   "name": "Ember 2 Tent",
+   "cat": "camp",
+   "price": "329.00",
+   "weight": 1900,
+   "blurb": "A two-person tent you can pitch in the rain.",
+   "feat": true,
+   "specs": [
+    [
+     "Sleeps",
+     "2"
+    ],
+    [
+     "Weight",
+     "1.9 kg"
+    ],
+    [
+     "Pitch",
+     "Fly first or together"
+    ],
+    [
+     "Packed",
+     "46 × 15 cm"
+    ]
+   ],
+   "guide": null,
+   "new": false,
+   "options": [],
+   "description": "A two-person tent that pitches in five minutes with one hub pole. Two doors and two porches, so nobody climbs over anybody. The fly goes up first in the rain.",
+   "newUntil": null
+  },
+  {
+   "id": "loft-20",
+   "name": "Loft 20° Sleeping Bag",
+   "cat": "camp",
+   "price": "249.00",
+   "weight": 1100,
+   "blurb": "Down-free warmth down to 20 °F.",
+   "feat": false,
+   "specs": [
+    [
+     "Rated to",
+     "20 °F / −7 °C"
+    ],
+    [
+     "Fill",
+     "Synthetic"
+    ],
+    [
+     "Weight",
+     "1.1 kg (Regular)"
+    ],
+    [
+     "Fits",
+     "Regular to 6′0″ · Long to 6′6″"
+    ]
+   ],
+   "guide": null,
+   "new": false,
+   "options": [
+    {
+     "key": "size",
+     "name": "Length",
+     "type": "chip",
+     "values": [
+      {
+       "id": "regular",
+       "label": "Regular"
+      },
+      {
+       "id": "long",
+       "label": "Long"
+      }
+     ]
+    }
+   ],
+   "description": "Down-free warmth down to 20 °F.",
+   "newUntil": null
+  },
+  {
+   "id": "pine-mug",
+   "name": "Pine Mug 12 oz",
+   "cat": "camp",
+   "price": "22.00",
+   "weight": 240,
+   "blurb": "Enamel steel, chips with character.",
+   "feat": false,
+   "specs": [
+    [
+     "Holds",
+     "12 oz / 350 ml"
+    ],
+    [
+     "Material",
+     "Enamelled steel"
+    ],
+    [
+     "Weight",
+     "240 g"
+    ],
+    [
+     "Care",
+     "Dishwasher safe"
+    ]
+   ],
+   "guide": null,
+   "new": false,
+   "options": [
+    {
+     "key": "colour",
+     "name": "Colour",
+     "type": "swatch",
+     "values": [
+      {
+       "id": "ember",
+       "label": "Ember",
+       "hex": "#c2410c"
+      },
+      {
+       "id": "moss",
+       "label": "Moss",
+       "hex": "#5f7a4a"
+      },
+      {
+       "id": "slate",
+       "label": "Slate",
+       "hex": "#4b5563"
+      }
+     ]
+    }
+   ],
+   "description": "Enamel steel, chips with character.",
+   "newUntil": null
+  },
+  {
+   "id": "trail-stove",
+   "name": "Trail Stove",
+   "cat": "camp",
+   "price": "69.00",
+   "weight": 300,
+   "blurb": "Boils a litre in four minutes.",
+   "feat": false,
+   "specs": [
+    [
+     "Fuel",
+     "Canister (not included)"
+    ],
+    [
+     "Weight",
+     "300 g"
+    ],
+    [
+     "Boil time",
+     "4 min / 1 L"
+    ],
+    [
+     "Ignition",
+     "Piezo"
+    ]
+   ],
+   "guide": null,
+   "new": true,
+   "options": [],
+   "description": "Boils a litre in four minutes.",
+   "newUntil": "2026-09-15"
+  },
+  {
+   "id": "headlamp-400",
+   "name": "Headlamp 400",
+   "cat": "camp",
+   "price": "39.00",
+   "weight": 90,
+   "blurb": "400 lumens, charges by USB-C.",
+   "feat": false,
+   "specs": [
+    [
+     "Brightness",
+     "400 lm"
+    ],
+    [
+     "Battery",
+     "Rechargeable, USB-C"
+    ],
+    [
+     "Weight",
+     "90 g"
+    ],
+    [
+     "Water",
+     "IPX4"
+    ]
+   ],
+   "guide": null,
+   "new": false,
+   "options": [],
+   "description": "400 lumens, charges by USB-C.",
+   "newUntil": null
+  },
+  {
+   "id": "insulated-750",
+   "name": "Insulated Bottle 750 ml",
+   "cat": "camp",
+   "price": "34.00",
+   "weight": 380,
+   "blurb": "Cold for a day, hot till lunch.",
+   "feat": false,
+   "specs": [
+    [
+     "Holds",
+     "750 ml"
+    ],
+    [
+     "Keeps",
+     "Cold 24 h · hot 12 h"
+    ],
+    [
+     "Weight",
+     "380 g"
+    ],
+    [
+     "Lid",
+     "Leak-proof"
+    ]
+   ],
+   "guide": null,
+   "new": false,
+   "options": [
+    {
+     "key": "colour",
+     "name": "Colour",
+     "type": "swatch",
+     "values": [
+      {
+       "id": "glacier",
+       "label": "Glacier",
+       "hex": "#7fa7b8"
+      },
+      {
+       "id": "ember",
+       "label": "Ember",
+       "hex": "#c2410c"
+      },
+      {
+       "id": "moss",
+       "label": "Moss",
+       "hex": "#5f7a4a"
+      }
+     ]
+    }
+   ],
+   "description": "Cold for a day, hot till lunch.",
+   "newUntil": null
+  }
+ ],
+ "RETURNS": [
+  {
+   "number": "RT-1001",
+   "order": "NL-1004",
+   "sku": "NL-TSH-SLA-36",
+   "qty": 1,
+   "reason": "Doesn't fit",
+   "step": "refunded",
+   "asked": "2026-07-28T10:00",
+   "amount": "62.21"
+  },
+  {
+   "number": "RT-1002",
+   "order": "NL-1005",
+   "sku": "NL-BSH-EMB-S",
+   "qty": 1,
+   "reason": "Not what I expected",
+   "step": "received",
+   "asked": "2026-07-31T10:00",
+   "amount": "202.70"
+  },
+  {
+   "number": "RT-1003",
+   "order": "NL-1008",
+   "sku": "NL-TSH-SLA-32",
+   "qty": 1,
+   "reason": "Faulty",
+   "step": "approved",
+   "asked": "2026-07-29T10:00",
+   "amount": "62.21"
+  },
+  {
+   "number": "RT-1004",
+   "order": "NL-1009",
+   "sku": "NL-BEA-SLA",
+   "qty": 1,
+   "reason": "Changed my mind",
+   "step": "asked",
+   "asked": "2026-08-04T10:00",
+   "amount": "29.12"
+  }
+ ],
+ "REVIEWS": [
+  {
+   "product": "merino-crew",
+   "order": "NL-1003",
+   "name": "Ruth E.",
+   "stars": 5,
+   "title": "Worth it",
+   "body": "Used it every day this month. Still like new.",
+   "on": "2026-07-27",
+   "state": "published"
+  },
+  {
+   "product": "trail-shorts",
+   "order": "NL-1004",
+   "name": "Mei L.",
+   "stars": 5,
+   "title": "Worth it",
+   "body": "Used it every day this month. Still like new.",
+   "on": "2026-07-30",
+   "state": "published"
+  },
+  {
+   "product": "basalt-shell",
+   "order": "NL-1005",
+   "name": "Zoe C.",
+   "stars": 5,
+   "title": "Exactly right",
+   "body": "Fits well and does what it says. I'd buy it again.",
+   "on": "2026-08-02",
+   "state": "published"
+  },
+  {
+   "product": "loft-20",
+   "order": "NL-1006",
+   "name": "Kai A.",
+   "stars": 4,
+   "title": "Good, one small thing",
+   "body": "Very good overall. I wish it came in more colours.",
+   "on": "2026-07-31",
+   "state": "published"
+  },
+  {
+   "product": "trail-shorts",
+   "order": "NL-1008",
+   "name": "Grace O.",
+   "stars": 3,
+   "title": "Fine",
+   "body": "It does the job. Nothing special.",
+   "on": "2026-07-31",
+   "state": "published"
+  },
+  {
+   "product": "wool-beanie",
+   "order": "NL-1009",
+   "name": "Noor H.",
+   "stars": 5,
+   "title": "Worth it",
+   "body": "Used it every day this month. Still like new.",
+   "on": "2026-08-06",
+   "state": "published"
+  },
+  {
+   "product": "cascade-45",
+   "order": "NL-1010",
+   "name": "Lena O.",
+   "stars": 5,
+   "title": "Exactly right",
+   "body": "Fits well and does what it says. I'd buy it again.",
+   "on": "2026-08-01",
+   "state": "published"
+  },
+  {
+   "product": "insulated-750",
+   "order": "NL-1011",
+   "name": "Noor H.",
+   "stars": 5,
+   "title": "Exactly right",
+   "body": "Fits well and does what it says. I'd buy it again.",
+   "on": "2026-07-31",
+   "state": "published"
+  },
+  {
+   "product": "camp-slide",
+   "order": "NL-1012",
+   "name": "Ella B.",
+   "stars": 5,
+   "title": "Exactly right",
+   "body": "Fits well and does what it says. I'd buy it again.",
+   "on": "2026-08-06",
+   "state": "published"
+  },
+  {
+   "product": "ridge-mid",
+   "order": "NL-1014",
+   "name": "Owen P.",
+   "stars": 4,
+   "title": "Good, one small thing",
+   "body": "Very good overall. I wish it came in more colours.",
+   "on": "2026-08-07",
+   "state": "published"
+  },
+  {
+   "product": "basalt-shell",
+   "order": "NL-1016",
+   "name": "Jonah P.",
+   "stars": 3,
+   "title": "Fine",
+   "body": "It does the job. Nothing special.",
+   "on": "2026-08-02",
+   "state": "published"
+  },
+  {
+   "product": "summit-duffel",
+   "order": "NL-1017",
+   "name": "Ade B.",
+   "stars": 3,
+   "title": "Fine",
+   "body": "It does the job. Nothing special.",
+   "on": "2026-08-08",
+   "state": "published"
+  },
+  {
+   "product": "talus-runner",
+   "order": "NL-1018",
+   "name": "Tom R.",
+   "stars": 5,
+   "title": "Worth it",
+   "body": "Used it every day this month. Still like new.",
+   "on": "2026-08-03",
+   "state": "published"
+  },
+  {
+   "product": "pine-mug",
+   "order": "NL-1020",
+   "name": "Hana S.",
+   "stars": 5,
+   "title": "Exactly right",
+   "body": "Fits well and does what it says. I'd buy it again.",
+   "on": "2026-08-09",
+   "state": "published"
+  },
+  {
+   "product": "trail-shorts",
+   "order": "NL-1023",
+   "name": "Tom R.",
+   "stars": 3,
+   "title": "Fine",
+   "body": "It does the job. Nothing special.",
+   "on": "2026-08-13",
+   "state": "published"
+  },
+  {
+   "product": "ridge-mid",
+   "order": "NL-1025",
+   "name": "Ravi M.",
+   "stars": 4,
+   "title": "Good, one small thing",
+   "body": "Very good overall. I wish it came in more colours.",
+   "on": "2026-08-08",
+   "state": "published"
+  },
+  {
+   "product": "merino-crew",
+   "order": "NL-1028",
+   "name": "Hana S.",
+   "stars": 5,
+   "title": "Exactly right",
+   "body": "Fits well and does what it says. I'd buy it again.",
+   "on": "2026-08-08",
+   "state": "published"
+  },
+  {
+   "product": "talus-runner",
+   "order": "NL-1030",
+   "name": "Diego M.",
+   "stars": 4,
+   "title": "Solid",
+   "body": "Well made. Runs a touch large.",
+   "on": "2026-08-08",
+   "state": "published"
+  },
+  {
+   "product": "fir-fleece",
+   "order": "NL-1032",
+   "name": "Ruth E.",
+   "stars": 3,
+   "title": "Fine",
+   "body": "It does the job. Nothing special.",
+   "on": "2026-08-15",
+   "state": "published"
+  },
+  {
+   "product": "cascade-45",
+   "order": "NL-1033",
+   "name": "Theo B.",
+   "stars": 4,
+   "title": "Solid",
+   "body": "Well made. Runs a touch large.",
+   "on": "2026-08-10",
+   "state": "published"
+  },
+  {
+   "product": "basalt-shell",
+   "order": "NL-1035",
+   "name": "Ade B.",
+   "stars": 4,
+   "title": "Solid",
+   "body": "Well made. Runs a touch large.",
+   "on": "2026-08-16",
+   "state": "published"
+  },
+  {
+   "product": "drybag-20",
+   "order": "NL-1036",
+   "name": "Clara N.",
+   "stars": 5,
+   "title": "Worth it",
+   "body": "Used it every day this month. Still like new.",
+   "on": "2026-08-13",
+   "state": "published"
+  },
+  {
+   "product": "fir-fleece",
+   "order": "NL-1037",
+   "name": "Diego M.",
+   "stars": 4,
+   "title": "Solid",
+   "body": "Well made. Runs a touch large.",
+   "on": "2026-08-17",
+   "state": "waiting"
+  },
+  {
+   "product": "talus-runner",
+   "order": "NL-1043",
+   "name": "Ines D.",
+   "stars": 3,
+   "title": "Fine",
+   "body": "It does the job. Nothing special.",
+   "on": "2026-08-14",
+   "state": "waiting"
+  },
+  {
+   "product": "basalt-shell",
+   "order": "NL-1044",
+   "name": "Grace O.",
+   "stars": 5,
+   "title": "Exactly right",
+   "body": "Fits well and does what it says. I'd buy it again.",
+   "on": "2026-08-15",
+   "state": "waiting"
+  }
+ ],
+ "SERVICES": [
+  {
+   "id": "standard",
+   "label": "Standard",
+   "days": [
+    3,
+    5
+   ],
+   "bands": {
+    "contiguous": [
+     {
+      "min": "0.00",
+      "price": "7.00"
+     },
+     {
+      "min": "100.00",
+      "price": "0.00"
+     }
+    ],
+    "remote": [
+     {
+      "min": "0.00",
+      "price": "16.00"
+     }
+    ]
+   }
+  },
+  {
+   "id": "express",
+   "label": "Express",
+   "days": [
+    2,
+    2
+   ],
+   "bands": {
+    "contiguous": [
+     {
+      "min": "0.00",
+      "price": "18.00"
+     }
+    ],
+    "remote": [
+     {
+      "min": "0.00",
+      "price": "34.00"
+     }
+    ]
+   }
+  },
+  {
+   "id": "overnight",
+   "label": "Overnight",
+   "days": [
+    1,
+    1
+   ],
+   "bands": {
+    "contiguous": [
+     {
+      "min": "0.00",
+      "price": "35.00"
+     }
+    ]
+   }
+  }
+ ],
+ "SHOP": {
+  "name": "Northline",
+  "line1": "1400 NW Kearney St, Suite 210",
+  "city": "Portland",
+  "state": "OR",
+  "zip": "97209",
+  "country": "US",
+  "email": "hello@northline.example",
+  "zone": "America/Los_Angeles",
+  "prefix": "NL-",
+  "cutoff": "14:00",
+  "payHoldMinutes": 30,
+  "transferDays": 5,
+  "returnDays": 30,
+  "showLeftBelow": 5,
+  "transfer": {
+   "accountName": "Northline Outdoor LLC",
+   "bank": "Sample Savings Bank",
+   "routing": "012345678",
+   "account": "000123456789",
+   "note": "Sample details; no real bank has these numbers."
+  },
+  "carrier": {
+   "name": "DHL",
+   "pickup": "15:00"
+  },
+  "promises": [
+   "Free Standard shipping from $100",
+   "Ships within one business day",
+   "30 days to send it back"
+  ],
+  "pages": {
+   "about": [
+    "Northline is a small outdoor-gear shop in Portland, Oregon. We sell shells, packs, boots and camp kit that we use ourselves on wet trails.",
+    "Everything ships from our shop on NW Kearney Street. We answer every e-mail ourselves."
+   ],
+   "privacy": [
+    "We keep what we need to send your order: your name, e-mail and address. We never sell it and we never share it with other customers.",
+    "News e-mails go only to people who ticked the box. Every news e-mail has a link to stop them.",
+    "You can delete your details from your account at any time. Orders you placed stay on the shop's records."
+   ],
+   "terms": [
+    "Prices are in US dollars. Shipping and tax are added at checkout; tax depends on the state you ship to.",
+    "We ship to US addresses only. You can send things back within 30 days after we ship.",
+    "Gift cards can be used for anything in the shop. They can't be exchanged for money."
+   ]
+  }
+ },
+ "SHOPPER": {
+  "customer": 1,
+  "note": "Priya Raman, signed in on the demo's shopper side; her NL order at the clock is paying"
+ },
+ "SIGNED_IN_STAFF": {
+  "name": "Robin Ash",
+  "role": "owner",
+  "initials": "RA"
+ },
+ "TAX": {
+  "OR": 0,
+  "WA": 0.065,
+  "CA": 0.0725,
+  "NY": 0.04
+ },
+ "VARIANTS": [
+  {
+   "sku": "NL-RDG28-SLA",
+   "product": "ridgeline-28",
+   "colour": "slate",
+   "size": null,
+   "price": "129.00",
+   "weightG": 980,
+   "onHand": 24,
+   "reserved": 1,
+   "available": 23
+  },
+  {
+   "sku": "NL-RDG28-MOS",
+   "product": "ridgeline-28",
+   "colour": "moss",
+   "size": null,
+   "price": "129.00",
+   "weightG": 980,
+   "onHand": 12,
+   "reserved": 0,
+   "available": 12
+  },
+  {
+   "sku": "NL-RDG28-EMB",
+   "product": "ridgeline-28",
+   "colour": "ember",
+   "size": null,
+   "price": "129.00",
+   "weightG": 980,
+   "onHand": 4,
+   "reserved": 0,
+   "available": 4
+  },
+  {
+   "sku": "NL-CAS45-SLA-SM",
+   "product": "cascade-45",
+   "colour": "slate",
+   "size": "sm",
+   "price": "219.00",
+   "weightG": 1650,
+   "onHand": 10,
+   "reserved": 0,
+   "available": 10
+  },
+  {
+   "sku": "NL-CAS45-SLA-ML",
+   "product": "cascade-45",
+   "colour": "slate",
+   "size": "ml",
+   "price": "219.00",
+   "weightG": 1650,
+   "onHand": 10,
+   "reserved": 0,
+   "available": 10
+  },
+  {
+   "sku": "NL-CAS45-MOS-SM",
+   "product": "cascade-45",
+   "colour": "moss",
+   "size": "sm",
+   "price": "219.00",
+   "weightG": 1650,
+   "onHand": 10,
+   "reserved": 0,
+   "available": 10
+  },
+  {
+   "sku": "NL-CAS45-MOS-ML",
+   "product": "cascade-45",
+   "colour": "moss",
+   "size": "ml",
+   "price": "219.00",
+   "weightG": 1650,
+   "onHand": 5,
+   "reserved": 1,
+   "available": 4
+  },
+  {
+   "sku": "NL-HIP-SLA",
+   "product": "trailhead-hip",
+   "colour": "slate",
+   "size": null,
+   "price": "45.00",
+   "weightG": 210,
+   "onHand": 8,
+   "reserved": 0,
+   "available": 8
+  },
+  {
+   "sku": "NL-HIP-EMB",
+   "product": "trailhead-hip",
+   "colour": "ember",
+   "size": null,
+   "price": "45.00",
+   "weightG": 210,
+   "onHand": 12,
+   "reserved": 0,
+   "available": 12
+  },
+  {
+   "sku": "NL-HIP-SAN",
+   "product": "trailhead-hip",
+   "colour": "sand",
+   "size": null,
+   "price": "45.00",
+   "weightG": 210,
+   "onHand": 14,
+   "reserved": 0,
+   "available": 14
+  },
+  {
+   "sku": "NL-DRY20-EMB",
+   "product": "drybag-20",
+   "colour": "ember",
+   "size": null,
+   "price": "32.00",
+   "weightG": 160,
+   "onHand": 16,
+   "reserved": 0,
+   "available": 16
+  },
+  {
+   "sku": "NL-DRY20-GLA",
+   "product": "drybag-20",
+   "colour": "glacier",
+   "size": null,
+   "price": "32.00",
+   "weightG": 160,
+   "onHand": 16,
+   "reserved": 0,
+   "available": 16
+  },
+  {
+   "sku": "NL-DUF60-SLA",
+   "product": "summit-duffel",
+   "colour": "slate",
+   "size": null,
+   "price": "149.00",
+   "weightG": 1400,
+   "onHand": 10,
+   "reserved": 0,
+   "available": 10
+  },
+  {
+   "sku": "NL-BSH-SLA-XS",
+   "product": "basalt-shell",
+   "colour": "slate",
+   "size": "xs",
+   "price": "189.00",
+   "weightG": 380,
+   "onHand": 10,
+   "reserved": 0,
+   "available": 10
+  },
+  {
+   "sku": "NL-BSH-SLA-S",
+   "product": "basalt-shell",
+   "colour": "slate",
+   "size": "s",
+   "price": "189.00",
+   "weightG": 380,
+   "onHand": 16,
+   "reserved": 0,
+   "available": 16
+  },
+  {
+   "sku": "NL-BSH-SLA-M",
+   "product": "basalt-shell",
+   "colour": "slate",
+   "size": "m",
+   "price": "189.00",
+   "weightG": 380,
+   "onHand": 20,
+   "reserved": 0,
+   "available": 20
+  },
+  {
+   "sku": "NL-BSH-SLA-L",
+   "product": "basalt-shell",
+   "colour": "slate",
+   "size": "l",
+   "price": "189.00",
+   "weightG": 380,
+   "onHand": 20,
+   "reserved": 0,
+   "available": 20
+  },
+  {
+   "sku": "NL-BSH-SLA-XL",
+   "product": "basalt-shell",
+   "colour": "slate",
+   "size": "xl",
+   "price": "199.00",
+   "weightG": 380,
+   "onHand": 0,
+   "reserved": 0,
+   "available": 0
+  },
+  {
+   "sku": "NL-BSH-EMB-S",
+   "product": "basalt-shell",
+   "colour": "ember",
+   "size": "s",
+   "price": "189.00",
+   "weightG": 380,
+   "onHand": 8,
+   "reserved": 0,
+   "available": 8
+  },
+  {
+   "sku": "NL-BSH-EMB-M",
+   "product": "basalt-shell",
+   "colour": "ember",
+   "size": "m",
+   "price": "189.00",
+   "weightG": 380,
+   "onHand": 4,
+   "reserved": 1,
+   "available": 3
+  },
+  {
+   "sku": "NL-BSH-EMB-L",
+   "product": "basalt-shell",
+   "colour": "ember",
+   "size": "l",
+   "price": "189.00",
+   "weightG": 380,
+   "onHand": 12,
+   "reserved": 0,
+   "available": 12
+  },
+  {
+   "sku": "NL-BSH-EMB-XL",
+   "product": "basalt-shell",
+   "colour": "ember",
+   "size": "xl",
+   "price": "199.00",
+   "weightG": 380,
+   "onHand": 8,
+   "reserved": 0,
+   "available": 8
+  },
+  {
+   "sku": "NL-FIR-MOS-S",
+   "product": "fir-fleece",
+   "colour": "moss",
+   "size": "s",
+   "price": "89.00",
+   "weightG": 340,
+   "onHand": 24,
+   "reserved": 0,
+   "available": 24
+  },
+  {
+   "sku": "NL-FIR-MOS-M",
+   "product": "fir-fleece",
+   "colour": "moss",
+   "size": "m",
+   "price": "89.00",
+   "weightG": 340,
+   "onHand": 14,
+   "reserved": 0,
+   "available": 14
+  },
+  {
+   "sku": "NL-FIR-MOS-L",
+   "product": "fir-fleece",
+   "colour": "moss",
+   "size": "l",
+   "price": "89.00",
+   "weightG": 340,
+   "onHand": 10,
+   "reserved": 0,
+   "available": 10
+  },
+  {
+   "sku": "NL-FIR-MOS-XL",
+   "product": "fir-fleece",
+   "colour": "moss",
+   "size": "xl",
+   "price": "89.00",
+   "weightG": 340,
+   "onHand": 24,
+   "reserved": 0,
+   "available": 24
+  },
+  {
+   "sku": "NL-FIR-SAN-S",
+   "product": "fir-fleece",
+   "colour": "sand",
+   "size": "s",
+   "price": "89.00",
+   "weightG": 340,
+   "onHand": 0,
+   "reserved": 0,
+   "available": 0
+  },
+  {
+   "sku": "NL-FIR-SAN-M",
+   "product": "fir-fleece",
+   "colour": "sand",
+   "size": "m",
+   "price": "89.00",
+   "weightG": 340,
+   "onHand": 10,
+   "reserved": 0,
+   "available": 10
+  },
+  {
+   "sku": "NL-FIR-SAN-L",
+   "product": "fir-fleece",
+   "colour": "sand",
+   "size": "l",
+   "price": "89.00",
+   "weightG": 340,
+   "onHand": 16,
+   "reserved": 0,
+   "available": 16
+  },
+  {
+   "sku": "NL-FIR-SAN-XL",
+   "product": "fir-fleece",
+   "colour": "sand",
+   "size": "xl",
+   "price": "89.00",
+   "weightG": 340,
+   "onHand": 24,
+   "reserved": 0,
+   "available": 24
+  },
+  {
+   "sku": "NL-FIR-SLA-S",
+   "product": "fir-fleece",
+   "colour": "slate",
+   "size": "s",
+   "price": "89.00",
+   "weightG": 340,
+   "onHand": 14,
+   "reserved": 0,
+   "available": 14
+  },
+  {
+   "sku": "NL-FIR-SLA-M",
+   "product": "fir-fleece",
+   "colour": "slate",
+   "size": "m",
+   "price": "89.00",
+   "weightG": 340,
+   "onHand": 10,
+   "reserved": 0,
+   "available": 10
+  },
+  {
+   "sku": "NL-FIR-SLA-L",
+   "product": "fir-fleece",
+   "colour": "slate",
+   "size": "l",
+   "price": "89.00",
+   "weightG": 340,
+   "onHand": 12,
+   "reserved": 1,
+   "available": 11
+  },
+  {
+   "sku": "NL-FIR-SLA-XL",
+   "product": "fir-fleece",
+   "colour": "slate",
+   "size": "xl",
+   "price": "89.00",
+   "weightG": 340,
+   "onHand": 12,
+   "reserved": 0,
+   "available": 12
+  },
+  {
+   "sku": "NL-MER-SLA-S",
+   "product": "merino-crew",
+   "colour": "slate",
+   "size": "s",
+   "price": "75.00",
+   "weightG": 180,
+   "onHand": 8,
+   "reserved": 0,
+   "available": 8
+  },
+  {
+   "sku": "NL-MER-SLA-M",
+   "product": "merino-crew",
+   "colour": "slate",
+   "size": "m",
+   "price": "75.00",
+   "weightG": 180,
+   "onHand": 8,
+   "reserved": 0,
+   "available": 8
+  },
+  {
+   "sku": "NL-MER-SLA-L",
+   "product": "merino-crew",
+   "colour": "slate",
+   "size": "l",
+   "price": "75.00",
+   "weightG": 180,
+   "onHand": 16,
+   "reserved": 0,
+   "available": 16
+  },
+  {
+   "sku": "NL-MER-SLA-XL",
+   "product": "merino-crew",
+   "colour": "slate",
+   "size": "xl",
+   "price": "75.00",
+   "weightG": 180,
+   "onHand": 24,
+   "reserved": 0,
+   "available": 24
+  },
+  {
+   "sku": "NL-MER-GLA-S",
+   "product": "merino-crew",
+   "colour": "glacier",
+   "size": "s",
+   "price": "75.00",
+   "weightG": 180,
+   "onHand": 12,
+   "reserved": 0,
+   "available": 12
+  },
+  {
+   "sku": "NL-MER-GLA-M",
+   "product": "merino-crew",
+   "colour": "glacier",
+   "size": "m",
+   "price": "75.00",
+   "weightG": 180,
+   "onHand": 16,
+   "reserved": 2,
+   "available": 14
+  },
+  {
+   "sku": "NL-MER-GLA-L",
+   "product": "merino-crew",
+   "colour": "glacier",
+   "size": "l",
+   "price": "75.00",
+   "weightG": 180,
+   "onHand": 14,
+   "reserved": 0,
+   "available": 14
+  },
+  {
+   "sku": "NL-MER-GLA-XL",
+   "product": "merino-crew",
+   "colour": "glacier",
+   "size": "xl",
+   "price": "75.00",
+   "weightG": 180,
+   "onHand": 10,
+   "reserved": 0,
+   "available": 10
+  },
+  {
+   "sku": "NL-TSH-SAN-30",
+   "product": "trail-shorts",
+   "colour": "sand",
+   "size": "30",
+   "price": "58.00",
+   "weightG": 220,
+   "onHand": 1,
+   "reserved": 0,
+   "available": 1
+  },
+  {
+   "sku": "NL-TSH-SAN-32",
+   "product": "trail-shorts",
+   "colour": "sand",
+   "size": "32",
+   "price": "58.00",
+   "weightG": 220,
+   "onHand": 10,
+   "reserved": 0,
+   "available": 10
+  },
+  {
+   "sku": "NL-TSH-SAN-34",
+   "product": "trail-shorts",
+   "colour": "sand",
+   "size": "34",
+   "price": "58.00",
+   "weightG": 220,
+   "onHand": 8,
+   "reserved": 0,
+   "available": 8
+  },
+  {
+   "sku": "NL-TSH-SLA-30",
+   "product": "trail-shorts",
+   "colour": "slate",
+   "size": "30",
+   "price": "58.00",
+   "weightG": 220,
+   "onHand": 8,
+   "reserved": 0,
+   "available": 8
+  },
+  {
+   "sku": "NL-TSH-SLA-32",
+   "product": "trail-shorts",
+   "colour": "slate",
+   "size": "32",
+   "price": "58.00",
+   "weightG": 220,
+   "onHand": 24,
+   "reserved": 0,
+   "available": 24
+  },
+  {
+   "sku": "NL-TSH-SLA-34",
+   "product": "trail-shorts",
+   "colour": "slate",
+   "size": "34",
+   "price": "58.00",
+   "weightG": 220,
+   "onHand": 10,
+   "reserved": 0,
+   "available": 10
+  },
+  {
+   "sku": "NL-TSH-SLA-36",
+   "product": "trail-shorts",
+   "colour": "slate",
+   "size": "36",
+   "price": "58.00",
+   "weightG": 220,
+   "onHand": 20,
+   "reserved": 0,
+   "available": 20
+  },
+  {
+   "sku": "NL-BEA-EMB",
+   "product": "wool-beanie",
+   "colour": "ember",
+   "size": null,
+   "price": "28.00",
+   "weightG": 80,
+   "onHand": 16,
+   "reserved": 0,
+   "available": 16
+  },
+  {
+   "sku": "NL-BEA-MOS",
+   "product": "wool-beanie",
+   "colour": "moss",
+   "size": null,
+   "price": "28.00",
+   "weightG": 80,
+   "onHand": 14,
+   "reserved": 1,
+   "available": 13
+  },
+  {
+   "sku": "NL-BEA-SLA",
+   "product": "wool-beanie",
+   "colour": "slate",
+   "size": null,
+   "price": "28.00",
+   "weightG": 80,
+   "onHand": 16,
+   "reserved": 0,
+   "available": 16
+  },
+  {
+   "sku": "NL-SOX-SM",
+   "product": "hiking-socks",
+   "colour": null,
+   "size": "sm",
+   "price": "24.00",
+   "weightG": 120,
+   "onHand": 20,
+   "reserved": 1,
+   "available": 19
+  },
+  {
+   "sku": "NL-SOX-LXL",
+   "product": "hiking-socks",
+   "colour": null,
+   "size": "lxl",
+   "price": "24.00",
+   "weightG": 120,
+   "onHand": 16,
+   "reserved": 0,
+   "available": 16
+  },
+  {
+   "sku": "NL-TAL-7",
+   "product": "talus-runner",
+   "colour": null,
+   "size": "7",
+   "price": "139.00",
+   "weightG": 590,
+   "onHand": 8,
+   "reserved": 0,
+   "available": 8
+  },
+  {
+   "sku": "NL-TAL-8",
+   "product": "talus-runner",
+   "colour": null,
+   "size": "8",
+   "price": "139.00",
+   "weightG": 590,
+   "onHand": 8,
+   "reserved": 0,
+   "available": 8
+  },
+  {
+   "sku": "NL-TAL-9",
+   "product": "talus-runner",
+   "colour": null,
+   "size": "9",
+   "price": "139.00",
+   "weightG": 590,
+   "onHand": 3,
+   "reserved": 1,
+   "available": 2
+  },
+  {
+   "sku": "NL-TAL-10",
+   "product": "talus-runner",
+   "colour": null,
+   "size": "10",
+   "price": "139.00",
+   "weightG": 590,
+   "onHand": 24,
+   "reserved": 0,
+   "available": 24
+  },
+  {
+   "sku": "NL-TAL-11",
+   "product": "talus-runner",
+   "colour": null,
+   "size": "11",
+   "price": "139.00",
+   "weightG": 590,
+   "onHand": 0,
+   "reserved": 0,
+   "available": 0
+  },
+  {
+   "sku": "NL-TAL-12",
+   "product": "talus-runner",
+   "colour": null,
+   "size": "12",
+   "price": "139.00",
+   "weightG": 590,
+   "onHand": 20,
+   "reserved": 0,
+   "available": 20
+  },
+  {
+   "sku": "NL-RMB-7",
+   "product": "ridge-mid",
+   "colour": null,
+   "size": "7",
+   "price": "189.00",
+   "weightG": 1180,
+   "onHand": 10,
+   "reserved": 0,
+   "available": 10
+  },
+  {
+   "sku": "NL-RMB-8",
+   "product": "ridge-mid",
+   "colour": null,
+   "size": "8",
+   "price": "189.00",
+   "weightG": 1180,
+   "onHand": 20,
+   "reserved": 0,
+   "available": 20
+  },
+  {
+   "sku": "NL-RMB-9",
+   "product": "ridge-mid",
+   "colour": null,
+   "size": "9",
+   "price": "189.00",
+   "weightG": 1180,
+   "onHand": 12,
+   "reserved": 0,
+   "available": 12
+  },
+  {
+   "sku": "NL-RMB-10",
+   "product": "ridge-mid",
+   "colour": null,
+   "size": "10",
+   "price": "189.00",
+   "weightG": 1180,
+   "onHand": 24,
+   "reserved": 0,
+   "available": 24
+  },
+  {
+   "sku": "NL-RMB-11",
+   "product": "ridge-mid",
+   "colour": null,
+   "size": "11",
+   "price": "189.00",
+   "weightG": 1180,
+   "onHand": 8,
+   "reserved": 0,
+   "available": 8
+  },
+  {
+   "sku": "NL-RMB-12",
+   "product": "ridge-mid",
+   "colour": null,
+   "size": "12",
+   "price": "189.00",
+   "weightG": 1180,
+   "onHand": 8,
+   "reserved": 0,
+   "available": 8
+  },
+  {
+   "sku": "NL-SLD-SLA-S",
+   "product": "camp-slide",
+   "colour": "slate",
+   "size": "s",
+   "price": "42.00",
+   "weightG": 300,
+   "onHand": 16,
+   "reserved": 0,
+   "available": 16
+  },
+  {
+   "sku": "NL-SLD-SLA-M",
+   "product": "camp-slide",
+   "colour": "slate",
+   "size": "m",
+   "price": "42.00",
+   "weightG": 300,
+   "onHand": 14,
+   "reserved": 0,
+   "available": 14
+  },
+  {
+   "sku": "NL-SLD-SLA-L",
+   "product": "camp-slide",
+   "colour": "slate",
+   "size": "l",
+   "price": "42.00",
+   "weightG": 300,
+   "onHand": 24,
+   "reserved": 0,
+   "available": 24
+  },
+  {
+   "sku": "NL-SLD-MOS-S",
+   "product": "camp-slide",
+   "colour": "moss",
+   "size": "s",
+   "price": "42.00",
+   "weightG": 300,
+   "onHand": 8,
+   "reserved": 0,
+   "available": 8
+  },
+  {
+   "sku": "NL-SLD-MOS-M",
+   "product": "camp-slide",
+   "colour": "moss",
+   "size": "m",
+   "price": "42.00",
+   "weightG": 300,
+   "onHand": 24,
+   "reserved": 0,
+   "available": 24
+  },
+  {
+   "sku": "NL-SLD-MOS-L",
+   "product": "camp-slide",
+   "colour": "moss",
+   "size": "l",
+   "price": "42.00",
+   "weightG": 300,
+   "onHand": 24,
+   "reserved": 0,
+   "available": 24
+  },
+  {
+   "sku": "NL-EMB2",
+   "product": "ember-2",
+   "colour": null,
+   "size": null,
+   "price": "329.00",
+   "weightG": 1900,
+   "onHand": 3,
+   "reserved": 1,
+   "available": 2
+  },
+  {
+   "sku": "NL-LOF-REGULAR",
+   "product": "loft-20",
+   "colour": null,
+   "size": "regular",
+   "price": "249.00",
+   "weightG": 1100,
+   "onHand": 8,
+   "reserved": 0,
+   "available": 8
+  },
+  {
+   "sku": "NL-LOF-LONG",
+   "product": "loft-20",
+   "colour": null,
+   "size": "long",
+   "price": "269.00",
+   "weightG": 1100,
+   "onHand": 12,
+   "reserved": 0,
+   "available": 12
+  },
+  {
+   "sku": "NL-MUG-EMB",
+   "product": "pine-mug",
+   "colour": "ember",
+   "size": null,
+   "price": "22.00",
+   "weightG": 240,
+   "onHand": 14,
+   "reserved": 2,
+   "available": 12
+  },
+  {
+   "sku": "NL-MUG-MOS",
+   "product": "pine-mug",
+   "colour": "moss",
+   "size": null,
+   "price": "22.00",
+   "weightG": 240,
+   "onHand": 20,
+   "reserved": 0,
+   "available": 20
+  },
+  {
+   "sku": "NL-MUG-SLA",
+   "product": "pine-mug",
+   "colour": "slate",
+   "size": null,
+   "price": "22.00",
+   "weightG": 240,
+   "onHand": 24,
+   "reserved": 0,
+   "available": 24
+  },
+  {
+   "sku": "NL-STV",
+   "product": "trail-stove",
+   "colour": null,
+   "size": null,
+   "price": "69.00",
+   "weightG": 300,
+   "onHand": 16,
+   "reserved": 1,
+   "available": 15
+  },
+  {
+   "sku": "NL-LMP",
+   "product": "headlamp-400",
+   "colour": null,
+   "size": null,
+   "price": "39.00",
+   "weightG": 90,
+   "onHand": 8,
+   "reserved": 1,
+   "available": 7
+  },
+  {
+   "sku": "NL-BTL-GLA",
+   "product": "insulated-750",
+   "colour": "glacier",
+   "size": null,
+   "price": "34.00",
+   "weightG": 380,
+   "onHand": 12,
+   "reserved": 2,
+   "available": 10
+  },
+  {
+   "sku": "NL-BTL-EMB",
+   "product": "insulated-750",
+   "colour": "ember",
+   "size": null,
+   "price": "34.00",
+   "weightG": 380,
+   "onHand": 16,
+   "reserved": 0,
+   "available": 16
+  },
+  {
+   "sku": "NL-BTL-MOS",
+   "product": "insulated-750",
+   "colour": "moss",
+   "size": null,
+   "price": "34.00",
+   "weightG": 380,
+   "onHand": 0,
+   "reserved": 0,
+   "available": 0
+  }
+ ],
+ "ZONES": {
+  "contiguous": "Contiguous US",
+  "remote": "Alaska & Hawaii"
+ }
+}
