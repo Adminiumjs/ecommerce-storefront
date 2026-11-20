@@ -9,6 +9,7 @@
  * guides, gift card amounts). The packer never sees them.
  */
 import { l, titles } from "./labels.ts";
+import { OVERVIEW_LAYOUT } from "./overview.ts";
 
 export const NAV_GROUPS = [
   { key: "records", label: l("Records"), order: 1 },
@@ -41,6 +42,16 @@ interface PageSpec {
 }
 
 const SPECS: PageSpec[] = [
+  {
+    ref: "ecommerce-overview",
+    template: "page-dashboard",
+    title: "Overview",
+    group: "overview",
+    icon: "layout-dashboard",
+    order: 0,
+    config: { layout: OVERVIEW_LAYOUT },
+  },
+
   // ── records ───────────────────────────────────────────────────────────────
   {
     ref: "ecommerce-orders",

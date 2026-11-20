@@ -6729,6 +6729,596 @@
   },
   "pages": [
     {
+      "ref": "ecommerce-overview",
+      "template": "page-dashboard",
+      "title": {
+        "key": "mft.ecommerce.overview",
+        "fallback": "Overview"
+      },
+      "titles": {},
+      "nav": {
+        "group": "overview",
+        "icon": "layout-dashboard",
+        "order": 0
+      },
+      "config": {
+        "layout": {
+          "version": 1,
+          "toolbar": {
+            "link": {
+              "label": "Open the desk",
+              "labels": {},
+              "href": "@staff",
+              "icon": "external-link"
+            }
+          },
+          "items": [
+            {
+              "i": "sales",
+              "widget": "kpi-stat-card",
+              "x": 0,
+              "y": 0,
+              "w": 3,
+              "h": 3,
+              "config": {
+                "title": "Sales, last 4 weeks",
+                "titles": {
+                  "en-US": "Sales, last 4 weeks"
+                },
+                "metricFormat": "currency",
+                "deltaMode": "none",
+                "showSparkline": false,
+                "iconName": "banknote",
+                "href": "/p/ecommerce-orders?f.placed_at=gte:today-27&f.status=in:paid,packed,shipped",
+                "binding": {
+                  "kind": "table-query",
+                  "source": {
+                    "name": "orders",
+                    "type": "table"
+                  },
+                  "shape": "metric+delta",
+                  "aggregations": [
+                    {
+                      "fn": "sum",
+                      "column": "net",
+                      "alias": "sales"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "column": "status",
+                      "op": "in",
+                      "value": [
+                        "paid",
+                        "packed",
+                        "shipped"
+                      ]
+                    }
+                  ],
+                  "window": {
+                    "column": "placed_at",
+                    "last": 28,
+                    "unit": "day"
+                  }
+                }
+              }
+            },
+            {
+              "i": "to-ship",
+              "widget": "kpi-stat-card",
+              "x": 3,
+              "y": 0,
+              "w": 3,
+              "h": 3,
+              "config": {
+                "title": "To ship today",
+                "titles": {
+                  "en-US": "To ship today"
+                },
+                "metricFormat": "plain",
+                "deltaMode": "none",
+                "showSparkline": false,
+                "iconName": "package",
+                "href": "/p/ecommerce-orders?f.status=eq:paid&f.kind=eq:goods&f.ships_by=lte:today",
+                "binding": {
+                  "kind": "table-query",
+                  "source": {
+                    "name": "orders",
+                    "type": "table"
+                  },
+                  "shape": "metric+delta",
+                  "aggregations": [
+                    {
+                      "fn": "count",
+                      "alias": "orders"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "column": "status",
+                      "op": "eq",
+                      "value": "paid"
+                    },
+                    {
+                      "column": "kind",
+                      "op": "eq",
+                      "value": "goods"
+                    },
+                    {
+                      "column": "ships_by",
+                      "op": "lte",
+                      "day": "today"
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "i": "returns-open",
+              "widget": "kpi-stat-card",
+              "x": 6,
+              "y": 0,
+              "w": 3,
+              "h": 3,
+              "config": {
+                "title": "Returns open",
+                "titles": {
+                  "en-US": "Returns open"
+                },
+                "metricFormat": "plain",
+                "deltaMode": "none",
+                "showSparkline": false,
+                "iconName": "undo-2",
+                "href": "/p/ecommerce-returns?f.status=in:asked,approved,received",
+                "binding": {
+                  "kind": "table-query",
+                  "source": {
+                    "name": "returns",
+                    "type": "table"
+                  },
+                  "shape": "metric+delta",
+                  "aggregations": [
+                    {
+                      "fn": "count",
+                      "alias": "returns"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "column": "status",
+                      "op": "in",
+                      "value": [
+                        "asked",
+                        "approved",
+                        "received"
+                      ]
+                    }
+                  ]
+                }
+              }
+            },
+            {
+              "i": "refunded",
+              "widget": "kpi-stat-card",
+              "x": 9,
+              "y": 0,
+              "w": 3,
+              "h": 3,
+              "config": {
+                "title": "Refunded, last 4 weeks",
+                "titles": {
+                  "en-US": "Refunded, last 4 weeks"
+                },
+                "metricFormat": "currency",
+                "deltaMode": "none",
+                "showSparkline": false,
+                "iconName": "rotate-ccw",
+                "iconTone": "warn",
+                "binding": {
+                  "kind": "table-query",
+                  "source": {
+                    "name": "payment_refunds",
+                    "type": "table"
+                  },
+                  "shape": "metric+delta",
+                  "aggregations": [
+                    {
+                      "fn": "sum",
+                      "column": "counted",
+                      "alias": "refunded"
+                    }
+                  ],
+                  "window": {
+                    "column": "made_at",
+                    "last": 28,
+                    "unit": "day"
+                  }
+                }
+              }
+            },
+            {
+              "i": "waiting-payment",
+              "widget": "mini-table",
+              "x": 0,
+              "y": 3,
+              "w": 6,
+              "h": 6,
+              "config": {
+                "title": "Waiting for payment",
+                "titles": {
+                  "en-US": "Waiting for payment"
+                },
+                "subtitle": "Cancelled by themselves if the money never comes",
+                "subtitles": {},
+                "emptyState": {
+                  "titleKey": "Nothing waiting for a payment",
+                  "titles": {}
+                },
+                "limit": 4,
+                "columns": [
+                  {
+                    "name": "number",
+                    "label": "Order",
+                    "format": "mono"
+                  },
+                  {
+                    "name": "pay_by",
+                    "label": "Cancels at",
+                    "logicalType": "timestamptz"
+                  },
+                  {
+                    "name": "total",
+                    "label": "Total",
+                    "logicalType": "decimal",
+                    "semantic": "money"
+                  }
+                ],
+                "viewAllHref": "/p/ecommerce-orders?f.status=in:paying,awaiting_transfer",
+                "binding": {
+                  "kind": "table-query",
+                  "source": {
+                    "name": "orders",
+                    "type": "table"
+                  },
+                  "shape": "record-list",
+                  "select": [
+                    "id",
+                    "number",
+                    "pay_by",
+                    "total",
+                    "status"
+                  ],
+                  "filters": [
+                    {
+                      "column": "status",
+                      "op": "in",
+                      "value": [
+                        "paying",
+                        "awaiting_transfer"
+                      ]
+                    }
+                  ],
+                  "orderBy": [
+                    {
+                      "column": "placed_at",
+                      "dir": "asc"
+                    }
+                  ],
+                  "limit": 4
+                }
+              }
+            },
+            {
+              "i": "returns-to-act",
+              "widget": "mini-table",
+              "x": 6,
+              "y": 3,
+              "w": 6,
+              "h": 6,
+              "config": {
+                "title": "Returns to act on",
+                "titles": {
+                  "en-US": "Returns to act on"
+                },
+                "subtitle": "To decide, or received and still to refund",
+                "subtitles": {},
+                "emptyState": {
+                  "titleKey": "No return needs you",
+                  "titles": {}
+                },
+                "limit": 4,
+                "columns": [
+                  {
+                    "name": "number",
+                    "label": "Return",
+                    "format": "mono"
+                  },
+                  {
+                    "name": "status",
+                    "label": "Step",
+                    "logicalType": "enum"
+                  },
+                  {
+                    "name": "refund_amount",
+                    "label": "Refund",
+                    "logicalType": "decimal",
+                    "semantic": "money"
+                  }
+                ],
+                "secondary": [
+                  "order_number"
+                ],
+                "viewAllHref": "/p/ecommerce-returns?f.status=in:asked,received",
+                "binding": {
+                  "kind": "table-query",
+                  "source": {
+                    "name": "returns",
+                    "type": "table"
+                  },
+                  "shape": "record-list",
+                  "select": [
+                    "id",
+                    "number",
+                    "order_number",
+                    "status",
+                    "refund_amount"
+                  ],
+                  "filters": [
+                    {
+                      "column": "status",
+                      "op": "in",
+                      "value": [
+                        "asked",
+                        "received"
+                      ]
+                    }
+                  ],
+                  "orderBy": [
+                    {
+                      "column": "asked_at",
+                      "dir": "asc"
+                    }
+                  ],
+                  "limit": 4
+                }
+              }
+            },
+            {
+              "i": "sales-by-week",
+              "widget": "chart-bar",
+              "x": 0,
+              "y": 9,
+              "w": 8,
+              "h": 7,
+              "config": {
+                "title": "Sales by week",
+                "titles": {
+                  "en-US": "Sales by week"
+                },
+                "subtitle": "Goods after reductions, last 4 weeks",
+                "subtitles": {},
+                "emptyState": {
+                  "titleKey": "No sales in the last 4 weeks",
+                  "titles": {}
+                },
+                "highlight": "current",
+                "series": [
+                  {
+                    "label": "Sales",
+                    "labels": {}
+                  }
+                ],
+                "binding": {
+                  "kind": "table-query",
+                  "source": {
+                    "name": "orders",
+                    "type": "table"
+                  },
+                  "shape": "timeseries",
+                  "aggregations": [
+                    {
+                      "fn": "sum",
+                      "column": "net",
+                      "alias": "sales"
+                    }
+                  ],
+                  "bucket": {
+                    "column": "placed_at",
+                    "unit": "week"
+                  },
+                  "filters": [
+                    {
+                      "column": "status",
+                      "op": "in",
+                      "value": [
+                        "paid",
+                        "packed",
+                        "shipped"
+                      ]
+                    }
+                  ],
+                  "window": {
+                    "column": "placed_at",
+                    "last": 28,
+                    "unit": "day"
+                  }
+                }
+              }
+            },
+            {
+              "i": "best-sellers",
+              "widget": "chart-ranking-bars",
+              "x": 8,
+              "y": 9,
+              "w": 4,
+              "h": 7,
+              "config": {
+                "title": "Best sellers, last 4 weeks",
+                "titles": {
+                  "en-US": "Best sellers, last 4 weeks"
+                },
+                "subtitle": "Units sold",
+                "subtitles": {},
+                "emptyState": {
+                  "titleKey": "Nothing sold in the last 4 weeks",
+                  "titles": {}
+                },
+                "n": 5,
+                "metricFormat": "plain",
+                "href": "/p/ecommerce-products",
+                "binding": {
+                  "kind": "table-query",
+                  "source": {
+                    "name": "order_lines",
+                    "type": "table"
+                  },
+                  "shape": "categorical",
+                  "groupBy": [
+                    "product_id"
+                  ],
+                  "groupLabel": "product_id.name",
+                  "aggregations": [
+                    {
+                      "fn": "sum",
+                      "column": "qty",
+                      "alias": "units"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "column": "order_id.status",
+                      "op": "in",
+                      "value": [
+                        "paid",
+                        "packed",
+                        "shipped"
+                      ]
+                    }
+                  ],
+                  "window": {
+                    "column": "order_id.placed_at",
+                    "last": 28,
+                    "unit": "day"
+                  },
+                  "limit": 5
+                }
+              }
+            },
+            {
+              "i": "codes-used",
+              "widget": "chart-ranking-bars",
+              "x": 0,
+              "y": 16,
+              "w": 6,
+              "h": 6,
+              "config": {
+                "title": "Codes used, last 4 weeks",
+                "titles": {
+                  "en-US": "Codes used, last 4 weeks"
+                },
+                "subtitle": "Orders that used each code",
+                "subtitles": {},
+                "emptyState": {
+                  "titleKey": "No codes used in the last 4 weeks",
+                  "titles": {}
+                },
+                "n": 5,
+                "metricFormat": "plain",
+                "binding": {
+                  "kind": "table-query",
+                  "source": {
+                    "name": "order_codes",
+                    "type": "table"
+                  },
+                  "shape": "categorical",
+                  "groupBy": [
+                    "typed"
+                  ],
+                  "aggregations": [
+                    {
+                      "fn": "count",
+                      "alias": "orders"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "column": "order_id.status",
+                      "op": "in",
+                      "value": [
+                        "paid",
+                        "packed",
+                        "shipped",
+                        "sent"
+                      ]
+                    },
+                    {
+                      "column": "removed_at",
+                      "op": "is_null"
+                    }
+                  ],
+                  "window": {
+                    "column": "order_id.placed_at",
+                    "last": 28,
+                    "unit": "day"
+                  },
+                  "limit": 5
+                }
+              }
+            },
+            {
+              "i": "gift-cards-sold",
+              "widget": "kpi-stat-card",
+              "x": 6,
+              "y": 16,
+              "w": 6,
+              "h": 3,
+              "config": {
+                "title": "Gift cards sold, last 4 weeks",
+                "titles": {
+                  "en-US": "Gift cards sold, last 4 weeks"
+                },
+                "metricFormat": "currency",
+                "deltaMode": "none",
+                "showSparkline": false,
+                "iconName": "gift",
+                "subtitle": "Money the shop owes to the holders. Not counted in sales.",
+                "subtitles": {},
+                "binding": {
+                  "kind": "table-query",
+                  "source": {
+                    "name": "gift_lines",
+                    "type": "table"
+                  },
+                  "shape": "metric+delta",
+                  "aggregations": [
+                    {
+                      "fn": "sum",
+                      "column": "amount",
+                      "alias": "sold"
+                    }
+                  ],
+                  "filters": [
+                    {
+                      "column": "order_id.status",
+                      "op": "in",
+                      "value": [
+                        "sent"
+                      ]
+                    }
+                  ],
+                  "window": {
+                    "column": "order_id.placed_at",
+                    "last": 28,
+                    "unit": "day"
+                  }
+                }
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
       "ref": "ecommerce-orders",
       "template": "page-crud",
       "title": {
@@ -8253,6 +8843,8 @@
         "table:@messages:read",
         "table:@messages:create",
         "table:@messages:update",
+        "page:@ecommerce-overview:view",
+        "page:@ecommerce-overview:edit",
         "page:@ecommerce-orders:view",
         "page:@ecommerce-orders:edit",
         "page:@ecommerce-order-lines:view",
