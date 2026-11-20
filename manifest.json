@@ -11592,5 +11592,13 @@
         ]
       }
     }
-  ]
+  ],
+  "sampleData": {
+    "file": "seeds/ecommerce-shop.sample.json",
+    "addOns": {
+      "inventory": {
+        "file": "seeds/ecommerce-shop.inventory.sample.json"
+      }
+    }
+  }
 }

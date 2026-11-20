@@ -96,6 +96,8 @@ export function buildManifest(): Record<string, unknown> {
     people: PEOPLE,
     payments: PAYMENTS,
     automations: AUTOMATIONS,
+    // Northline's Tuesday: the shop's own rows, and the stock items, links and opening stock Inventory adds.
+    sampleData: { file: "seeds/ecommerce-shop.sample.json", addOns: { inventory: { file: "seeds/ecommerce-shop.inventory.sample.json" } } },
   };
 }
 
