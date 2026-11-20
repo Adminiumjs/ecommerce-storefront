@@ -94,6 +94,9 @@ describe.skipIf(why !== null)(`Northline installs on a built Adminium${why === n
         const big = await create("variants", { product_id: shell["id"], colour_id: slate["id"], size_id: xl["id"], sku: "NL-BSH-SLA-XL", price_delta: 10, weight_g: 400 });
         expect([variant["sku"], Number(variant["price"]), variant["colour_code"], variant["size_code"], variant["category_id"], variant["product_status"]]).toEqual(["NL-BSH-SLA-M", 189, "slate", "m", cat["id"], "active"]);
         expect(Number(big["price"])).toBe(199);
+        // With Inventory on, each new variant has a stock item of its own, linked to it.
+        const items = ok(await staff.get<{ data: Row[] }>(`/api/v1/data/${connectionId}/inventory_items?limit=50`)).data;
+        expect(items.map((i) => i["name"]).sort()).toEqual(["Basalt Rain Shell · Slate · M · NL-BSH-SLA-M", "Basalt Rain Shell · Slate · XL · NL-BSH-SLA-XL"]);
         const zone = await create("zones", { code: "contiguous", label: "Contiguous US" });
         wa = await create("regions", { code: "WA", name: "Washington", zone_id: zone["id"], tax_rate: 6.5 });
         const standard = await create("shipping_services", { code: "standard", label: "Standard", transit_min: 3, transit_max: 5 });
