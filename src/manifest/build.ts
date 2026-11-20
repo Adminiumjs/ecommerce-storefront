@@ -9,6 +9,7 @@
  * when it and the modules disagree (`npm run manifest` writes it again).
  */
 import { ADD_ONS } from "./add-ons.ts";
+import { AUTOMATIONS } from "./automations.ts";
 import { NAV_GROUPS, pages } from "./pages.ts";
 import { PAYMENTS } from "./payments.ts";
 import { PEOPLE } from "./people.ts";
@@ -94,6 +95,7 @@ export function buildManifest(): Record<string, unknown> {
     publicAccess: PUBLIC_ACCESS,
     people: PEOPLE,
     payments: PAYMENTS,
+    automations: AUTOMATIONS,
   };
 }
 

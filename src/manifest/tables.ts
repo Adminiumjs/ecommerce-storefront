@@ -1044,7 +1044,8 @@ export const TABLES: Table[] = [
       }),
       // Put back in stock when it comes in: said at Received, off for a faulty piece.
       bool("restock", "Put back in stock", true),
-      // Set when the return is declined: its pieces are free to come back in another.
+      // Set by the desk's Decline, on each piece before the return moves: its pieces are free to come back in another.
+      // (A copy that follows the return cannot feed the order line's total; the desk writes it in the same sheet.)
       at("void_at", "Freed", opt),
     ],
   },

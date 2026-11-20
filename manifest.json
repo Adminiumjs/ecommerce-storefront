@@ -10870,5 +10870,135 @@
         }
       }
     ]
-  }
+  },
+  "automations": [
+    {
+      "key": "gift-order-sent",
+      "name": {
+        "en-US": "A gift-cards-only order is paid: it is sent"
+      },
+      "description": {
+        "en-US": "Moves a paid order that sells only gift cards to Sent: Offers & gift cards mails each card when the payment lands."
+      },
+      "enabled": true,
+      "trigger": {
+        "kind": "record",
+        "event": "updated",
+        "table": "orders",
+        "changedColumn": "status",
+        "when": [
+          {
+            "left": {
+              "field": "status"
+            },
+            "op": "is",
+            "right": "paid"
+          },
+          {
+            "left": {
+              "field": "kind"
+            },
+            "op": "is",
+            "right": "gift"
+          }
+        ]
+      },
+      "graph": {
+        "version": 1,
+        "nodes": [
+          {
+            "id": "t",
+            "kind": "trigger",
+            "title": {
+              "en-US": "A gift-cards-only order is paid"
+            }
+          },
+          {
+            "id": "sent",
+            "kind": "action",
+            "title": {
+              "en-US": "Mark it sent"
+            },
+            "action": {
+              "kind": "record.update",
+              "values": {
+                "status": "sent"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "key": "back-in-stock",
+      "name": {
+        "en-US": "A variant is back in stock: the customers who asked are told"
+      },
+      "description": {
+        "en-US": "Every 15 minutes, each waiting back-in-stock request whose variant Inventory says is in is stamped and its customer e-mailed once."
+      },
+      "enabled": true,
+      "trigger": {
+        "kind": "schedule",
+        "schedule": {
+          "kind": "interval",
+          "everyMinutes": "15"
+        },
+        "forEach": {
+          "table": "restock_requests",
+          "where": [
+            {
+              "left": {
+                "field": "notified_at"
+              },
+              "op": "is_empty"
+            }
+          ],
+          "once": false
+        }
+      },
+      "graph": {
+        "version": 1,
+        "nodes": [
+          {
+            "id": "t",
+            "kind": "trigger",
+            "title": {
+              "en-US": "Each waiting back-in-stock request"
+            }
+          },
+          {
+            "id": "in",
+            "kind": "condition",
+            "title": {
+              "en-US": "Inventory says the variant is in"
+            },
+            "condition": {
+              "left": {
+                "words": "inventory:stock",
+                "of": "variant_id"
+              },
+              "op": "is",
+              "right": "in"
+            }
+          },
+          {
+            "id": "stamp",
+            "kind": "action",
+            "title": {
+              "en-US": "Stamp it told"
+            },
+            "action": {
+              "kind": "record.update",
+              "values": {
+                "notified_at": {
+                  "now": true
+                }
+              }
+            }
+          }
+        ]
+      }
+    }
+  ]
 }
