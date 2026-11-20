@@ -41,6 +41,8 @@
  */
 import { z } from 'zod';
 
+import { publicConsentSchema } from './people.ts';
+
 import { kindOf, rulesOf, type Capacity } from './capacity.ts';
 import { formulaColumns, type FormulaExpr } from './formula.ts';
 import {
@@ -52,6 +54,8 @@ import {
   type ReferenceIssue,
   type TableIndex,
 } from './refs.ts';
+import { FORMS_BECAME_TABLE_MAX } from './forms.ts';
+import { compareSemver } from './semver.ts';
 import { momentIssues, momentOffsetSchema, plainMomentSchema, wallTimeSchema, type Moment } from './refs.ts';
 import { conditionIssues, linkedConditionSchema, reachedOnlyByUndo, stateConditionSchema, type StateMove } from './states.ts';
 
@@ -60,6 +64,59 @@ export const SELF_UNLOCK_MIN_LENGTH = 10;
 
 /** The key every entry uses unless it names another. */
 export const CUSTOMER_KEY = 'customer';
+
+/**
+ * The reserved key name of the entries that open a table to FORMS: an answer
+ * to a form may become a new row of the table, through this entry's
+ * `writable` columns, `defaults` and `anonymous` limits. No browser key of
+ * this name is ever made, and the public API never serves such an entry: it
+ * is read by the forms door alone, so opening a table to forms does not open
+ * it to the public API.
+ */
+export const FORMS_KEY = 'forms';
+
+/**
+ * What a forms entry may say. A form only ever creates a row (it never reads
+ * one back, changes one or signs anyone in), so every word about reading,
+ * claims, sessions, children, files and the entry's own confirmation mail is
+ * left out: forms send their own.
+ */
+export const FORMS_ENTRY_WORDS = ['table', 'methods', 'key', 'writable', 'writableValues', 'defaults', 'requires', 'agrees', 'anonymous', 'requireSetting', 'module', 'source'] as const;
+
+/**
+ * The reserved key name of the entries that open a table to a CHAT's
+ * question left outside hours: a visitor who leaves one with an e-mail adds
+ * a new row of the table, through this entry's `writable` columns, `defaults`
+ * and `anonymous` limits. As with `forms`, no browser key of this name is
+ * ever made and the public API never serves such an entry: the chat door
+ * alone reads it. A table may carry both a `forms` and a `chat` entry.
+ */
+export const CHAT_KEY = 'chat';
+
+/** What a chat entry may say: a forms entry's words, but a chat's row has no form, so no form's "Source". */
+export const CHAT_ENTRY_WORDS = FORMS_ENTRY_WORDS.filter((word): word is Exclude<(typeof FORMS_ENTRY_WORDS)[number], 'source'> => word !== 'source');
+
+/** The reserved keys whose entries a door of Adminium's own writes through, and the public API never serves. */
+export const DOOR_KEYS: readonly string[] = [FORMS_KEY, CHAT_KEY];
+
+/**
+ * The release that reserved `chat`. A manifest whose floor
+ * (`compatibility.minAdminiumVersion`) is older was written when `chat` was
+ * an ordinary key name: it keeps that meaning, so an app that named a key
+ * `chat` before still validates and its entries are still served.
+ */
+export const CHAT_KEY_FLOOR = '0.3.64';
+
+/** Whether a manifest's `chat` is the reserved key: its floor is {@link CHAT_KEY_FLOOR} or later. */
+export function chatKeyReserved(m: { compatibility?: { minAdminiumVersion?: string | undefined } | undefined }): boolean {
+  const floor = m.compatibility?.minAdminiumVersion;
+  return floor !== undefined && compareSemver(floor, CHAT_KEY_FLOOR) >= 0;
+}
+
+/** The reserved door keys of one manifest: `forms` always, `chat` from its floor on. */
+export function doorKeysOf(m: { compatibility?: { minAdminiumVersion?: string | undefined } | undefined }): readonly string[] {
+  return chatKeyReserved(m) ? DOOR_KEYS : [FORMS_KEY];
+}
 
 /** The longest a plain-text value may be unless its column says longer: a name. */
 export const PLAIN_TEXT_MAX = 80;
@@ -93,6 +150,44 @@ export const plainTextRef = (entry: PlainTextColumnRef): string => (typeof entry
 export const plainTextMax = (entry: PlainTextColumnRef): number => (typeof entry === 'string' ? PLAIN_TEXT_MAX : (entry.max ?? PLAIN_TEXT_MAX));
 
 const keyNameSchema = z.string().regex(/^[a-z][a-z0-9-]{0,31}$/, 'a key name is kebab-case');
+
+/**
+ * What a shopper may ask of a column of a list anyone reads: equal to, one
+ * of (at most {@link SHOPPER_IN_MOST} values), and at least, at most, more or
+ * less than. Never a pattern of their own (`like`), never "or": a shopper's
+ * filter only narrows what the entry shows, one condition on top of another.
+ */
+export const SHOPPER_OPS = ['eq', 'in', 'gte', 'lte', 'gt', 'lt'] as const;
+export type ShopperOp = (typeof SHOPPER_OPS)[number];
+/** The operators a column takes when the entry names none. */
+export const SHOPPER_DEFAULT_OPS: readonly ShopperOp[] = ['eq', 'in', 'gte', 'lte'];
+/** The most values one `in` of a shopper's filter carries. */
+export const SHOPPER_IN_MOST = 50;
+/** The most columns a list anyone reads may be filtered, searched and ordered by. */
+export const SHOPPER_FILTERABLE_MOST = 8;
+export const SHOPPER_SEARCHABLE_MOST = 4;
+export const SHOPPER_ORDERABLE_MOST = 5;
+/** The fewest characters a search asks for, and how many searches a minute one visitor makes. */
+export const SHOPPER_SEARCH_MIN = 2;
+export const SHOPPER_SEARCHES_A_MINUTE = 30;
+/** How far a list ordered by the shopper pages by offset: past it, by cursor. */
+export const SHOPPER_OFFSET_MOST = 1_000;
+/** How far a list anyone reads counts its rows before it says "1,000 or more". */
+export const SHOPPER_COUNT_MOST = 1_000;
+/** The longest page an entry of a file not made on an Adminium serves. */
+export const SHOPPER_PAGE_MOST = 100;
+
+/** A column a shopper may filter by: its ref (the default operators), or its ref with its own. */
+const shopperFilterSchema = z.union([
+  refSchema,
+  z.object({ column: refSchema, ops: z.array(z.enum(SHOPPER_OPS)).min(1).max(SHOPPER_OPS.length) }).strict(),
+]);
+export type ShopperFilter = z.infer<typeof shopperFilterSchema>;
+
+/** The column a shopper's filter names. */
+export const shopperFilterColumn = (filter: ShopperFilter): string => (typeof filter === 'string' ? filter : filter.column);
+/** The operators a shopper's filter takes on its column. */
+export const shopperFilterOps = (filter: ShopperFilter): readonly ShopperOp[] => (typeof filter === 'string' ? SHOPPER_DEFAULT_OPS : filter.ops);
 
 const valueFilterSchema = z
   .object({
@@ -170,17 +265,42 @@ export function claimKind(claim: Claim): 'lookup' | 'link' | 'token' {
   return 'link';
 }
 
+/** What {@link shareCodeColumns} reads of the app's tables: a table's columns, with their rules (a `tableIndex` is one). */
+export interface CodeSchema {
+  table(ref: string): { columns: readonly { ref: string; rules?: unknown }[] } | undefined;
+}
+
+/** The app's tables as {@link shareCodeColumns} reads them. */
+export function codeSchemaOf(tables: readonly { ref: string; columns: readonly { ref: string; rules?: unknown }[] }[]): CodeSchema {
+  return { table: (ref) => tables.find((table) => table.ref === ref) };
+}
+
+/** Whether a column's rules make it a code no staff member reads (`rules.code.hiddenFromStaff`). */
+export function hiddenFromStaff(rules: unknown): boolean {
+  return ((rules as { code?: { hiddenFromStaff?: unknown } } | undefined)?.code?.hiddenFromStaff ?? false) === true;
+}
+
 /**
  * The columns of one table its shared links open a row by (`claim: { by:
  * 'token' }`): codes that leave only as the link — never shown, never
- * listed, never a value the app's own package gives (its sample rows).
+ * listed, never copied, never a value the app's own package gives (its
+ * sample rows).
+ *
+ * With `schema`, every code of the table no staff member reads
+ * (`rules.code.hiddenFromStaff`) counts too, whether or not an entry claims
+ * by it yet: such a code is the link an order's or a quote's own email
+ * carries, and every guard that keeps a shared link's code keeps it the
+ * same way (a kept total, its last four, a ledger's copy, a public entry).
  */
-export function shareCodeColumns(entries: readonly PublicAccess[], table: string): string[] {
+export function shareCodeColumns(entries: readonly PublicAccess[], table: string, schema?: CodeSchema): string[] {
   const out: string[] = [];
   for (const entry of entries) {
     const claim = entry.claim;
     if (entry.table !== table || claim === undefined || !('by' in claim) || claimKind(claim) !== 'token') continue;
     if (!out.includes(claim.column)) out.push(claim.column);
+  }
+  for (const column of schema?.table(table)?.columns ?? []) {
+    if (hiddenFromStaff(column.rules) && !out.includes(column.ref)) out.push(column.ref);
   }
   return out;
 }
@@ -200,7 +320,7 @@ export function unlistedColumn(
   column: string,
 ): string | null {
   const entries = m.publicAccess ?? [];
-  if (shareCodeColumns(entries, table).includes(column)) return 'the code a shared link opens its row with';
+  if (shareCodeColumns(entries, table, codeSchemaOf(m.requiredSchema.tables)).includes(column)) return 'the code a shared link opens its row with';
   if (entries.some((entry) => entry.table === table && entry.withhold?.columns.includes(column) === true)) return 'withheld from all but its holder';
   const columns = m.requiredSchema.tables.find((candidate) => candidate.ref === table)?.columns ?? [];
   const rules = columns.find((candidate) => candidate.ref === column)?.rules;
@@ -349,12 +469,16 @@ const agreeTargetSchema = z.union([
  * A value of the row that must agree with another: `column` (followed along
  * `path` through foreign keys) equals, is at most, or is at least the target.
  * `when` applies it only to rows whose value (along its own `path`) is one of
- * `in`.
+ * `in`. `length: true` compares how many characters a text value has, with
+ * `lte` alone: a line's lettering no longer than its product allows
+ * (`{ "column": "lettering", "length": true, "lte": { "via": "product_id",
+ * "column": "lettering_limit" } }`), refused as `too-long`.
  */
 export const agreeSchema = z
   .object({
     column: refSchema,
     path: pathSchema.optional(),
+    length: z.literal(true).optional(),
     when: z.object({ path: pathSchema.optional(), in: z.array(scalarSchema).min(1).max(32) }).strict().optional(),
     eq: agreeTargetSchema.optional(),
     lte: agreeTargetSchema.optional(),
@@ -406,6 +530,8 @@ const childEntryShape = {
   plainText: plainTextSchema.optional(),
   /** The most a column may add up to across the rows of one write (a dozen items to an order). */
   sumMax: sumMaxSchema.optional(),
+  /** File columns of the child a guest may upload into (`POST /public/uploads`), as on the entry itself. */
+  uploads: z.array(refSchema).min(1).max(8).optional(),
 };
 
 const childTablesSchema = <T extends z.ZodTypeAny>(entry: T) =>
@@ -488,10 +614,57 @@ export const publicAccessSchema = z
   .object({
     table: refSchema,
     kind: z.enum(['records', 'availability']).optional(),
-    methods: z.array(z.enum(['GET', 'POST', 'PATCH'])).min(1),
+    /**
+     * `DELETE` only on an add-on's own link: its holder removes their own row while it is in a state the entry names.
+     * A file made on an Adminium (publisher `local`) may also replace (`PUT`), remove (`DELETE`) and write many rows
+     * at a time (`BATCH`), each behind a claim, as `PATCH` is.
+     */
+    methods: z.array(z.enum(['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'BATCH'])).min(1),
+    /** The endpoint's own address (`/open_orders`), in place of the one Adminium names. A file made on an Adminium only. */
+    path: z.string().regex(/^\/[a-z][A-Za-z0-9_]{0,63}$/, 'a path is "/" and a ref: a lower-case letter, then letters, digits and _').optional(),
+    /** How many rows a page holds, and in what order. A file made on an Adminium only. */
+    pagination: z
+      .object({
+        defaultLimit: z.number().int().min(1).max(200),
+        maxLimit: z.number().int().min(1).max(200),
+        /** `column.asc` or `column.desc`. */
+        order: z.string().regex(/^[a-z][a-z0-9_]*\.(asc|desc)$/, 'an order is "column.asc" or "column.desc"').optional(),
+      })
+      .strict()
+      .refine((pages) => pages.defaultLimit <= pages.maxLimit, { message: 'the default page is no longer than the longest', path: ['defaultLimit'] })
+      .optional(),
+    /** How many requests a guest may make in a window. A file made on an Adminium only. */
+    rateLimit: z.object({ requests: z.number().int().min(1).max(10_000), window: z.enum(['1s', '1m', '1h']) }).strict().optional(),
+    /** What a reply is: rows wrapped in `data`, a bare list, or one row. A file made on an Adminium only. */
+    response: z.enum(['wrapped', 'array', 'single']).optional(),
     select: z.array(refSchema).optional(),
     writable: z.array(refSchema).optional(),
     filters: z.array(z.union([valueFilterSchema, relativeFilterSchema])).optional(),
+    /**
+     * A list anyone reads (a catalogue): the columns a shopper may filter it
+     * by, each with the operators it takes (`eq`, `in`, `gte`, `lte` when
+     * none are named). Every filter is ANDed after the entry's own `filters`,
+     * so a shopper's only narrows what the entry shows.
+     */
+    filterable: z.array(shopperFilterSchema).min(1).max(SHOPPER_FILTERABLE_MOST).optional(),
+    /** Text columns a shopper's search looks in: a part of the text, any case, from two characters. */
+    searchable: z.array(refSchema).min(1).max(SHOPPER_SEARCHABLE_MOST).optional(),
+    /** Columns a shopper may order the list by, each never empty; the key always breaks a tie. */
+    orderable: z.array(refSchema).min(1).max(SHOPPER_ORDERABLE_MOST).optional(),
+    /**
+     * Filters through another list anyone reads on the same key, whose rows
+     * point at this one (a product's variants): `entry` is that list's table,
+     * `on` its link to this table, `columns` what may be asked of its rows.
+     * Every condition sent through it must hold on ONE of those rows, as that
+     * list shows them (its own filters included): a product is found by
+     * "Slate and M" only when one variant it has is both.
+     */
+    via: z
+      .object({ entry: refSchema, on: refSchema, columns: z.array(shopperFilterSchema).min(1).max(4) })
+      .strict()
+      .optional(),
+    /** The first page of a list anyone reads says how many rows it holds, counted to a thousand. */
+    count: z.literal(true).optional(),
     /** Values the server writes, whatever the browser sends (`status: confirmed`). */
     defaults: z.record(refSchema, z.union([z.string(), z.number(), z.boolean()])).optional(),
     /** How a person proves who they are on this key (see {@link claimSchema}). */
@@ -510,6 +683,24 @@ export const publicAccessSchema = z
     shareLink: refSchema.optional(),
     /** On an identity entry: what "delete my details" empties. */
     forget: forgetSchema.optional(),
+    /**
+     * A tick a stranger gives on this entry's create or change ("Email me
+     * about new shows"): `column` is the bool of the written row that carries
+     * it, `purpose` the consent it gives, and `wording` the sentence shown
+     * beside the box, with its version, so the consent log keeps what was
+     * shown and never a text from the request. Kept for the person the entry
+     * finds or works for (see `people.ts` `publicConsentIssues`). A box left
+     * unticked writes nothing: it takes back no earlier yes.
+     */
+    consent: publicConsentSchema.optional(),
+    /**
+     * On an add-on's entry, which rides the key of every app it is attached
+     * to: a text column of the table that holds the key of the app a row is
+     * for (`app`). Through an app's key the entry reads only the rows whose
+     * column holds that app's key, a create writes that key there (the
+     * browser cannot choose it), and a change never moves it.
+     */
+    appColumn: refSchema.optional(),
     /** On a signed-in person's rows: "Make a new link" for a row's own link. */
     newLink: newLinkSchema.optional(),
     /**
@@ -520,6 +711,14 @@ export const publicAccessSchema = z
     visibleWith: z.object({ table: refSchema, via: refSchema }).strict().optional(),
     /** File columns a claimed person may download (the file the row names, never by its id). */
     files: z.array(refSchema).min(1).max(8).optional(),
+    /**
+     * File columns a guest may upload into (`POST /public/uploads`): each a
+     * `writable` file column whose rule says what a guest may send
+     * (`rules.file.upload`). The upload is kept for a day; the guest's next
+     * create or change through this entry names it in the column, and it
+     * becomes the row's own file.
+     */
+    uploads: z.array(refSchema).min(1).max(8).optional(),
     /** The kinds of document a claimed person may list and open for these rows. */
     documents: z.array(z.string().regex(/^[a-z][a-z0-9-]*$/, 'a document kind')).min(1).max(8).optional(),
     /**
@@ -569,6 +768,27 @@ export const publicAccessSchema = z
       .optional(),
     /** A proof-of-work the browser solves before the write (or the claim) is taken. */
     humanCheck: z.literal(true).optional(),
+    /**
+     * A create here answers the new row's pay link (`payUrl`), when the app
+     * takes payments online right now: one round trip at checkout. Only on a
+     * create of one of the app's payable tables, behind the human check.
+     */
+    pay: z.literal(true).optional(),
+    /**
+     * Open only while the app takes payments online for this entry's table
+     * (`on`: a create that must be paid for), or only while it does not
+     * (`off`: the way a create is made when payments are off). "Takes
+     * payments" is what `GET /public/payments/available` answers, for this
+     * table: the app's payable switched on, a live service, reachable, not
+     * paused. Closed, a write here is refused as a switched-off setting is
+     * (`PUBLIC_SWITCHED_OFF`). With `requireSetting`, both must hold: a hotel
+     * that asks guests to pay at booking opens its paying entry with
+     * `requireSetting` "required" and `requirePayments: "on"`, and its unpaid
+     * one for "required" only with `requirePayments: "off"` — so no caller
+     * books unpaid while paying is required and possible, and none is held to
+     * pay while it is not. Only on a create of one of the app's payable tables.
+     */
+    requirePayments: z.enum(['on', 'off']).optional(),
     /** The rows a create carries with it, by child table (see `childEntrySchema`). */
     children: childTablesSchema(childEntrySchema).optional(),
     /** Checks the created row's own values must pass (guests no more than a room sleeps). */
@@ -621,13 +841,24 @@ export const publicAccessSchema = z
       .strict()
       .refine((l) => l.perValue !== undefined || l.plainText !== undefined, { message: 'limits name a per-value cap, plain-text columns, or both' })
       .optional(),
-    /** Refused while a bool in the settings row is false (only for a session-less create with `anonymous`). */
+    /**
+     * Refused while a bool in the settings row is false (only for a session-less create with `anonymous`); with `in`,
+     * while the setting holds none of those values (a hotel that asks for payment at booking: the entry that takes a
+     * booking unpaid is open only while the setting is "nothing" or "optional").
+     */
     requireSetting: z
-      .array(settingRefSchema.extend({ when: z.literal('anonymous').optional() }).strict())
+      .array(settingRefSchema.extend({ when: z.literal('anonymous').optional(), in: z.array(z.string().min(1).max(64)).min(1).max(8).optional() }).strict())
       .max(4)
       .optional(),
     /** Which browser key serves the entry: `customer`, or one of `publicKeys`. */
     key: keyNameSchema.optional(),
+    /**
+     * A forms entry only: the one `writable` text column a form's fixed
+     * "Source" value goes into (an enquiry's "From form": the form's name, or
+     * what the owner words it). The builder shows that row on this column;
+     * the answer door writes it as the form's settings say, like any other.
+     */
+    source: refSchema.optional(),
     /** The part of the app the entry belongs to: closed while it is off (see `modules.ts`). */
     module: z.string().regex(/^[a-z][a-z0-9-]{0,39}$/, 'a module id is kebab-case').optional(),
     /**
@@ -698,6 +929,13 @@ export const publicAccessSchema = z
     /** Image columns any visitor may see, through the rows this entry reads. */
     pictures: z.array(refSchema).min(1).max(4).optional(),
     /**
+     * File columns of product assets every visitor's browser may load,
+     * through the rows this entry reads (`GET /public/assets`): a preview
+     * model (GLB), a print model (STL, 3MF), a web font (WOFF2), an SVG piece.
+     * Each column holds files by a `file` rule that takes only those kinds.
+     */
+    assets: z.array(refSchema).min(1).max(8).optional(),
+    /**
      * On rows reached through a parent: `columns` are left out unless
      * `unlessHolder` is empty or names the session's own person (a ticket
      * sent to a friend keeps its code from the buyer who sent it).
@@ -737,11 +975,17 @@ export const publicKeysSchema = z
   .record(keyNameSchema, publicKeySchema)
   .refine((keys) => !(CUSTOMER_KEY in keys) || Object.keys(keys[CUSTOMER_KEY] ?? {}).every((field) => field === 'peak'), {
     message: '"customer" is the app\'s own key: only its peak is said here',
+  })
+  .refine((keys) => !(FORMS_KEY in keys), {
+    message: '"forms" is the name of the entries forms write through, and no browser key: name the key otherwise',
   });
+// `chat` is refused as a browser key's name from its floor on (`publicAccessIssues`), where the manifest's floor is known.
 export type PublicKey = z.infer<typeof publicKeySchema>;
 
 interface PublicAccessContext {
   index: TableIndex;
+  /** The app's own key: a forms entry's table is stored on each answer by it (`<app>:<table>`). Absent: not checked. */
+  appKey?: string | undefined;
   /** Columns Adminium decides on a table: a browser may never write them. */
   decided: (table: string) => ReadonlySet<string>;
   /** The columns of a table a money figure Adminium works out reads (a formula, a total, a copy into one). */
@@ -752,9 +996,19 @@ interface PublicAccessContext {
   answersAvailability: (table: string) => boolean;
   /** The add-ons whose stock words an entry may be answered by: the ones the manifest names, and itself when it is one. Absent: not checked. */
   addOns?: ReadonlySet<string> | undefined;
+  /**
+   * The manifest is an add-on's: its entries with no key ride the `customer`
+   * key of each app it is attached to, whose own sign-in opens the sessions
+   * they are read with.
+   */
+  ridesAppKeys?: boolean | undefined;
+  /** The manifest is a file made on an Adminium (publisher `local`): its entries may use the wider methods and fields. */
+  local?: boolean | undefined;
   /** The table's limits, as it declares them (absent: the caller does not say). */
   capacityOf?: (table: string) => Capacity | undefined;
   publicKeys: Readonly<Record<string, PublicKey>> | undefined;
+  /** Whether `chat` is the reserved key ({@link chatKeyReserved}); absent: it is. */
+  chatReserved?: boolean | undefined;
   roles: readonly {
     key: string;
     screensOnly?: boolean | undefined;
@@ -855,12 +1109,273 @@ export function resendAddressOf(outbox: ResendOutbox, kind: string, table: strin
   return { columns, ...(person === undefined ? {} : { person }) };
 }
 
+/** Whether anyone at all may read rows through an entry: no claim, no session, no person, no parent row it is read with. */
+function readByAnyone(entry: PublicAccess): boolean {
+  return (
+    entry.methods.includes('GET') &&
+    entry.kind !== 'availability' &&
+    entry.claim === undefined &&
+    entry.claimedBy === undefined &&
+    entry.identity === undefined &&
+    entry.visibleWith === undefined &&
+    entry.level === undefined
+  );
+}
+
+/**
+ * A forms entry's own rules: it creates (POST) and nothing else, under the
+ * anonymous limits every stranger's create has, with the columns a form may
+ * fill named; one per table; and no entry on any key lets anyone read the
+ * rows strangers add through it.
+ */
+function formsEntryIssues(entry: PublicAccess, i: number, entries: readonly PublicAccess[], appKey: string | undefined, index: TableIndex): ReferenceIssue[] {
+  const out: ReferenceIssue[] = [];
+  const at = (...rest: (string | number)[]) => ['publicAccess', i, ...rest];
+  // Each answer keeps the row it became by its table's stored name: it must fit an answers table, whole.
+  const stored = appKey === undefined ? 0 : appKey.length + 1 + entry.table.length;
+  if (stored > FORMS_BECAME_TABLE_MAX) {
+    out.push({ path: at('table'), message: `a form's answer names the row it became by "<app>:<table>", at most ${String(FORMS_BECAME_TABLE_MAX)} characters: "${appKey ?? ''}:${entry.table}" is ${String(stored)}` });
+  }
+  const allowed: readonly string[] = FORMS_ENTRY_WORDS;
+  for (const word of Object.keys(entry)) {
+    if (!allowed.includes(word)) out.push({ path: at(word), message: `a forms entry only lets a form add a row: "${word}" is not said on it` });
+  }
+  if (entry.methods.length !== 1 || entry.methods[0] !== 'POST') out.push({ path: at('methods'), message: 'a forms entry adds a row and does nothing else: its methods are ["POST"]' });
+  if (entry.anonymous === undefined) out.push({ path: at('anonymous'), message: 'a form is sent by strangers: a forms entry says its anonymous limits' });
+  if ((entry.writable ?? []).length === 0) out.push({ path: at('writable'), message: 'a forms entry names the columns a form may fill (writable)' });
+  if (entry.source !== undefined) {
+    const named = index.column(entry.table, entry.source);
+    if (!(entry.writable ?? []).includes(entry.source)) {
+      out.push({ path: at('source'), message: `a form's source goes into one of the columns a form may fill: put "${entry.source}" in writable` });
+    } else if (named !== undefined && (named.type === 'fk' || named.references !== undefined)) {
+      out.push({ path: at('source'), message: `"${entry.source}" links to another row: a form's source is words, so it goes into a text column` });
+    } else if (named !== undefined && named.type !== 'text') {
+      out.push({ path: at('source'), message: `"${entry.source}" holds ${named.type}: a form's source is words, so it goes into a text column` });
+    }
+  }
+  if (entries.findIndex((other) => other.key === FORMS_KEY && other.table === entry.table) !== i) {
+    out.push({ path: at('table'), message: `"${entry.table}" is opened to forms by another entry already: one forms entry per table` });
+  }
+  const reader = entries.findIndex((other) => other !== entry && other.table === entry.table && readByAnyone(other));
+  if (reader !== -1) {
+    out.push({
+      path: at('table'),
+      message: `strangers add rows to "${entry.table}" through forms, and entry ${String(reader)} lets anyone read its rows: everyone could read what people typed into a form`,
+    });
+  }
+  return out;
+}
+
+/**
+ * A chat entry's own rules, those of a forms entry: it creates (POST) and
+ * nothing else, under anonymous limits, with the columns a left question may
+ * fill named; one per table, its table short enough for a conversation to
+ * keep whole; and no entry on any key lets anyone read the rows strangers
+ * add through it. A chat's row has no form, so it names no source.
+ */
+function chatEntryIssues(entry: PublicAccess, i: number, entries: readonly PublicAccess[], appKey: string | undefined): ReferenceIssue[] {
+  const out: ReferenceIssue[] = [];
+  const at = (...rest: (string | number)[]) => ['publicAccess', i, ...rest];
+  // Each conversation keeps the row it became by its table's stored name: it must fit a conversations table, whole.
+  const stored = appKey === undefined ? 0 : appKey.length + 1 + entry.table.length;
+  if (stored > FORMS_BECAME_TABLE_MAX) {
+    out.push({ path: at('table'), message: `a chat names the row it became by "<app>:<table>", at most ${String(FORMS_BECAME_TABLE_MAX)} characters: "${appKey ?? ''}:${entry.table}" is ${String(stored)}` });
+  }
+  const allowed: readonly string[] = CHAT_ENTRY_WORDS;
+  for (const word of Object.keys(entry)) {
+    if (!allowed.includes(word)) out.push({ path: at(word), message: `a chat entry only lets a left question add a row: "${word}" is not said on it` });
+  }
+  if (entry.methods.length !== 1 || entry.methods[0] !== 'POST') out.push({ path: at('methods'), message: 'a chat entry adds a row and does nothing else: its methods are ["POST"]' });
+  if (entry.anonymous === undefined) out.push({ path: at('anonymous'), message: 'a question is left by strangers: a chat entry says its anonymous limits' });
+  if ((entry.writable ?? []).length === 0) out.push({ path: at('writable'), message: 'a chat entry names the columns a left question may fill (writable)' });
+  if (entries.findIndex((other) => other.key === CHAT_KEY && other.table === entry.table) !== i) {
+    out.push({ path: at('table'), message: `"${entry.table}" is opened to chat by another entry already: one chat entry per table` });
+  }
+  const reader = entries.findIndex((other) => other !== entry && other.table === entry.table && readByAnyone(other));
+  if (reader !== -1) {
+    out.push({
+      path: at('table'),
+      message: `strangers add rows to "${entry.table}" through chat, and entry ${String(reader)} lets anyone read its rows: everyone could read the questions people left`,
+    });
+  }
+  return out;
+}
+
+/**
+ * An entry held to the app whose key serves it (`appColumn`): a text column
+ * of its table, never one a browser writes or a value the entry sets, and
+ * only on an entry that rides each app's own key (no key of the add-on's,
+ * no sign-in of its own).
+ */
+function appColumnIssues(entries: readonly PublicAccess[], index: TableIndex): ReferenceIssue[] {
+  const out: ReferenceIssue[] = [];
+  entries.forEach((entry, i) => {
+    const column = entry.appColumn;
+    if (column === undefined) return;
+    const at = ['publicAccess', i, 'appColumn'];
+    const found = index.column(entry.table, column);
+    if (found === undefined) out.push({ path: at, message: `"${entry.table}" has no column "${column}"` });
+    else if (found.type !== 'text') out.push({ path: at, message: `"${entry.table}.${column}" is not a text column, so it cannot hold an app's key` });
+    if ((entry.writable ?? []).includes(column) || Object.prototype.hasOwnProperty.call(entry.defaults ?? {}, column)) {
+      out.push({ path: at, message: `"${column}" holds the app whose key serves the entry: Adminium writes it, so it is neither writable nor a default` });
+    }
+    if ((entry.key ?? CUSTOMER_KEY) !== CUSTOMER_KEY) out.push({ path: at, message: `an entry on "${String(entry.key)}" is served by no app's key, so it has no app to be held to` });
+    if (entry.claim !== undefined || entry.identity !== undefined) out.push({ path: at, message: 'a sign-in entry is the key\'s own, and is held to no app' });
+  });
+  return out;
+}
+
+/** Whether an entry declares any of a shopper's lists: filters, search, order, a filter through another list, a count. */
+export function shopperLists(entry: PublicAccess): boolean {
+  return entry.filterable !== undefined || entry.searchable !== undefined || entry.orderable !== undefined || entry.via !== undefined || entry.count !== undefined;
+}
+
+/** The columns an entry shows: its `select`, else every column but a code Adminium makes and a secret (as the server reads it). */
+function shownColumns(entry: PublicAccess, index: TableIndex): readonly string[] {
+  if (entry.select !== undefined) return entry.select;
+  return (index.table(entry.table)?.columns ?? [])
+    .filter((column) => (column as { rules?: Record<string, unknown> }).rules?.['code'] === undefined && (column as { rules?: Record<string, unknown> }).rules?.['secret'] !== true)
+    .map((column) => column.ref);
+}
+
+/**
+ * A SHOPPER'S LISTS: which entries may say them, and of which columns.
+ *
+ * "Does a row match" is a read of the column it asks about, one question at a
+ * time. So the lists are said only of a list anyone reads — GET alone, no
+ * sign-in, no code that opens it, nothing withheld from some readers — of a
+ * table that is no person's, and only of columns the list shows that are no
+ * code, secret, personal data, file or JSON, nor the app an add-on's row is
+ * for. A search reads text; an order is by a column that is never empty, so
+ * the three engines put the rows in one order and a cursor never stops at a
+ * gap. A filter through another list is the same rule twice, and its link
+ * points at this table.
+ */
+function shopperListIssues(entries: readonly PublicAccess[], ctx: PublicAccessContext): ReferenceIssue[] {
+  const out: ReferenceIssue[] = [];
+  const { index } = ctx;
+  // A person's table: one a key signs people in on, finds them by, or claims rows for.
+  const people = new Set<string>();
+  for (const entry of entries) {
+    if (entry.claim !== undefined && !('by' in entry.claim)) people.add(entry.table);
+    if (entry.identity !== undefined) people.add(entry.identity.table);
+    if (entry.claimedBy !== undefined) people.add(entry.claimedBy.table);
+  }
+  const anyoneReads = (entry: PublicAccess): string | null => {
+    if (!readByAnyone(entry)) return 'a list anyone reads, with no sign-in';
+    if (entry.methods.length !== 1) return 'a list that only reads (GET alone)';
+    if (entry.unlockBy !== undefined) return 'a list no code opens';
+    if (entry.withhold !== undefined) return 'a list that shows every reader the same columns';
+    if (people.has(entry.table)) return `a list of no person's rows, and "${entry.table}" holds people`;
+    return null;
+  };
+  const why = (entry: PublicAccess, column: string): string | null => {
+    const found = index.column(entry.table, column) as (ColumnShape & { rules?: Record<string, unknown> }) | undefined;
+    if (found === undefined) return `"${entry.table}" has no column "${column}"`;
+    if (!shownColumns(entry, index).includes(column)) return `"${column}" is not shown by the entry (its select), so nothing may be asked of it`;
+    if (found.rules?.['code'] !== undefined || shareCodeColumns(entries, entry.table).includes(column)) return `"${column}" is a code: a shopper's list may not ask about it`;
+    if (found.rules?.['secret'] === true) return `"${column}" is a secret`;
+    if (found.type === 'file' || found.type === 'json') return `"${column}" holds ${found.type === 'file' ? 'a file' : 'JSON'}, which no list asks about`;
+    const table = index.table(entry.table);
+    if (table !== undefined && personalColumn(table as never, column) !== null) return `"${column}" is personal data: a shopper's list may not ask about it`;
+    if (entry.appColumn === column) return `"${column}" holds the app the row is for, which Adminium alone fills`;
+    return null;
+  };
+  entries.forEach((entry, i) => {
+    if (!shopperLists(entry)) return;
+    const at = (...rest: Path): Path => ['publicAccess', i, ...rest];
+    const notAnyone = anyoneReads(entry);
+    if (notAnyone !== null) {
+      for (const key of ['filterable', 'searchable', 'orderable', 'via', 'count'] as const) {
+        if (entry[key] !== undefined) out.push({ path: at(key), message: `a shopper's ${key} is said only of ${notAnyone}` });
+      }
+      return;
+    }
+    const seen = new Set<string>();
+    (entry.filterable ?? []).forEach((filter, f) => {
+      const column = shopperFilterColumn(filter);
+      if (seen.has(column)) out.push({ path: at('filterable', f), message: `"${column}" is listed twice` });
+      seen.add(column);
+      const wrong = why(entry, column);
+      if (wrong !== null) out.push({ path: at('filterable', f), message: wrong });
+      const ops = shopperFilterOps(filter);
+      if (new Set(ops).size !== ops.length) out.push({ path: at('filterable', f, 'ops'), message: 'an operator is listed once' });
+    });
+    (entry.searchable ?? []).forEach((column, c) => {
+      const wrong = why(entry, column);
+      if (wrong !== null) out.push({ path: at('searchable', c), message: wrong });
+      else if (index.column(entry.table, column)?.type !== 'text') out.push({ path: at('searchable', c), message: `"${column}" is searched as text: a text column` });
+      if ((entry.searchable ?? []).indexOf(column) !== c) out.push({ path: at('searchable', c), message: `"${column}" is listed twice` });
+    });
+    (entry.orderable ?? []).forEach((column, c) => {
+      const wrong = why(entry, column);
+      const found = index.column(entry.table, column);
+      if (wrong !== null) out.push({ path: at('orderable', c), message: wrong });
+      else if (found?.nullable === true && found.role !== 'pk') {
+        out.push({ path: at('orderable', c), message: `"${column}" may be empty, and an empty value sorts first on one engine and last on another: order by a column that is never empty` });
+      }
+      if ((entry.orderable ?? []).indexOf(column) !== c) out.push({ path: at('orderable', c), message: `"${column}" is listed twice` });
+    });
+    const via = entry.via;
+    if (via !== undefined) {
+      const key = entry.key ?? CUSTOMER_KEY;
+      // A stock-words entry on the same table answers words, never rows: it is no list to filter through (the server skips it too).
+      const lists = entries.filter((other) => other.table === via.entry && (other.key ?? CUSTOMER_KEY) === key && other.methods.includes('GET') && other.kind !== 'availability');
+      const through = lists[0];
+      if (via.entry === entry.table) out.push({ path: at('via', 'entry'), message: 'a filter through another list names another table' });
+      else if (lists.length !== 1 || through === undefined) {
+        out.push({ path: at('via', 'entry'), message: `a filter through "${via.entry}" names the one entry that reads it on the "${key}" key, and there ${lists.length === 0 ? 'is none' : `are ${String(lists.length)}`}` });
+      } else {
+        const notThrough = anyoneReads(through);
+        if (notThrough !== null) out.push({ path: at('via', 'entry'), message: `a filter through "${via.entry}" reads rows as that list shows them, so it is ${notThrough}` });
+        else if (shopperLists(through) && through.via !== undefined) out.push({ path: at('via', 'entry'), message: `"${via.entry}" filters through another list itself: one step only` });
+        const link = index.column(via.entry, via.on);
+        if (link === undefined) out.push({ path: at('via', 'on'), message: `"${via.entry}" has no column "${via.on}"` });
+        else if (link.type !== 'fk' || link.references !== entry.table) out.push({ path: at('via', 'on'), message: `"${via.entry}.${via.on}" is not a link to "${entry.table}"` });
+        else if (!shownColumns(through, index).includes(via.on)) out.push({ path: at('via', 'on'), message: `"${via.on}" joins "${via.entry}" to this list: the "${via.entry}" list shows it, or a filter through it would say what it hides` });
+        const named = new Set<string>();
+        via.columns.forEach((filter, f) => {
+          const column = shopperFilterColumn(filter);
+          if (named.has(column)) out.push({ path: at('via', 'columns', f), message: `"${column}" is listed twice` });
+          named.add(column);
+          const wrong = why(through, column);
+          if (wrong !== null) out.push({ path: at('via', 'columns', f), message: wrong });
+        });
+      }
+    }
+  });
+  // An entry's own pages, from a file not made on an Adminium too: a page of at most a hundred, ordered by a column never empty.
+  if (ctx.local !== true) {
+    entries.forEach((entry, i) => {
+      const pages = entry.pagination;
+      if (pages === undefined) return;
+      const at = (...rest: Path): Path => ['publicAccess', i, 'pagination', ...rest];
+      if (pages.maxLimit > SHOPPER_PAGE_MOST) out.push({ path: at('maxLimit'), message: `a page holds at most ${String(SHOPPER_PAGE_MOST)} rows` });
+      const ordered = pages.order;
+      if (ordered === undefined) return;
+      const column = ordered.slice(0, ordered.lastIndexOf('.'));
+      const found = index.column(entry.table, column);
+      if (found !== undefined && found.nullable === true && found.role !== 'pk') {
+        out.push({ path: at('order'), message: `"${column}" may be empty, and an empty value sorts first on one engine and last on another: order by a column that is never empty` });
+      }
+      if (found !== undefined && !shownColumns(entry, index).includes(column)) out.push({ path: at('order'), message: `"${column}" is not shown by the entry, and an order says what a column holds` });
+    });
+  }
+  return out;
+}
+
 /** Everything in `publicAccess` and `publicKeys` that names something undeclared, or breaks a rule. */
 export function publicAccessIssues(entries: readonly PublicAccess[], ctx: PublicAccessContext): ReferenceIssue[] {
   const out: ReferenceIssue[] = [];
   const { index } = ctx;
   const has = index.has;
+  out.push(...appColumnIssues(entries, index));
+  out.push(...shopperListIssues(entries, ctx));
 
+  const doorKeys = ctx.chatReserved === false ? [FORMS_KEY] : DOOR_KEYS;
+  if (doorKeys.includes(CHAT_KEY) && ctx.publicKeys?.[CHAT_KEY] !== undefined) {
+    out.push({ path: ['publicKeys', CHAT_KEY], message: '"chat" is the name of the entries a chat\'s left questions write through, and no browser key: name the key otherwise' });
+  }
   for (const [name, key] of Object.entries(ctx.publicKeys ?? {})) {
     const at = ['publicKeys', name];
     // The app's own key, named only for its peak: nothing more to check.
@@ -949,6 +1464,10 @@ export function publicAccessIssues(entries: readonly PublicAccess[], ctx: Public
     if (entry.claim === undefined || claimKind(entry.claim) !== 'token' || !('by' in entry.claim)) continue;
     shareCodes.set(entry.table, (shareCodes.get(entry.table) ?? new Set()).add(entry.claim.column));
   }
+  // …and a code no staff member reads, which is such a link's whether or not an entry claims by it yet.
+  for (const table of index.tables()) {
+    for (const column of shareCodeColumns([], table.ref, index)) shareCodes.set(table.ref, (shareCodes.get(table.ref) ?? new Set()).add(column));
+  }
   entries.forEach((entry, i) => {
     const codes = shareCodes.get(entry.table);
     if (codes === undefined) return;
@@ -974,9 +1493,14 @@ export function publicAccessIssues(entries: readonly PublicAccess[], ctx: Public
     }
     const column = (ref: string) => index.column(entry.table, ref);
     const key = entry.key ?? CUSTOMER_KEY;
-    if (key !== CUSTOMER_KEY && ctx.publicKeys?.[key] === undefined) {
-      out.push({ path: at('key'), message: `"${key}" is not one of the app's publicKeys` });
+    if (key !== CUSTOMER_KEY && !doorKeys.includes(key) && ctx.publicKeys?.[key] === undefined) {
+      // Under an older floor `chat` is a key like any other: say so, for whoever meant a chat's left questions.
+      const chat = key === CHAT_KEY ? ` (a chat's left questions are opened under "chat" from Adminium ${CHAT_KEY_FLOOR}: set compatibility.minAdminiumVersion to it or later)` : '';
+      out.push({ path: at('key'), message: `"${key}" is not one of the app's publicKeys${chat}` });
     }
+    if (key === FORMS_KEY) out.push(...formsEntryIssues(entry, i, entries, ctx.appKey, index));
+    else if (key === CHAT_KEY && doorKeys.includes(CHAT_KEY)) out.push(...chatEntryIssues(entry, i, entries, ctx.appKey));
+    else if (entry.source !== undefined) out.push({ path: at('source'), message: 'a source is said only on a forms entry (key "forms"): the column a form\'s fixed "Source" value goes into' });
 
     for (const list of ['select', 'writable'] as const) {
       for (const ref of entry[list] ?? []) {
@@ -986,8 +1510,8 @@ export function publicAccessIssues(entries: readonly PublicAccess[], ctx: Public
     // An entry anyone may call (no claim, no parent, no session asked) shows no personal data: the install refuses it too.
     const sessionOnly = entry.level !== undefined && entry.claim === undefined && entry.claimedBy === undefined && entry.visibleWith === undefined;
     const anyone = entry.claim === undefined && entry.visibleWith === undefined && (entry.claimedBy === undefined || entry.claimedBy.optional === true) && !sessionOnly;
-    // An availability entry shows no row, whatever it names.
-    if (anyone && entry.kind !== 'availability') {
+    // An availability entry shows no row, whatever it names; nor does a forms or a chat entry, which answers nobody with the row.
+    if (anyone && entry.kind !== 'availability' && !doorKeys.includes(key)) {
       // No select shows every column but a code Adminium makes and a secret, as the install reads it.
       const shown =
         entry.select ??
@@ -1020,16 +1544,47 @@ export function publicAccessIssues(entries: readonly PublicAccess[], ctx: Public
 
     // A change to an existing row, from a browser, only behind a claim: the
     // guest reaches their own row (or a child of it) and nothing else.
-    if (patches && entry.claim === undefined && entry.visibleWith === undefined && (entry.claimedBy === undefined || entry.claimedBy.optional === true)) {
+    const claimed = entry.claim !== undefined || entry.visibleWith !== undefined || (entry.claimedBy !== undefined && entry.claimedBy.optional !== true);
+    if (patches && !claimed) {
       out.push({ path: at('methods'), message: 'PATCH is allowed only with a claim' });
+    }
+    /*
+     * A removal from a browser: only through an add-on's own link (a shopper
+     * deleting their own saved draft), on the entry that opens the row by it.
+     * Nothing else a guest holds removes a row — but in a file made on an
+     * Adminium, whose owner made the endpoint by hand: there a removal, a
+     * replacement and a batch are each held behind a claim, as a change is.
+     */
+    if (entry.methods.includes('DELETE')) {
+      const ownLink = ctx.ridesAppKeys === true && entry.key !== undefined && entry.claim !== undefined && 'by' in entry.claim && entry.claim.own === true;
+      if (!ownLink && ctx.local !== true) out.push({ path: at('methods'), message: "DELETE is allowed only on an add-on's own link, the entry that opens the row by it (claim by token, own)" });
+      else if (!ownLink && !claimed) out.push({ path: at('methods'), message: 'DELETE is allowed only with a claim' });
+    }
+    for (const method of ['PUT', 'BATCH'] as const) {
+      if (!entry.methods.includes(method)) continue;
+      if (ctx.local !== true) out.push({ path: at('methods'), message: `${method} is read only from a file made on an Adminium (publisher "local")` });
+      else if (!claimed) out.push({ path: at('methods'), message: `${method} is allowed only with a claim` });
+    }
+    // Pages are any file's to say from 0.3.68 on (a page of at most a hundred, checked with the shopper's lists).
+    for (const field of ['path', 'rateLimit', 'response'] as const) {
+      if (entry[field] !== undefined && ctx.local !== true) out.push({ path: at(field), message: `"${field}" is read only from a file made on an Adminium (publisher "local")` });
+    }
+    // An app's own key is granted every entry, and an app's pages read rows wrapped in `data`.
+    if (entry.response !== undefined && entry.response !== 'wrapped' && ctx.local === true) {
+      out.push({ path: at('response'), message: `an app's own key reads rows wrapped in { data }, so its entries reply "wrapped", not "${entry.response}"` });
+    }
+    const ordered = entry.pagination?.order;
+    if (ordered !== undefined && !has(entry.table, ordered.slice(0, ordered.lastIndexOf('.')))) {
+      out.push({ path: at('pagination', 'order'), message: `"${entry.table}" has no column "${ordered.slice(0, ordered.lastIndexOf('.'))}"` });
     }
     // Nothing a server decides may be written by a browser.
     const decided = ctx.decided(entry.table);
     for (const ref of writable) {
       if (decided.has(ref)) out.push({ path: at('writable'), message: `"${ref}" is decided by Adminium and cannot be written publicly` });
     }
-    // A file column names a file a signed-in staff member uploaded: a browser's key uploads nothing, so it names none.
-    for (const [list, refs] of [['writable', [...writable]], ['defaults', Object.keys(entry.defaults ?? {})]] as const) {
+    // A file column names a file a signed-in staff member uploaded: a browser's key uploads nothing, so it names none —
+    // but a guest's own upload, in a column the entry lets them upload into (`uploads`).
+    for (const [list, refs] of [['writable', [...writable].filter((ref) => !(entry.uploads ?? []).includes(ref))], ['defaults', Object.keys(entry.defaults ?? {})]] as const) {
       for (const ref of refs) {
         const found = ctx.index.column(entry.table, ref) as { rules?: { file?: unknown } } | undefined;
         if (found?.rules?.file !== undefined) out.push({ path: at(list), message: `"${entry.table}.${ref}" holds files a signed-in person uploads, so a public write never sets it` });
@@ -1199,7 +1754,8 @@ export function publicAccessIssues(entries: readonly PublicAccess[], ctx: Public
       if (root === undefined) out.push({ path: at('visibleWith'), message: 'the entries it is visible with lead to no claimed person' });
     }
     for (const ref of entry.files ?? []) {
-      if (writable.has(ref)) out.push({ path: at('files'), message: `"${ref}" is offered for download, so a browser never writes it` });
+      // A guest's own upload is written by naming it, and only a file they uploaded for the column is taken there.
+      if (writable.has(ref) && !(entry.uploads ?? []).includes(ref)) out.push({ path: at('files'), message: `"${ref}" is offered for download, so a browser never writes it` });
       const found = column(ref);
       if (found === undefined) out.push({ path: at('files'), message: `"${entry.table}" has no column "${ref}"` });
       else if (found.type !== 'text') out.push({ path: at('files'), message: `"${entry.table}.${ref}" is not a text column holding a file` });
@@ -1294,7 +1850,7 @@ export function publicAccessIssues(entries: readonly PublicAccess[], ctx: Public
           [when.after, when.before].some((end) => end !== undefined) &&
           [when.after, when.before].every((end) => end === undefined || end.column !== undefined),
       );
-    if (entry.writableWhen !== undefined && !patches && !createWindow) {
+    if (entry.writableWhen !== undefined && !patches && !entry.methods.includes('DELETE') && !createWindow) {
       out.push({ path: at('writableWhen'), message: "writableWhen limits a change, and this entry changes nothing (a child's create takes a window read from its parent, keyed by the link)" });
     }
     for (const [ref, when] of Object.entries(entry.writableWhen ?? {})) {
@@ -1399,8 +1955,15 @@ export function publicAccessIssues(entries: readonly PublicAccess[], ctx: Public
       }
     }
     for (const [r, setting] of (entry.requireSetting ?? []).entries()) {
-      if (index.column(setting.table, setting.column)?.type !== 'bool') {
-        out.push({ path: at('requireSetting', r), message: `"${setting.table}.${setting.column}" is not a bool of this app` });
+      const found = index.column(setting.table, setting.column) as { type?: string; enum?: readonly string[] } | undefined;
+      if (setting.in === undefined) {
+        if (found?.type !== 'bool') out.push({ path: at('requireSetting', r), message: `"${setting.table}.${setting.column}" is not a bool of this app` });
+      } else if (found?.type !== 'enum') {
+        out.push({ path: at('requireSetting', r, 'in'), message: `"${setting.table}.${setting.column}" is not a choice (an enum) of this app, so it holds none of these values` });
+      } else {
+        for (const value of setting.in) {
+          if (!(found.enum ?? []).includes(value)) out.push({ path: at('requireSetting', r, 'in'), message: `"${value}" is not a value of "${setting.table}.${setting.column}"` });
+        }
       }
       if (setting.when === 'anonymous' && entry.claimedBy?.optional !== true) {
         out.push({ path: at('requireSetting', r, 'when'), message: 'only an entry a session is optional on is ever anonymous' });
@@ -1443,6 +2006,11 @@ export function publicAccessIssues(entries: readonly PublicAccess[], ctx: Public
     if (entry.words === undefined) out.push(...availabilityShapeIssues(entry, ctx, at));
     if (entry.unlockBy !== undefined) out.push(...unlockIssues(entry, entry.unlockBy, entries, ctx, at));
     if (entry.pictures !== undefined) out.push(...pictureIssues(entry, entry.pictures, entries, ctx, at));
+    if (entry.uploads !== undefined) {
+      if (!entry.methods.includes('POST') && !entry.methods.includes('PATCH')) out.push({ path: at('uploads'), message: "a guest's upload is named by a create or a change, and this entry makes neither" });
+      out.push(...uploadIssues(ctx.index, entry.table, entry.uploads, entry.writable ?? [], at('uploads')));
+    }
+    if (entry.assets !== undefined) out.push(...assetIssues(entry, entry.assets, entries, ctx, at));
   });
   out.push(...treeIssues(entries, ctx, identities, shareCodes));
   out.push(...personIssues(entries, ctx, identities));
@@ -1520,7 +2088,7 @@ function unlockIssues(
       if (code.rules?.code === undefined && code.rules?.normalize !== 'code') {
         out.push({ path: at('unlockBy', 'column'), message: `"${entry.table}.${code.ref}" is compared as a code: give it normalize "code"` });
       }
-      if (shareCodeColumns(entries, entry.table).includes(code.ref)) {
+      if (shareCodeColumns(entries, entry.table, index).includes(code.ref)) {
         out.push({ path: at('unlockBy', 'column'), message: "a shared link's code is never looked up" });
       }
       // The code opens the row; the row never shows it back.
@@ -1559,7 +2127,7 @@ function unlockIssues(
     if (code.rules?.code === undefined && code.rules?.normalize !== 'code') {
       out.push({ path: at('unlockBy', 'column'), message: `"${unlock.table}.${code.ref}" is compared as a code: give it normalize "code"` });
     }
-    if (shareCodeColumns(entries, unlock.table).includes(code.ref)) {
+    if (shareCodeColumns(entries, unlock.table, index).includes(code.ref)) {
       out.push({ path: at('unlockBy', 'column'), message: "a shared link's code is never looked up" });
     }
   }
@@ -1599,7 +2167,7 @@ function pictureIssues(
   }
   if ((entry.key ?? CUSTOMER_KEY) !== CUSTOMER_KEY) out.push({ path: at('key'), message: "pictures are served through the app's customer key" });
   const writes = new Set([...(entry.writable ?? []), ...Object.keys(entry.defaults ?? {})]);
-  const shareCodes = shareCodeColumns(entries, entry.table);
+  const shareCodes = shareCodeColumns(entries, entry.table, ctx.index);
   for (const ref of pictures) {
     const found = ctx.index.column(entry.table, ref) as
       | (ColumnShape & { semantic?: string; rules?: { code?: unknown; secret?: boolean; personal?: boolean } })
@@ -1618,6 +2186,100 @@ function pictureIssues(
       out.push({ path: at('pictures'), message: `"${entry.table}.${ref}" is kept from readers, so it is no picture for everyone` });
     }
     if (found.rules?.personal === true) out.push({ path: at('pictures'), message: `"${entry.table}.${ref}" is personal data, so it is no picture for everyone` });
+  }
+  return out;
+}
+
+/** The kinds of file a product asset may be (`ASSET_FILE_KINDS` in `schema.ts`, which imports this file). */
+const ASSET_KINDS: readonly string[] = ['svg', 'glb', 'stl', '3mf', 'woff2'];
+
+/**
+ * Product assets every visitor's browser loads: file columns the entry shows,
+ * held to a model's, a font's or an SVG's kinds, which no browser writes. The
+ * same shape as pictures: a viewer `fetch`es a model and `@font-face` loads a
+ * font with no session, so the rows are read by every visitor alike.
+ */
+function assetIssues(
+  entry: PublicAccess,
+  assets: readonly string[],
+  entries: readonly PublicAccess[],
+  ctx: PublicAccessContext,
+  at: (...rest: (string | number)[]) => (string | number)[],
+): ReferenceIssue[] {
+  const out: ReferenceIssue[] = [];
+  if (entry.methods.length !== 1 || entry.methods[0] !== 'GET' || entry.kind === 'availability') {
+    out.push({ path: at('assets'), message: 'assets are served through an entry that only reads rows' });
+  }
+  if (entry.claim !== undefined || entry.claimedBy !== undefined || entry.visibleWith !== undefined) {
+    out.push({ path: at('assets'), message: "assets are for every visitor; a signed-in person's own files are `files`" });
+  }
+  if (entry.unlockBy !== undefined) out.push({ path: at('assets'), message: 'assets are for every visitor; rows a code unlocks are read only by whoever gave the code' });
+  if (entry.level !== undefined && entry.claim === undefined && entry.claimedBy === undefined && entry.visibleWith === undefined) {
+    out.push({ path: at('assets'), message: 'assets are for every visitor; rows read by a signed-in session alone are no asset a page loads for anyone' });
+  }
+  if ((entry.key ?? CUSTOMER_KEY) !== CUSTOMER_KEY) out.push({ path: at('key'), message: "assets are served through the app's customer key" });
+  const writes = new Set([...(entry.writable ?? []), ...Object.keys(entry.defaults ?? {})]);
+  const shareCodes = shareCodeColumns(entries, entry.table, ctx.index);
+  const guests = guestUploadColumns(entries, entry.table);
+  if (new Set(assets).size !== assets.length) out.push({ path: at('assets'), message: 'an asset column is named twice' });
+  for (const ref of assets) {
+    const found = ctx.index.column(entry.table, ref) as
+      | (ColumnShape & { rules?: { code?: unknown; secret?: boolean; personal?: boolean; file?: { accept?: readonly string[] } } })
+      | undefined;
+    if (found === undefined) {
+      out.push({ path: at('assets'), message: `"${entry.table}" has no column "${ref}"` });
+      continue;
+    }
+    const accept = found.rules?.file?.accept;
+    if (accept === undefined || accept.length === 0 || accept.some((kind) => !ASSET_KINDS.includes(kind))) {
+      out.push({ path: at('assets'), message: `"${entry.table}.${ref}" is not a column of assets: a file rule that takes only ${ASSET_KINDS.join(', ')}` });
+    }
+    if (writes.has(ref)) out.push({ path: at('assets'), message: `"${ref}" is an asset every visitor loads, so a browser never writes it` });
+    if (entry.select !== undefined && !entry.select.includes(ref)) out.push({ path: at('assets'), message: `"${ref}" is not one of the columns the entry shows` });
+    if ((entry.files ?? []).includes(ref)) out.push({ path: at('assets'), message: `"${ref}" is a signed-in person's file, not an asset for everyone` });
+    if ((entry.pictures ?? []).includes(ref)) out.push({ path: at('assets'), message: `"${ref}" is a picture already; a column is one or the other` });
+    if (found.rules?.secret === true || found.rules?.code !== undefined || shareCodes.includes(ref)) {
+      out.push({ path: at('assets'), message: `"${entry.table}.${ref}" is kept from readers, so it is no asset for everyone` });
+    }
+    if (found.rules?.personal === true) out.push({ path: at('assets'), message: `"${entry.table}.${ref}" is personal data, so it is no asset for everyone` });
+    if (guests.has(ref)) out.push({ path: at('assets'), message: `guests upload into "${entry.table}.${ref}", and a guest's file is kept private, so it is no asset for everyone` });
+  }
+  return out;
+}
+
+/** The columns of `table` any entry lets a guest upload into, on the entry itself or on a level of its child rows. */
+function guestUploadColumns(entries: readonly PublicAccess[], table: string): Set<string> {
+  const out = new Set<string>();
+  const walk = (children: Readonly<Record<string, ChildEntry>> | undefined): void => {
+    for (const [name, child] of Object.entries(children ?? {})) {
+      if (name === table) for (const ref of child.uploads ?? []) out.add(ref);
+      walk(child.children);
+    }
+  };
+  for (const entry of entries) {
+    if (entry.table === table) for (const ref of entry.uploads ?? []) out.add(ref);
+    walk(entry.children);
+  }
+  return out;
+}
+
+/**
+ * The file columns a guest may upload into, at one level of an entry: each a
+ * column of the table, written there, whose file rule says what a guest may
+ * send (`rules.file.upload`). Named once each.
+ */
+function uploadIssues(index: TableIndex, table: string, uploads: readonly string[], writable: readonly string[], path: Path): ReferenceIssue[] {
+  const out: ReferenceIssue[] = [];
+  if (new Set(uploads).size !== uploads.length) out.push({ path, message: 'each column is named once' });
+  for (const ref of uploads) {
+    const found = ruledColumn(index, table, ref);
+    if (found === undefined) {
+      out.push({ path, message: `"${table}" has no column "${ref}"` });
+      continue;
+    }
+    if (found.rules?.file === undefined) out.push({ path, message: `"${table}.${ref}" holds no files: give it a file rule (rules.file)` });
+    else if (found.rules.file.upload === undefined) out.push({ path, message: `"${table}.${ref}" does not say what a guest may upload: give its file rule an upload (kinds, maxBytes)` });
+    if (!writable.includes(ref)) out.push({ path, message: `"${ref}" is filled by naming the upload, so it is writable` });
   }
   return out;
 }
@@ -1724,6 +2386,7 @@ interface RuledColumn extends ColumnShape {
         validation?: { min?: number | undefined; max?: number | undefined; format?: string | undefined; maxLength?: number | undefined } | undefined;
         normalize?: string | undefined;
         secret?: boolean | undefined;
+        file?: { upload?: unknown } | undefined;
       }
     | undefined;
 }
@@ -1818,8 +2481,16 @@ function agreeIssues(index: TableIndex, table: string, parent: string | undefine
       other = index.column(via.references, target.column);
       if (other === undefined) out.push({ path: at(test, 'column'), message: `"${via.references}" has no column "${target.column}"` });
     }
-  } else if (typeof reached !== 'string' && !agreeValueFits(reached.column, target.value)) {
+  } else if (agree.length !== true && typeof reached !== 'string' && !agreeValueFits(reached.column, target.value)) {
     out.push({ path: at(test, 'value'), message: `${JSON.stringify(target.value)} is not a value of "${reached.table}.${reached.column.ref}"` });
+  }
+  if (agree.length === true) {
+    // How many characters a text has, at most a number: the text is the row's, the most is a number.
+    if (test !== 'lte') out.push({ path: at(test), message: 'a length is compared with lte (at most so many characters)' });
+    if (typeof reached !== 'string' && reached.column.type !== 'text') out.push({ path: at('length'), message: `"${reached.table}.${reached.column.ref}" is not text, so it has no length` });
+    if (other !== undefined && !NUMBERS.includes(other.type)) out.push({ path: at(test), message: `"${other.ref}" is not a number, so it is no most characters` });
+    if ('value' in target && (typeof target.value !== 'number' || !Number.isInteger(target.value) || target.value < 0)) out.push({ path: at(test, 'value'), message: 'the most characters is a whole number' });
+    return out;
   }
   if (typeof reached !== 'string') {
     if (test !== 'eq' && !NUMBERS.includes(reached.column.type)) {
@@ -2026,6 +2697,7 @@ function treeIssues(
           }
         }
         out.push(...boundIssues(index, ctx, name, child.writable, here('writable')));
+        if (child.uploads !== undefined) out.push(...uploadIssues(index, name, child.uploads, child.writable, here('uploads')));
         (child.agrees ?? []).forEach((agree, a) => out.push(...agreeIssues(index, name, parent, agree, (...rest) => here('agrees', a, ...rest))));
         (child.counts ?? []).forEach((counts, c) => out.push(...countsIssues(index, name, parent, counts, (...rest) => here('counts', c, ...rest))));
         if (child.children !== undefined) {
@@ -2172,7 +2844,7 @@ function personIssues(
           if (column === undefined) out.push({ path: here('fill', target), message: `"${id.table}" has no column "${target}"` });
           else if (column.type !== 'text' || column.role === 'pk' || target === claimed) {
             out.push({ path: here('fill', target), message: `"${id.table}.${target}" is not a text column a new person is filled with` });
-          } else if (peopleDecided.has(target) || column.rules?.secret === true || shareCodeColumns(entries, id.table).includes(target)) {
+          } else if (peopleDecided.has(target) || column.rules?.secret === true || shareCodeColumns(entries, id.table, index).includes(target)) {
             out.push({ path: here('fill', target), message: `"${id.table}.${target}" is Adminium's or a secret, so a create never fills it` });
           } else if (column.unique === true) {
             // A clash would refuse only the create that makes a person: a way to ask whether one exists.
@@ -2324,7 +2996,9 @@ function personIssues(
     // A read for the holder of a session alone (no claim of its own): the settings a signed-in guest may see.
     if (entry.level !== undefined && entry.claim === undefined && entry.claimedBy === undefined && entry.visibleWith === undefined) {
       if (entry.methods.length !== 1 || entry.methods[0] !== 'GET') out.push({ path: at('methods'), message: 'a read for a signed-in guest alone only reads' });
-      if (!identities.has(key)) out.push({ path: at('level'), message: `the "${key}" key signs nobody in, so no session could read this` });
+      // An add-on's entry on an app's key is read with a session the app's own sign-in opened (a guest who found their order).
+      const appSignsIn = ctx.ridesAppKeys === true && key === CUSTOMER_KEY;
+      if (!identities.has(key) && !appSignsIn) out.push({ path: at('level'), message: `the "${key}" key signs nobody in, so no session could read this` });
       if (entry.select === undefined) out.push({ path: at('select'), message: 'a read for a signed-in guest lists what it shows; without select it would show every column' });
       const signIn = identities.get(key)?.entry.claim;
       const verifiedOnly = signIn !== undefined && (claimKind(signIn) === 'link' || ('own' in signIn && signIn.own === true));

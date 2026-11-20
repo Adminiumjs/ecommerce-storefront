@@ -103,6 +103,70 @@ export const CONTRACT_REGISTRY = [
       'What an order is reduced by: one synchronous, pure answer per question — a reduction for every line, what was applied, what was refused — written by Adminium inside the save.',
     implementations: 1,
   },
+  {
+    /*
+     * THE EIGHTH: WHETHER A SHOPPER'S DESIGN MAY BE ORDERED. An add-on that
+     * keeps designs answers, for each order line that names one, whether it
+     * stands by its ready-made design and base and which priced features it
+     * uses. Adminium reads the rows the add-on declared, asks once a save
+     * (and once a dry run), and checks the answer against what each line
+     * pays for. A third kind of code that decides inside a save, loaded only
+     * from a package Adminium can vouch for. Its implementer is the
+     * Customiser, which both shops of the customising plan require.
+     */
+    id: 'design-check',
+    version: 1,
+    summary:
+      'Whether each order line\'s design stands and which priced features it uses: one synchronous, pure answer per question, checked by Adminium against what each line pays for, inside the save and the dry run.',
+    implementations: 1,
+  },
+  {
+    /*
+     * THE SEVENTH: MONEY THAT MOVES AT A PAYMENT SERVICE. A shop's customer
+     * pays on the provider's own hosted page; the provider half starts the
+     * checkout, says how it ended, refunds, and proves its webhooks. Consumed
+     * by the engine's payments, selected by add-on key, and loaded
+     * only from a package Adminium can vouch for. Online payments only:
+     * in-person terminals are a contract of their own when they are built.
+     * Its two implementers are the Stripe and PayPal add-ons, proven against
+     * the packed package before the release that admits it.
+     */
+    id: 'payment-provider',
+    version: 1,
+    summary:
+      'One payment service, online only: start a checkout on its hosted page, read how it ended, end one, refund, verify its webhooks, list missed events, and say which ways to pay are switched on. Answers are data; a refusal is never thrown.',
+    implementations: 2,
+  },
+  {
+    /**
+     * A card reader on the shop's counter, driven by a cloud API: the till
+     * asks the engine, the engine asks the reader, outbound only. Its two
+     * implementers are Card payments (Stripe Terminal) and the Card readers
+     * add-on (Square), proven against the packed package before the release
+     * that admits it.
+     */
+    id: 'card-terminal',
+    version: 1,
+    summary:
+      'A card reader at the counter: pair it in two steps, put an amount on it, read where the charge stands (the tip apart), take it off, refund, and read disputes by polling. Answers are data; a charge is never given up blind.',
+    implementations: 2,
+  },
+  {
+    /**
+     * Where companies, and the people at them, are found: a business
+     * register, a company search service, a service that knows a company's
+     * addresses. One package holds several sources (`addOn.sources`) and
+     * provides this once; the engine calls it per source, with that source's
+     * key and a client narrowed to that source's hosts. The engine writes
+     * every row; the source only answers. Its implementer is the Lead finder
+     * add-on, and it is loaded only from a package Adminium can vouch for.
+     */
+    id: 'lead-source',
+    version: 1,
+    summary:
+      'One place that knows companies or the people at them: check the owner\'s key, find companies by activity and place, fill in one company by number or name, pick facts from a page the engine read, find the people at a domain. Answers are data, parsed by the engine; a refusal is never thrown.',
+    implementations: 1,
+  },
 ] as const satisfies readonly ContractDefinition[];
 
 export type ContractId = (typeof CONTRACT_REGISTRY)[number]['id'];

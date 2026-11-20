@@ -26,19 +26,24 @@ import { z } from 'zod';
 
 import { i18nMessageSchema, wordsByLanguageSchema } from './common.ts';
 import { contractIdSchema, hasContractVersion } from './contracts.ts';
+import { RECORD_ACTION_KINDS } from './record-actions.ts';
+import { recordPanelsSchema } from './record-panels.ts';
 import { recordTabsSchema } from './record-tabs.ts';
 import { slotIdSchema } from './slots.ts';
 import { addOnAssistantSchema } from './assistant-block.ts';
 import { addOnStepsSchema } from './add-on-steps.ts';
 import { BUILTIN_NAV_GROUP_KEYS, type BuiltinNavGroupKey } from './nav-groups.ts';
+import { LEAD_SOURCE_CONTRACT, LEAD_SOURCE_GIVES } from './lead-source.ts';
 
 /**
  * Add-ons get their OWN closed category vocabulary, because an add-on is
  * not a vertical and forcing it into the app facet set would make a carrier a
  * "commerce" product. Wave 4 uses two of the five; the other three exist so a
- * second add-on wave does not have to reopen the vocabulary.
+ * second add-on wave does not have to reopen the vocabulary. `marketing` is
+ * for the add-ons that reach people outside the business: forms and surveys,
+ * landing pages, chat, social posts, prospecting.
  */
-export const ADD_ON_CATEGORIES = ['artwork', 'delivery', 'payments', 'email', 'data'] as const;
+export const ADD_ON_CATEGORIES = ['artwork', 'delivery', 'payments', 'email', 'data', 'marketing'] as const;
 export const addOnCategorySchema = z.enum(ADD_ON_CATEGORIES);
 export type AddOnCategory = (typeof ADD_ON_CATEGORIES)[number];
 
@@ -101,13 +106,41 @@ export const consumesSchema = z
   })
   .strict();
 
+/**
+ * One slot an add-on fills, with the file its fill is in.
+ *
+ * A `record.actions` fill may also name the kind of declared table it acts
+ * on (`on`): Adminium's generated record page then shows it on such a table,
+ * as a button in the fill's own words (`label`, `labels`) and `icon`, beside
+ * "Edit" (see `record-actions.ts`). A fill without `on` is for apps' own
+ * screens alone, as every fill was before. The three words go together, and
+ * only on that slot.
+ */
 export const slotFillSchema = z
   .object({
     slot: slotIdSchema,
     client: z.string().min(1),
     order: z.number().int(),
+    /** `record.actions` only: the kind of declared table whose generated record page shows this fill. */
+    on: z.enum(RECORD_ACTION_KINDS).optional(),
+    /** The button's words, with `on`: a key in the add-on's own strings and the English fallback. */
+    label: i18nMessageSchema.optional(),
+    /** The button's words in the other languages: it is drawn before any of the add-on's code runs. */
+    labels: wordsByLanguageSchema.optional(),
+    /** The button's icon (a Lucide name), with `on`. */
+    icon: z.string().regex(/^[a-z][a-z0-9-]{0,59}$/, 'an icon is a kebab-case Lucide name').optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((fill, ctx) => {
+    const drawn = fill.label !== undefined || fill.labels !== undefined || fill.icon !== undefined;
+    if (fill.on === undefined) {
+      if (drawn) ctx.addIssue({ code: 'custom', path: ['on'], message: 'a fill\'s label, labels and icon are for a record action Adminium\'s record page shows: name the kind of table it acts on ("on")' });
+      return;
+    }
+    if (fill.slot !== 'record.actions') ctx.addIssue({ code: 'custom', path: ['on'], message: '"on" is for a record.actions fill only' });
+    if (fill.label === undefined) ctx.addIssue({ code: 'custom', path: ['label'], message: 'a record action Adminium\'s record page shows needs its words ("label")' });
+    if (fill.icon === undefined) ctx.addIssue({ code: 'custom', path: ['icon'], message: 'a record action Adminium\'s record page shows needs an icon' });
+  });
 
 export const addOnEventSchema = z
   .object({
@@ -130,6 +163,77 @@ export const addOnNetworkSchema = z
     allow: z.array(z.string().regex(HOSTNAME, 'must be an exact https hostname')),
   })
   .strict();
+
+// ── sources ──────────────────────────────────────────────────────────────────
+
+/** The most sources one add-on declares. */
+export const ADD_ON_SOURCES_MAX = 8;
+/** What `reads` may say: the engine's own website reader, which an add-on only names. */
+export const SOURCE_READS_WEBSITE = 'website';
+/**
+ * Ids no source may take: `sources` is the version field of the envelope the
+ * engine keeps every source's key in (`{ sources: 1, <id>: { key } }`).
+ */
+export const RESERVED_SOURCE_IDS: readonly string[] = ['sources'];
+
+/**
+ * One place an add-on finds companies or people (`addOn.sources[]`): a
+ * register, a search service, or the engine's own website reader
+ * (`reads: "website"`). Each keyed source has its own key, a secret setting
+ * no other source uses, and its own hosts, a part of `network.allow`: the
+ * engine hands the add-on's code, per call, only that key and a client that
+ * reaches only those hosts. The cross-checks with the rest of the block are
+ * the block's own refines; that `key` is a secret setting is the manifest's
+ * check, where the settings are seen.
+ */
+export const addOnSourceSchema = z
+  .object({
+    id: z
+      .string()
+      .regex(/^[a-z][a-z0-9-]{1,31}$/, 'a source id is kebab-case, 2 to 32 characters')
+      .refine((id) => !RESERVED_SOURCE_IDS.includes(id), { message: 'a source id may not be "sources": the engine keeps its keys under that name' }),
+    /** The hosts this source's code may reach: a part of `network.allow`. */
+    hosts: z.array(z.string().regex(HOSTNAME, 'must be an exact https hostname')).min(1).max(8).optional(),
+    /** `website`: the engine reads the company's website, and the add-on picks facts from what it read. */
+    reads: z.literal(SOURCE_READS_WEBSITE).optional(),
+    /** The secret setting that holds this source's key; absent for a source that needs none. */
+    key: z.string().regex(/^[a-z][a-z0-9_]*$/, 'a setting key').optional(),
+    gives: z.array(z.enum(LEAD_SOURCE_GIVES)).min(1).max(LEAD_SOURCE_GIVES.length),
+    /** The source's own rate window: at most `calls` calls in `seconds`. */
+    window: z.object({ calls: z.number().int().min(1).max(100_000), seconds: z.number().int().min(1).max(86_400) }).strict().optional(),
+    /** Each call costs the owner money: it counts against the owner's daily cap. */
+    paid: z.boolean().optional(),
+    /**
+     * The source's name as a person reads it ("Companies House", "the
+     * website"): a key in the add-on's own strings and the English fallback.
+     * The record page says where a filled field came from in these words.
+     */
+    label: i18nMessageSchema.optional(),
+    /** The name in the other languages: drawn before any of the add-on's code runs. */
+    labels: wordsByLanguageSchema.optional(),
+  })
+  .strict()
+  .superRefine((source, ctx) => {
+    if (new Set(source.gives).size !== source.gives.length) ctx.addIssue({ code: 'custom', path: ['gives'], message: 'a source names each thing it gives once' });
+    if (source.reads === SOURCE_READS_WEBSITE) {
+      // The engine reads the website itself: the add-on's code reaches no host for it and holds no key.
+      if (source.hosts !== undefined) ctx.addIssue({ code: 'custom', path: ['hosts'], message: 'the website reader is the engine\'s: it names no hosts' });
+      if (source.key !== undefined) ctx.addIssue({ code: 'custom', path: ['key'], message: 'the website reader needs no key' });
+      if (source.gives.length !== 1 || source.gives[0] !== 'fill') ctx.addIssue({ code: 'custom', path: ['gives'], message: 'the website reader gives "fill" only' });
+      if (source.paid === true) ctx.addIssue({ code: 'custom', path: ['paid'], message: 'the website reader costs nothing' });
+    } else if (source.hosts === undefined) {
+      ctx.addIssue({ code: 'custom', path: ['hosts'], message: 'a source names the hosts its code reaches' });
+    }
+  });
+export type AddOnSource = z.infer<typeof addOnSourceSchema>;
+
+/**
+ * What the install's consent says of each source: the hosts it reaches, or
+ * that the engine reads company websites for it. In the manifest's order.
+ */
+export function sourceConsentLines(block: { sources?: readonly AddOnSource[] | undefined }): { source: string; hosts: string[]; readsWebsites: boolean }[] {
+  return (block.sources ?? []).map((source) => ({ source: source.id, hosts: [...(source.hosts ?? [])], readsWebsites: source.reads === SOURCE_READS_WEBSITE }));
+}
 
 // ── pages and navigation ─────────────────────────────────────────────────────
 
@@ -258,6 +362,12 @@ export type AddOnNavGroup = z.infer<typeof addOnNavGroupSchema>;
 export const addOnBlockSchema = z
   .object({
     attaches: z.array(attachTargetSchema).min(1),
+    /**
+     * `server`: kept once per server (a payment provider: two businesses share
+     * one provider account). Absent: installed per database, on its host
+     * install's database — its settings, roles and keys are each business's own.
+     */
+    scope: z.enum(['server']).optional(),
     provides: z.array(providesSchema).optional(),
     consumes: z.array(consumesSchema).optional(),
     slots: z.array(slotFillSchema).optional(),
@@ -266,6 +376,24 @@ export const addOnBlockSchema = z
     /** Grants over host + own tables, checked against SCOPE_OUT_OF_RANGE. */
     scopes: z.array(z.string().min(1)).optional(),
     network: addOnNetworkSchema.optional(),
+    /**
+     * The places the add-on finds companies and people (see
+     * {@link addOnSourceSchema}). A package with sources provides
+     * `lead-source`, and a `lead-source` provider declares its sources.
+     */
+    sources: z.array(addOnSourceSchema).min(1).optional(),
+    /**
+     * The add-on's own tables for what its sources found: the people found
+     * and where each filled field came from. Only the table refs are typed
+     * here: the columns each must have are the manifest's own vocabulary, so
+     * `@adminium/manifest` checks the whole of it.
+     */
+    leads: z
+      .looseObject({
+        foundPeople: z.string().regex(/^[a-z][a-z0-9_]*$/, 'a table ref'),
+        fieldSources: z.string().regex(/^[a-z][a-z0-9_]*$/, 'a table ref'),
+      })
+      .optional(),
     /** The only settings the client bundle may read. */
     publicSettings: z.array(z.string().min(1)).optional(),
     /** Required to ship a demo that makes no real third-party call. */
@@ -320,6 +448,13 @@ export const addOnBlockSchema = z
      */
     adjuster: z.record(z.string(), z.unknown()).optional(),
     /**
+     * What the add-on reads to answer whether a design may be ordered (its
+     * designs table and keyed reads from a design row), served by its
+     * `design-check` provider. Its words are the manifest's own, so
+     * `@adminium/manifest` checks the whole of it.
+     */
+    checker: z.record(z.string(), z.unknown()).optional(),
+    /**
      * Stock words: a question a page may ask of a ledger without writing
      * anything — "is this in, low or out?". Only the id is typed here; the
      * rest names the manifest's own ledgers and settings, which
@@ -332,12 +467,73 @@ export const addOnBlockSchema = z
       .optional(),
     /** Tabs on other tables' record pages that list this add-on's rows for the record (see `record-tabs.ts`). */
     recordTabs: recordTabsSchema.optional(),
+    /** The add-on's own screens on the record pages of tables that link into one of its tables (see `record-panels.ts`). */
+    panels: recordPanelsSchema.optional(),
     /**
      * What a typed or scanned code may find: the tables that hold codes and
      * the columns an answer may carry. Typed loosely here: it names the
      * manifest's own tables, so `@adminium/manifest` checks the whole of it.
      */
     lookUp: z.record(z.string(), z.unknown()).optional(),
+    /**
+     * Forms: which of the add-on's own tables hold the forms, the answers,
+     * and (optional) the survey invitations and the strangers' files. The
+     * engine reads, draws and writes them for a stranger; no add-on code
+     * runs for one. Only the two tables every forms add-on has are typed
+     * here: the columns each must have are the manifest's own vocabulary,
+     * so `@adminium/manifest` checks the whole of it.
+     */
+    forms: z
+      .looseObject({
+        forms: z.string().regex(/^[a-z][a-z0-9_]*$/, 'a table ref'),
+        answers: z.string().regex(/^[a-z][a-z0-9_]*$/, 'a table ref'),
+      })
+      .optional(),
+    /**
+     * Chat: which of the add-on's own tables hold the conversations, their
+     * messages, the answers staff wrote for automatic replies and the
+     * answerer's choices. The engine keeps the conversation for a stranger;
+     * no add-on code runs for one. Only the table refs are typed here: the
+     * columns each must have, and the settings table's, are the manifest's
+     * own vocabulary, so `@adminium/manifest` checks the whole of it.
+     */
+    chat: z
+      .looseObject({
+        conversations: z.string().regex(/^[a-z][a-z0-9_]*$/, 'a table ref'),
+        messages: z.string().regex(/^[a-z][a-z0-9_]*$/, 'a table ref'),
+        answers: z.string().regex(/^[a-z][a-z0-9_]*$/, 'a table ref'),
+        choices: z.string().regex(/^[a-z][a-z0-9_]*$/, 'a table ref'),
+      })
+      .optional(),
+    /**
+     * Landing pages: which of the add-on's own tables hold its pages and its
+     * funnels. The engine draws a live page for a stranger and seals the
+     * columns that publish one; no add-on code runs for a stranger. Only the
+     * table refs are typed here: the columns each must have are the
+     * manifest's own vocabulary, so `@adminium/manifest` checks the whole of
+     * it. (`pages`, below, is the add-on's own staff screens.)
+     */
+    landing: z
+      .looseObject({
+        pages: z.string().regex(/^[a-z][a-z0-9_]*$/, 'a table ref'),
+        funnels: z.string().regex(/^[a-z][a-z0-9_]*$/, 'a table ref'),
+      })
+      .optional(),
+    /**
+     * Reviews: which of the add-on's own tables hold the reviews customers
+     * leave on an app's rows (a shipped order line, a visit) and the totals
+     * the engine keeps of the published ones. The engine writes every review
+     * through the app's `review` word and keeps the totals; staff move a
+     * review's state and reply. Only the table refs are typed here: the
+     * columns each must have are the manifest's own vocabulary, so
+     * `@adminium/manifest` checks the whole of it.
+     */
+    reviews: z
+      .looseObject({
+        reviews: z.string().regex(/^[a-z][a-z0-9_]*$/, 'a table ref'),
+        totals: z.string().regex(/^[a-z][a-z0-9_]*$/, 'a table ref'),
+      })
+      .optional(),
     /**
      * Steps the add-on gives to Automations: each a named write of one row of
      * one of its own tables (see `steps.ts`). Which table and columns they are
@@ -423,6 +619,57 @@ export const addOnBlockSchema = z
   .refine((b) => (b.consumes ?? []).every((c) => hasContractVersion(c.contract, c.version)), {
     message: 'CONTRACT_UNKNOWN: a consumed contract is not in the registry at that version',
     path: ['consumes'],
+  })
+  // Sources: at most eight, each id once, the website reader at most once, and each key held by one source alone.
+  .refine((b) => (b.sources ?? []).length <= ADD_ON_SOURCES_MAX, {
+    message: `an add-on declares at most ${String(ADD_ON_SOURCES_MAX)} sources`,
+    path: ['sources'],
+  })
+  .refine((b) => new Set((b.sources ?? []).map((source) => source.id)).size === (b.sources ?? []).length, {
+    message: 'duplicate source id',
+    path: ['sources'],
+  })
+  .refine((b) => (b.sources ?? []).filter((source) => source.reads === SOURCE_READS_WEBSITE).length <= 1, {
+    message: 'the website reader is one source: declare it once',
+    path: ['sources'],
+  })
+  .refine(
+    (b) => {
+      const keys = (b.sources ?? []).flatMap((source) => (source.key === undefined ? [] : [source.key]));
+      return new Set(keys).size === keys.length;
+    },
+    { message: 'each source has a key of its own: two sources name the same setting', path: ['sources'] },
+  )
+  // A source's code reaches its own hosts only, and those are hosts the add-on declares it may contact at all.
+  .superRefine((b, ctx) => {
+    const allow = new Set(b.network?.allow ?? []);
+    (b.sources ?? []).forEach((source, s) => {
+      (source.hosts ?? []).forEach((host, h) => {
+        if (!allow.has(host)) ctx.addIssue({ code: 'custom', path: ['sources', s, 'hosts', h], message: `"${host}" is not in network.allow: a source reaches only hosts the add-on declares` });
+      });
+    });
+  })
+  // The engine calls a package's sources through the one contract they answer by, and that contract only for sources.
+  .refine((b) => b.sources === undefined || (b.provides ?? []).some((p) => p.contract === LEAD_SOURCE_CONTRACT), {
+    message: `an add-on with sources provides the contract "${LEAD_SOURCE_CONTRACT}"`,
+    path: ['provides'],
+  })
+  .refine((b) => !(b.provides ?? []).some((p) => p.contract === LEAD_SOURCE_CONTRACT) || b.sources !== undefined, {
+    message: `an add-on that provides "${LEAD_SOURCE_CONTRACT}" declares its sources (addOn.sources)`,
+    path: ['sources'],
+  })
+  .refine((b) => (b.provides ?? []).filter((p) => p.contract === LEAD_SOURCE_CONTRACT).length <= 1, {
+    message: `an add-on provides "${LEAD_SOURCE_CONTRACT}" once: the engine calls it per source`,
+    path: ['provides'],
+  })
+  // What sources find is kept in the add-on's own two tables, which the engine writes.
+  .refine((b) => b.sources === undefined || b.leads !== undefined, {
+    message: 'an add-on with sources names the tables the engine keeps what they found in (addOn.leads)',
+    path: ['leads'],
+  })
+  .refine((b) => b.leads === undefined || b.sources !== undefined, {
+    message: 'addOn.leads keeps what an add-on\'s sources found: it declares its sources (addOn.sources)',
+    path: ['sources'],
   })
   // An oauth2 connect must name where it authorizes.
   .refine(
