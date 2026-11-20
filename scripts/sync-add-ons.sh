@@ -11,7 +11,7 @@
 # (`order.dispatch.actions`) on the post office run, for each parcel. So it
 # vendors exactly two packages from the add-ons monorepo:
 #
-#   <somewhere>/maker-shop      ← this repo, the HOST
+#   <somewhere>/ecommerce-storefront ← this repo, the HOST
 #   <somewhere>/add-ons         ← the monorepo
 #       packages/host/              the shared contract the add-on imports
 #       packages/shipping-dhl/      the delivery add-on's client half
@@ -112,7 +112,7 @@ files_of() { local v; v="FILES_$(var "$1")[@]"; printf '%s\n' "${!v}"; }
 pkg_of() { printf 'packages/%s' "$1"; }
 src_of() { printf '%s/packages/%s/src' "$MONO" "$1"; }
 
-[ -d "$HOST/src/add-ons" ] || die "run this from inside the maker-shop checkout"
+[ -d "$HOST/src/add-ons" ] || die "run this from inside the ecommerce-storefront checkout"
 
 # Is the monorepo where we think it is? If what we find is the pre-monorepo
 # layout, say THAT, because the fix is a different one (update ADD_ONS_DIR).
