@@ -100,6 +100,8 @@ describe.skipIf(why !== null)(`Northline takes orders on a built Adminium${why =
           const row = await stand.row("orders", placed["id"]);
           expect(Date.parse(String(row["pay_by"])) - Date.parse(String(row["placed_at"]))).toBe(30 * 60_000);
           expect(Date.parse(String(row["stock_until"])) - Date.parse(String(row["placed_at"]))).toBe(45 * 86_400_000);
+          expect(Date.parse(String(row["link_expires"])) - Date.parse(String(row["placed_at"]))).toBe(120 * 86_400_000);
+          expect([row["service_label"], row["transfer_by"]]).toEqual(["Standard", expect.anything()]);
           // Told before paying: shipped today if paid now (before two), arriving three to five shipping days on.
           expect([row["est_ships_by"], row["est_from"], row["est_to"]].map((d) => String(d).slice(0, 10))).toEqual(["2026-08-18", "2026-08-21", "2026-08-25"]);
         });

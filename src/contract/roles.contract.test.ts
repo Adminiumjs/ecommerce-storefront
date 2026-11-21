@@ -111,6 +111,18 @@ describe.skipIf(why !== null)(`who may do what at Northline's desk${why === null
           expect((await stand.row("orders", order["id"]))["status"]).toBe("paid");
         });
 
+        it("draws an order's packing slip, which holds no money, and never its receipt", async () => {
+          const order = await stand.order("NL-1063");
+          const slip = await packer.post<{ printUrl?: string }>("/api/v1/apps/ecommerce-shop/documents/render", { kind: "packing-slip", ref: "orders", pk: { id: order["id"] } });
+          expect([200, 201], JSON.stringify(slip.body).slice(0, 600)).toContain(slip.status);
+          // The words a reader sees: styles and tags left out.
+          const page = String((await packer.get(slip.body.printUrl!)).body).replace(/<(style|script)[\s\S]*?<\/\1>/gi, " ").replace(/<[^>]+>/g, " ");
+          for (const words of ["NL-1063", "Grace Okafor", "Overnight", "NL-TAL-9"]) expect(page, words).toContain(words);
+          expect(page).not.toMatch(/\$\s?\d/);
+          const receipt = await packer.post("/api/v1/apps/ecommerce-shop/documents/render", { kind: "receipt", ref: "orders", pk: { id: order["id"] } });
+          expect([403, 404], JSON.stringify(receipt.body).slice(0, 400)).toContain(receipt.status);
+        });
+
         it("is answered no figures by the Payment panel (A4)", async () => {
           const order = await stand.order("NL-1063");
           const said = await panel(packer, order);
@@ -128,6 +140,14 @@ describe.skipIf(why !== null)(`who may do what at Northline's desk${why === null
           const said = ok(await panel(owner, order));
           expect(said.data).not.toBeNull();
           expect(JSON.stringify(said.data)).toMatch(/184\.08/);
+        });
+
+        it("draws an order's receipt: its lines, delivery, sales tax and total, and how it was paid", async () => {
+          const order = await stand.order("NL-1063");
+          const drawn = await owner.post<{ printUrl?: string }>("/api/v1/apps/ecommerce-shop/documents/render", { kind: "receipt", ref: "orders", pk: { id: order["id"] } });
+          expect([200, 201], JSON.stringify(drawn.body).slice(0, 600)).toContain(drawn.status);
+          const page = String((await owner.get(drawn.body.printUrl!)).body).replace(/<[^>]+>/g, " ").replace(/&amp;/g, "&");
+          for (const words of ["NL-1063", "Talus Trail Runner", "139.00", "35.00", "10.08", "184.08"]) expect(page, words).toContain(words);
         });
 
         it("records a bank transfer on an order waiting for one, and gives money back", async () => {

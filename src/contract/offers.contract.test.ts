@@ -2,8 +2,8 @@
  * CODES AND GIFT CARDS AT NORTHLINE'S CHECKOUT, DECIDED BY OFFERS & GIFT CARDS.
  *
  * On each engine, Northline installed with its add-ons and its sample at
- * Tuesday 18 August 2026, 11:40 in Portland. The owner makes the shop's two
- * codes in Offers' own tables, as the sample world has them: TRAIL15, 15 %
+ * Tuesday 18 August 2026, 11:40 in Portland. The sample brings the shop's
+ * two codes into Offers' own tables, as an owner makes them there: TRAIL15, 15 %
  * off packs and bags, for anybody; WELCOME10, 10 % off a first order, for a
  * signed-in customer. Then, through the shop's own doors:
  *
@@ -91,15 +91,9 @@ describe.skipIf(why !== null)(`codes and gift cards at Northline's checkout${why
         stand = await standUp(engine as Engine, PORT_BASE + index * PORTS_PER_ENGINE, "offers");
         shop = await shopOf(stand);
         paying = await stand.rehearsing();
-        // The owner makes the shop's two codes in Offers' own tables.
-        const packs = (await stand.rows("categories")).find((c) => c["slug"] === "packs")!;
-        trail = await stand.create("offers_offers", { name: "Trail 15", public_name: { "en-US": "15% off packs & bags" }, gives: "percent", value: "15", trigger: "code", applies_to: "lines", starts_on: "2026-08-01", ends_on: "2026-08-31", combinable: true });
-        await stand.create("offers_offer_targets", { offer_id: trail["id"], kind: "category", source_table: "ecommerce-shop:categories", source_row: String(packs["id"]), label: "Packs & bags" });
-        await stand.patch("offers_offers", trail["id"], { status: "active" });
-        await stand.create("offers_codes", { offer_id: trail["id"], code: "TRAIL15", active: true });
-        const welcome = await stand.create("offers_offers", { name: "Welcome 10", public_name: { "en-US": "10% off your first order" }, gives: "percent", value: "10", trigger: "code", applies_to: "order", starts_on: "2026-08-01", first_order_only: true, max_per_customer: 1, combinable: true });
-        await stand.patch("offers_offers", welcome["id"], { status: "active" });
-        await stand.create("offers_codes", { offer_id: welcome["id"], code: "WELCOME10", active: true });
+        // The shop's two codes, as its sample brings them into Offers' own tables (as its owner makes them there).
+        trail = (await stand.rows("offers_offers")).find((o) => o["name"] === "TRAIL15")!;
+        expect((await stand.rows("offers_codes")).map((c) => c["code"]).sort()).toEqual(["TRAIL15", "WELCOME10"]);
       }, 600_000);
 
       afterAll(async () => {

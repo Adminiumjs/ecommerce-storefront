@@ -2,8 +2,8 @@
  * SENDING SOMETHING BACK TO NORTHLINE, ON A BUILT ADMINIUM.
  *
  * On each engine, Northline installed with its add-ons and its sample at
- * Tuesday 18 August 2026, 11:40 in Portland, TRAIL15 made in Offers as the
- * world has it. A signed-in customer orders two packs to Washington with
+ * Tuesday 18 August 2026, 11:40 in Portland (TRAIL15 among the codes it
+ * brings into Offers' own tables). A signed-in customer orders two packs to Washington with
  * TRAIL15, pays, and the desk packs and ships them. Then:
  *
  *   - a return asked by the signed-in customer, in one write with its
@@ -70,11 +70,6 @@ describe.skipIf(why !== null)(`sending something back to Northline${why === null
       beforeAll(async () => {
         stand = await standUp(engine as Engine, PORT_BASE + index * PORTS_PER_ENGINE, "returns");
         shop = await shopOf(stand);
-        const packs = (await stand.rows("categories")).find((c) => c["slug"] === "packs")!;
-        const trail = await stand.create("offers_offers", { name: "Trail 15", public_name: { "en-US": "15% off packs & bags" }, gives: "percent", value: "15", trigger: "code", applies_to: "lines", starts_on: "2026-08-01", ends_on: "2026-08-31", combinable: true });
-        await stand.create("offers_offer_targets", { offer_id: trail["id"], kind: "category", source_table: "ecommerce-shop:categories", source_row: String(packs["id"]), label: "Packs & bags" });
-        await stand.patch("offers_offers", trail["id"], { status: "active" });
-        await stand.create("offers_codes", { offer_id: trail["id"], code: "TRAIL15", active: true });
         const config = ok(await new Caller(stand.server.base, { origin: stand.server.base, authorization: `Bearer ${stand.linkKey}` }).get<{ data?: { refs?: Record<string, Row> } }>("/api/v1/public/config"));
         linkRefs = config.data?.refs ?? {};
       }, 600_000);
@@ -135,6 +130,8 @@ describe.skipIf(why !== null)(`sending something back to Northline${why === null
       let second: Row;
       it("puts received pieces back on the shelf, and is refunded only once refunds cover what it gives back", async () => {
         await stand.patch("returns", second["id"], { status: "approved" });
+        // Send it back within five shipping days of the approval: Tuesday 18 August, so by Tuesday 25 August.
+        expect(String((await stand.row("returns", second["id"]))["send_by"]).slice(0, 10)).toBe("2026-08-25");
         await stand.patch("returns", second["id"], { status: "received" });
         const early = await stand.staff.patch(`${stand.data("returns")}/${String(second["id"])}`, { values: { status: "refunded" } });
         expect(early.status, JSON.stringify(early.body).slice(0, 400)).not.toBe(200);

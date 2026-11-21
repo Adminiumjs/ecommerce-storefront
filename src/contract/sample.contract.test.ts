@@ -95,6 +95,13 @@ describe.skipIf(why !== null)(`Northline's sample on a built Adminium${why === n
         expect(points.some((p) => num(p["on_hand"]) > 0)).toBe(true);
       });
 
+      it("dates every paid order's shipping as the world did, and every paying order's deadlines", async () => {
+        const paid = await stand.order("NL-1061");
+        expect([paid["ships_by"], paid["arrives_from"], paid["arrives_to"]].every((d) => d !== null)).toBe(true);
+        const paying = await stand.order("NL-1066");
+        expect([paying["pay_by"], paying["stock_until"], paying["link_expires"], paying["est_ships_by"], paying["est_from"], paying["est_to"]].every((d) => d !== null)).toBe(true);
+      });
+
       it("numbers the shop's next order after the sample's last", async () => {
         const settings = (await stand.rows("settings"))[0]!;
         expect(num(settings["first_number"])).toBe(1067);

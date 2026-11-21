@@ -102,6 +102,32 @@ describe.skipIf(why !== null)(`Northline's stock on a built Adminium${why === nu
         expect(await stockOf("NL-RDG28-SLA")).toEqual(before);
       }, 120_000);
 
+      it("packs a sample order that used a code: Offers holds the code it looks at again", async () => {
+        // NL-1065 used TRAIL15: Offers holds the code, so looking at it again on the move to packed finds it.
+        const coded = await stand.order("NL-1065");
+        expect(coded["status"]).toBe("paid");
+        const packed = await stand.staff.patch(`${stand.data("orders")}/${String(coded["id"])}`, { values: { status: "packed" } });
+        expect(packed.status, JSON.stringify(packed.body).slice(0, 600)).toBe(200);
+        const after = await stand.order("NL-1065");
+        expect([after["status"], num(after["discount"]).toFixed(2), num(after["total"]).toFixed(2)]).toEqual(["packed", "32.85", "216.25"]);
+      }, 60_000);
+
+      it("puts a packed order's stock back on the shelf when the owner cancels it before it ships", async () => {
+        const before = await stockOf("NL-RDG28-SLA");
+        const placed = await placeOne("bo", "NL-RDG28-SLA");
+        await paid(placed);
+        await stand.patch("orders", placed["id"], { status: "packed" });
+        expect(await stockOf("NL-RDG28-SLA")).toEqual([before[0] - 1, before[1], before[2] - 1]);
+        await stand.patch("orders", placed["id"], { status: "cancelled", cancel_reason: "address" });
+        expect(await stockOf("NL-RDG28-SLA")).toEqual(before);
+        // Its money went back with the cancel, through the service it came by.
+        const refunds = await until(async () => {
+          const rows = (await stand.rows("payment_refunds")).filter((r) => String(r["order_id"]) === String(placed["id"]));
+          return rows.length > 0 ? rows : undefined;
+        }, "the cancel's refund", 60_000);
+        expect(num(refunds[0]!["amount"]).toFixed(2)).toBe(num(placed["total"]).toFixed(2));
+      }, 120_000);
+
       it("keeps the stock of an order paid at minute five held until it is packed days later", async () => {
         const before = await stockOf("NL-MUG-MOS");
         const placed = await placeOne("cleo", "NL-MUG-MOS");
