@@ -64,7 +64,7 @@ interface Move {
 export interface SampleBundle {
   format: "adminium.sample/1";
   app: "ecommerce-shop";
-  addOn?: "inventory";
+  addOn?: "inventory" | "offers";
   weekAnchor: "tue";
   tables: Table[];
   moves?: Move[];
@@ -186,7 +186,7 @@ export interface World {
   TAX: Record<string, number>;
   CLOSURES: { iso: string; name: string }[];
   GIFT_AMOUNTS: string[];
-  CODES: Record<string, { percent: number; on: string | null }>;
+  CODES: Record<string, { percent: number; on: string | null; label: string; until: string | null; guests: boolean; firstOrder: boolean }>;
   CUSTOMERS: Customer[];
   ORDERS: WorldOrder[];
   RETURNS: Return[];
@@ -525,6 +525,9 @@ export function sampleBundle(): SampleBundle {
       region_id: goods ? ref(`region:${o.ship.state}`) : null,
       offer_id: goods ? ref(`offer:${o.service!}:${zoneOf(o.ship.state)}`) : null,
       language: "en-US",
+      // What its code took off, as Offers & gift cards decided it on the day: a sample row is written past every save,
+      // so the reduction is history the row brings, as its moments are (Offers keeps the code: `offersSection`).
+      ...(o.code === null ? {} : { discount: o.discount }),
       // The stamps a sample is never given, written as they would have been.
       placed_at: at(t.placed),
       pay_by: at(t.payBy),
@@ -549,7 +552,7 @@ export function sampleBundle(): SampleBundle {
     });
     for (const line of o.lines) {
       if (!variantBySku.has(line.sku)) throw new Error(`${o.number}: no variant ${line.sku}`);
-      lines.push({ "@label": lineLabel(o.number, line.sku), order_id: ref(`order:${o.number}`), variant_id: ref(`variant:${line.sku}`), qty: line.qty });
+      lines.push({ "@label": lineLabel(o.number, line.sku), order_id: ref(`order:${o.number}`), variant_id: ref(`variant:${line.sku}`), qty: line.qty, ...(o.code === null ? {} : { discount: line.discount }) });
     }
     for (const gift of o.gifts) {
       giftLines.push({ order_id: ref(`order:${o.number}`), amount_id: ref(giftLabel(gift.amount)), to_name: gift.to, to_email: gift.toEmail, message: gift.message });
@@ -735,6 +738,60 @@ export function sampleBundle(): SampleBundle {
           return { variant_id: ref(`variant:${r.sku}`), customer_id: ref(customerLabel(customer)), language: "en-US", asked_at: recent(r.at) };
         }),
       },
+    ],
+  };
+}
+
+// ── Offers & gift cards ─────────────────────────────────────────────────────
+
+/** The day the world's first order with a code was placed: each code's offer runs from the first of that month. */
+const CODES_FROM = (() => {
+  const first = WORLD.ORDERS.filter((o) => o.code !== null).map((o) => o.placed.slice(0, 10)).sort()[0] ?? TODAY;
+  return `${first.slice(0, 8)}01`;
+})();
+
+/**
+ * The shop's two codes, in Offers' own tables, as the owner makes them on its
+ * page: TRAIL15, 15 % off packs and bags until the end of August, for anybody;
+ * WELCOME10, 10 % off a first order, once a customer (so for a signed-in one).
+ * The sample's orders that used them name them typed (`order_codes`) and bring
+ * what each took off; a code Offers holds is what lets such an order move on
+ * (packed, shipped), where Offers looks at its codes again.
+ */
+export function offersSection(): SampleBundle {
+  const percent = (code: string) => String(WORLD.CODES[code]!.percent);
+  const day = (iso: string | null) => (iso === null ? null : { "@day": offset(iso) });
+  return {
+    format: "adminium.sample/1",
+    app: "ecommerce-shop",
+    addOn: "offers",
+    weekAnchor: "tue",
+    tables: [
+      {
+        ref: "offers",
+        rows: Object.entries(WORLD.CODES).map(([code, c]) => ({
+          "@label": `offer:${code}`,
+          name: code,
+          public_name: { "en-US": c.label },
+          gives: "percent",
+          value: percent(code),
+          trigger: "code",
+          applies_to: c.on === null ? "order" : "lines",
+          starts_on: day(CODES_FROM),
+          ends_on: day(c.until),
+          first_order_only: c.firstOrder,
+          ...(c.firstOrder ? { max_per_customer: 1 } : {}),
+          combinable: true,
+          status: "active",
+        })),
+      },
+      {
+        ref: "offer_targets",
+        rows: Object.entries(WORLD.CODES)
+          .filter(([, c]) => c.on !== null)
+          .map(([code, c]) => ({ offer_id: ref(`offer:${code}`), kind: "category", source_table: { "@table": "categories" }, source_row: ref(`category:${c.on!}`), label: WORLD.CATEGORIES.find((k) => k.id === c.on)!.name })),
+      },
+      { ref: "codes", rows: Object.keys(WORLD.CODES).map((code) => ({ offer_id: ref(`offer:${code}`), code, active: true })) },
     ],
   };
 }

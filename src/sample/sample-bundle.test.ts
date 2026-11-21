@@ -158,6 +158,7 @@ const WRITTEN_ANYWAY: Record<string, Record<string, string>> = {
     ["number_seq", "spelled null, as the docs ask of a gapless series"],
     ["number", "the world's own number, off the series"],
     // History is never stamped (manifest reference, "Stamps"): each moment is written as the stamp would have.
+    ["discount", "what its code took off on the day: history, as Offers decided it then"],
     ...["placed_at", "pay_by", "stock_until", "link_expires", "est_ships_by", "est_from", "est_to", "ships_by", "arrives_from", "arrives_to", "packed_at", "packed_by", "shipped_at", "shipped_by", "cancelled_at", "cancelled_by"].map(
       (c) => [c, "a stamp history never gets"],
     ),
@@ -169,6 +170,7 @@ const WRITTEN_ANYWAY: Record<string, Record<string, string>> = {
   ]),
   products: { created_at: "never empty: the shop sorts by it, and history is never stamped" },
   customers: { created_at: "their first order's placing", news_since: "the day they said yes" },
+  order_lines: { discount: "what its order's code took off it on the day: history, as Offers decided it then" },
   payments: { made_by: "a stamp history never gets: the customer, through the pay page", paid_at: "the moment the pay page wrote (stamped only for a gift card)" },
   payment_refunds: { made_at: "a stamp history never gets", made_by: "a stamp history never gets" },
   restock_requests: { asked_at: "a stamp history never gets" },
@@ -290,9 +292,17 @@ describe("every row writes columns its table has, and leaves Adminium's to Admin
     expect([...written].sort()).toEqual(listed.sort());
   });
 
-  it("names no line's price, total or reduction: Adminium copies the price, Offers decides the reduction", () => {
-    for (const line of rowsOf(main, "order_lines")) expect(Object.keys(line).sort()).toEqual(["@label", "order_id", "qty", "variant_id"]);
-    for (const order of orders) for (const key of ["goods", "discount", "net", "shipping", "tax", "total", "paid", "due"]) expect(order, key).not.toHaveProperty(key);
+  it("names no line's price or total, and a reduction only as the world's own, on an order with a code", () => {
+    const coded = new Set(rowsOf(main, "order_codes").map((c) => refOf(c["order_id"])));
+    for (const line of rowsOf(main, "order_lines")) {
+      const order = refOf(line["order_id"]);
+      expect(Object.keys(line).sort()).toEqual(coded.has(order) ? ["@label", "discount", "order_id", "qty", "variant_id"] : ["@label", "order_id", "qty", "variant_id"]);
+    }
+    for (const order of orders) {
+      for (const key of ["goods", "net", "shipping", "tax", "total", "paid", "due"]) expect(order, key).not.toHaveProperty(key);
+      if (coded.has(String(order["@label"]))) expect(order["discount"]).toBe(worldOrder(order).discount);
+      else expect(order).not.toHaveProperty("discount");
+    }
   });
 
   it("writes in Inventory's file only Inventory's columns, none its ledger keeps", () => {

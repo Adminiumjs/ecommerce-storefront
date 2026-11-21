@@ -10,6 +10,7 @@
  */
 import { ADD_ONS } from "./add-ons.ts";
 import { AUTOMATIONS } from "./automations.ts";
+import { DOCUMENTS } from "./documents.ts";
 import { emailTemplates } from "./emails.ts";
 import { OUTBOX } from "./outbox.ts";
 import { NAV_GROUPS, pages } from "./pages.ts";
@@ -98,10 +99,11 @@ export function buildManifest(): Record<string, unknown> {
     people: PEOPLE,
     payments: PAYMENTS,
     automations: AUTOMATIONS,
+    documents: DOCUMENTS,
     outbox: OUTBOX,
     emailTemplates: emailTemplates(),
-    // Northline's Tuesday: the shop's own rows, and the stock items, links and opening stock Inventory adds.
-    sampleData: { file: "seeds/ecommerce-shop.sample.json", addOns: { inventory: { file: "seeds/ecommerce-shop.inventory.sample.json" } } },
+    // Northline's Tuesday: the shop's own rows; the stock items, links and opening stock Inventory adds; the codes Offers keeps.
+    sampleData: { file: "seeds/ecommerce-shop.sample.json", addOns: { inventory: { file: "seeds/ecommerce-shop.inventory.sample.json" }, offers: { file: "seeds/ecommerce-shop.offers.sample.json" } } },
   };
 }
 

@@ -1550,6 +1550,42 @@
             }
           },
           {
+            "ref": "stock_label",
+            "type": "text",
+            "maxLength": 90,
+            "nullable": true,
+            "label": {
+              "en-US": "Colour and size"
+            },
+            "rules": {
+              "formula": {
+                "join": [
+                  "colour_label",
+                  " · ",
+                  "size_label"
+                ]
+              }
+            }
+          },
+          {
+            "ref": "stock_head",
+            "type": "text",
+            "maxLength": 180,
+            "nullable": true,
+            "label": {
+              "en-US": "Product, colour and size"
+            },
+            "rules": {
+              "formula": {
+                "join": [
+                  "product_name",
+                  " · ",
+                  "stock_label"
+                ]
+              }
+            }
+          },
+          {
             "ref": "stock_name",
             "type": "text",
             "maxLength": 200,
@@ -1560,11 +1596,7 @@
             "rules": {
               "formula": {
                 "join": [
-                  "product_name",
-                  " · ",
-                  "colour_label",
-                  " · ",
-                  "size_label",
+                  "stock_head",
                   " · ",
                   "sku"
                 ]
@@ -2394,6 +2426,20 @@
                   "packer"
                 ],
                 "undo": true
+              },
+              {
+                "to": "cancelled",
+                "requires": {
+                  "where": [
+                    {
+                      "column": "cancel_reason",
+                      "isNull": false
+                    }
+                  ]
+                },
+                "roles": [
+                  "owner"
+                ]
               }
             ],
             "sent": [
@@ -2866,6 +2912,22 @@
               "copy": {
                 "via": "offer_id",
                 "from": "service_id",
+                "mode": "always"
+              }
+            }
+          },
+          {
+            "ref": "service_label",
+            "type": "text",
+            "maxLength": 40,
+            "nullable": true,
+            "label": {
+              "en-US": "Shipping service"
+            },
+            "rules": {
+              "copy": {
+                "via": "offer_id",
+                "from": "service_label",
                 "mode": "always"
               }
             }
@@ -3895,7 +3957,8 @@
                 "from": [
                   "paying",
                   "awaiting_transfer",
-                  "paid"
+                  "paid",
+                  "packed"
                 ]
               }
             },
@@ -5652,6 +5715,37 @@
                   "column": "status",
                   "values": [
                     "refunded"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "ref": "send_by",
+            "type": "date",
+            "label": {
+              "en-US": "Send it back by"
+            },
+            "nullable": true,
+            "rules": {
+              "stamp": {
+                "set": {
+                  "addWorkingDays": {
+                    "from": "now",
+                    "days": 5,
+                    "weekdays": "ship_days",
+                    "closures": {
+                      "table": "closures",
+                      "from": "from_date",
+                      "to": "to_date",
+                      "active": "active"
+                    }
+                  }
+                },
+                "on": {
+                  "column": "status",
+                  "values": [
+                    "approved"
                   ]
                 }
               }
@@ -9208,6 +9302,7 @@
             "zone_id",
             "offer_id",
             "service_id",
+            "service_label",
             "pieces",
             "weight_g",
             "placed_at",
@@ -9292,6 +9387,8 @@
             "category_id",
             "product_name",
             "product_status",
+            "stock_label",
+            "stock_head",
             "stock_name"
           ]
         },
@@ -11539,7 +11636,8 @@
             {
               "from": [
                 "paid",
-                "paying"
+                "paying",
+                "packed"
               ],
               "to": "cancelled",
               "by": [
@@ -11680,6 +11778,108 @@
             }
           }
         ]
+      }
+    }
+  ],
+  "documents": [
+    {
+      "kind": "receipt",
+      "addOn": "invoices",
+      "table": "orders",
+      "feature": "receipts",
+      "name": {
+        "en-US": "Receipt"
+      },
+      "mapping": {
+        "reference": {
+          "column": "number"
+        },
+        "issuedAt": {
+          "column": "placed_at"
+        },
+        "customerName": {
+          "column": "name"
+        },
+        "customerEmail": {
+          "column": "email"
+        },
+        "items": {
+          "collection": {
+            "table": "order_lines",
+            "via": "order_id",
+            "orderBy": "id",
+            "columns": {
+              "desc": "product_name",
+              "options": "variant_label",
+              "qty": "qty",
+              "rate": "each",
+              "amount": "line"
+            }
+          }
+        },
+        "subtotal": {
+          "column": "goods"
+        },
+        "delivery": {
+          "column": "shipping"
+        },
+        "taxRate": {
+          "column": "tax_rate"
+        },
+        "tax": {
+          "column": "tax"
+        },
+        "total": {
+          "column": "total"
+        },
+        "payments": {
+          "collection": {
+            "table": "payments",
+            "via": "order_id",
+            "orderBy": "id",
+            "columns": {
+              "paidOn": "paid_at",
+              "method": "method",
+              "amount": "amount"
+            }
+          }
+        }
+      }
+    },
+    {
+      "kind": "packing-slip",
+      "addOn": "invoices",
+      "table": "orders",
+      "feature": "packing-slips",
+      "name": {
+        "en-US": "Packing slip"
+      },
+      "mapping": {
+        "orderNumber": {
+          "column": "number"
+        },
+        "issuedAt": {
+          "column": "placed_at"
+        },
+        "shipToName": {
+          "column": "ship_name"
+        },
+        "deliveryService": {
+          "column": "service_label"
+        },
+        "items": {
+          "collection": {
+            "table": "order_lines",
+            "via": "order_id",
+            "orderBy": "id",
+            "columns": {
+              "desc": "product_name",
+              "variant": "variant_label",
+              "sku": "sku",
+              "qty": "qty"
+            }
+          }
+        }
       }
     }
   ],
@@ -27359,6 +27559,9 @@
     "addOns": {
       "inventory": {
         "file": "seeds/ecommerce-shop.inventory.sample.json"
+      },
+      "offers": {
+        "file": "seeds/ecommerce-shop.offers.sample.json"
       }
     }
   }

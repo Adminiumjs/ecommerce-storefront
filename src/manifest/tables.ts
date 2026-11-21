@@ -425,7 +425,11 @@ export const TABLES: Table[] = [
       copied("product_name", 80, "Product name", follow("product_id", "name")),
       copied("product_status", 16, "Product status", follow("product_id", "status")),
       // What Inventory calls the item it makes for the variant.
-      copied("stock_name", 200, "Stock item name", { formula: { join: ["product_name", " · ", "colour_label", " · ", "size_label", " · ", "sku"] } }),
+      // (In steps: a join keeps the words between two parts only while both are there, so an empty size would take
+      // both its " · " with it and run the colour into the SKU.)
+      copied("stock_label", 90, "Colour and size", { formula: { join: ["colour_label", " · ", "size_label"] } }),
+      copied("stock_head", 180, "Product, colour and size", { formula: { join: ["product_name", " · ", "stock_label"] } }),
+      copied("stock_name", 200, "Stock item name", { formula: { join: ["stock_head", " · ", "sku"] } }),
     ],
     postings: [
       // With Inventory on, a new variant gets a stock item of its own, linked to it: its stock is counted from then.
@@ -596,6 +600,8 @@ export const TABLES: Table[] = [
         packed: [
           { to: "shipped", requires: { where: [{ column: "carrier", isNull: false }] } },
           { to: "paid", roles: ["owner", "packer"], undo: true },
+          // Packed but not yet gone: the owner may still cancel it, its stock put back. A shipped order cannot be.
+          { ...cancel(), roles: ["owner"] },
         ],
         // A gift card sold: cancelled only by the owner, and only while it is unspent (Offers' recall refuses otherwise).
         sent: [{ to: "cancelled", roles: ["owner"], requires: { where: [{ column: "cancel_reason", isNull: false }] } }],
@@ -650,6 +656,8 @@ export const TABLES: Table[] = [
         rules: { linkable: { where: [{ column: "active", eq: true }], same: [{ column: "zone_id", as: "zone_id" }] } },
       }),
       fk("service_id", "shipping_services", "Service", { ...opt, rules: frozen("offer_id", "service_id") }),
+      // How it goes, by name, as the packing slip prints it.
+      copied("service_label", 40, "Shipping service", frozen("offer_id", "service_label")),
       money("ship_price", "Shipping price", frozen("offer_id", "price")),
       money("free_from", "Free shipping from", frozen("offer_id", "free_from")),
       figure("transit_min", "Days on the way, at least", frozen("offer_id", "transit_min")),
@@ -741,7 +749,8 @@ export const TABLES: Table[] = [
         via: "order_id",
         reserve: { on: { create: true } },
         post: { on: { to: ["packed"] } },
-        reverse: { on: { to: ["cancelled"], from: ["paying", "awaiting_transfer", "paid"] } },
+        // (From packed too: the owner's cancel of a packed order puts what was taken back.)
+        reverse: { on: { to: ["cancelled"], from: ["paying", "awaiting_transfer", "paid", "packed"] } },
         heldUntil: { parent: "stock_until" },
         map: { what: "variant_id", quantity: "qty" },
       },
@@ -990,6 +999,8 @@ export const TABLES: Table[] = [
       at("received_at", "Received", { ...opt, rules: stamp("now", onState("status", "received")) }),
       text("received_by", 80, "Received by", { ...opt, rules: stamp("user-name", onState("status", "received")) }),
       at("refunded_at", "Refunded at", { ...opt, rules: stamp("now", onState("status", "refunded")) }),
+      // Send it back by this day: five shipping days from the approval, told in the "Return approved" e-mail.
+      date("send_by", "Send it back by", { ...opt, rules: stamp({ addWorkingDays: { from: "now", days: 5, weekdays: SHIP_DAYS, closures: CLOSURES } }, onState("status", "approved")) }),
       language("language", frozen("order_id", "language")),
     ],
   },

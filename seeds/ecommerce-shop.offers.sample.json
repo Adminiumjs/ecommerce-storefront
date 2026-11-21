@@ -1,0 +1,89 @@
+{
+  "format": "adminium.sample/1",
+  "app": "ecommerce-shop",
+  "addOn": "offers",
+  "weekAnchor": "tue",
+  "tables": [
+    {
+      "ref": "offers",
+      "rows": [
+        {
+          "@label": "offer:TRAIL15",
+          "name": "TRAIL15",
+          "public_name": {
+            "en-US": "15% off packs & bags"
+          },
+          "gives": "percent",
+          "value": "15",
+          "trigger": "code",
+          "applies_to": "lines",
+          "starts_on": {
+            "@day": -48
+          },
+          "ends_on": {
+            "@day": 13
+          },
+          "first_order_only": false,
+          "combinable": true,
+          "status": "active"
+        },
+        {
+          "@label": "offer:WELCOME10",
+          "name": "WELCOME10",
+          "public_name": {
+            "en-US": "10% off your first order"
+          },
+          "gives": "percent",
+          "value": "10",
+          "trigger": "code",
+          "applies_to": "order",
+          "starts_on": {
+            "@day": -48
+          },
+          "ends_on": null,
+          "first_order_only": true,
+          "max_per_customer": 1,
+          "combinable": true,
+          "status": "active"
+        }
+      ]
+    },
+    {
+      "ref": "offer_targets",
+      "rows": [
+        {
+          "offer_id": {
+            "@ref": "offer:TRAIL15"
+          },
+          "kind": "category",
+          "source_table": {
+            "@table": "categories"
+          },
+          "source_row": {
+            "@ref": "category:packs"
+          },
+          "label": "Packs & bags"
+        }
+      ]
+    },
+    {
+      "ref": "codes",
+      "rows": [
+        {
+          "offer_id": {
+            "@ref": "offer:TRAIL15"
+          },
+          "code": "TRAIL15",
+          "active": true
+        },
+        {
+          "offer_id": {
+            "@ref": "offer:WELCOME10"
+          },
+          "code": "WELCOME10",
+          "active": true
+        }
+      ]
+    }
+  ]
+}

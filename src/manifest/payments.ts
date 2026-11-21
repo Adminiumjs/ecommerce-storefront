@@ -56,7 +56,7 @@ export const PAYMENTS = {
         auto: { values: { automatic: true } },
       },
       refundOn: {
-        moves: [{ from: ["paid", "paying"], to: "cancelled", by: ["customer", "system", "refund-right"] }],
+        moves: [{ from: ["paid", "paying", "packed"], to: "cancelled", by: ["customer", "system", "refund-right"] }],
       },
     },
   ],
