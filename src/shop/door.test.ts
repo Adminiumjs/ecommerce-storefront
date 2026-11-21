@@ -67,6 +67,23 @@ describe("the product list", () => {
     expect(sent.at(-1)!.query.get("q")).toBeNull();
   });
 
+  it("keeps a product's id when the entry answers with its count", async () => {
+    const row = { id: 3, name: "Trailhead Hip Pack", slug: "trailhead-hip", price: 45 };
+    const { shop, sent } = door(() => ({ body: { data: [row], page: { limit: 1, offset: 0, total: null }, count: { rows: 1, atLeast: false } } }));
+    expect((await shop.productBySlug("trailhead-hip"))?.id).toBe(3);
+    expect(JSON.parse(sent.at(-1)!.query.get("where")!)).toEqual({ column: "slug", op: "eq", value: "trailhead-hip" });
+  });
+
+  it("reads every page of products with their ids", async () => {
+    const { shop, sent } = door((one) => ({
+      body: one.query.get("cursor") === null
+        ? { data: [{ id: 1 }], cursor: { next: "c2" }, count: { rows: 2, atLeast: false } }
+        : { data: [{ id: 2 }], cursor: { next: null }, count: { rows: 2, atLeast: false } },
+    }));
+    expect((await shop.allProducts()).map((p) => p["id"])).toEqual([1, 2]);
+    expect(sent.filter((s) => s.path.endsWith("/ecommerce_shop_products")).map((s) => s.query.get("cursor"))).toEqual([null, "c2"]);
+  });
+
   it("reads a refused filter as a refusal the page can read", async () => {
     const { shop } = door(() => ({ status: 400, body: { error: { code: "PUBLIC_QUERY_REFUSED", message: "no", params: { parameter: "via" } } } }));
     const error = await shop.products({ colour: "slate" }).catch((e: unknown) => e);

@@ -447,10 +447,31 @@ export class AdminiumShop implements ShopPort {
     });
   }
 
+  /**
+   * Every product row, read through `raw`. This entry answers with a `count`,
+   * and the client (through 0.3.70) then takes the whole reply for one row and
+   * loses every id, so products are never read with `client.list`.
+   */
+  async allProducts(): Promise<Row[]> {
+    const limit = await this.pageSize(this.refs.products);
+    const rows: Row[] = [];
+    let cursor: string | null = null;
+    for (let i = 0; i < 20; i += 1) {
+      const p = new URLSearchParams({ limit: String(limit) });
+      if (cursor !== null) p.set("cursor", cursor);
+      const reply: { data: Row[]; cursor?: { next: string | null } } = await this.raw(this.client, this.served.publishableKey, `/api/v1/public/records/${this.refs.products}?${p.toString()}`);
+      rows.push(...reply.data);
+      cursor = reply.cursor?.next ?? null;
+      if (cursor === null || cursor === "" || reply.data.length === 0) break;
+    }
+    return rows;
+  }
+
   productBySlug(slug: string): Promise<Product | null> {
     return answer(async () => {
-      const page = await this.client.list<Row>(this.refs.products, { where: { column: "slug", op: "eq", value: slug }, limit: 1 });
-      const row = page.data[0];
+      const p = new URLSearchParams({ where: JSON.stringify({ column: "slug", op: "eq", value: slug }), limit: "1" });
+      const reply = await this.raw<{ data: Row[] }>(this.client, this.served.publishableKey, `/api/v1/public/records/${this.refs.products}?${p.toString()}`);
+      const row = reply.data[0];
       return row === undefined ? null : productOf(row);
     });
   }
