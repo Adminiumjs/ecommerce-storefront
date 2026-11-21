@@ -10,6 +10,8 @@
  */
 import { ADD_ONS } from "./add-ons.ts";
 import { AUTOMATIONS } from "./automations.ts";
+import { emailTemplates } from "./emails.ts";
+import { OUTBOX } from "./outbox.ts";
 import { NAV_GROUPS, pages } from "./pages.ts";
 import { PAYMENTS } from "./payments.ts";
 import { PEOPLE } from "./people.ts";
@@ -96,6 +98,8 @@ export function buildManifest(): Record<string, unknown> {
     people: PEOPLE,
     payments: PAYMENTS,
     automations: AUTOMATIONS,
+    outbox: OUTBOX,
+    emailTemplates: emailTemplates(),
   };
 }
 

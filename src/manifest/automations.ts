@@ -5,9 +5,11 @@
  *     and mails its cards when the payment lands, and there is nothing to pack.
  *   - "Tell me when it's back": every 15 minutes Adminium visits the waiting
  *     requests, asks Inventory whether the variant is in (at least one whole
- *     unit), and stamps the request before its e-mail goes, so the next visit
- *     passes it by. Inventory off, not answering, or the variant counted by
- *     nothing: the answer is no, and nobody is mailed.
+ *     unit), and stamps the request: the stamp is what sends its e-mail (the
+ *     outbox's `back-in-stock` kind, once for the request, in the language it
+ *     was asked in), and the next visit passes it by. Inventory off, not
+ *     answering, or the variant counted by nothing: the answer is no, and
+ *     nobody is mailed.
  */
 import { l } from "./labels.ts";
 

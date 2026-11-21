@@ -28,6 +28,7 @@
  * cards): the tables say what they hand each one, and when.
  */
 import { l, type Labels } from "./labels.ts";
+import { KIND_NAMES } from "./outbox.ts";
 import { CUTOFF, SHIP_DAYS } from "./settings.ts";
 
 type Tone = "pos" | "warn" | "danger" | "info" | "neutral" | "accent";
@@ -228,26 +229,8 @@ export const RETURN_STATES: Record<string, string> = {
 /** What the desk says when it declines a return: the customer reads it. */
 export const CATEGORY_ICONS = ["backpack", "shirt", "footprints", "tent", "mountain", "compass", "flame", "sun"];
 
-/** The outbox's kinds, as the Emails page names them. */
-export const EMAIL_KINDS: Record<string, string> = {
-  "order-placed": "Order received",
-  "order-transfer": "Order placed, to pay by bank transfer",
-  "order-paid": "Order confirmation",
-  "order-shipped": "Order shipped",
-  "order-cancelled": "Order cancelled",
-  "order-cancelled-unpaid": "Order cancelled, not paid",
-  "order-refunded": "Refund sent",
-  "transfer-reminder": "Bank transfer reminder",
-  "return-asked": "Return asked",
-  "return-approved": "Return approved",
-  "return-declined": "Return declined",
-  "return-refunded": "Return refunded",
-  "back-in-stock": "Back in stock",
-  "news-welcome": "Newsletter welcome",
-  "staff-new-order": "Staff: a new order",
-  "staff-return": "Staff: a return asked",
-  "staff-enquiry": "Staff: a message",
-};
+/** The outbox's kinds, as the E-mails page names them: `outbox.ts` says what sends each. */
+export const EMAIL_KINDS: Record<string, string> = KIND_NAMES;
 
 // ── the tables ──────────────────────────────────────────────────────────────
 
@@ -1120,6 +1103,7 @@ export const TABLES: Table[] = [
       fk("enquiry_id", "enquiries", "Message", opt),
       fk("customer_id", "customers", "Customer", opt),
       fk("request_id", "restock_requests", "Back-in-stock request", opt),
+      fk("signup_id", "news_signups", "Newsletter sign-up", opt),
       at("due", "Due", opt),
       at("created_at", "Created", { ...opt, rules: stamp("now", onCreate) }),
       at("sent_at", "Sent", opt),
