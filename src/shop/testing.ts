@@ -11,6 +11,7 @@
  * Tests only; nothing that ships imports it.
  */
 import data from "../sample/northline-data.json";
+import { fakeAfter, type FakeAfter } from "./after-testing.ts";
 import {
   ShopError,
   type Id,
@@ -31,6 +32,7 @@ import {
   type Row,
   type ShopBase,
   type ShopConfig,
+  type ShopFeatures,
   type ShopPayments,
   type ShopPort,
   type StockWord,
@@ -183,6 +185,10 @@ export interface FakePort extends ShopPort {
   restocks: Id[];
   signups: string[];
   enquiries: Row[];
+  /** Which add-ons the shop has; all on unless a test turns one off. */
+  featureSet: ShopFeatures;
+  /** The after-order door's stand-in. */
+  afterFake: FakeAfter;
 }
 
 const EST: Record<string, [string, string]> = { standard: ["2026-08-21", "2026-08-25"], express: ["2026-08-20", "2026-08-20"], overnight: ["2026-08-19", "2026-08-19"] };
@@ -324,8 +330,13 @@ export function fakePort(): FakePort {
     return { products: page.map(({ world: _w, ...p }) => p), next: from + limit < rows.length ? String(from + limit) : null, count: from === 0 ? { rows: rows.length, atLeast: false } : null };
   };
 
+  const afterFake = fakeAfter();
   const port: FakePort = {
     world,
+    featureSet: { forms: true, offers: true, inventory: true },
+    afterFake,
+    features: () => ({ ...port.featureSet }),
+    after: () => afterFake,
     calls,
     offer: { online: true, test: false },
     signedIn: false,

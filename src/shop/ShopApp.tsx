@@ -19,7 +19,7 @@ import { HomeScreen } from "./screens/Home.tsx";
 import { ProductScreen } from "./screens/Product.tsx";
 import { ShopScreen } from "./screens/Shop.tsx";
 import { CheckoutScreen } from "./screens/Checkout.tsx";
-import { AccountScreen, FindScreen, OrderReturnScreen, OrderScreen, SignInScreen } from "./screens/After.tsx";
+import { AccountScreen, FindScreen, OrderReturnScreen, OrderScreen, SignInScreen, SignInSheet } from "./screens/After.tsx";
 import { AboutScreen, GiftBalanceScreen, GiftCardsScreen, HelpContactScreen, HelpShippingScreen, HelpSizesScreen, MissingScreen, NewsBox, NewsThanksScreen, PrivacyScreen, TermsScreen } from "./screens/Pages.tsx";
 
 function Screen({ view }: { view: ShopView }): ReactNode {
@@ -432,6 +432,7 @@ export default function ShopApp() {
       {loading === "loading" ? <Loading /> : loading === "failed" ? <Failed /> : <Screen view={view} />}
       {!checkout && <Footer />}
       <BasketDrawer />
+      <SignInSheet />
       <Toasts />
     </div>
   );

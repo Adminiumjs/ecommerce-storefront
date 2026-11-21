@@ -15,6 +15,8 @@
  */
 import { createPublicClient, pictureUrl, PublicApiError, type HeldSession, type ListOptions, type PublicClient, type PublicConfig, type PublicFilter } from "@adminiumjs/public-client";
 
+import { AdminiumAfter } from "./after-door.ts";
+import type { AfterPort } from "./after-port.ts";
 import { ADD_ON_REFS, KEYS, linkRefs, shopRefs, type LinkRefs, type ShopRefs } from "./refs.ts";
 import {
   ShopError,
@@ -40,6 +42,7 @@ import {
   type Row,
   type ShopBase,
   type ShopConfig,
+  type ShopFeatures,
   type ShopPayments,
   type ShopPort,
   type ShopSettings,
@@ -58,6 +61,8 @@ export interface ShopServed {
   settings?: Record<string, unknown>;
   /** The write token of someone who manages payments, rehearsing the checkout here. Absent for anyone else. */
   rehearsalToken?: string;
+  /** The add-ons installed for the app, as `surface-config.json` lists them. */
+  addOns?: Record<string, { present?: boolean }>;
 }
 
 export interface ShopDoorOptions {
@@ -323,6 +328,7 @@ export class AdminiumShop implements ShopPort {
   /** The order's own link key: the session a link opens is held here. Null where Adminium serves none. */
   readonly linkClient: PublicClient | null;
   private config$: Promise<PublicConfig> | null = null;
+  private afterDoor: AfterPort | null = null;
 
   constructor(served: ShopServed, options: ShopDoorOptions = {}) {
     this.served = served;
@@ -584,6 +590,16 @@ export class AdminiumShop implements ShopPort {
     return answer(async () => {
       await this.client.create(this.refs.enquiries, { ...values, client_key: clientKey });
     });
+  }
+
+  features(): ShopFeatures {
+    const on = (key: string) => this.served.addOns?.[key]?.present === true;
+    return { forms: on("forms"), offers: on("offers"), inventory: on("inventory") };
+  }
+
+  after(): AfterPort {
+    this.afterDoor ??= new AdminiumAfter(this);
+    return this.afterDoor;
   }
 
   giftCard(code: string): Promise<{ balance: string; status: string; expiresOn: string | null } | null> {

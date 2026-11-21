@@ -74,6 +74,8 @@ export interface Customer {
   name: string;
   email: string;
   news: boolean;
+  /** Where their newest proved, not-cancelled order went: checkout fills it in (ACC-7). */
+  address?: { shipName: string; line1: string; line2: string; city: string; zip: string; regionId: Id | null } | null;
 }
 
 export interface Listing {
@@ -132,6 +134,8 @@ export interface ShopState {
 
   // ── everywhere ──
   customer: Customer | null;
+  /** The sign-in sheet over a screen (the checkout's "Sign in for a faster checkout"); it stays on that screen once signed in. */
+  signInSheet: boolean;
   toasts: Toast[];
   announce: string;
 }
@@ -196,6 +200,7 @@ function initial(): Omit<ShopState, "port"> {
     basketNote: null,
     clientKey: kept.clientKey ?? newClientKey(),
     customer: null,
+    signInSheet: false,
     toasts: [],
     announce: "",
   };
@@ -790,6 +795,11 @@ export function unavailable(quote: Quote | null): boolean {
 /** Pieces in the basket, for the header's badge. */
 export function basketPieces(s: Pick<ShopState, "basket" | "gifts">): number {
   return s.basket.reduce((n, l) => n + l.qty, 0) + s.gifts.length;
+}
+
+/** Open the sign-in as a sheet over this screen. */
+export function openSignIn(open = true): void {
+  set({ signInSheet: open });
 }
 
 export function openDrawer(open = true): void {

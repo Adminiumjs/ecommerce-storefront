@@ -7,6 +7,8 @@
  * estimated. Money stays the decimal Adminium sent ("189.00", or 189) until it
  * is formatted.
  */
+import type { AfterPort } from "./after-port.ts";
+
 export type Id = string | number;
 export type Row = Record<string, unknown>;
 
@@ -374,4 +376,15 @@ export interface ShopPort {
   enquiry(values: Row, clientKey: string): Promise<void>;
   /** A gift card's balance by its code; null when no card answers to it. */
   giftCard(code: string): Promise<{ balance: string; status: string; expiresOn: string | null } | null>;
+  /** Which of the shop's add-ons are installed and on for it, as Adminium serves them. */
+  features(): ShopFeatures;
+  /** The pages after an order: signing in, an order by its link, the account, returns and reviews. */
+  after(): AfterPort;
+}
+
+/** The add-ons the shop's pages change with: Forms makes the newsletter's confirm mail, Offers the codes and gift cards, Inventory the stock words. */
+export interface ShopFeatures {
+  forms: boolean;
+  offers: boolean;
+  inventory: boolean;
 }
