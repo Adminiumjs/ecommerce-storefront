@@ -837,7 +837,8 @@ export const TABLES: Table[] = [
         into: { addOn: "offers", ledger: "value", action: "recall" },
         needs: "gift-cards",
         via: "order_id",
-        post: { on: { to: ["cancelled"], from: ["paid", "sent"] } },
+        // Every cancel of a card already live: a packed order is refunded in full too.
+        post: { on: { to: ["cancelled"], from: ["paid", "packed", "sent"] } },
         map: { sale: { row: true } },
       },
     ],

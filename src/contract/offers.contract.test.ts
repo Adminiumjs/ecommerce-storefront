@@ -19,12 +19,14 @@
  *     ships-by dated from the card's payment;
  *   - an e-gift card sold online: made inactive with the order, active and
  *     mailed to its recipient when it is paid, void when the order is not
- *     paid in time; a paid gift order cancelled by the owner calls its card
- *     back, and is refused once the card is spent.
+ *     paid in time; a paid or packed order cancelled by the owner calls its
+ *     card back, and is refused once the card is spent.
  *
  * It runs with `CONTRACT=1` where a built Adminium and a built add-ons
  * checkout are, and says why it skipped otherwise.
  */
+import { randomBytes } from "node:crypto";
+
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { Caller, ENGINES, missing, missingAddOn, ok, PORTS_PER_ENGINE, until, type Engine } from "./harness.ts";
@@ -257,6 +259,53 @@ describe.skipIf(why !== null)(`codes and gift cards at Northline's checkout${why
         expect((await stand.row("orders", spent.body.data["id"]))["status"]).toBe("sent");
         expect((await cardOfLine(spent.body.data["id"]))["status"]).toBe("active");
       }, 240_000);
+
+      it("calls a card back when the Owner cancels its packed order, and refuses once the card is spent", async () => {
+        const roles = ok(await stand.staff.get<{ roles: { id: string; name: string; key?: string }[] }>("/api/v1/roles")).roles;
+        const role = roles.find((r) => /owner/i.test(r.name) || /owner/i.test(r.key ?? ""))!;
+        const email = `olga.${engine}@northline-staff.dev`;
+        const invited = ok(await stand.staff.post<{ invite: { token: string } }>("/api/v1/users", { email, name: "Olga", roleIds: [role.id] }), 201);
+        const password = `${randomBytes(18).toString("base64url")}Aa1!`;
+        ok(await new Caller(stand.server.base, { origin: stand.server.base }).post("/api/v1/auth/password/reset", { token: invited.invite.token, newPassword: password }));
+        const owner = new Caller(stand.server.base, { origin: stand.server.base });
+        await owner.signInToScreens(email, password);
+        const orderPath = (id: unknown) => `${stand.data("orders")}/${String(id)}`;
+        /** A mug and a $50 card, paid online and packed by the Owner. */
+        const packedWithCard = async (who: string, to: string): Promise<{ id: unknown; card: Row }> => {
+          const sold = await place(paying, goods(), goodsOrder(shop, guest(who), "OR", "standard", [["NL-MUG-MOS", 1]], { gifts: [{ amount_id: shop.giftAmount(50)["id"], to_name: to, to_email: mail(to) }] }));
+          expect(sold.status, JSON.stringify(sold.body).slice(0, 600)).toBe(201);
+          const id = sold.body.data["id"];
+          await stand.payDemo(sold.body.payUrl!);
+          await until$(id, "paid");
+          const card = await cardOfLine(id);
+          expect([card["status"], money(card["balance"])]).toEqual(["active", "50.00"]);
+          const packed = await owner.patch(orderPath(id), { values: { status: "packed" } });
+          expect(packed.status, JSON.stringify(packed.body).slice(0, 600)).toBe(200);
+          return { id, card };
+        };
+
+        const recalled = await packedWithCard("uma", "vera");
+        const cancelled = await owner.patch(orderPath(recalled.id), { values: { status: "cancelled", cancel_reason: "asked" } });
+        expect(cancelled.status, JSON.stringify(cancelled.body).slice(0, 600)).toBe(200);
+        await until(async () => {
+          const row = await stand.row("orders", recalled.id);
+          return num(row["refunded"]) > 0 ? row : undefined;
+        }, "the automatic refund", 90_000);
+        const voided = await cardOfLine(recalled.id);
+        expect(voided["status"]).toBe("void");
+        const respent = await place(paying, goods(), goodsOrder(shop, guest("wes"), "OR", "standard", [["NL-MUG-MOS", 1]], { card: String(voided["code"]) }));
+        expect([respent.status, respent.code], JSON.stringify(respent.body).slice(0, 400)).toEqual([409, "PUBLIC_CARD_REFUSED"]);
+
+        // Spent in part while the order sat packed: the cancel is refused, nothing goes back, and the order stays packed.
+        const held = await packedWithCard("xan", "yuri");
+        const used = await place(paying, goods(), goodsOrder(shop, guest("zoe"), "OR", "standard", [["NL-MUG-MOS", 1]], { card: String(held.card["code"]) }));
+        expect(used.status, JSON.stringify(used.body).slice(0, 400)).toBe(201);
+        const refused = await owner.patch(orderPath(held.id), { values: { status: "cancelled", cancel_reason: "asked" } });
+        expect(refused.status, JSON.stringify(refused.body).slice(0, 600)).toBe(409);
+        const kept = await stand.row("orders", held.id);
+        expect([kept["status"], money(kept["refunded"])]).toEqual(["packed", "0.00"]);
+        expect((await cardOfLine(held.id))["status"]).toBe("active");
+      }, 300_000);
     });
   });
 });
