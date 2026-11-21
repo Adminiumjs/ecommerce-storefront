@@ -1,156 +1,89 @@
-# Ecommerce Storefront
+# Online Shop
 
-> **This app will be reworked in Q4 2026.** Until then it is kept as it is and may not show what
-> the newest Adminium can do.
+An online shop and its desk, installed into [Adminium](https://adminium.dev). Shoppers
+browse by size and colour, see what is in stock, pay on a secure page and follow their
+order; the desk packs, ships and takes returns. Adminium decides every price, discount,
+shipping charge, sales tax, total, order number, stock answer, date and status — the
+pages only ask.
 
-A complete, production-shaped e-commerce storefront — built with Vite + React +
-TypeScript, no CSS framework, no backend required. It's the example app that
-ships with [Adminium](https://adminium.dev): browse a catalog, configure product
-variants, personalize items, run a cart with promo codes and a 4-step checkout,
-and place a (demo) order — all from built-in demo data.
+The demo is dressed as **Northline**, a fictional outdoor-gear shop in Portland, Oregon,
+that sells shells, packs, boots and camp kit in 20 products and 83 size-and-colour
+variants. Its clock stands at **Tuesday 18 August 2026, 11:40** — before the two o'clock
+cut-off — and the shop ships Monday to Friday.
 
-**Live demo → [adminium.dev/demo/ecommerce-storefront](https://adminium.dev/demo/ecommerce-storefront)**
+## What it needs
 
-## Highlights
+- Adminium **0.3.70** or later, on SQLite, Postgres or MySQL.
+- Nothing else is required: browsing, ordering, paying, packing and shipping work on
+  Adminium alone. Eight add-ons are offered at install, four of them ticked:
+  - **Inventory** (ticked) — counts each size and colour, holds what is ordered until it
+    is packed, and tells shoppers "Only 3 left" and "Sold out". Without it every variant
+    sells, and the desk marks one "Sold out" by hand.
+  - **Offers & gift cards** (ticked) — discount codes and gift cards at checkout, and
+    e-gift cards sold online.
+  - **Invoices & Receipts** (ticked) — the customer's receipt, and packing slips for a
+    day's orders printed as one job.
+  - **Forms & surveys** (ticked) — reviews from customers who bought (published by the
+    shop), and a confirmation e-mail for newsletter sign-ups.
+  - **Shipping (DHL)** — the dispatch flow on the desk. **This release, DHL is a demo
+    carrier:** it books nothing real, and a real shop types the carrier and the tracking
+    number on the order.
+  - **Barcode labels** — SKU labels for the stockroom.
+  - **Live chat** and **Landing pages** — a chat window on the shop; landing pages for a
+    season or a sale.
 
-- **State-based routing** (no router) — a single `view` value drives the whole
-  app: home, listing, product, cart, checkout, confirmation, and account.
-- **Real commerce logic** — a variant matrix with cross-option disabling and
-  out-of-stock overlays, composite cart line-items (options + engraving +
-  bundle), `WELCOME10` promo, free-shipping progress, tax, and shipping tiers.
-- **Light / dark themes** via CSS custom properties, persisted to `localStorage`.
-- **Real product photography** — every product, and the home hero, renders a
-  real photo (`object-fit: cover`, lazy-loaded, with the product tint showing
-  behind it while it loads). Self-hosted Manrope + JetBrains Mono and tree-shaken
-  `lucide-react` icons round out the visuals.
-- **No payment integration** — the checkout's card field only *mimics* Stripe
-  Elements. Nothing is ever charged.
+## What it does
 
-## Local development
+**For shoppers** (the app's customer side): the home page, the shop with filters by
+category, colour, size, price and "in stock only", search and sort; a product's page with
+its colours and sizes (a combination that is not made says so), its stock and its own
+price; the basket and the checkout (US addresses in the 50 states and DC, each delivery
+service priced for the state, sales tax for the state); paying on Adminium's pay page, or
+by bank transfer while the shop takes no payments online; the order's own page by its
+private link, with cancel while it is not packed; signing in by a code e-mailed to the
+customer, their orders and returns; sending something back within 30 days; a review of
+what they bought; e-gift cards; "Tell me when it's back" on a sold-out size; the help
+pages, the newsletter box with its consent tick, never ticked for the shopper.
 
-```bash
-npm install
-npm run dev
-```
+**For the shop** (the app's staff side, the desk): Today, Orders, one order with the
+payment panel, Packing (a pick list by SKU, packing slips, packed and shipped), Returns,
+Products with their variants grid and stock, Reviews, Customers and Settings. Two roles:
+**owner** (everything, refunds, recording a bank transfer) and **packer** (packing,
+shipping and receiving returns; never money, never a customer's e-mail address).
 
-Then open the URL Vite prints (default http://localhost:5173).
+**In Adminium's console** (the Online shop section): the Overview, every record, and the
+shop's price lists: shipping services and prices, states with their sales tax, closures,
+size guides and gift card amounts.
 
-## Deploy
+## The rules Adminium keeps
 
-[![Deploy to Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Adminiumjs/ecommerce-storefront&project-name=ecommerce-storefront&repository-name=ecommerce-storefront)
-&nbsp;
-[![Deploy to DigitalOcean](https://www.deploytodo.com/do-btn-blue.svg)](https://cloud.digitalocean.com/apps/new?repo=https://github.com/Adminiumjs/ecommerce-storefront/tree/main)
+- An order's lines copy each variant's price, SKU and names when it is placed; a code's
+  reduction is Offers & gift cards' answer; shipping is the service's price for the zone,
+  nothing from its "free from" figure up; sales tax is the state's rate on the goods after
+  reductions, worked out once for the order, never on shipping.
+- Order numbers run without gaps from the settings' prefix and first number (`NL-1067`).
+- An order paid online waits 30 minutes for its payment, its stock held, then cancels
+  itself; a bank-transfer order waits five shipping days. A paid order keeps its stock for
+  45 days from placing, until it is packed.
+- A paid order ships the same day if it was paid before two o'clock on a shipping day, else
+  the next; its arrival window counts the service's shipping days from then, skipping the
+  shop's closures.
+- A return takes back no more pieces than were bought less what other returns hold; its
+  refund is what the customer paid for those pieces, their share of reductions and tax
+  included, never the shipping unless the shop says the piece was faulty.
 
-- **Vercel** — click the button above, or import the repo. Build command
-  `npm run build`, output `dist`.
-- **DigitalOcean App Platform** — click the button above, or use the included
-  [`.do/deploy.template.yaml`](.do/deploy.template.yaml).
-- **Host anywhere** — `npm run build` produces a fully static `dist/` you can
-  drop on any static host (Netlify, Cloudflare Pages, S3, GitHub Pages…). Or
-  build the container:
-
-  ```bash
-  docker build -t ecommerce-storefront .
-  docker run -p 8080:80 ecommerce-storefront
-  ```
-
-### Build scripts
-
-| Script              | What it does                                                           |
-| ------------------- | ---------------------------------------------------------------------- |
-| `npm run dev`       | Start the Vite dev server.                                             |
-| `npm run build`     | Type-check + build to `dist/` at base `/` (root deploys).              |
-| `npm run build:demo`| Build to `dist/` at base `/demo/ecommerce-storefront/` (Adminium demo).|
-| `npm run preview`   | Preview a production build locally.                                    |
-
-## Full implementation (self-host)
-
-There are two tiers to running this store.
-
-**Tier 1 — the frontend, one click.** The Vercel / DigitalOcean buttons above
-deploy the storefront on its own, running on the bundled demo catalog (now with
-real product images). No database, no admin — a fully static preview.
-
-**Tier 2 — the whole stack, one command.** [`docker-compose.yml`](docker-compose.yml)
-stands up Postgres (seeded by default with the *same* catalog, prices, and
-images), an auto-generated Adminium admin dashboard that manages the catalog and
-orders on that real database, and the storefront:
+## Building it
 
 ```bash
-cp .env.example .env      # then set ADMINIUM_SECRET — e.g. openssl rand -hex 32
-docker compose up
-```
-
-- **Storefront** → http://localhost:8080
-- **Adminium admin dashboard** → http://localhost:4600
-
-On first boot, `shop-db` applies [`db/schema.sql`](db/schema.sql), installs the
-demo bookkeeping from [`db/demo-toolkit.sql`](db/demo-toolkit.sql), and then runs
-[`db/init-demo.sh`](db/init-demo.sh), which loads [`db/seed.sql`](db/seed.sql)
-unless you set `DEMO_DATA=0`. Adminium imports the shop database as its first
-source connection, introspects the schema, and generates the admin dashboard.
-Finish the ~1-minute first-run wizard at `:4600` — it's pre-pointed at the shop
-DB. With the demo data loaded, the storefront and the dashboard are the **same
-shop**: the 16 products, their prices, and their images match one-for-one. The
-install spec Adminium reads to configure itself is [`manifest.json`](manifest.json).
-
-### Demo data
-
-The shop arrives stocked — the 16 products, their categories, the customers and
-the order history all come from `db/seed.sql`. To start with an empty shop
-instead, same schema and no rows, set `DEMO_DATA=0` in `.env` before the first
-`docker compose up`. Neither choice is permanent: the demo rows can be loaded
-and removed again whenever you like.
-
-| Script                | What it does                                          |
-| --------------------- | ----------------------------------------------------- |
-| `npm run demo:status` | What is loaded right now, table by table.             |
-| `npm run demo:import` | Load `db/seed.sql`.                                   |
-| `npm run demo:wipe`   | Remove the demo rows — schema and your own rows stay. |
-| `npm run demo:reset`  | Wipe, then import a fresh copy.                       |
-
-A wipe deletes only the rows a ledger attributes to the seed, so the products
-and orders you added yourself, and the tables themselves, survive it. A demo
-row your own data depends on is kept rather than force-deleted, and reported
-under `kept`. `ON DELETE CASCADE` still applies, though: a demo order takes
-its line items with it, including one you added yourself, and those are
-counted separately as `cascaded`. `wipe` and `reset` ask before they act;
-`npm run demo:wipe -- --yes` skips the question, which is what you need in a
-script — without a terminal it fails rather than asking. Setting
-`DATABASE_URL` points all four commands at a Postgres somewhere else — Neon,
-Supabase, RDS — instead of the `shop-db` container.
-[`db/README.md`](db/README.md) has the rest.
-
-## Connecting to Adminium
-
-All catalog access goes through a thin `DataSource` interface
-([`src/data/source.ts`](src/data/source.ts)) with a single `demoSource`
-implementation backed by the bundled catalog. Once Adminium's browser-safe
-**publishable key** ships, the frontend will read **live** data — your real
-products, orders, and reviews from the database above — through the Adminium
-records API via a second `DataSource` implementation, without touching any of the
-screens or the store. The seam is already in place.
-
-## Project structure
-
-```
-src/
-  app/         App shell + view switch
-  state/       Zustand store (cart engine, filters, checkout, theme)
-  data/        demo catalog, types, DataSource seam
-  lib/         pricing, ratings, placeholders, formatting
-  screens/     Home · Listing · Product · Cart · Checkout · Confirm · Account · NotFound
-  components/  Header, Footer, ProductCard, CartDrawer, OptionPicker, modals, …
-  styles/      tokens.css (design tokens) + base.css (fonts, utilities)
-public/fonts/  self-hosted Manrope + JetBrains Mono (woff2)
-db/            schema, demo seed + the demo-data toolkit (see db/README.md)
+npm ci
+npm test               # the unit suite
+npm run manifest       # write manifest.json from src/manifest/
+npm run sample         # write the sample files from src/sample/
+npm run build:surface  # both hosted sides
+npm run contract       # the contracts, against a built Adminium (see src/contract/)
 ```
 
 ## License
 
-[AGPL-3.0](LICENSE) © 2026 Ecommerce Storefront. A demo shipped with Adminium.
-
-## Building on this app with a coding agent
-
-The Adminium skills teach Claude Code, Codex and other agents to build and change an app:
-`npx skills add Adminiumjs/skills` — https://github.com/Adminiumjs/skills
+[AGPL-3.0](LICENSE) © 2026. An example app for Adminium. The sample's catalogue, people,
+orders and the shop itself are made up.

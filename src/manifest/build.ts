@@ -10,6 +10,8 @@
  */
 import { ADD_ONS } from "./add-ons.ts";
 import { AUTOMATIONS } from "./automations.ts";
+import { emailTemplates } from "./emails.ts";
+import { OUTBOX } from "./outbox.ts";
 import { NAV_GROUPS, pages } from "./pages.ts";
 import { PAYMENTS } from "./payments.ts";
 import { PEOPLE } from "./people.ts";
@@ -96,6 +98,8 @@ export function buildManifest(): Record<string, unknown> {
     people: PEOPLE,
     payments: PAYMENTS,
     automations: AUTOMATIONS,
+    outbox: OUTBOX,
+    emailTemplates: emailTemplates(),
     // Northline's Tuesday: the shop's own rows, and the stock items, links and opening stock Inventory adds.
     sampleData: { file: "seeds/ecommerce-shop.sample.json", addOns: { inventory: { file: "seeds/ecommerce-shop.inventory.sample.json" } } },
   };

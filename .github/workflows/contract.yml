@@ -1,14 +1,16 @@
 # SPDX-License-Identifier: AGPL-3.0-only
 #
-# Maker Shop's own checks, beside `ci.yml` (the fleet's synced workflow: the
+# Northline's own checks, beside `ci.yml` (the fleet's synced workflow: the
 # build, the unit suite, the manifest; never hand-edited).
 #
 #   the contract   `src/contract/`: this repo's manifest and sample installed,
-#                  with the Customiser, on a BUILT Adminium on SQLite,
-#                  Postgres 16 and MySQL 8.4 — a shopper's order and what
-#                  follows it, the studio's bench and its batches, every
-#                  e-mail sent to the SMTP sink, and the rework installed into
-#                  a database still holding the old example's tables. It skips
+#                  with Inventory, Offers & gift cards, Invoices & Receipts and
+#                  Forms & surveys, on a BUILT Adminium on SQLite, Postgres 16
+#                  and MySQL 8.4 — a shopper's order and what follows it, the
+#                  stock and code races, payments, returns, reviews, the
+#                  desk's roles, every e-mail sent to the SMTP sink, and the
+#                  rework installed into a database still holding the old
+#                  example's tables. It skips
 #                  without the checkouts; here `ADMINIUM_REQUIRE_CONTRACT=1`
 #                  makes a skip a failure, so it cannot go quietly green.
 #   the builds     both hosted sides and the website's demo (`demo.json`).
@@ -27,8 +29,8 @@ on:
 
 env:
   # The Adminium release the contract runs on, and the add-ons release the app asks for.
-  ADMINIUM_REF: v0.3.62
-  ADD_ONS_REF: v1.0.26
+  ADMINIUM_REF: v0.3.70
+  ADD_ONS_REF: v1.0.33
 
 jobs:
   contract:
@@ -90,14 +92,13 @@ jobs:
           pnpm install --frozen-lockfile
           pnpm turbo run build --filter="@adminium/e2e..."
 
-      # The add-ons the contract installs: the Customiser, which the app
-      # requires, and Invoices & Receipts, which draws an order's receipt.
-      - name: Build the Customiser and Invoices
+      # The add-ons the contract installs: the four the shop ticks at install,
+      # and DHL and Barcode labels, which the desk mounts.
+      - name: Build the add-ons the shop names
         run: |
           cd .add-ons
           npm ci
-          npm run build -w packages/customiser
-          npm run build -w packages/invoices
+          for key in inventory offers invoices forms shipping-dhl barcode-labels; do npm run build -w "packages/$key"; done
 
       - name: Move the checkouts out of the workspace
         run: |
