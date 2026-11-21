@@ -354,7 +354,8 @@ export class AdminiumShop implements ShopPort {
     if (client === null) throw new Error("The shop's key could not be used.");
     this.client = client;
     const linkKey = served.publicKeys?.[KEYS.link];
-    this.linkClient = linkKey === undefined ? null : make(linkKey, false, KEYS.link);
+    // Starting a payment always owes a visitor's key the human check, so this key must be able to answer it.
+    this.linkClient = linkKey === undefined ? null : make(linkKey, options.humanCheck ?? {}, KEYS.link);
   }
 
   private clientConfig(): Promise<PublicConfig> {

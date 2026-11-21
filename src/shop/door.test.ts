@@ -105,6 +105,24 @@ describe("stock words", () => {
   });
 });
 
+describe("starting a payment", () => {
+  it("answers the human check through the order's own link", async () => {
+    const sent: { path: string; proof: string | null; key: string | null }[] = [];
+    const fetchImpl = (async (input: RequestInfo | URL, init: RequestInit = {}) => {
+      const path = new URL(String(input)).pathname;
+      const headers = new Headers(init.headers);
+      sent.push({ path, proof: headers.get("x-adminium-proof"), key: headers.get("authorization") });
+      const body = path.endsWith("/public/challenge") ? { data: { id: "c1", salt: "0011", difficulty: 1 } } : { data: { payUrl: "/pay/one" } };
+      return new Response(JSON.stringify(body), { status: 200, headers: { "content-type": "application/json" } });
+    }) as typeof fetch;
+    const shop = new AdminiumShop({ baseUrl: "https://shop.example", publishableKey: "pk_shop", publicKeys: { link: "pk_link" }, addOns: { forms: { present: true }, offers: { present: true } } }, { fetch: fetchImpl });
+    expect(await shop.payments().start("link", 7)).toBe("/pay/one");
+    const start = sent.find((s) => s.path.endsWith("/public/payments/start"));
+    expect(start?.key).toBe("Bearer pk_link");
+    expect(start?.proof).toMatch(/^c1\./);
+  });
+});
+
 describe("pricing and placing an order", () => {
   const body = { values: { region_id: 48, offer_id: 1 }, children: { order_lines: [{ values: { variant_id: 7, qty: 1 } }], order_codes: [{ values: { typed: "TRAIL15" } }] } };
 
