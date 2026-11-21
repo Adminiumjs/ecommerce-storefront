@@ -2,3 +2,8 @@
 export function CheckoutScreen() {
   return <main id="main" className="nl-page" />;
 }
+
+/** Back from the pay page on the order's address: the paying states, then the confirmation. Shown when `heldCheckout()`. */
+export function PayReturn() {
+  return null;
+}
