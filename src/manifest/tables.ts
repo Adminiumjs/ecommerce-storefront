@@ -617,7 +617,8 @@ export const TABLES: Table[] = [
         // A gift card sold: cancelled only by the owner, and only while it is unspent (Offers' recall refuses otherwise).
         sent: [{ to: "cancelled", roles: ["owner"], requires: { where: [{ column: "cancel_reason", isNull: false }] } }],
       },
-      lock: { when: ["shipped", "sent", "cancelled"], except: ["link_stopped", "staff_note", "tracking", "carrier"] },
+      // The owner's cancel of a sent gift order names its reason in the same save as the move.
+      lock: { when: ["shipped", "sent", "cancelled"], except: ["link_stopped", "staff_note", "tracking", "carrier", "cancel_reason"] },
       children: {
         order_lines: { via: "order_id", lock: true },
         gift_lines: { via: "order_id", lock: true },
@@ -710,10 +711,11 @@ export const TABLES: Table[] = [
       at("stock_until", "Stock held until", { ...opt, rules: stamp({ addMinutes: { hours: 45 * 24 } }, onCreate) }),
       at("paid_at", "Paid at", { ...opt, rules: { rollup: { from: "payments", via: "order_id", latest: { of: "paid_at", by: "paid_at" } } } }),
       // When it ships and arrives, worked out from the payment: the same day before the cut-off, else the next shipping day.
-      date("ships_by", "Ships by", { ...opt, rules: stamp(shipDays("paid_at", 0), { columns: ["paid_at"] }) }),
+      // (And on the move to paid: an order a gift card pays in full has its payment in the create, before the move.)
+      date("ships_by", "Ships by", { ...opt, rules: stamp(shipDays("paid_at", 0), [{ columns: ["paid_at"] }, onState("status", "paid")]) }),
       // (They watch the payment too: the payment's total moves `paid_at` alone, and works out only the stamps that watch it.)
-      date("arrives_from", "Arrives from", { ...opt, rules: stamp(shipDays("ships_by", "transit_min"), { columns: ["paid_at", "ships_by", "transit_min"] }) }),
-      date("arrives_to", "Arrives by", { ...opt, rules: stamp(shipDays("ships_by", "transit_max"), { columns: ["paid_at", "ships_by", "transit_max"] }) }),
+      date("arrives_from", "Arrives from", { ...opt, rules: stamp(shipDays("ships_by", "transit_min"), [{ columns: ["paid_at", "ships_by", "transit_min"] }, onState("status", "paid")]) }),
+      date("arrives_to", "Arrives by", { ...opt, rules: stamp(shipDays("ships_by", "transit_max"), [{ columns: ["paid_at", "ships_by", "transit_max"] }, onState("status", "paid")]) }),
       // The same, as told before paying: "if you pay now".
       date("est_ships_by", "Ships by, if paid now", { ...opt, rules: stamp(shipDays("placed_at", 0), { columns: ["placed_at"] }) }),
       date("est_from", "Arrives from, if paid now", { ...opt, rules: stamp(shipDays("est_ships_by", "transit_min"), { columns: ["est_ships_by", "transit_min"] }) }),
@@ -823,8 +825,9 @@ export const TABLES: Table[] = [
         needs: "gift-cards",
         via: "order_id",
         reserve: { on: { create: true } },
-        post: { on: { column: "paid_at", set: true } },
-        reverse: { on: { column: "cancelled_at", set: true } },
+        // On the order's own moves: its `paid_at` is a total of its payments, which moves no posting of a line.
+        post: { on: { to: ["paid"] } },
+        reverse: { on: { to: ["cancelled"], from: ["paying", "awaiting_transfer"] } },
         map: { amount: "load_amount", to_name: "to_name", to_email: "to_email", message: "message", sender: "sender", language: "language" },
       },
       {
@@ -832,7 +835,7 @@ export const TABLES: Table[] = [
         into: { addOn: "offers", ledger: "value", action: "recall" },
         needs: "gift-cards",
         via: "order_id",
-        post: { on: { column: "cancelled_at", set: true } },
+        post: { on: { to: ["cancelled"], from: ["paid", "sent"] } },
         map: { sale: { row: true } },
       },
     ],

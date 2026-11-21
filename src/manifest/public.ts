@@ -356,6 +356,9 @@ export const PUBLIC_ACCESS = [
     writable: ["order_id", "reason", "note", "tracking"],
     requires: ["order_id", "reason"],
   },
+  // A returned piece names its variant (copied from its line, for Inventory's "back in stock"): every key that makes
+  // one reads the variants it may name, on sale or not. Only what a returns page shows of one.
+  { table: "variants", key: LINK_KEY, methods: ["GET"], select: ["id", "product_id", "sku", "colour_label", "size_label"], filterable: [{ column: "id", ops: ["eq", "in"] }] },
   {
     table: "return_lines",
     key: LINK_KEY,

@@ -2423,7 +2423,8 @@
               "link_stopped",
               "staff_note",
               "tracking",
-              "carrier"
+              "carrier",
+              "cancel_reason"
             ]
           },
           "children": {
@@ -3410,11 +3411,19 @@
                     }
                   }
                 },
-                "on": {
-                  "columns": [
-                    "paid_at"
-                  ]
-                }
+                "on": [
+                  {
+                    "columns": [
+                      "paid_at"
+                    ]
+                  },
+                  {
+                    "column": "status",
+                    "values": [
+                      "paid"
+                    ]
+                  }
+                ]
               }
             }
           },
@@ -3441,13 +3450,21 @@
                     }
                   }
                 },
-                "on": {
-                  "columns": [
-                    "paid_at",
-                    "ships_by",
-                    "transit_min"
-                  ]
-                }
+                "on": [
+                  {
+                    "columns": [
+                      "paid_at",
+                      "ships_by",
+                      "transit_min"
+                    ]
+                  },
+                  {
+                    "column": "status",
+                    "values": [
+                      "paid"
+                    ]
+                  }
+                ]
               }
             }
           },
@@ -3474,13 +3491,21 @@
                     }
                   }
                 },
-                "on": {
-                  "columns": [
-                    "paid_at",
-                    "ships_by",
-                    "transit_max"
-                  ]
-                }
+                "on": [
+                  {
+                    "columns": [
+                      "paid_at",
+                      "ships_by",
+                      "transit_max"
+                    ]
+                  },
+                  {
+                    "column": "status",
+                    "values": [
+                      "paid"
+                    ]
+                  }
+                ]
               }
             }
           },
@@ -4247,14 +4272,20 @@
             },
             "post": {
               "on": {
-                "column": "paid_at",
-                "set": true
+                "to": [
+                  "paid"
+                ]
               }
             },
             "reverse": {
               "on": {
-                "column": "cancelled_at",
-                "set": true
+                "to": [
+                  "cancelled"
+                ],
+                "from": [
+                  "paying",
+                  "awaiting_transfer"
+                ]
               }
             },
             "map": {
@@ -4277,8 +4308,13 @@
             "via": "order_id",
             "post": {
               "on": {
-                "column": "cancelled_at",
-                "set": true
+                "to": [
+                  "cancelled"
+                ],
+                "from": [
+                  "paid",
+                  "sent"
+                ]
               }
             },
             "map": {
@@ -11284,6 +11320,29 @@
       "requires": [
         "order_id",
         "reason"
+      ]
+    },
+    {
+      "table": "variants",
+      "key": "link",
+      "methods": [
+        "GET"
+      ],
+      "select": [
+        "id",
+        "product_id",
+        "sku",
+        "colour_label",
+        "size_label"
+      ],
+      "filterable": [
+        {
+          "column": "id",
+          "ops": [
+            "eq",
+            "in"
+          ]
+        }
       ]
     },
     {
