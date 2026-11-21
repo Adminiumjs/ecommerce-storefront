@@ -17,16 +17,33 @@
  */
 import type { Translated } from "../untranslated.ts";
 import { LOCALE_TAGS, type LocaleTag } from "../locales.ts";
+import { after } from "../strings/after.ts";
 import { chrome } from "../strings/chrome.ts";
 import { desk } from "../strings/desk.ts";
+import { pages } from "../strings/pages.ts";
+import { pay } from "../strings/pay.ts";
+import { shop } from "../strings/shop.ts";
 
 type Area<EN extends Record<string, string>> = { "en-US": EN } & Record<Exclude<LocaleTag, "en-US">, Translated<EN>>;
 
-const AREAS: [Area<(typeof chrome)["en-US"]>, Area<(typeof desk)["en-US"]>] = [chrome, desk];
+const AREAS: [
+  Area<(typeof chrome)["en-US"]>,
+  Area<(typeof shop)["en-US"]>,
+  Area<(typeof pay)["en-US"]>,
+  Area<(typeof after)["en-US"]>,
+  Area<(typeof pages)["en-US"]>,
+  Area<(typeof desk)["en-US"]>,
+] = [chrome, shop, pay, after, pages, desk];
 
 export const MESSAGES = Object.fromEntries(
   LOCALE_TAGS.map((t) => [t, Object.assign({}, ...AREAS.map((a) => a[t] ?? {}))]),
 ) as Record<LocaleTag, Record<string, string>>;
 
 /** Keys are typed off English — the source of truth — so a typo is a compile error. */
-export type MessageKey = keyof (typeof chrome)["en-US"] | keyof (typeof desk)["en-US"];
+export type MessageKey =
+  | keyof (typeof chrome)["en-US"]
+  | keyof (typeof shop)["en-US"]
+  | keyof (typeof pay)["en-US"]
+  | keyof (typeof after)["en-US"]
+  | keyof (typeof pages)["en-US"]
+  | keyof (typeof desk)["en-US"];

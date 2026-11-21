@@ -1,0 +1,160 @@
+/*
+ * The smaller pages: gift cards, the help pages, the newsletter box and 404.
+ * Tokens only, logical properties only, so Arabic mirrors as it should; the
+ * shop's own classes (`shop.css`) do the rest.
+ */
+
+/* ── shared ────────────────────────────────────────────────────────────── */
+
+.nl-pages-form { display: flex; flex-direction: column; gap: 16px; padding: clamp(18px, 3vw, 26px); border-radius: 20px; }
+.nl-pages-submit { align-self: flex-start; }
+.nl-pages-select { inline-size: 100%; font-size: 14px; font-weight: 500; min-block-size: 46px; }
+.nl-pages-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-block-start: 14px;
+  min-block-size: 44px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--accent) !important;
+}
+.nl-pages-mail { color: var(--accent) !important; font-weight: 600; }
+.nl-label-row { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
+.nl-counter { font-size: 11.5px; color: var(--fg-subtle); }
+.nl-check--top { align-items: flex-start; min-block-size: 0; }
+.nl-check--top input { margin-block-start: 1px; }
+.nl-field--mono .nl-input { font-family: "JetBrains Mono", var(--font-mono, ui-monospace), monospace; font-weight: 500; }
+.nl-end { text-align: end !important; }
+
+/* A done line: what went through, in the positive tone (or quiet, for a card that cannot be used). */
+.nl-done {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--pos-soft);
+  color: var(--pos);
+  font-size: 14.5px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+.nl-done svg { flex-shrink: 0; margin-block-start: 1px; }
+.nl-done--sm { padding: 13px 15px; border-radius: 12px; font-size: 13.5px; }
+.nl-done--off { background: var(--surface-2); color: var(--fg); }
+.nl-done-sub { display: block; margin-block-start: 4px; font-size: 13px; font-weight: 600; }
+.nl-done--icon {
+  inline-size: 60px;
+  block-size: 60px;
+  padding: 0;
+  border-radius: 16px;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ── gift cards ────────────────────────────────────────────────────────── */
+
+.nl-gift { max-inline-size: 620px; }
+.nl-gift .nl-h1 { margin-block-end: 6px; }
+.nl-gift-sub { margin: 0 0 20px; font-size: 14px; color: var(--fg-muted); line-height: 1.55; }
+.nl-amounts { display: flex; flex-wrap: wrap; gap: 9px; }
+.nl-amount {
+  min-block-size: 48px;
+  padding: 0 20px;
+  border-radius: 12px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--fg);
+  font-family: "JetBrains Mono", var(--font-mono, ui-monospace), monospace;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  unicode-bidi: isolate;
+  direction: ltr;
+}
+.nl-amount:hover { border-color: var(--accent); }
+.nl-amount[aria-pressed="true"] { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+.nl-gift-when { display: flex; align-items: center; gap: 8px; margin: 0; font-size: 12.5px; color: var(--fg-muted); }
+.nl-gift-when svg { flex-shrink: 0; }
+
+.nl-balance { max-inline-size: 520px; padding-block: clamp(24px, 5vw, 56px); }
+.nl-h1--form { font-size: clamp(22px, 3vw, 26px); letter-spacing: -0.02em; }
+.nl-balance .nl-pages-form { gap: 14px; border-radius: 22px; padding: clamp(22px, 4vw, 32px); }
+
+/* ── the help pages ────────────────────────────────────────────────────── */
+
+.nl-help {
+  max-inline-size: 1000px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: clamp(18px, 3vw, 32px);
+}
+.nl-help-nav { flex: 0 1 220px; min-inline-size: min(200px, 100%); display: flex; flex-direction: column; gap: 2px; }
+.nl-help-link {
+  display: flex;
+  align-items: center;
+  min-block-size: 42px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--fg-muted) !important;
+}
+.nl-help-link:hover { background: var(--surface-2); color: var(--fg) !important; }
+.nl-help-link[aria-current="page"] { color: var(--accent) !important; background: var(--accent-soft); }
+.nl-help-body { flex: 1 1 480px; min-inline-size: 0; display: flex; flex-direction: column; gap: 16px; }
+.nl-help-body > .nl-prose { white-space: normal; }
+.nl-prose--text { font-size: 15px; max-inline-size: 640px; }
+.nl-help-h2 { margin-block-start: 10px; font-size: 18px; }
+.nl-table-wrap {
+  overflow-x: auto;
+  border-radius: 14px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+}
+.nl-table-wrap .nl-table { background: var(--surface); }
+.nl-ship-table { min-inline-size: 460px; font-size: 13.5px; }
+.nl-ship-table td { white-space: nowrap; }
+.nl-closures { margin: 6px 0 0; padding-inline-start: 20px; }
+.nl-guide { display: flex; flex-direction: column; gap: 10px; }
+.nl-guide-note { margin: 0; }
+.nl-shop-line { margin: 0; line-height: 1.6; }
+
+/* ── the newsletter box ────────────────────────────────────────────────── */
+
+.nl-news { flex: 1 1 320px; min-inline-size: 0; display: flex; flex-direction: column; gap: 12px; }
+.nl-news-title { margin: 0; font-size: 17px; font-weight: 800; letter-spacing: -0.01em; }
+.nl-news-sub { margin: 0; font-size: 13.5px; color: var(--fg-muted); }
+.nl-news-form { display: flex; flex-direction: column; gap: 10px; }
+.nl-news-consent { display: flex; flex-direction: column; gap: 4px; }
+.nl-news-line,
+.nl-news-indent { padding-inline-start: 30px; }
+.nl-news-line { font-size: 12px; color: var(--fg-subtle); }
+
+/* ── the news thanks page and 404 ──────────────────────────────────────── */
+
+.nl-plain,
+.nl-missing {
+  max-inline-size: 560px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  text-align: center;
+  padding-block: clamp(50px, 10vw, 110px);
+}
+.nl-plain .nl-prose { white-space: normal; }
+.nl-plain .nl-btn { margin-block-start: 8px; }
+.nl-missing-code {
+  font-weight: 600;
+  font-size: clamp(56px, 12vw, 88px);
+  letter-spacing: -0.04em;
+  color: var(--accent);
+  line-height: 1;
+}
+.nl-missing-search { display: flex; gap: 8px; inline-size: 100%; max-inline-size: 380px; margin-block-start: 8px; }
+.nl-missing-search .nl-input { flex: 1; min-inline-size: 0; min-block-size: 48px; }
+.nl-missing-search .nl-btn { min-block-size: 48px; }
+.nl-missing > .nl-btn { margin-block-start: 6px; }

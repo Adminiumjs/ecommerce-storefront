@@ -1,0 +1,330 @@
+/*
+ * The checkout, its paying states and the confirmation, as the Northline comp
+ * draws them (views 699–871, the refusal sheet 189–215), on the shop's tokens
+ * and the shared parts in `shop.css`. Logical properties only, so Arabic
+ * mirrors; figures in mono through `.nl-mono`.
+ */
+
+/* ── the page and its steps ─────────────────────────────────────────────── */
+
+.nl-co-title { margin-block-end: 16px; }
+
+.nl-co-stepper {
+  list-style: none;
+  margin: 0 0 22px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.nl-co-stepper-item { display: flex; align-items: center; gap: 10px; }
+.nl-co-step {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  min-block-size: 44px;
+  padding: 0 2px;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--fg-muted);
+  cursor: pointer;
+}
+.nl-co-step[aria-current="step"] { color: var(--fg); cursor: default; }
+.nl-co-step:disabled { color: var(--fg-subtle); cursor: default; }
+.nl-co-dot {
+  inline-size: 28px;
+  block-size: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "JetBrains Mono", var(--font-mono, ui-monospace), monospace;
+  font-size: 12.5px;
+  font-weight: 600;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.nl-co-step[aria-current="step"] .nl-co-dot { background: var(--accent); color: var(--accent-fg); }
+.nl-co-step:disabled .nl-co-dot { background: var(--surface-3); color: var(--fg-subtle); }
+.nl-co-sep { inline-size: 28px; block-size: 2px; border-radius: 2px; background: var(--border-strong); }
+
+.nl-co-grid { display: flex; flex-wrap: wrap; gap: clamp(18px, 3vw, 32px); align-items: flex-start; }
+.nl-co-main { flex: 1 1 500px; min-inline-size: 0; display: flex; flex-direction: column; gap: 16px; }
+
+.nl-co-card {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  padding: clamp(18px, 3vw, 26px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.nl-co-h2 { margin: 0; font-size: 18px; font-weight: 800; letter-spacing: -0.02em; }
+.nl-co-h2:focus { outline: none; }
+.nl-co-h2:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.nl-co-flush { margin: 0; }
+.nl-co-next { align-self: flex-start; }
+
+/* ── contact ───────────────────────────────────────────────────────────── */
+
+.nl-co-identity {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 13px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+}
+.nl-co-initials {
+  inline-size: 40px;
+  block-size: 40px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 13px;
+  flex-shrink: 0;
+}
+.nl-co-identity-text { font-size: 14px; font-weight: 700; overflow-wrap: anywhere; }
+.nl-co-signin {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-block-size: 44px;
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 700;
+  font-size: 13.5px;
+  cursor: pointer;
+  padding: 0;
+}
+.nl-co-signin-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px;
+  border-radius: 13px;
+  background: var(--accent-soft);
+  color: var(--fg);
+}
+.nl-co-signin-card > svg { color: var(--accent); flex-shrink: 0; }
+.nl-co-news { display: flex; flex-direction: column; gap: 2px; }
+.nl-co-news-tick { align-items: flex-start; padding-block-start: 10px; min-block-size: 0; }
+.nl-co-news-line { font-size: 12px; color: var(--fg-subtle); padding-inline-start: 30px; }
+
+/* ── delivery ──────────────────────────────────────────────────────────── */
+
+.nl-co-address {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+  gap: 14px;
+}
+.nl-co-wide { grid-column: 1 / -1; }
+.nl-co-select { cursor: pointer; }
+.nl-co-speeds { display: flex; flex-direction: column; gap: 10px; margin-block-start: 6px; }
+.nl-co-legend { font-size: 14px; font-weight: 800; margin-block-end: 10px; padding: 0; }
+.nl-co-speed {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 13px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  cursor: pointer;
+}
+.nl-co-speed--on { border-color: var(--accent); background: var(--accent-soft); }
+.nl-co-speed input { inline-size: 20px; block-size: 20px; margin: 0; accent-color: var(--accent); flex-shrink: 0; }
+.nl-co-speed-text { flex: 1; min-inline-size: 0; display: flex; flex-direction: column; gap: 2px; }
+.nl-co-speed-name { font-size: 14px; font-weight: 800; }
+.nl-co-speed-when { font-size: 12.5px; color: var(--fg-muted); }
+.nl-co-speed-price { font-size: 14px; font-weight: 700; display: inline-flex; align-items: center; color: var(--fg-muted); }
+.nl-co-speed-price .nl-mono { font-weight: 600; color: var(--fg); }
+
+/* ── pay ──────────────────────────────────────────────────────────────── */
+
+.nl-co-review { margin: 0; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; }
+.nl-co-review-row { display: flex; align-items: flex-start; gap: 12px; padding: 13px 15px; border-block-end: 1px solid var(--border); }
+.nl-co-review-row:last-child { border-block-end: none; }
+.nl-co-review-row dt { inline-size: 96px; flex-shrink: 0; font-size: 12.5px; color: var(--fg-subtle); font-weight: 700; }
+.nl-co-review-row dd { margin: 0; flex: 1; min-inline-size: 0; display: flex; align-items: flex-start; gap: 12px; font-size: 13.5px; line-height: 1.5; }
+.nl-co-review-value { flex: 1; min-inline-size: 0; overflow-wrap: anywhere; }
+.nl-co-change {
+  min-block-size: 32px;
+  border: none;
+  background: transparent;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 700;
+  font-size: 12.5px;
+  cursor: pointer;
+  padding: 0 4px;
+}
+.nl-co-pay { font-size: 15.5px; }
+.nl-co-pay[aria-busy="true"] { cursor: progress; }
+.nl-co-paynote { margin: 0; font-size: 12.5px; color: var(--fg-muted); text-align: center; }
+
+/* ── the summary ───────────────────────────────────────────────────────── */
+
+.nl-co-summary { inset-block-start: 80px; }
+.nl-co-line { display: flex; gap: 11px; align-items: center; }
+.nl-co-line-pic { inline-size: 52px; flex-shrink: 0; display: block; }
+.nl-co-line-text { flex: 1; min-inline-size: 0; font-size: 13px; line-height: 1.3; }
+.nl-co-line-total { font-weight: 600; font-size: 13px; }
+.nl-co-totals { border-block-start: 1px solid var(--border); padding-block-start: 12px; }
+
+/* ── the refusal ───────────────────────────────────────────────────────── */
+
+.nl-co-ref { inline-size: 460px; }
+.nl-co-ref-head { padding: 20px 22px 0; display: flex; gap: 12px; align-items: flex-start; }
+.nl-co-ref-icon {
+  inline-size: 40px;
+  block-size: 40px;
+  border-radius: 12px;
+  background: var(--warn-soft);
+  color: var(--warn);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.nl-co-ref-title { margin: 0; font-size: 16.5px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.35; flex: 1; }
+.nl-co-ref-body { padding: 16px 22px; display: flex; flex-direction: column; gap: 10px; }
+.nl-co-ref-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  flex-wrap: wrap;
+}
+.nl-co-ref-what { flex: 1; min-inline-size: 160px; font-size: 13.5px; }
+.nl-co-ref-msg { font-size: 12.5px; font-weight: 700; color: var(--danger); margin-block-start: 3px; }
+.nl-co-ref-price { text-align: end; font-size: 12px; color: var(--fg-muted); }
+.nl-co-ref-now { color: var(--fg); font-weight: 700; }
+.nl-co-ref-now .nl-mono { font-weight: 600; }
+.nl-co-was { text-decoration: line-through; }
+.nl-co-ref-acts { display: flex; gap: 8px; }
+.nl-co-remove { color: var(--danger) !important; }
+.nl-co-ref-note { margin: 0; }
+.nl-co-ref-foot {
+  display: flex;
+  gap: 10px;
+  padding: 16px 22px;
+  border-block-start: 1px solid var(--border);
+  background: var(--surface-2);
+  flex-wrap: wrap;
+}
+.nl-co-ref-back,
+.nl-co-ref-order { flex: 1; min-inline-size: 130px; min-block-size: 48px; }
+
+/* ── paying ───────────────────────────────────────────────────────────── */
+
+.nl-co-narrow { max-inline-size: 560px; padding-block: clamp(28px, 6vw, 64px); }
+.nl-co-paying {
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  padding: clamp(22px, 4vw, 34px);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  align-items: center;
+  text-align: center;
+}
+.nl-co-paying p { margin: 0; font-size: 14px; line-height: 1.55; }
+.nl-co-number { font-weight: 600; font-size: 12.5px; color: var(--fg-subtle); }
+.nl-co-paying-spin { color: var(--accent); display: flex; }
+.nl-co-paying-title { margin: 0; font-size: clamp(19px, 3vw, 24px); font-weight: 800; letter-spacing: -0.02em; line-height: 1.3; }
+.nl-co-paying-icon {
+  inline-size: 56px;
+  block-size: 56px;
+  border-radius: 50%;
+  background: var(--surface-3);
+  color: var(--fg-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nl-co-paying-icon--warn { background: var(--warn-soft); color: var(--warn); }
+.nl-co-paying-icon--danger { background: var(--danger-soft); color: var(--danger); }
+.nl-co-paying .nl-co-holding { font-size: 13px; font-weight: 700; color: var(--warn); }
+.nl-co-paying .nl-co-cardheld { display: inline-flex; align-items: center; gap: 6px; font-size: 13px; color: var(--fg-muted); }
+
+/* ── the confirmation ─────────────────────────────────────────────────── */
+
+.nl-co-thanks { max-inline-size: 760px; padding-block: clamp(24px, 4vw, 44px) 30px; }
+.nl-co-thanks-head { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 10px; }
+.nl-co-thanks-head p { margin: 0; font-size: 14.5px; }
+.nl-co-thanks-icon {
+  inline-size: 64px;
+  block-size: 64px;
+  border-radius: 50%;
+  background: var(--pos-soft);
+  color: var(--pos);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nl-co-thanks-title { margin: 0; font-size: clamp(24px, 3.6vw, 32px); font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; }
+.nl-co-facts {
+  margin-block-start: 24px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
+  gap: 12px;
+}
+.nl-co-fact {
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  padding: 15px 16px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  box-shadow: var(--shadow);
+  font-size: 14px;
+  font-weight: 700;
+}
+.nl-co-fact-icon { color: var(--accent); display: flex; }
+.nl-co-panel {
+  margin-block-start: 16px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.nl-co-panel-title { margin: 0; display: flex; align-items: center; gap: 9px; font-size: 16px; font-weight: 800; }
+.nl-co-note { margin: 0; white-space: pre-line; font-size: 13.5px; line-height: 1.7; overflow-wrap: anywhere; }
+.nl-co-note .nl-mono { font-weight: 600; }
+.nl-co-payby {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--warn-soft);
+  color: var(--warn);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.nl-co-rule { border-block-start: 1px solid var(--border); }
+.nl-co-actions { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin-block-start: 22px; }
+.nl-co-paying .nl-co-actions { margin-block-start: 4px; }
