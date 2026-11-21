@@ -321,6 +321,8 @@ const SETTINGS: Row = {
   // The shop's own next order. The sample's 66 orders keep their numbers off the running series, so a first number
   // of 1001 would give the first real order NL-1001, the number a sample order already holds.
   first_number: Number(WORLD.NEXT_NUMBER.slice(SHOP.prefix.length)),
+  // The same for returns: the sample's own returns keep their RT- numbers off the series, so the next is after the last.
+  first_return_number: Math.max(...WORLD.RETURNS.map((r) => Number(r.number.replace(/^RT-/, "")))) + 1,
   pay_hold_minutes: SHOP.payHoldMinutes,
   transfer_name: SHOP.transfer.accountName,
   transfer_bank: SHOP.transfer.bank,

@@ -272,6 +272,8 @@ export const TABLES: Table[] = [
       // The order number: the prefix and the first number. A change applies to the next order.
       text("ref_prefix", 8, "Order number prefix", { default: "NL-" }),
       int("first_number", "First order number", { default: 1001, rules: { validation: { min: 1 } } }),
+      // A return's number runs on its own series, RT-1001 and on: from this number, the next return after a change.
+      int("first_return_number", "First return number", { default: 1001, rules: { validation: { min: 1 } } }),
       // Taking orders at all: off, the shop shows its pages and takes no order.
       bool("taking_orders", "Taking orders", true),
       // Paying online: how long an order waits for its payment, its stock held.
@@ -971,7 +973,7 @@ export const TABLES: Table[] = [
     },
     columns: [
       id,
-      int("number_seq", "Number (running)", { ...opt, rules: { sequence: { gapless: true, start: 1001 } } }),
+      int("number_seq", "Number (running)", { ...opt, rules: { sequence: { gapless: true, startSetting: setting("first_return_number") } } }),
       text("number", 16, "Number", { ...opt, unique: true, rules: { format: { from: "number_seq", prefix: "RT-" } } }),
       fk("order_id", "orders", "Order", { rules: { linkable: { where: [{ column: "status", eq: "shipped" }] } } }),
       // The signed-in customer who asked it; a return asked through the order's own link has none.

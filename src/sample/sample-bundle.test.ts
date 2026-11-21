@@ -169,7 +169,7 @@ const WRITTEN_ANYWAY: Record<string, Record<string, string>> = {
   ]),
   products: { created_at: "never empty: the shop sorts by it, and history is never stamped" },
   customers: { created_at: "their first order's placing", news_since: "the day they said yes" },
-  payments: { made_by: "a stamp history never gets: the customer, through the pay page" },
+  payments: { made_by: "a stamp history never gets: the customer, through the pay page", paid_at: "the moment the pay page wrote (stamped only for a gift card)" },
   payment_refunds: { made_at: "a stamp history never gets", made_by: "a stamp history never gets" },
   restock_requests: { asked_at: "a stamp history never gets" },
   enquiries: { created_at: "a stamp history never gets" },

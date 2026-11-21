@@ -16,6 +16,7 @@
           "zip": "97209",
           "ref_prefix": "NL-",
           "first_number": 1067,
+          "first_return_number": 1005,
           "pay_hold_minutes": 30,
           "transfer_name": "Northline Outdoor LLC",
           "transfer_bank": "Sample Savings Bank",

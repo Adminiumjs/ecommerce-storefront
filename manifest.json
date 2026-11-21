@@ -419,6 +419,19 @@
             }
           },
           {
+            "ref": "first_return_number",
+            "type": "int",
+            "label": {
+              "en-US": "First return number"
+            },
+            "default": 1001,
+            "rules": {
+              "validation": {
+                "min": 1
+              }
+            }
+          },
+          {
             "ref": "taking_orders",
             "type": "bool",
             "default": true,
@@ -5202,7 +5215,10 @@
             "rules": {
               "sequence": {
                 "gapless": true,
-                "start": 1001
+                "startSetting": {
+                  "table": "settings",
+                  "column": "first_return_number"
+                }
               }
             }
           },
