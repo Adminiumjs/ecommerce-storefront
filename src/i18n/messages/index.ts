@@ -18,14 +18,15 @@
 import type { Translated } from "../untranslated.ts";
 import { LOCALE_TAGS, type LocaleTag } from "../locales.ts";
 import { chrome } from "../strings/chrome.ts";
+import { desk } from "../strings/desk.ts";
 
 type Area<EN extends Record<string, string>> = { "en-US": EN } & Record<Exclude<LocaleTag, "en-US">, Translated<EN>>;
 
-const AREAS: [Area<(typeof chrome)["en-US"]>] = [chrome];
+const AREAS: [Area<(typeof chrome)["en-US"]>, Area<(typeof desk)["en-US"]>] = [chrome, desk];
 
 export const MESSAGES = Object.fromEntries(
   LOCALE_TAGS.map((t) => [t, Object.assign({}, ...AREAS.map((a) => a[t] ?? {}))]),
 ) as Record<LocaleTag, Record<string, string>>;
 
 /** Keys are typed off English — the source of truth — so a typo is a compile error. */
-export type MessageKey = keyof (typeof chrome)["en-US"];
+export type MessageKey = keyof (typeof chrome)["en-US"] | keyof (typeof desk)["en-US"];
