@@ -195,4 +195,13 @@ jobs:
           git commit -m "chore(release): ledger for v$VERSION"
           git tag -a "v$VERSION" -m "v$VERSION"
           git push origin HEAD:main
-          git push origin "v$VERSION"
+          # GitHub can refuse a tag on a commit pushed seconds earlier
+          # ("remote rejected (failed)") and take the same push moments later.
+          # The ledger is already on main here, so the tag has to land.
+          for wait in 0 5 15 30 60; do
+            sleep "$wait"
+            if git push origin "v$VERSION"; then exit 0; fi
+            echo "::warning::GitHub refused the tag v$VERSION; trying again"
+          done
+          echo "::error::the ledger is on main but tag v$VERSION was refused; push it by hand from that commit"
+          exit 1
