@@ -343,6 +343,8 @@ export const INSTALL_FLOOR_WORD_NAMES = [
   'automations.words',
   // A customer's review of a row, kept by an add-on; the add-on's tables of reviews; an app's role held to its app's rows.
   'table.review',
+  // Whether a reviewed row's person proved who they are: a row's own link reviews only a proved one.
+  'table.review.proved',
   'addOn.reviews',
   'appGrants.appColumn',
   // A new row that moves the earlier rows sharing its link on (a proof sent again).
@@ -706,6 +708,7 @@ export const WORD_FLOORS: Readonly<Partial<Record<ManifestWordName, string>>> = 
   'publicAccess.appPagination': '0.3.68',
   'automations.words': '0.3.68',
   'table.review': '0.3.68',
+  'table.review.proved': '0.3.70',
   'addOn.reviews': '0.3.68',
   'appGrants.appColumn': '0.3.68',
 };
@@ -890,6 +893,7 @@ export function installFloorWords(document: unknown): ManifestWord[] {
     if (table['adjust'] !== undefined) out.push({ word: 'table.adjust', path: `${at}.adjust` });
     if (table['check'] !== undefined) out.push({ word: 'table.check', path: `${at}.check` });
     if (table['review'] !== undefined) out.push({ word: 'table.review', path: `${at}.review` });
+    if (isDoc(table['review']) && table['review']['proved'] !== undefined) out.push({ word: 'table.review.proved', path: `${at}.review.proved` });
     if (table['belongs'] !== undefined) out.push({ word: 'table.belongs', path: `${at}.belongs` });
     list(table['belongs']).forEach((way, w) => {
       if (isDoc(way) && isDoc(way['through']) && way['through']['while'] !== undefined) out.push({ word: 'listing.while', path: `${at}.belongs.${String(w)}.through.while` });

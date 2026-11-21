@@ -153,9 +153,8 @@ describe("the checkout's steps", () => {
     await visit({ view: "checkout" });
     expect($("h1")?.textContent).toBe("Checkout");
     expect([...document.querySelectorAll(".nl-co-step")].map((b) => b.textContent)).toEqual(["1Contact", "2Delivery", "3Pay"]);
-    expect($<HTMLInputElement>('.nl-co-news input[type="checkbox"]')?.checked).toBe(false);
-    expect(text()).toContain("Send me Northline news now and then");
-    expect(text()).toContain("You can say no at any time — every news e-mail has a link.");
+    // A guest is never asked for news: an order typed in somebody's address must not sign them up.
+    expect($('.nl-co-news input[type="checkbox"]')).toBeNull();
     await type("#co-email", "priya");
     await next();
     expect(text()).toContain("Enter an e-mail address, like name@example.com.");
@@ -251,7 +250,7 @@ describe("the checkout's steps", () => {
     expect(sent.kind).toBe("goods");
     expect(sent.pay).toBe("online");
     expect(sent.expect).toBe("217.00");
-    expect(sent.body.values).toEqual({ language: "en-US", name: "Priya Raman", email: "priya.r@example.com", ship_name: "Priya Raman", address_line1: "3410 Fir Ave", city: "Portland", zip: "97214", region_id: Number(regionId("OR")), offer_id: sent.body.values["offer_id"], news: false });
+    expect(sent.body.values).toEqual({ language: "en-US", name: "Priya Raman", email: "priya.r@example.com", ship_name: "Priya Raman", address_line1: "3410 Fir Ave", city: "Portland", zip: "97214", region_id: Number(regionId("OR")), offer_id: sent.body.values["offer_id"] });
     expect(sent.body.children.order_lines).toHaveLength(2);
     expect(useShop.getState().basket).toEqual([]);
     expect(left).toEqual(["https://pay.example/1067"]);
@@ -519,7 +518,7 @@ describe("gift cards", () => {
     await next();
     await pay();
     expect(places()[0]!.kind).toBe("gift");
-    expect(places()[0]!.body.values).toEqual({ language: "en-US", name: "Priya Raman", email: "priya.r@example.com", news: false });
+    expect(places()[0]!.body.values).toEqual({ language: "en-US", name: "Priya Raman", email: "priya.r@example.com" });
   });
 });
 

@@ -18,7 +18,7 @@
     "commerce"
   ],
   "compatibility": {
-    "minAdminiumVersion": "0.3.68",
+    "minAdminiumVersion": "0.3.70",
     "engines": [
       "sqlite",
       "postgres",
@@ -573,7 +573,7 @@
             "label": {
               "en-US": "Pieces an order may hold"
             },
-            "default": 30,
+            "default": 20,
             "rules": {
               "validation": {
                 "min": 1,
@@ -3461,6 +3461,23 @@
             }
           },
           {
+            "ref": "shop_bank_details",
+            "type": "text",
+            "maxLength": 400,
+            "label": {
+              "en-US": "Shop's bank details then"
+            },
+            "nullable": true,
+            "rules": {
+              "default": {
+                "from": {
+                  "table": "settings",
+                  "column": "transfer_details"
+                }
+              }
+            }
+          },
+          {
             "ref": "transfer_note",
             "type": "text",
             "maxLength": 400,
@@ -3469,10 +3486,15 @@
             },
             "nullable": true,
             "rules": {
-              "default": {
-                "from": {
-                  "table": "settings",
-                  "column": "transfer_details"
+              "stamp": {
+                "set": {
+                  "copy": "shop_bank_details"
+                },
+                "on": {
+                  "column": "status",
+                  "values": [
+                    "awaiting_transfer"
+                  ]
                 }
               }
             }
@@ -4056,6 +4078,10 @@
           "person": [
             "order_id",
             "customer_id"
+          ],
+          "proved": [
+            "order_id",
+            "customer_proved"
           ],
           "shownName": {
             "full": "name"
@@ -9125,7 +9151,7 @@
             "language",
             "offer_id",
             "transfer_days",
-            "transfer_note",
+            "shop_bank_details",
             "carrier",
             "tracking",
             "cancel_reason",
@@ -9146,7 +9172,7 @@
             "language",
             "offer_id",
             "transfer_days",
-            "transfer_note",
+            "shop_bank_details",
             "carrier",
             "tracking",
             "cancel_reason",
@@ -10408,7 +10434,6 @@
         "email",
         "language",
         "client_key",
-        "news",
         "ship_name",
         "address_line1",
         "address_line2",
@@ -10451,23 +10476,6 @@
           "language": "language"
         }
       },
-      "consent": {
-        "column": "news",
-        "purpose": "newsletter",
-        "wording": {
-          "version": 1,
-          "text": {
-            "en-US": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "de-DE": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "fr-FR": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "da-DK": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "cs-CZ": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "ar-EG": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "zh-CN": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "zh-TW": "Send me news and offers from Northline. You can stop them from any e-mail."
-          }
-        }
-      },
       "shareLink": "link_token",
       "anonymous": {
         "perValue": {
@@ -10476,7 +10484,7 @@
           ],
           "n": 3
         },
-        "perIpHour": 6,
+        "perIpHour": 4,
         "perKeyHour": 300,
         "plainText": [
           "name",
@@ -10639,8 +10647,7 @@
         "name",
         "email",
         "language",
-        "client_key",
-        "news"
+        "client_key"
       ],
       "requires": [
         "name",
@@ -10670,23 +10677,6 @@
           "language": "language"
         }
       },
-      "consent": {
-        "column": "news",
-        "purpose": "newsletter",
-        "wording": {
-          "version": 1,
-          "text": {
-            "en-US": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "de-DE": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "fr-FR": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "da-DK": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "cs-CZ": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "ar-EG": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "zh-CN": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "zh-TW": "Send me news and offers from Northline. You can stop them from any e-mail."
-          }
-        }
-      },
       "shareLink": "link_token",
       "anonymous": {
         "perValue": {
@@ -10695,7 +10685,7 @@
           ],
           "n": 3
         },
-        "perIpHour": 6,
+        "perIpHour": 4,
         "perKeyHour": 300,
         "plainText": [
           "name"
@@ -10823,7 +10813,6 @@
         "email",
         "language",
         "client_key",
-        "news",
         "ship_name",
         "address_line1",
         "address_line2",
@@ -10861,23 +10850,6 @@
         "table": "customers",
         "column": "customer_id"
       },
-      "consent": {
-        "column": "news",
-        "purpose": "newsletter",
-        "wording": {
-          "version": 1,
-          "text": {
-            "en-US": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "de-DE": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "fr-FR": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "da-DK": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "cs-CZ": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "ar-EG": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "zh-CN": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "zh-TW": "Send me news and offers from Northline. You can stop them from any e-mail."
-          }
-        }
-      },
       "shareLink": "link_token",
       "anonymous": {
         "perValue": {
@@ -10886,7 +10858,7 @@
           ],
           "n": 3
         },
-        "perIpHour": 6,
+        "perIpHour": 4,
         "perKeyHour": 300,
         "plainText": [
           "name",
@@ -10900,7 +10872,7 @@
           "paying",
           "awaiting_transfer"
         ],
-        "n": 2
+        "n": 1
       },
       "children": {
         "order_lines": {
@@ -11049,8 +11021,7 @@
         "name",
         "email",
         "language",
-        "client_key",
-        "news"
+        "client_key"
       ],
       "requires": [
         "name",
@@ -11075,23 +11046,6 @@
         "table": "customers",
         "column": "customer_id"
       },
-      "consent": {
-        "column": "news",
-        "purpose": "newsletter",
-        "wording": {
-          "version": 1,
-          "text": {
-            "en-US": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "de-DE": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "fr-FR": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "da-DK": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "cs-CZ": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "ar-EG": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "zh-CN": "Send me news and offers from Northline. You can stop them from any e-mail.",
-            "zh-TW": "Send me news and offers from Northline. You can stop them from any e-mail."
-          }
-        }
-      },
       "shareLink": "link_token",
       "anonymous": {
         "perValue": {
@@ -11100,7 +11054,7 @@
           ],
           "n": 3
         },
-        "perIpHour": 6,
+        "perIpHour": 4,
         "perKeyHour": 300,
         "plainText": [
           "name"
@@ -11112,7 +11066,7 @@
           "paying",
           "awaiting_transfer"
         ],
-        "n": 2
+        "n": 1
       },
       "children": {
         "gift_lines": {
@@ -11233,16 +11187,7 @@
       ],
       "claimedBy": {
         "table": "customers",
-        "column": "customer_id",
-        "optional": true
-      },
-      "identity": {
-        "table": "customers",
-        "email": "email",
-        "link": "customer_id",
-        "fill": {
-          "language": "language"
-        }
+        "column": "customer_id"
       },
       "consent": {
         "column": "news",
@@ -11260,16 +11205,6 @@
             "zh-TW": "Send me news and offers from Northline. You can stop them from any e-mail."
           }
         }
-      },
-      "anonymous": {
-        "perValue": {
-          "columns": [
-            "email"
-          ],
-          "n": 3
-        },
-        "perIpHour": 5,
-        "perKeyHour": 120
       },
       "clientKey": "client_key"
     },

@@ -13,8 +13,10 @@
  * (`pay.ts`) so the order's page (`/o`, no code in its fragment) finds it on
  * the way back and shows the paying states, then the confirmation.
  */
+import { newClientKey } from "@adminiumjs/public-client";
 import { create } from "zustand";
 
+import { documentLanguage } from "./door.ts";
 import { last4 } from "./format.ts";
 import { backOf, firstName, forgetHeld, keepHeld, keptHeld, leaveFor, marksOf, movedLines, readOrder, retryKey, type Back, type Held, type Mark } from "./pay.ts";
 import { isShopError, type Id, type OrderKind, type PayMethod, type Placed, type Quote, type Row, type ShippingOffer, type StockWord } from "./port.ts";
@@ -240,8 +242,8 @@ export function orderValues(): Row {
   const s = get();
   const customer = shop().customer;
   const email = customer?.email ?? s.email.trim();
-  const tick = customer === null || !customer.news ? { news: s.news } : {};
-  if (orderKind() === "gift") return { name: customer?.name || s.name.trim(), email, ...tick };
+  // The news tick is never sent with the order: a yes is logged only for somebody signed in, after the order (`newsAfterPlacing`).
+  if (orderKind() === "gift") return { name: customer?.name || s.name.trim(), email };
   const a = s.address;
   const offer = chosenOffer(s);
   return {
@@ -254,7 +256,6 @@ export function orderValues(): Row {
     zip: a.zip.trim(),
     region_id: a.regionId === "" ? null : idOf(a.regionId),
     offer_id: offer?.id ?? null,
-    ...tick,
   };
 }
 
@@ -351,7 +352,23 @@ async function send(expect: string): Promise<void> {
     return;
   }
   await afterPlaced(placed, values, pay);
+  await newsAfterPlacing(port);
   set({ checking: false });
+}
+
+/**
+ * A signed-in customer's yes to news, given at checkout: logged for them after the order is placed, through the
+ * newsletter's own door, which takes it only from somebody signed in. A guest is never shown the tick — an order
+ * typed in somebody's address must never sign that somebody up.
+ */
+async function newsAfterPlacing(port: { newsSignup(email: string, language: string, clientKey: string): Promise<void> }): Promise<void> {
+  const customer = shop().customer;
+  if (customer === null || customer.news || !get().news) return;
+  try {
+    await port.newsSignup(customer.email, documentLanguage(), newClientKey());
+  } catch {
+    // the order stands; the account's own "News e-mails" switch is there to try again
+  }
 }
 
 async function withBusyRetry<T>(run: () => Promise<T>): Promise<T> {

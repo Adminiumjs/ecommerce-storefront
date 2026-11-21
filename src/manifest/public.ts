@@ -228,7 +228,6 @@ function placeOrder(kind: Kind, pay: Pay) {
       "email",
       "language",
       "client_key",
-      "news",
       ...(goods ? ["ship_name", "address_line1", "address_line2", "city", "zip", "region_id", "offer_id"] : []),
     ],
     requires: goods ? ["name", "email", "ship_name", "address_line1", "city", "zip", "region_id", "offer_id"] : ["name", "email"],
@@ -238,17 +237,17 @@ function placeOrder(kind: Kind, pay: Pay) {
     ...(online
       ? { claimedBy: { table: "customers", column: "customer_id", optional: true as const }, identity: { table: "customers", email: "email", link: "customer_id", fill: { name: "name", language: "language" } } }
       : { claimedBy: { table: "customers", column: "customer_id" } }),
-    consent: NEWS_TICK,
     shareLink: "link_token",
     anonymous: {
       perValue: { columns: ["email"], n: 3 },
-      perIpHour: 6,
+      perIpHour: 4,
       perKeyHour: 300,
       plainText: goods
         ? ["name", "ship_name", "city"]
         : ["name"],
     },
-    maxOpen: { column: "status", values: ["paying", "awaiting_transfer"], n: 2 },
+    // One unpaid order at a time for a signed-in customer paying by transfer (its stock is held for days); two online.
+    maxOpen: { column: "status", values: ["paying", "awaiting_transfer"], n: online ? 2 : 1 },
     children: goods ? { order_lines: { ...LINES, min: 1 }, gift_lines: GIFTS, order_codes: CODES, payments: CARD } : { gift_lines: { ...GIFTS, min: 1 }, order_codes: CODES, payments: CARD },
     dryRun: true,
     expect: "total",
@@ -343,10 +342,9 @@ export const PUBLIC_ACCESS = [
     select: ["id"],
     writable: ["email", "language", "news", "client_key"],
     requires: ["email"],
-    claimedBy: { table: "customers", column: "customer_id", optional: true },
-    identity: { table: "customers", email: "email", link: "customer_id", fill: { language: "language" } },
+    // Only somebody signed in, who proved the address is theirs with the e-mailed code: nobody signs a stranger up.
+    claimedBy: { table: "customers", column: "customer_id" },
     consent: NEWS_TICK,
-    anonymous: { perValue: { columns: ["email"], n: 3 }, perIpHour: 5, perKeyHour: 120 },
     clientKey: "client_key",
   },
 

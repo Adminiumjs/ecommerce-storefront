@@ -14,6 +14,7 @@ const en = {
   // ── the newsletter box (S17) ──
   "pages.news.title": "News from {shop}",
   "pages.news.sub": "New gear and trail notes, now and then.",
+  "pages.news.byCode": "We’ll e-mail you a code to confirm the address is yours.",
   "pages.news.email": "E-mail",
   "pages.news.tick": "Send me {shop} news now and then",
   "pages.news.line": "You can say no at any time — every news e-mail has a link.",
@@ -102,6 +103,7 @@ type Words = Record<keyof typeof en, string>;
 const de: Words = {
   "pages.news.title": "Neues von {shop}",
   "pages.news.sub": "Neue Ausrüstung und Tourennotizen, ab und zu.",
+  "pages.news.byCode": "Wir schicken Ihnen einen Code, um zu bestätigen, dass die Adresse Ihre ist.",
   "pages.news.email": "E-Mail",
   "pages.news.tick": "Senden Sie mir ab und zu Neuigkeiten von {shop}",
   "pages.news.line": "Sie können jederzeit Nein sagen – jede Newsletter-E-Mail enthält einen Abmeldelink.",
@@ -180,6 +182,7 @@ const de: Words = {
 const fr: Words = {
   "pages.news.title": "Les nouvelles de {shop}",
   "pages.news.sub": "Du nouveau matériel et des notes de sentier, de temps en temps.",
+  "pages.news.byCode": "Nous vous envoyons un code pour confirmer que l’adresse est bien la vôtre.",
   "pages.news.email": "Adresse e-mail",
   "pages.news.tick": "Envoyez-moi les nouvelles de {shop} de temps en temps",
   "pages.news.line": "Vous pouvez dire non à tout moment : chaque e-mail d’actualités contient un lien pour cela.",
@@ -258,6 +261,7 @@ const fr: Words = {
 const da: Words = {
   "pages.news.title": "Nyt fra {shop}",
   "pages.news.sub": "Nyt udstyr og turnoter, nu og da.",
+  "pages.news.byCode": "Vi sender dig en kode, så du kan bekræfte, at adressen er din.",
   "pages.news.email": "E-mailadresse",
   "pages.news.tick": "Send mig nyt fra {shop} nu og da",
   "pages.news.line": "Du kan sige nej når som helst — hver nyhedsmail har et link til det.",
@@ -336,6 +340,7 @@ const da: Words = {
 const cs: Words = {
   "pages.news.title": "Novinky od {shop}",
   "pages.news.sub": "Nové vybavení a poznámky z treků, čas od času.",
+  "pages.news.byCode": "Pošleme vám kód, kterým potvrdíte, že adresa je vaše.",
   "pages.news.email": "E-mailová adresa",
   "pages.news.tick": "Posílejte mi čas od času novinky od {shop}",
   "pages.news.line": "Kdykoli můžete říct ne — každý e-mail s novinkami obsahuje odkaz.",
@@ -414,6 +419,7 @@ const cs: Words = {
 const ar: Words = {
   "pages.news.title": "أخبار {shop}",
   "pages.news.sub": "معدات جديدة وملاحظات من المسارات، بين حين وآخر.",
+  "pages.news.byCode": "سنرسل إليك رمزًا لتأكيد أن العنوان عنوانك.",
   "pages.news.email": "البريد الإلكتروني",
   "pages.news.tick": "أرسلوا لي أخبار {shop} بين حين وآخر",
   "pages.news.line": "يمكنك الرفض في أي وقت — في كل رسالة إخبارية رابط لذلك.",
@@ -494,6 +500,7 @@ const ar: Words = {
 const zhCN: Words = {
   "pages.news.title": "来自 {shop} 的消息",
   "pages.news.sub": "新装备和徒步笔记，不定期发送。",
+  "pages.news.byCode": "我们会给你发送一个验证码，确认这是你的邮箱地址。",
   "pages.news.email": "电子邮件",
   "pages.news.tick": "不定期给我发送 {shop} 的消息",
   "pages.news.line": "你可以随时拒绝——每封新闻邮件都附有退订链接。",
@@ -572,6 +579,7 @@ const zhCN: Words = {
 const zhTW: Words = {
   "pages.news.title": "來自 {shop} 的消息",
   "pages.news.sub": "新裝備與步道筆記，不定期寄送。",
+  "pages.news.byCode": "我們會寄給你一組驗證碼，確認這是你的電子郵件地址。",
   "pages.news.email": "電子郵件",
   "pages.news.tick": "不定期寄給我 {shop} 的消息",
   "pages.news.line": "你可以隨時拒絕——每封消息郵件都附有取消訂閱連結。",

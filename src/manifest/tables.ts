@@ -274,7 +274,7 @@ export const TABLES: Table[] = [
       int("return_days", "Days to send something back", { default: 30, rules: { validation: { min: 0, max: 365 } } }),
       bool("refund_shipping_faulty", "Refund the shipping on a faulty item", true),
       // How many pieces one order may hold, every line together.
-      int("max_pieces", "Pieces an order may hold", { default: 30, rules: { validation: { min: 1, max: 200 } } }),
+      int("max_pieces", "Pieces an order may hold", { default: 20, rules: { validation: { min: 1, max: 200 } } }),
       // The shop's own words: the three promises under the home page's hero, and its pages.
       text("promise_1", 80, "Promise 1", opt),
       text("promise_2", 80, "Promise 2", opt),
@@ -701,7 +701,11 @@ export const TABLES: Table[] = [
       figure("transfer_days", "Shipping days to pay", { default: { from: setting("transfer_days") } }),
       date("transfer_by", "Pay by transfer by", { ...opt, rules: stamp(shipDays("placed_at", "transfer_days"), { columns: ["placed_at", "transfer_days"] }) }),
       // The bank details as they were when the order was placed: what the customer was told to pay into.
-      text("transfer_note", 400, "Bank details given", { ...opt, rules: { default: { from: setting("transfer_details") } } }),
+      // The shop's bank details as they stood when the order was placed, kept apart and read by nobody outside.
+      text("shop_bank_details", 400, "Shop's bank details then", { ...opt, rules: { default: { from: setting("transfer_details") } } }),
+      // What the customer is told to pay into: written only on an order made to wait for a bank transfer, so an
+      // order paid online never carries the shop's bank details to whoever holds its link.
+      text("transfer_note", 400, "Bank details given", { ...opt, rules: stamp({ copy: "shop_bank_details" }, onState("status", "awaiting_transfer")) }),
       // Its stock stays held 45 days from placing: a paid order keeps its stock until it is packed.
       at("stock_until", "Stock held until", { ...opt, rules: stamp({ addMinutes: { hours: 45 * 24 } }, onCreate) }),
       at("paid_at", "Paid at", { ...opt, rules: { rollup: { from: "payments", via: "order_id", latest: { of: "paid_at", by: "paid_at" } } } }),
@@ -766,6 +770,8 @@ export const TABLES: Table[] = [
       about: { link: "product_id", name: "product_name", detail: "variant_label" },
       when: { path: ["order_id", "status"], in: ["shipped"] },
       person: ["order_id", "customer_id"],
+      // A guest's order typed in somebody's address proves nothing: its own link reviews only an order placed signed in.
+      proved: ["order_id", "customer_proved"],
       shownName: { full: "name" },
       stamp: "reviewed_at",
     },

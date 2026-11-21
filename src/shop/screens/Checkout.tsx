@@ -145,7 +145,8 @@ function ContactStep({ onNext }: { onNext: () => void }) {
   const gift = orderKind() === "gift";
   const transferGuest = needsSignIn();
   // A signed-in customer already on the news list is not asked again (D4).
-  const showTick = !transferGuest && (customer === null || !customer.news);
+  // Only a signed-in customer is asked: a guest's typed address proves nothing, and nobody is signed up by another.
+  const showTick = !transferGuest && customer !== null && !customer.news;
   return (
     <StepCard id="contact">
       {customer !== null ? (

@@ -2,9 +2,10 @@
  * S17 the newsletter box in the footer, and the page a confirm link lands on.
  *
  * The box asks for an address and a yes: the tick is never ticked for the
- * shopper, and without it nothing is sent (R1). Adminium finds or makes the
- * customer for the address and logs the yes (ACC-10), so the page never asks
- * whether an address is known. With Forms & surveys the shop sends a confirm
+ * shopper, and without it nothing is sent (R1). The yes is only ever logged
+ * for somebody who proved the address is theirs: a shopper not signed in (or
+ * signing up another address) is sent the sign-in code first, and the yes is
+ * sent once the code is in — so nobody signs a stranger up. With Forms & surveys the shop sends a confirm
  * mail and the box says so; without it the yes counts at once and the box
  * says only "You're on the list" (C13).
  *
@@ -19,7 +20,8 @@ import { useEffect, useRef, useState } from "react";
 import { useI18n } from "../../i18n/index.tsx";
 import { documentLanguage } from "../door.ts";
 import { Field, FieldError, looksLikeEmail, Spinner } from "../parts.tsx";
-import { announce, useShop } from "../store.ts";
+import { useAfter } from "../after.ts";
+import { announce, openSignIn, useShop } from "../store.ts";
 import { ArrowLink, refusalWords, refusedColumn, useShopName } from "./PagesParts.tsx";
 
 type NewsState = { step: "form" | "busy" } | { step: "done"; confirm: boolean };
@@ -35,6 +37,8 @@ export function NewsBox() {
   const key = useRef<string | null>(null);
   const touched = useRef(false);
   const focusNext = useRef<string | null>(null);
+  // A yes waiting for the address to be proved by the sign-in code.
+  const pending = useRef(false);
 
   // A signed-in customer's own address is filled in, until they type another.
   useEffect(() => {
@@ -45,6 +49,24 @@ export function NewsBox() {
     if (focusNext.current === null) return;
     document.getElementById(focusNext.current)?.focus();
     focusNext.current = null;
+  });
+
+  const signUp = async () => {
+    // Not signed in with this address: the sign-in code proves it first, and the yes follows.
+    if (signedInEmail === null || signedInEmail.toLowerCase() !== email.trim().toLowerCase()) {
+      pending.current = true;
+      useAfter.setState((s) => ({ flows: { ...s.flows, sheet: { ...s.flows.sheet, email: email.trim() } } }));
+      openSignIn(true);
+      return;
+    }
+    await signUp();
+  };
+
+  // Signed in with the address the yes was for: send it.
+  useEffect(() => {
+    if (!pending.current || signedInEmail === null) return;
+    pending.current = false;
+    if (signedInEmail.toLowerCase() === email.trim().toLowerCase()) void signUp();
   });
 
   const submit = async () => {
@@ -86,6 +108,7 @@ export function NewsBox() {
         {t("pages.news.title", { shop })}
       </h2>
       <p className="nl-news-sub">{t("pages.news.sub")}</p>
+      {signedInEmail === null && state.step !== "done" && <p className="nl-news-sub">{t("pages.news.byCode")}</p>}
       {state.step === "done" ? (
         <div className="nl-done nl-done--sm">
           <CircleCheck size={17} aria-hidden="true" />

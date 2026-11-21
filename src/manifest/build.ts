@@ -28,9 +28,14 @@ export const VERSION = "0.2.0";
  * search, sort and count on the catalogue and filters through a product's
  * variants; a review taken from a shipped order line and kept by Forms &
  * surveys; a rule's condition that asks Inventory's stock words; and the
- * Payment panel that answers no money to a role whose limits hide it.
+ * Payment panel that answers no money to a role whose limits hide it. 0.3.70
+ * lets a review word say who proved who they are (an order's own link reviews
+ * only an order placed signed in), counts only proved orders toward a first
+ * order, lets a returned piece name the variant Adminium copied onto it
+ * through the order's own link, filters a catalogue through variants that
+ * also answer stock words, and bundles the 1.0.33 add-ons.
  */
-export const MIN_ADMINIUM = "0.3.68";
+export const MIN_ADMINIUM = "0.3.70";
 
 const ENV = {
   VITE_ADMINIUM_API_BASE_URL: { required: false, example: "https://admin.example.com" },

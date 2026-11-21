@@ -80,6 +80,13 @@ export const reviewSchema = z
     when: z.object({ path: pathSchema, in: z.array(scalarSchema).min(1).max(16) }).strict(),
     /** The links from this row to the person whose review it is: the way the row's claim reaches them. */
     person: pathSchema,
+    /**
+     * The yes/no along this path (links, then a column) that says the person proved who they are when the row
+     * was made: a guest's typed address proves nothing. With it, a row's own link may review only a proved row,
+     * and is never told the name an unproved one would be shown with; a person signed in on their own row
+     * always may. Without it, a row's own link may review any row its `when` allows.
+     */
+    proved: pathSchema.optional(),
     /** How the person's name is shown: first name and the last name's initial, or a whole name cut the same way. */
     shownName: z.union([z.object({ first: refSchema, last: refSchema.optional() }).strict(), z.object({ full: refSchema }).strict()]),
     /** The moment Adminium writes on the row when its review is taken. */
@@ -351,6 +358,10 @@ export function reviewIssues(
     if (found?.column !== undefined && found.column.type !== 'text' && found.column.type !== 'enum') out.push({ path: here('about', key), message: `"${found.table.ref}.${found.column.ref}" is copied as text: a text column` });
   }
   follow(review.when.path, here('when', 'path'), 'column');
+  if (review.proved !== undefined) {
+    const proved = follow(review.proved, here('proved'), 'column');
+    if (proved?.column !== undefined && proved.column.type !== 'bool') out.push({ path: here('proved'), message: `"${proved.table.ref}.${proved.column.ref}" says whether the person proved who they are: a yes/no column` });
+  }
 
   // Whose review it is: the way the app's own entries reach a person from this row, never another link.
   const chains = claimChains(table.ref, ctx.entries);
