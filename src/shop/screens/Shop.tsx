@@ -55,7 +55,7 @@ function Filters({ narrow }: { narrow: boolean }) {
   const currency = useShop((s) => s.config.currency);
   const open = useShop((s) => s.filterSheet);
   const close = () => useShop.setState({ filterSheet: false });
-  const ref = useDialog<HTMLElement>(narrow && open, close);
+  const ref = useDialog<HTMLDivElement>(narrow && open, close);
   if (base === null) return null;
   const total = base.categories.reduce((n, c) => n + c.count, 0);
   const colours = distinct(base.facets.filter((f) => f.kind === "colour"));
@@ -66,10 +66,12 @@ function Filters({ narrow }: { narrow: boolean }) {
   const priceLabel = listing.priceMax === null ? t("shop.filter.anyPrice") : money(listing.priceMax, currency, locale);
   const shown = listing.inStock ? null : list.count;
   if (narrow && !open) return null;
+  // Beside the cards the filters are an aside; on a phone they are a dialog, which an aside may not be.
+  const Box = narrow ? "div" : "aside";
   return (
     <>
       {narrow && <div className="nl-scrim" onClick={close} />}
-      <aside ref={ref} className={narrow ? "nl-filters nl-filters--sheet" : "nl-filters"} aria-label={t("shop.filter.title")} {...(narrow ? { role: "dialog", "aria-modal": true } : {})}>
+      <Box ref={ref} className={narrow ? "nl-filters nl-filters--sheet" : "nl-filters"} aria-label={t("shop.filter.title")} {...(narrow ? { role: "dialog", "aria-modal": true } : {})}>
         {narrow && (
           <div className="nl-sheet-head">
             <span className="nl-sheet-title">{t("shop.filter.title")}</span>
@@ -171,7 +173,7 @@ function Filters({ narrow }: { narrow: boolean }) {
             </button>
           )}
         </div>
-      </aside>
+      </Box>
     </>
   );
 }

@@ -211,7 +211,7 @@ export const useShop = create<ShopState>(() => ({ port: null, ...initial() }));
 const get = () => useShop.getState();
 const set = (patch: Partial<ShopState>) => useShop.setState(patch);
 
-function keepBasket(): void {
+export function keepBasket(): void {
   const s = get();
   try {
     localStorage.setItem(BASKET_SLOT, JSON.stringify({ lines: s.basket, gifts: s.gifts, codes: s.codes, card: s.card, clientKey: s.clientKey }));
@@ -298,9 +298,13 @@ export function onShopNavigate(listener: ((place: Place) => void) | null): void 
 }
 
 /** Screens drawn by other modules, told when they open (an order's page reads its link). */
-const openers = new Map<ShopView, (place: Place) => void>();
-export function onOpen(view: ShopView, opener: (place: Place) => void): void {
-  openers.set(view, opener);
+const openers = new Map<ShopView, Set<(place: Place) => void>>();
+/** Run code when a screen opens; several modules may listen to one screen. Returns its undoing. */
+export function onOpen(view: ShopView, opener: (place: Place) => void): () => void {
+  const set = openers.get(view) ?? new Set();
+  set.add(opener);
+  openers.set(view, set);
+  return () => set.delete(opener);
 }
 
 /** Open the screen a place names, and say so to the address bar. */
@@ -334,7 +338,7 @@ function openPlace(place: Place): void {
     default:
       break;
   }
-  openers.get(place.view)?.(place);
+  for (const opener of openers.get(place.view) ?? []) opener(place);
 }
 
 // ── stock words ─────────────────────────────────────────────────────────
@@ -759,12 +763,13 @@ export async function requoteBasket(): Promise<void> {
       const r = error.refused;
       if (r.child === "order_codes" && r.index !== null) {
         const code = get().codes[r.index] ?? "";
-        set({ codes: get().codes.filter((_, i) => i !== r.index), codeNote: { code, note: codeNoteOf(r.reason) } });
+        // The order changed (a code left it): a new retry key, as for any change of the basket.
+        set({ codes: get().codes.filter((_, i) => i !== r.index), codeNote: { code, note: codeNoteOf(r.reason) }, clientKey: newClientKey() });
         keepBasket();
         return requoteBasket();
       }
       if (r.code === "PUBLIC_CARD_REFUSED" || r.child === "payments") {
-        set({ card: null, cardNote: "unknown" });
+        set({ card: null, cardNote: "unknown", clientKey: newClientKey() });
         keepBasket();
         return requoteBasket();
       }

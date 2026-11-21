@@ -29,14 +29,6 @@ const AXE: axe.RunOptions = {
   },
 };
 
-/**
- * One finding belongs to the shop's frame, not to these pages: the header's
- * category nav and the footer's first column are both named "Shop", so the
- * two landmarks share a name. It is reported to the frame's owner; until it is
- * renamed, it is left out here so these pages' own findings still fail.
- */
-const FRAME_KNOWN = new Set(["landmark-unique .nl-nav"]);
-
 let port: FakePort;
 let root: Root | null = null;
 let host: HTMLDivElement | null = null;
@@ -195,7 +187,7 @@ describe.each(LOCALES)("gift cards, help, news and 404 in %s", (locale, dir) => 
     expect(result.passes.length, `${label}: axe examined nothing`).toBeGreaterThan(0);
     expect(
       result.violations
-        .map((v) => ({ ...v, nodes: v.nodes.filter((n) => !FRAME_KNOWN.has(`${v.id} ${n.target.join(" ")}`)) }))
+        .map((v) => ({ ...v, nodes: v.nodes }))
         .filter((v) => v.nodes.length > 0)
         .map((v) => `${v.id} (${v.impact ?? "?"}): ${v.nodes.map((n) => n.target.join(" ")).join(", ")}`),
       `${locale} · ${label}`,

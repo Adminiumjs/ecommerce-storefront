@@ -17,7 +17,7 @@ import { Mono } from "./words.tsx";
 import { BasketDrawer, BasketScreen } from "./screens/Basket.tsx";
 import { HomeScreen } from "./screens/Home.tsx";
 import { ProductScreen } from "./screens/Product.tsx";
-import { ShopScreen } from "./screens/Shop.tsx";
+import { ShopScreen, useNarrow } from "./screens/Shop.tsx";
 import { CheckoutScreen } from "./screens/Checkout.tsx";
 import { AccountScreen, FindScreen, OrderReturnScreen, OrderScreen, SignInScreen, SignInSheet } from "./screens/After.tsx";
 import { AboutScreen, GiftBalanceScreen, GiftCardsScreen, HelpContactScreen, HelpShippingScreen, HelpSizesScreen, MissingScreen, NewsBox, NewsThanksScreen, PrivacyScreen, TermsScreen } from "./screens/Pages.tsx";
@@ -156,7 +156,7 @@ function MenuSheet({ open, onClose, query, setQuery, onSearch }: { open: boolean
           <Search size={17} aria-hidden="true" className="nl-search-icon" />
           <input type="search" className="nl-search-input" aria-label={t("shop.search")} placeholder={t("shop.search.placeholder")} value={query} onChange={(e) => setQuery(e.target.value)} />
         </form>
-        <nav aria-label={t("shop.nav.label")} className="nl-menu-nav">
+        <nav aria-label={t("shop.nav.menu")} className="nl-menu-nav">
           <ShopLink to={{ view: "shop" }} className="nl-menu-item">
             <CategoryIcon name="store" size={18} />
             {t("shop.nav.all")}
@@ -200,6 +200,8 @@ function Header({ checkout }: { checkout: boolean }) {
   const [menu, setMenu] = useState(false);
   const [query, setQuery] = useState("");
   const menuButton = useRef<HTMLButtonElement>(null);
+  // Below 1024 px the categories and the search live in the menu sheet: drawn once, so a reader meets one of each.
+  const narrow = useNarrow(1024);
   const onSearch = () => {
     const q = query.trim();
     if (q === "") return;
@@ -214,7 +216,7 @@ function Header({ checkout }: { checkout: boolean }) {
       </a>
       <header className="nl-header">
         <div className="nl-header-row">
-          {!checkout && (
+          {!checkout && narrow && (
             <button ref={menuButton} type="button" className="nl-icon-btn nl-narrow" aria-label={t("shop.nav.openMenu")} aria-haspopup="dialog" onClick={() => setMenu(true)}>
               <Menu size={18} aria-hidden="true" />
             </button>
@@ -229,28 +231,32 @@ function Header({ checkout }: { checkout: boolean }) {
             <CheckoutHeaderTools />
           ) : (
             <>
-              <nav aria-label={t("shop.nav.label")} className="nl-nav nl-wide">
-                <ShopLink to={{ view: "shop" }} className="nl-nav-item" aria-current={current(null)}>
-                  {t("shop.nav.all")}
-                </ShopLink>
-                {categories.map((c) => (
-                  <ShopLink key={String(c.id)} to={{ view: "shop", slug: c.slug }} className="nl-nav-item" aria-current={current(c.slug)}>
-                    {c.name}
+              {!narrow && (
+                <nav aria-label={t("shop.home.categories")} className="nl-nav nl-wide">
+                  <ShopLink to={{ view: "shop" }} className="nl-nav-item" aria-current={current(null)}>
+                    {t("shop.nav.all")}
                   </ShopLink>
-                ))}
-              </nav>
+                  {categories.map((c) => (
+                    <ShopLink key={String(c.id)} to={{ view: "shop", slug: c.slug }} className="nl-nav-item" aria-current={current(c.slug)}>
+                      {c.name}
+                    </ShopLink>
+                  ))}
+                </nav>
+              )}
               <div className="nl-header-tools">
-                <form
-                  role="search"
-                  className="nl-search nl-wide"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    onSearch();
-                  }}
-                >
-                  <Search size={15} aria-hidden="true" className="nl-search-icon" />
-                  <input type="search" className="nl-search-input" aria-label={t("shop.search")} placeholder={t("shop.search.placeholder")} value={query} onChange={(e) => setQuery(e.target.value)} />
-                </form>
+                {!narrow && (
+                  <form
+                    role="search"
+                    className="nl-search nl-wide"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      onSearch();
+                    }}
+                  >
+                    <Search size={15} aria-hidden="true" className="nl-search-icon" />
+                    <input type="search" className="nl-search-input" aria-label={t("shop.search")} placeholder={t("shop.search.placeholder")} value={query} onChange={(e) => setQuery(e.target.value)} />
+                  </form>
+                )}
                 {customer === null ? (
                   <ShopLink to={{ view: "signIn" }} className="nl-btn nl-btn--quiet nl-btn--sm">
                     <User size={16} aria-hidden="true" />
@@ -419,8 +425,16 @@ export default function ShopApp() {
     };
   }, []);
 
+  // The tab's title is the shop's own name.
+  const name = useShop((s) => s.base?.settings.name ?? "");
+  useEffect(() => {
+    document.title = name || "Northline";
+  }, [name]);
+
   // A new screen starts at its top.
   useEffect(() => {
+    // jsdom has no layout to scroll: the tests' window says so in its user agent.
+    if (typeof navigator !== "undefined" && /jsdom/i.test(navigator.userAgent)) return;
     window.scrollTo?.(0, 0);
   }, [view]);
 

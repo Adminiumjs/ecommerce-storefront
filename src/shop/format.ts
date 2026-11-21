@@ -51,10 +51,16 @@ export function shopDay(value: unknown, timezone: string): string | null {
   }
 }
 
-/** "Tue 18 Aug". */
+const EN_DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const EN_MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const english = (locale: string) => locale.startsWith("en");
+
+/** "Tue 18 Aug". English is written by hand: Intl's British English says "Sept", the shop's designs say "Sep". */
 export function dayShort(day: unknown, locale: string): string {
   const date = typeof day === "string" ? asDate(day) : null;
-  return date === null ? "" : new Intl.DateTimeFormat(dateLocale(locale), { timeZone: "UTC", weekday: "short", day: "numeric", month: "short" }).format(date);
+  if (date === null) return "";
+  if (english(locale)) return `${EN_DAYS[date.getUTCDay()]} ${date.getUTCDate()} ${EN_MONTHS[date.getUTCMonth()]}`;
+  return new Intl.DateTimeFormat(dateLocale(locale), { timeZone: "UTC", weekday: "short", day: "numeric", month: "short" }).format(date);
 }
 
 /** "Tuesday 18 August". */
@@ -69,6 +75,11 @@ export function dayRange(from: unknown, to: unknown, locale: string): string {
   const b = typeof to === "string" ? asDate(to) : null;
   if (a === null) return b === null ? "" : dayShort(to, locale);
   if (b === null || a.getTime() === b.getTime()) return dayShort(from, locale);
+  // "Fri 21 – Tue 25 Aug": one month named once.
+  if (english(locale)) {
+    const same = a.getUTCMonth() === b.getUTCMonth() && a.getUTCFullYear() === b.getUTCFullYear();
+    return same ? `${EN_DAYS[a.getUTCDay()]} ${a.getUTCDate()} – ${dayShort(to, locale)}` : `${dayShort(from, locale)} – ${dayShort(to, locale)}`;
+  }
   const f = new Intl.DateTimeFormat(dateLocale(locale), { timeZone: "UTC", weekday: "short", day: "numeric", month: "short" });
   try {
     return f.formatRange(a, b);

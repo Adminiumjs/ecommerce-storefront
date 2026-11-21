@@ -76,6 +76,8 @@ export function placeOf(relative: string, search = ""): Place {
   if (first === "shop" && parts.length <= 2) return { view: "shop", slug: second ?? null };
   if (first === "search" && parts.length === 1) return { view: "search", q: new URLSearchParams(search).get("q") ?? "" };
   if (first === "p" && second !== undefined && parts.length === 2) return { view: "product", slug: second };
+  // The sign-in link Adminium e-mails lands on `/c#<code>`: the sign-in page continues it.
+  if (first === "c" && parts.length === 1) return { view: "signIn" };
   const joined = parts.join("/");
   const fixed = (Object.entries(PATHS) as [ShopView, string][]).find(([, path]) => path === joined);
   if (fixed !== undefined) return { view: fixed[0] };
