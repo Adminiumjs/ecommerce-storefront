@@ -346,6 +346,12 @@ export class Caller {
     this.csrf = ok(await this.get<{ data: { csrfToken: string } }>("/api/v1/bootstrap")).data.csrfToken;
   }
 
+  /** Sign in as a member of staff on the app's own screens, and take the write token their config hands out. */
+  async signInToScreens(email: string, password: string, app = "ecommerce-shop"): Promise<void> {
+    ok(await this.post("/api/v1/auth/login", { email, password }));
+    this.csrf = ok(await this.get<{ csrfToken: string }>(`/apps/${app}/staff/surface-config.json`)).csrfToken;
+  }
+
   /** The session this caller holds, for a screen that speaks to the same server through its own transport. */
   session(): { cookie: string; csrfToken: string } {
     return { cookie: this.cookie, csrfToken: this.csrf };

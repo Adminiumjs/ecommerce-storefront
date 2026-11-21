@@ -49,11 +49,14 @@ export interface PublicReply<T = Row> {
  */
 export class Shopper {
   session: string | null = null;
-  constructor(
-    readonly base: string,
-    readonly key: string,
-    private readonly rehearsal: { cookie: string; csrf: string } | null = null,
-  ) {}
+  readonly base: string;
+  readonly key: string;
+  private readonly rehearsal: { cookie: string; csrf: string } | null;
+  constructor(base: string, key: string, rehearsal: { cookie: string; csrf: string } | null = null) {
+    this.base = base;
+    this.key = key;
+    this.rehearsal = rehearsal;
+  }
 
   private async proof(purpose: "write" | "claim"): Promise<string> {
     const challenge = (await this.raw("GET", `/api/v1/public/challenge?purpose=${purpose}`)).body.data as unknown as { id: string; salt: string; difficulty: number };
@@ -74,9 +77,11 @@ export class Shopper {
         },
         ...(body === undefined ? {} : { body: JSON.stringify(body) }),
       });
-      // The rate limit's own burst refusal is not the contract's: waited out (a cap the app sets says its own code).
-      if (res.status === 429 && res.headers.get("retry-after") !== null && attempt < 4 && !(await res.clone().text()).includes("PUBLIC_RATE_LIMITED")) {
-        await new Promise((resolve) => setTimeout(resolve, 3_000));
+      // A burst over the visitor's requests a minute is the server's flood guard, not the shop's rule: waited out, as
+      // a person's next click would be. (A cap the app sets answers 409 PUBLIC_LIMIT_REACHED, never this.)
+      if (res.status === 429 && attempt < 6) {
+        const after = Number(res.headers.get("retry-after") ?? "10");
+        await new Promise((resolve) => setTimeout(resolve, Math.min(Math.max(after, 1), 30) * 1_000));
         continue;
       }
       const text = await res.text();
