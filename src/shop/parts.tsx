@@ -210,7 +210,8 @@ export function Field({ id, label, error, hint, className = "", ...input }: { id
       <label htmlFor={id} className="nl-label">
         {label}
       </label>
-      <input id={id} className="nl-input" aria-invalid={error ? true : undefined} aria-describedby={described} {...input} />
+      {/* A typed value reads in its own direction: a Latin address stays left to right on an Arabic page. */}
+      <input id={id} className="nl-input" dir="auto" aria-invalid={error ? true : undefined} aria-describedby={described} {...input} />
       {hint !== undefined && (
         <div id={`${id}-hint`} className="nl-hint">
           {hint}

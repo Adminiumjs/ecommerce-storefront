@@ -381,7 +381,8 @@ function Total({ label, value, strong = false, pos = false }: { label: string; v
 /** Why the order was cancelled, as its customer reads it. */
 function cancelText(o: Row, t: ReturnType<typeof useI18n>["t"], day: (v: unknown) => string, holdMinutes: number | null, locale: string): ReactNode {
   const reason = o["cancel_reason"];
-  if (reason === "customer") return t(isZero(o["paid"]) ? "after.order.cancelledNothing" : "after.order.cancelledRefund");
+  // Money that was taken and is being given back still counts: a refunded order holds nothing paid, but something was taken.
+  if (reason === "customer") return t(isZero(o["paid"]) && isZero(o["refunded"]) ? "after.order.cancelledNothing" : "after.order.cancelledRefund");
   if (reason === "unpaid") {
     if (o["pay_method"] === "transfer" && o["transfer_by"] != null) return rich(t, "after.cancelled.unpaidTransfer", { date: <Mono>{day(o["transfer_by"])}</Mono> });
     return rich(t, "after.cancelled.unpaidOnline", { n: <Mono>{new Intl.NumberFormat(locale).format(holdMinutes ?? 30)}</Mono> }, holdMinutes ?? 30);
@@ -447,7 +448,7 @@ function CancelSheet() {
       busy={busy}
       onConfirm={() => {
         void cancelOrder().then((done) => {
-          if (done === "done") announce(t(isZero(useAfter.getState().opened?.read?.order["paid"]) ? "after.order.cancelledNothing" : "after.order.cancelledRefund"));
+          if (done === "done") announce(t(isZero(useAfter.getState().opened?.read?.order["paid"]) && isZero(useAfter.getState().opened?.read?.order["refunded"]) ? "after.order.cancelledNothing" : "after.order.cancelledRefund"));
         });
       }}
     />

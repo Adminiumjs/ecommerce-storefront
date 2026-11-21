@@ -678,7 +678,7 @@ export async function cancelOrder(): Promise<"done" | "refused" | "failed"> {
   set({ cancel: "idle", cancelSheet: false });
   await reread();
   const order = get().opened?.read?.order;
-  toast(order !== undefined && Number(order["paid"] ?? 0) > 0 ? "after.order.cancelledRefund" : "after.order.cancelledNothing");
+  toast(order !== undefined && (Number(order["paid"] ?? 0) > 0 || Number(order["refunded"] ?? 0) > 0) ? "after.order.cancelledRefund" : "after.order.cancelledNothing");
   return "done";
 }
 
