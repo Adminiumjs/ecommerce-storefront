@@ -254,13 +254,15 @@ describe.skipIf(why !== null)(`a shop on the old example takes the rework${why =
       let tablesBefore: string[];
       let connectionId = "";
       let app: ReturnType<typeof appBundle>;
-      const addOns = ADD_ONS.map((key) => addOnBundle(key));
+      // Packed when the run starts, not when the tests are listed: a run that skips needs no add-ons checkout.
+      let addOns: ReturnType<typeof addOnBundle>[] = [];
       const body = () => ({ key: app.key, version: app.version, connectionId });
       const data = (table: string) => `/api/v1/data/${connectionId}/${table}`;
       const rows = async (table: string): Promise<Row[]> => ok(await staff.get<{ data: Row[] }>(`${data(table)}?limit=200`)).data;
 
       beforeAll(async () => {
         app = appBundle({ manifest: MANIFEST_TEXT });
+        addOns = ADD_ONS.map((key) => addOnBundle(key));
         place = await makeOld(engine as Engine, dbName("update_old", engine as Engine));
         before = await snapshot(place);
         tablesBefore = await tablesIn(place);
