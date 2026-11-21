@@ -20,6 +20,7 @@ import {
   type Applied,
   type Id,
   type OrderBody,
+  type OptionValue,
   type OrderKind,
   type PayMethod,
   type PayState,
@@ -197,6 +198,16 @@ export class DemoShop implements ShopPort {
 
   variantsOf(productIds: readonly Id[]): Promise<Variant[]> {
     return answer(() => this.publicVariants().filter((v) => productIds.some((id) => same(id, v["product_id"]))).map((v) => variantOf(copy(v))));
+  }
+
+  coloursOf(productIds: readonly Id[]): Promise<OptionValue[]> {
+    return answer(() =>
+      this.world
+        .all("option_values")
+        .filter((o) => o["kind"] === "colour" && productIds.some((id) => same(id, o["product_id"])))
+        .map(optionOf)
+        .sort((a, b) => a.position - b.position || Number(a.id) - Number(b.id)),
+    );
   }
 
   stock(variantIds: readonly Id[]): Promise<Record<string, StockWord>> {

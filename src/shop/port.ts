@@ -359,6 +359,8 @@ export interface ShopPort {
   variantsByIds(ids: readonly Id[]): Promise<Variant[]>;
   /** The variants of several products at once (a page of cards). */
   variantsOf(productIds: readonly Id[]): Promise<Variant[]>;
+  /** The colours of several products at once: what a card is tinted by. */
+  coloursOf(productIds: readonly Id[]): Promise<OptionValue[]>;
   /** Inventory's words for each variant asked, by its id. */
   stock(variantIds: readonly Id[]): Promise<Record<string, StockWord>>;
   /** A product's published reviews and totals; null while reviews are off. */

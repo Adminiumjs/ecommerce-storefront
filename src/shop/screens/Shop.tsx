@@ -46,6 +46,27 @@ function distinct(values: readonly OptionValue[]): OptionValue[] {
   return [...seen.values()];
 }
 
+/** Letter sizes in the order a shopper reads them; a size of two letters sits after its first. */
+const LETTERS = ["XXS", "XS", "S", "S/M", "M", "M/L", "L", "L/XL", "XL", "XXL"];
+
+/**
+ * Sizes across products, in an order a shopper can scan: letter sizes small to large, then numbers low to high
+ * (a waist, a shoe), then the rest (Regular, Long) as the shop placed them.
+ */
+export function sizeOrder(sizes: readonly OptionValue[]): OptionValue[] {
+  const rank = (v: OptionValue): [number, number] => {
+    const letter = LETTERS.indexOf(v.label.trim().toUpperCase());
+    if (letter >= 0) return [0, letter];
+    const n = Number(v.label.replace(/^US\s+/i, "").trim());
+    if (Number.isFinite(n) && v.label.trim() !== "") return [1, n];
+    return [2, v.position];
+  };
+  return [...sizes].sort((a, b) => {
+    const [x, y] = [rank(a), rank(b)];
+    return x[0] - y[0] || x[1] - y[1] || a.label.localeCompare(b.label);
+  });
+}
+
 function Filters({ narrow }: { narrow: boolean }) {
   const { t, locale } = useI18n();
   const listing = useShop((s) => s.listing);
@@ -61,7 +82,7 @@ function Filters({ narrow }: { narrow: boolean }) {
   const colours = distinct(base.facets.filter((f) => f.kind === "colour"));
   // Sizes in view: a category's or a search's are those its loaded products are made in; everything's, every size.
   const inView = listing.categorySlug !== null || listing.q.trim() !== "" ? new Set(list.products.map((p) => String(p.id))) : null;
-  const sizes = distinct(base.facets.filter((f) => f.kind === "size" && (inView === null || inView.has(String(f.productId)) || f.code === listing.size)));
+  const sizes = sizeOrder(distinct(base.facets.filter((f) => f.kind === "size" && (inView === null || inView.has(String(f.productId)) || f.code === listing.size))));
   const chosenColour = colours.find((c) => c.code === listing.colour);
   const priceLabel = listing.priceMax === null ? t("shop.filter.anyPrice") : money(listing.priceMax, currency, locale);
   const shown = listing.inStock ? null : list.count;

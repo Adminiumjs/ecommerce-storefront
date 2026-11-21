@@ -171,12 +171,13 @@ export function ProductCard({ product, showNew = true, compact = false }: { prod
   const { t, locale } = useI18n();
   const currency = useShop((s) => s.config.currency);
   const word = useShop((s) => s.cardStock[String(product.id)]);
+  const tint = useShop((s) => s.cardTint[String(product.id)] ?? null);
   const icon = useShop((s) => s.base?.categories.find((c) => String(c.id) === String(product.categoryId))?.icon ?? null);
   const fresh = showNew && isNew(product);
   return (
     <ShopLink to={{ view: "product", slug: product.slug }} className={`nl-card ${compact ? "nl-card--compact" : ""}`}>
       <span className="nl-card-pic">
-        <Picture icon={icon} />
+        <Picture icon={icon} tint={tint} />
         {fresh && <span className="nl-tag">{t("shop.card.new")}</span>}
       </span>
       <span className="nl-card-body">

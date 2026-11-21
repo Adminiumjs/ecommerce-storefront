@@ -581,7 +581,14 @@
   inline-size: 100%;
   color: color-mix(in srgb, #fff 82%, transparent);
 }
-.nl-pic--stand { background: linear-gradient(158deg, color-mix(in srgb, var(--tint) 62%, #fff) 0%, var(--tint) 100%); }
+/* The design's stand-in: a soft light over the colour, the colour pooled under the glyph, and the glyph in the colour. */
+.nl-pic--stand {
+  background:
+    radial-gradient(120% 82% at 50% 0%, rgba(255, 255, 255, 0.6), transparent 58%),
+    radial-gradient(52% 20% at 50% 80%, color-mix(in srgb, var(--tint) 22%, transparent), transparent 72%),
+    linear-gradient(158deg, color-mix(in srgb, var(--tint) 19%, transparent), color-mix(in srgb, var(--tint) 7%, transparent));
+  color: color-mix(in srgb, var(--tint) 50%, transparent);
+}
 .nl-pic--stand:not(.nl-pic--tinted) { background: linear-gradient(158deg, var(--surface-3) 0%, color-mix(in srgb, var(--accent) 26%, var(--surface-3)) 100%); color: var(--accent); }
 .nl-pic--main { border-radius: 22px; border: 1px solid var(--border); }
 .nl-pic--thumb { border-radius: 12px; }

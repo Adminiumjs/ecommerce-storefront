@@ -498,6 +498,18 @@ export class AdminiumShop implements ShopPort {
     });
   }
 
+  coloursOf(productIds: readonly Id[]): Promise<OptionValue[]> {
+    return answer(async () => {
+      const out: OptionValue[] = [];
+      const unique = [...new Set(productIds.map(String))];
+      for (let i = 0; i < unique.length; i += 50) {
+        const rows = await this.all(this.refs.options, { where: { column: "product_id", op: "in", value: unique.slice(i, i + 50) } });
+        out.push(...rows.map(optionOf).filter((o) => o.kind === "colour"));
+      }
+      return out.sort(byPosition);
+    });
+  }
+
   stock(variantIds: readonly Id[]): Promise<Record<string, StockWord>> {
     return answer(async () => {
       const out: Record<string, StockWord> = {};

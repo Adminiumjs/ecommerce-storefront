@@ -377,6 +377,7 @@ export function fakePort(): FakePort {
       })),
     variantsByIds: (ids) => answer(() => world.variants.filter((v) => ids.map(String).includes(String(v.id))).map(({ available: _a, ...v }) => v)),
     variantsOf: (ids) => answer(() => world.variants.filter((v) => ids.map(String).includes(String(v.productId))).map(({ available: _a, ...v }) => v)),
+    coloursOf: (ids) => answer(() => world.options.filter((o) => o.kind === "colour" && ids.map(String).includes(String(o.productId)))),
     stock: (ids) => answer(() => Object.fromEntries(world.variants.filter((v) => ids.map(String).includes(String(v.id))).map((v) => [String(v.id), word(v)]))),
     reviews: (productId) =>
       answer((): Reviews => {

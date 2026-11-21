@@ -106,6 +106,8 @@ export interface ShopState {
   list: { state: "idle" | "busy" | "more" | "ok" | "failed"; key: string; products: Product[]; next: string | null; count: { rows: number; atLeast: boolean } | null };
   /** Every card's stock words, by product id. */
   cardStock: Record<string, CardStock>;
+  /** Each card's tint: its product's first colour, as the shop typed it. */
+  cardTint: Record<string, string>;
   filterSheet: boolean;
   /** The cheapest and dearest prices on sale, for the "Price up to" slider: Adminium's, read once. */
   priceBounds: { min: number; max: number } | null;
@@ -181,6 +183,7 @@ function initial(): Omit<ShopState, "port"> {
     listing: NO_LISTING,
     list: { state: "idle", key: "", products: [], next: null, count: null },
     cardStock: {},
+    cardTint: {},
     filterSheet: false,
     priceBounds: null,
     product: { slug: null, state: "idle", product: null, detail: null, reviews: null, goes: [] },
@@ -363,11 +366,29 @@ export function cardWord(variants: readonly Variant[], words: Record<string, Sto
   return { state: "out", left: null };
 }
 
+/** Each card's tint: the first colour the product is made in. A product in no colour keeps the shop's own tint. */
+async function loadCardTints(products: readonly Product[]): Promise<void> {
+  const port = get().port;
+  if (port === null || products.length === 0) return;
+  try {
+    const colours = await port.coloursOf(products.map((p) => p.id));
+    const next = { ...get().cardTint };
+    for (const p of products) {
+      const first = colours.find((c) => String(c.productId) === String(p.id) && c.hex !== null);
+      if (first?.hex) next[String(p.id)] = first.hex;
+    }
+    set({ cardTint: next });
+  } catch {
+    // no colours: the cards keep the shop's own tint
+  }
+}
+
 /** The stock words of a page of cards: their variants, then Inventory's words for them. */
 async function loadCardStock(products: readonly Product[]): Promise<void> {
   const port = get().port;
   if (port === null || products.length === 0) return;
   try {
+    void loadCardTints(products);
     const variants = await port.variantsOf(products.map((p) => p.id));
     const words = await port.stock(variants.map((v) => v.id));
     const next = { ...get().cardStock };
