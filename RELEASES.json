@@ -18,6 +18,12 @@
       "version": "0.2.2",
       "integrity": "sha512-UhlMBqi2U4rBZf8bOFVbWXLSkoGW7LcYAXHnMjd/QweIkNwGn2sqfzP4693WEy+gLYatJNOLxUjL2J+g6XdFCA==",
       "publishedAt": "2026-11-21T12:18:39.000Z"
+    },
+    {
+      "name": "@adminiumjs/app-ecommerce-shop",
+      "version": "0.2.3",
+      "integrity": "sha512-DyrZszG4cyhxU5HRwK9WfkFImyQ3Zf13gD2/1JXi1CSXwj2HQfWKmcaoxewvjsLkW1EN1ECbWOiMp3JgnJ4VdQ==",
+      "publishedAt": "2026-11-21T13:39:44.000Z"
     }
   ]
 }
