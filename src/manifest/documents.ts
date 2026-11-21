@@ -80,4 +80,18 @@ export const DOCUMENTS = [
       },
     },
   },
+  {
+    // SKU labels for the stockroom: one variant's SKU as a Code 128 label, as many as the person printing asks.
+    kind: "label-sheet",
+    addOn: "barcode-labels",
+    table: "variants",
+    feature: "sku-labels",
+    name: l("SKU labels"),
+    mapping: {
+      sku: { column: "sku" },
+      code: { column: "sku" },
+      reference: { column: "product_name" },
+    },
+    requestValues: ["count"],
+  },
 ];
