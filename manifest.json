@@ -419,6 +419,19 @@
             }
           },
           {
+            "ref": "first_return_number",
+            "type": "int",
+            "label": {
+              "en-US": "First return number"
+            },
+            "default": 1001,
+            "rules": {
+              "validation": {
+                "min": 1
+              }
+            }
+          },
+          {
             "ref": "taking_orders",
             "type": "bool",
             "default": true,
@@ -494,6 +507,28 @@
             "nullable": true,
             "rules": {
               "personal": false
+            }
+          },
+          {
+            "ref": "transfer_details",
+            "type": "text",
+            "maxLength": 400,
+            "nullable": true,
+            "label": {
+              "en-US": "Bank details"
+            },
+            "rules": {
+              "formula": {
+                "join": [
+                  "transfer_name",
+                  "\n",
+                  "transfer_bank",
+                  "\n",
+                  "transfer_routing",
+                  "\n",
+                  "transfer_account"
+                ]
+              }
             }
           },
           {
@@ -1537,6 +1572,42 @@
             }
           },
           {
+            "ref": "stock_label",
+            "type": "text",
+            "maxLength": 90,
+            "nullable": true,
+            "label": {
+              "en-US": "Colour and size"
+            },
+            "rules": {
+              "formula": {
+                "join": [
+                  "colour_label",
+                  " · ",
+                  "size_label"
+                ]
+              }
+            }
+          },
+          {
+            "ref": "stock_head",
+            "type": "text",
+            "maxLength": 180,
+            "nullable": true,
+            "label": {
+              "en-US": "Product, colour and size"
+            },
+            "rules": {
+              "formula": {
+                "join": [
+                  "product_name",
+                  " · ",
+                  "stock_label"
+                ]
+              }
+            }
+          },
+          {
             "ref": "stock_name",
             "type": "text",
             "maxLength": 200,
@@ -1547,11 +1618,7 @@
             "rules": {
               "formula": {
                 "join": [
-                  "product_name",
-                  " · ",
-                  "colour_label",
-                  " · ",
-                  "size_label",
+                  "stock_head",
                   " · ",
                   "sku"
                 ]
@@ -2381,6 +2448,20 @@
                   "packer"
                 ],
                 "undo": true
+              },
+              {
+                "to": "cancelled",
+                "requires": {
+                  "where": [
+                    {
+                      "column": "cancel_reason",
+                      "isNull": false
+                    }
+                  ]
+                },
+                "roles": [
+                  "owner"
+                ]
               }
             ],
             "sent": [
@@ -2410,7 +2491,8 @@
               "link_stopped",
               "staff_note",
               "tracking",
-              "carrier"
+              "carrier",
+              "cancel_reason"
             ]
           },
           "children": {
@@ -2857,6 +2939,22 @@
             }
           },
           {
+            "ref": "service_label",
+            "type": "text",
+            "maxLength": 40,
+            "nullable": true,
+            "label": {
+              "en-US": "Shipping service"
+            },
+            "rules": {
+              "copy": {
+                "via": "offer_id",
+                "from": "service_label",
+                "mode": "always"
+              }
+            }
+          },
+          {
             "ref": "ship_price",
             "type": "decimal",
             "scale": "currency",
@@ -3090,6 +3188,39 @@
             }
           },
           {
+            "ref": "before_tax",
+            "type": "decimal",
+            "scale": "currency",
+            "nullable": true,
+            "label": {
+              "en-US": "Before tax"
+            },
+            "rules": {
+              "formula": {
+                "add": [
+                  {
+                    "coalesce": [
+                      "net",
+                      0
+                    ]
+                  },
+                  {
+                    "coalesce": [
+                      "shipping",
+                      0
+                    ]
+                  },
+                  {
+                    "coalesce": [
+                      "gifts",
+                      0
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          {
             "ref": "total",
             "type": "decimal",
             "scale": "currency",
@@ -3270,21 +3401,14 @@
             "rules": {
               "stamp": {
                 "set": {
-                  "moment": {
-                    "column": "placed_at",
-                    "plus": {
-                      "minutes": {
-                        "table": "settings",
-                        "column": "pay_hold_minutes"
-                      }
+                  "addMinutes": {
+                    "minutes": {
+                      "table": "settings",
+                      "column": "pay_hold_minutes"
                     }
                   }
                 },
-                "on": {
-                  "columns": [
-                    "placed_at"
-                  ]
-                }
+                "on": "create"
               }
             }
           },
@@ -3343,7 +3467,15 @@
             "label": {
               "en-US": "Bank details given"
             },
-            "nullable": true
+            "nullable": true,
+            "rules": {
+              "default": {
+                "from": {
+                  "table": "settings",
+                  "column": "transfer_details"
+                }
+              }
+            }
           },
           {
             "ref": "stock_until",
@@ -3355,18 +3487,11 @@
             "rules": {
               "stamp": {
                 "set": {
-                  "moment": {
-                    "column": "placed_at",
-                    "plus": {
-                      "days": 45
-                    }
+                  "addMinutes": {
+                    "hours": 1080
                   }
                 },
-                "on": {
-                  "columns": [
-                    "placed_at"
-                  ]
-                }
+                "on": "create"
               }
             }
           },
@@ -3411,11 +3536,19 @@
                     }
                   }
                 },
-                "on": {
-                  "columns": [
-                    "paid_at"
-                  ]
-                }
+                "on": [
+                  {
+                    "columns": [
+                      "paid_at"
+                    ]
+                  },
+                  {
+                    "column": "status",
+                    "values": [
+                      "paid"
+                    ]
+                  }
+                ]
               }
             }
           },
@@ -3442,12 +3575,21 @@
                     }
                   }
                 },
-                "on": {
-                  "columns": [
-                    "ships_by",
-                    "transit_min"
-                  ]
-                }
+                "on": [
+                  {
+                    "columns": [
+                      "paid_at",
+                      "ships_by",
+                      "transit_min"
+                    ]
+                  },
+                  {
+                    "column": "status",
+                    "values": [
+                      "paid"
+                    ]
+                  }
+                ]
               }
             }
           },
@@ -3474,12 +3616,21 @@
                     }
                   }
                 },
-                "on": {
-                  "columns": [
-                    "ships_by",
-                    "transit_max"
-                  ]
-                }
+                "on": [
+                  {
+                    "columns": [
+                      "paid_at",
+                      "ships_by",
+                      "transit_max"
+                    ]
+                  },
+                  {
+                    "column": "status",
+                    "values": [
+                      "paid"
+                    ]
+                  }
+                ]
               }
             }
           },
@@ -3795,18 +3946,11 @@
             "rules": {
               "stamp": {
                 "set": {
-                  "moment": {
-                    "column": "placed_at",
-                    "plus": {
-                      "days": 120
-                    }
+                  "addMinutes": {
+                    "hours": 2880
                   }
                 },
-                "on": {
-                  "columns": [
-                    "placed_at"
-                  ]
-                }
+                "on": "create"
               }
             }
           },
@@ -3876,7 +4020,8 @@
                 "from": [
                   "paying",
                   "awaiting_transfer",
-                  "paid"
+                  "paid",
+                  "packed"
                 ]
               }
             },
@@ -4253,14 +4398,20 @@
             },
             "post": {
               "on": {
-                "column": "paid_at",
-                "set": true
+                "to": [
+                  "paid"
+                ]
               }
             },
             "reverse": {
               "on": {
-                "column": "cancelled_at",
-                "set": true
+                "to": [
+                  "cancelled"
+                ],
+                "from": [
+                  "paying",
+                  "awaiting_transfer"
+                ]
               }
             },
             "map": {
@@ -4283,8 +4434,13 @@
             "via": "order_id",
             "post": {
               "on": {
-                "column": "cancelled_at",
-                "set": true
+                "to": [
+                  "cancelled"
+                ],
+                "from": [
+                  "paid",
+                  "sent"
+                ]
               }
             },
             "map": {
@@ -4787,7 +4943,20 @@
             "label": {
               "en-US": "Paid at"
             },
-            "nullable": true
+            "nullable": true,
+            "rules": {
+              "stamp": {
+                "set": {
+                  "addMinutes": {
+                    "minutes": 0
+                  }
+                },
+                "on": {
+                  "column": "card_code",
+                  "filled": true
+                }
+              }
+            }
           },
           {
             "ref": "note",
@@ -5208,7 +5377,10 @@
             "rules": {
               "sequence": {
                 "gapless": true,
-                "start": 1001
+                "startSetting": {
+                  "table": "settings",
+                  "column": "first_return_number"
+                }
               }
             }
           },
@@ -5606,6 +5778,37 @@
                   "column": "status",
                   "values": [
                     "refunded"
+                  ]
+                }
+              }
+            }
+          },
+          {
+            "ref": "send_by",
+            "type": "date",
+            "label": {
+              "en-US": "Send it back by"
+            },
+            "nullable": true,
+            "rules": {
+              "stamp": {
+                "set": {
+                  "addWorkingDays": {
+                    "from": "now",
+                    "days": 5,
+                    "weekdays": "ship_days",
+                    "closures": {
+                      "table": "closures",
+                      "from": "from_date",
+                      "to": "to_date",
+                      "active": "active"
+                    }
+                  }
+                },
+                "on": {
+                  "column": "status",
+                  "values": [
+                    "approved"
                   ]
                 }
               }
@@ -9162,6 +9365,7 @@
             "zone_id",
             "offer_id",
             "service_id",
+            "service_label",
             "pieces",
             "weight_g",
             "placed_at",
@@ -9246,6 +9450,8 @@
             "category_id",
             "product_name",
             "product_status",
+            "stock_label",
+            "stock_head",
             "stock_name"
           ]
         },
@@ -9393,6 +9599,7 @@
         "PATCH"
       ],
       "select": [
+        "id",
         "name",
         "email",
         "language",
@@ -9400,8 +9607,26 @@
       ],
       "writable": [
         "name",
-        "language"
+        "language",
+        "news"
       ],
+      "consent": {
+        "column": "news",
+        "purpose": "newsletter",
+        "wording": {
+          "version": 1,
+          "text": {
+            "en-US": "Send me news and offers from Northline. You can stop them from any e-mail.",
+            "de-DE": "Send me news and offers from Northline. You can stop them from any e-mail.",
+            "fr-FR": "Send me news and offers from Northline. You can stop them from any e-mail.",
+            "da-DK": "Send me news and offers from Northline. You can stop them from any e-mail.",
+            "cs-CZ": "Send me news and offers from Northline. You can stop them from any e-mail.",
+            "ar-EG": "Send me news and offers from Northline. You can stop them from any e-mail.",
+            "zh-CN": "Send me news and offers from Northline. You can stop them from any e-mail.",
+            "zh-TW": "Send me news and offers from Northline. You can stop them from any e-mail."
+          }
+        }
+      },
       "claim": {
         "verify": "email-link",
         "email": "email"
@@ -9446,10 +9671,12 @@
         "offer_id",
         "service_id",
         "tax_rate",
+        "free_from",
         "goods",
         "discount",
         "net",
         "shipping",
+        "before_tax",
         "tax",
         "gifts",
         "total",
@@ -9477,13 +9704,17 @@
         "link_expires",
         "customer_proved"
       ],
+      "documents": [
+        "receipt"
+      ],
       "writable": [
         "status",
         "cancel_reason"
       ],
       "writableValues": {
         "status": [
-          "cancelled"
+          "cancelled",
+          "paid"
         ],
         "cancel_reason": [
           "customer"
@@ -9491,6 +9722,7 @@
       },
       "writableWhen": {
         "status": [
+          "paying",
           "paid",
           "awaiting_transfer"
         ]
@@ -9564,7 +9796,8 @@
         "returned",
         "kept",
         "card_last4",
-        "paid_at"
+        "paid_at",
+        "provider"
       ]
     },
     {
@@ -9591,7 +9824,8 @@
     {
       "table": "returns",
       "methods": [
-        "GET"
+        "GET",
+        "PATCH"
       ],
       "level": "verified",
       "visibleWith": {
@@ -9617,7 +9851,15 @@
         "declined_at",
         "received_at",
         "refunded_at"
-      ]
+      ],
+      "writable": [
+        "tracking"
+      ],
+      "writableWhen": {
+        "status": [
+          "approved"
+        ]
+      }
     },
     {
       "table": "return_lines",
@@ -9769,6 +10011,13 @@
         }
       ],
       "filterable": [
+        {
+          "column": "id",
+          "ops": [
+            "eq",
+            "in"
+          ]
+        },
         "category_id",
         {
           "column": "price",
@@ -10122,10 +10371,12 @@
         "offer_id",
         "service_id",
         "tax_rate",
+        "free_from",
         "goods",
         "discount",
         "net",
         "shipping",
+        "before_tax",
         "tax",
         "gifts",
         "total",
@@ -10352,10 +10603,12 @@
         "offer_id",
         "service_id",
         "tax_rate",
+        "free_from",
         "goods",
         "discount",
         "net",
         "shipping",
+        "before_tax",
         "tax",
         "gifts",
         "total",
@@ -10532,10 +10785,12 @@
         "offer_id",
         "service_id",
         "tax_rate",
+        "free_from",
         "goods",
         "discount",
         "net",
         "shipping",
+        "before_tax",
         "tax",
         "gifts",
         "total",
@@ -10560,7 +10815,8 @@
         "cancelled_at",
         "cancel_reason",
         "link_expires",
-        "customer_proved"
+        "customer_proved",
+        "transfer_note"
       ],
       "writable": [
         "name",
@@ -10756,10 +11012,12 @@
         "offer_id",
         "service_id",
         "tax_rate",
+        "free_from",
         "goods",
         "discount",
         "net",
         "shipping",
+        "before_tax",
         "tax",
         "gifts",
         "total",
@@ -10784,7 +11042,8 @@
         "cancelled_at",
         "cancel_reason",
         "link_expires",
-        "customer_proved"
+        "customer_proved",
+        "transfer_note"
       ],
       "writable": [
         "name",
@@ -11039,10 +11298,12 @@
         "offer_id",
         "service_id",
         "tax_rate",
+        "free_from",
         "goods",
         "discount",
         "net",
         "shipping",
+        "before_tax",
         "tax",
         "gifts",
         "total",
@@ -11078,13 +11339,17 @@
         "own": true,
         "address": "email"
       },
+      "documents": [
+        "receipt"
+      ],
       "writable": [
         "status",
         "cancel_reason"
       ],
       "writableValues": {
         "status": [
-          "cancelled"
+          "cancelled",
+          "paid"
         ],
         "cancel_reason": [
           "customer"
@@ -11092,6 +11357,7 @@
       },
       "writableWhen": {
         "status": [
+          "paying",
           "paid",
           "awaiting_transfer"
         ]
@@ -11168,7 +11434,8 @@
         "returned",
         "kept",
         "card_last4",
-        "paid_at"
+        "paid_at",
+        "provider"
       ]
     },
     {
@@ -11197,7 +11464,8 @@
       "table": "returns",
       "key": "link",
       "methods": [
-        "GET"
+        "GET",
+        "PATCH"
       ],
       "level": "verified",
       "visibleWith": {
@@ -11223,7 +11491,15 @@
         "declined_at",
         "received_at",
         "refunded_at"
-      ]
+      ],
+      "writable": [
+        "tracking"
+      ],
+      "writableWhen": {
+        "status": [
+          "approved"
+        ]
+      }
     },
     {
       "table": "return_lines",
@@ -11287,6 +11563,29 @@
       "requires": [
         "order_id",
         "reason"
+      ]
+    },
+    {
+      "table": "variants",
+      "key": "link",
+      "methods": [
+        "GET"
+      ],
+      "select": [
+        "id",
+        "product_id",
+        "sku",
+        "colour_label",
+        "size_label"
+      ],
+      "filterable": [
+        {
+          "column": "id",
+          "ops": [
+            "eq",
+            "in"
+          ]
+        }
       ]
     },
     {
@@ -11466,7 +11765,8 @@
             {
               "from": [
                 "paid",
-                "paying"
+                "paying",
+                "packed"
               ],
               "to": "cancelled",
               "by": [
@@ -11607,6 +11907,108 @@
             }
           }
         ]
+      }
+    }
+  ],
+  "documents": [
+    {
+      "kind": "receipt",
+      "addOn": "invoices",
+      "table": "orders",
+      "feature": "receipts",
+      "name": {
+        "en-US": "Receipt"
+      },
+      "mapping": {
+        "reference": {
+          "column": "number"
+        },
+        "issuedAt": {
+          "column": "placed_at"
+        },
+        "customerName": {
+          "column": "name"
+        },
+        "customerEmail": {
+          "column": "email"
+        },
+        "items": {
+          "collection": {
+            "table": "order_lines",
+            "via": "order_id",
+            "orderBy": "id",
+            "columns": {
+              "desc": "product_name",
+              "options": "variant_label",
+              "qty": "qty",
+              "rate": "each",
+              "amount": "line"
+            }
+          }
+        },
+        "subtotal": {
+          "column": "goods"
+        },
+        "delivery": {
+          "column": "shipping"
+        },
+        "taxRate": {
+          "column": "tax_rate"
+        },
+        "tax": {
+          "column": "tax"
+        },
+        "total": {
+          "column": "total"
+        },
+        "payments": {
+          "collection": {
+            "table": "payments",
+            "via": "order_id",
+            "orderBy": "id",
+            "columns": {
+              "paidOn": "paid_at",
+              "method": "method",
+              "amount": "amount"
+            }
+          }
+        }
+      }
+    },
+    {
+      "kind": "packing-slip",
+      "addOn": "invoices",
+      "table": "orders",
+      "feature": "packing-slips",
+      "name": {
+        "en-US": "Packing slip"
+      },
+      "mapping": {
+        "orderNumber": {
+          "column": "number"
+        },
+        "issuedAt": {
+          "column": "placed_at"
+        },
+        "shipToName": {
+          "column": "ship_name"
+        },
+        "deliveryService": {
+          "column": "service_label"
+        },
+        "items": {
+          "collection": {
+            "table": "order_lines",
+            "via": "order_id",
+            "orderBy": "id",
+            "columns": {
+              "desc": "product_name",
+              "variant": "variant_label",
+              "sku": "sku",
+              "qty": "qty"
+            }
+          }
+        }
       }
     }
   ],
@@ -27280,5 +27682,16 @@
         }
       }
     }
-  ]
+  ],
+  "sampleData": {
+    "file": "seeds/ecommerce-shop.sample.json",
+    "addOns": {
+      "inventory": {
+        "file": "seeds/ecommerce-shop.inventory.sample.json"
+      },
+      "offers": {
+        "file": "seeds/ecommerce-shop.offers.sample.json"
+      }
+    }
+  }
 }

@@ -16,6 +16,7 @@
           "zip": "97209",
           "ref_prefix": "NL-",
           "first_number": 1067,
+          "first_return_number": 1005,
           "pay_hold_minutes": 30,
           "transfer_name": "Northline Outdoor LLC",
           "transfer_bank": "Sample Savings Bank",
@@ -5364,6 +5365,7 @@
             "@ref": "offer:standard:contiguous"
           },
           "language": "en-US",
+          "discount": "14.90",
           "placed_at": {
             "@day": -21,
             "@time": "17:50",
@@ -5438,6 +5440,7 @@
             "@ref": "offer:express:contiguous"
           },
           "language": "en-US",
+          "discount": "20.80",
           "placed_at": {
             "@day": -20,
             "@time": "05:30",
@@ -5946,6 +5949,7 @@
             "@ref": "offer:express:contiguous"
           },
           "language": "en-US",
+          "discount": "18.90",
           "placed_at": {
             "@day": -16,
             "@time": "03:12",
@@ -6524,6 +6528,7 @@
             "@ref": "offer:express:contiguous"
           },
           "language": "en-US",
+          "discount": "42.45",
           "placed_at": {
             "@day": -13,
             "@time": "02:28",
@@ -6746,6 +6751,7 @@
             "@ref": "offer:express:contiguous"
           },
           "language": "en-US",
+          "discount": "4.80",
           "placed_at": {
             "@day": -12,
             "@time": "13:36",
@@ -7624,6 +7630,7 @@
             "@ref": "offer:standard:contiguous"
           },
           "language": "en-US",
+          "discount": "65.70",
           "placed_at": {
             "@day": -6,
             "@time": "09:23",
@@ -7920,6 +7927,7 @@
             "@ref": "offer:standard:remote"
           },
           "language": "en-US",
+          "discount": "13.50",
           "placed_at": {
             "@day": -4,
             "@time": "09:24",
@@ -8190,6 +8198,7 @@
             "@ref": "offer:standard:contiguous"
           },
           "language": "en-US",
+          "discount": "19.35",
           "placed_at": {
             "@day": -3,
             "@time": "20:49"
@@ -8382,6 +8391,7 @@
             "@ref": "offer:express:contiguous"
           },
           "language": "en-US",
+          "discount": "19.35",
           "placed_at": {
             "@day": -1,
             "@time": "14:40"
@@ -8754,6 +8764,7 @@
             "@ref": "offer:express:contiguous"
           },
           "language": "en-US",
+          "discount": "32.85",
           "placed_at": {
             "@ago": "PT1H35M"
           },
@@ -9085,7 +9096,8 @@
           "variant_id": {
             "@ref": "variant:NL-DUF60-SLA"
           },
-          "qty": 1
+          "qty": 1,
+          "discount": "14.90"
         },
         {
           "@label": "line:NL-1018:NL-TAL-8",
@@ -9095,7 +9107,8 @@
           "variant_id": {
             "@ref": "variant:NL-TAL-8"
           },
-          "qty": 1
+          "qty": 1,
+          "discount": "13.90"
         },
         {
           "@label": "line:NL-1018:NL-STV",
@@ -9105,7 +9118,8 @@
           "variant_id": {
             "@ref": "variant:NL-STV"
           },
-          "qty": 1
+          "qty": 1,
+          "discount": "6.90"
         },
         {
           "@label": "line:NL-1019:NL-RMB-9",
@@ -9195,7 +9209,8 @@
           "variant_id": {
             "@ref": "variant:NL-RMB-7"
           },
-          "qty": 1
+          "qty": 1,
+          "discount": "18.90"
         },
         {
           "@label": "line:NL-1026:NL-LOF-REGULAR",
@@ -9315,7 +9330,8 @@
           "variant_id": {
             "@ref": "variant:NL-CAS45-SLA-SM"
           },
-          "qty": 1
+          "qty": 1,
+          "discount": "32.85"
         },
         {
           "@label": "line:NL-1033:NL-DRY20-GLA",
@@ -9325,7 +9341,8 @@
           "variant_id": {
             "@ref": "variant:NL-DRY20-GLA"
           },
-          "qty": 2
+          "qty": 2,
+          "discount": "9.60"
         },
         {
           "@label": "line:NL-1034:NL-BSH-SLA-S",
@@ -9365,7 +9382,8 @@
           "variant_id": {
             "@ref": "variant:NL-DRY20-GLA"
           },
-          "qty": 1
+          "qty": 1,
+          "discount": "4.80"
         },
         {
           "@label": "line:NL-1036:NL-TAL-7",
@@ -9375,7 +9393,8 @@
           "variant_id": {
             "@ref": "variant:NL-TAL-7"
           },
-          "qty": 2
+          "qty": 2,
+          "discount": "0.00"
         },
         {
           "@label": "line:NL-1037:NL-FIR-MOS-M",
@@ -9595,7 +9614,8 @@
           "variant_id": {
             "@ref": "variant:NL-CAS45-MOS-SM"
           },
-          "qty": 2
+          "qty": 2,
+          "discount": "65.70"
         },
         {
           "@label": "line:NL-1049:NL-MER-SLA-XL",
@@ -9655,7 +9675,8 @@
           "variant_id": {
             "@ref": "variant:NL-HIP-SLA"
           },
-          "qty": 2
+          "qty": 2,
+          "discount": "13.50"
         },
         {
           "@label": "line:NL-1052:NL-EMB2",
@@ -9665,7 +9686,8 @@
           "variant_id": {
             "@ref": "variant:NL-EMB2"
           },
-          "qty": 1
+          "qty": 1,
+          "discount": "0.00"
         },
         {
           "@label": "line:NL-1053:NL-RMB-9",
@@ -9715,7 +9737,8 @@
           "variant_id": {
             "@ref": "variant:NL-RDG28-EMB"
           },
-          "qty": 1
+          "qty": 1,
+          "discount": "19.35"
         },
         {
           "@label": "line:NL-1056:NL-LOF-REGULAR",
@@ -9725,7 +9748,8 @@
           "variant_id": {
             "@ref": "variant:NL-LOF-REGULAR"
           },
-          "qty": 1
+          "qty": 1,
+          "discount": "0.00"
         },
         {
           "@label": "line:NL-1057:NL-TSH-SAN-32",
@@ -9755,7 +9779,8 @@
           "variant_id": {
             "@ref": "variant:NL-RDG28-SLA"
           },
-          "qty": 1
+          "qty": 1,
+          "discount": "19.35"
         },
         {
           "@label": "line:NL-1059:NL-LMP",
@@ -9765,7 +9790,8 @@
           "variant_id": {
             "@ref": "variant:NL-LMP"
           },
-          "qty": 1
+          "qty": 1,
+          "discount": "0.00"
         },
         {
           "@label": "line:NL-1060:NL-BTL-GLA",
@@ -9855,7 +9881,8 @@
           "variant_id": {
             "@ref": "variant:NL-CAS45-MOS-ML"
           },
-          "qty": 1
+          "qty": 1,
+          "discount": "32.85"
         },
         {
           "@label": "line:NL-1066:NL-BSH-EMB-M",

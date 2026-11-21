@@ -255,6 +255,8 @@ export const TABLES: Table[] = [
       // The order number: the prefix and the first number. A change applies to the next order.
       text("ref_prefix", 8, "Order number prefix", { default: "NL-" }),
       int("first_number", "First order number", { default: 1001, rules: { validation: { min: 1 } } }),
+      // A return's number runs on its own series, RT-1001 and on: from this number, the next return after a change.
+      int("first_return_number", "First return number", { default: 1001, rules: { validation: { min: 1 } } }),
       // Taking orders at all: off, the shop shows its pages and takes no order.
       bool("taking_orders", "Taking orders", true),
       // Paying online: how long an order waits for its payment, its stock held.
@@ -265,6 +267,8 @@ export const TABLES: Table[] = [
       text("transfer_bank", 80, "Bank", { ...opt, rules: { personal: false } }),
       text("transfer_routing", 16, "Routing number", { ...opt, rules: { personal: false } }),
       text("transfer_account", 24, "Account number", { ...opt, rules: { personal: false } }),
+      // The bank details as one text, what a transfer order is given to pay into: worked out, never typed twice.
+      copied("transfer_details", 400, "Bank details", { formula: { join: ["transfer_name", "\n", "transfer_bank", "\n", "transfer_routing", "\n", "transfer_account"] } }),
       int("transfer_days", "Shipping days to pay a bank transfer", { default: 5, rules: { validation: { min: 1, max: 20 } } }),
       // Returns: how long after shipping, and whether a faulty item's shipping comes back too.
       int("return_days", "Days to send something back", { default: 30, rules: { validation: { min: 0, max: 365 } } }),
@@ -423,7 +427,11 @@ export const TABLES: Table[] = [
       copied("product_name", 80, "Product name", follow("product_id", "name")),
       copied("product_status", 16, "Product status", follow("product_id", "status")),
       // What Inventory calls the item it makes for the variant.
-      copied("stock_name", 200, "Stock item name", { formula: { join: ["product_name", " · ", "colour_label", " · ", "size_label", " · ", "sku"] } }),
+      // (In steps: a join keeps the words between two parts only while both are there, so an empty size would take
+      // both its " · " with it and run the colour into the SKU.)
+      copied("stock_label", 90, "Colour and size", { formula: { join: ["colour_label", " · ", "size_label"] } }),
+      copied("stock_head", 180, "Product, colour and size", { formula: { join: ["product_name", " · ", "stock_label"] } }),
+      copied("stock_name", 200, "Stock item name", { formula: { join: ["stock_head", " · ", "sku"] } }),
     ],
     postings: [
       // With Inventory on, a new variant gets a stock item of its own, linked to it: its stock is counted from then.
@@ -594,11 +602,14 @@ export const TABLES: Table[] = [
         packed: [
           { to: "shipped", requires: { where: [{ column: "carrier", isNull: false }] } },
           { to: "paid", roles: ["owner", "packer"], undo: true },
+          // Packed but not yet gone: the owner may still cancel it, its stock put back. A shipped order cannot be.
+          { ...cancel(), roles: ["owner"] },
         ],
         // A gift card sold: cancelled only by the owner, and only while it is unspent (Offers' recall refuses otherwise).
         sent: [{ to: "cancelled", roles: ["owner"], requires: { where: [{ column: "cancel_reason", isNull: false }] } }],
       },
-      lock: { when: ["shipped", "sent", "cancelled"], except: ["link_stopped", "staff_note", "tracking", "carrier"] },
+      // The owner's cancel of a sent gift order names its reason in the same save as the move.
+      lock: { when: ["shipped", "sent", "cancelled"], except: ["link_stopped", "staff_note", "tracking", "carrier", "cancel_reason"] },
       children: {
         order_lines: { via: "order_id", lock: true },
         gift_lines: { via: "order_id", lock: true },
@@ -647,6 +658,8 @@ export const TABLES: Table[] = [
         rules: { linkable: { where: [{ column: "active", eq: true }], same: [{ column: "zone_id", as: "zone_id" }] } },
       }),
       fk("service_id", "shipping_services", "Service", { ...opt, rules: frozen("offer_id", "service_id") }),
+      // How it goes, by name, as the packing slip prints it.
+      copied("service_label", 40, "Shipping service", frozen("offer_id", "service_label")),
       money("ship_price", "Shipping price", frozen("offer_id", "price")),
       money("free_from", "Free shipping from", frozen("offer_id", "free_from")),
       figure("transit_min", "Days on the way, at least", frozen("offer_id", "transit_min")),
@@ -668,6 +681,8 @@ export const TABLES: Table[] = [
       // Sales tax on the goods after reductions, once for the order, never on shipping.
       money("tax", "Sales tax", { formula: { round: [{ div: [{ mul: [c0("net"), c0("tax_rate")] }, 100] }, 2] } }),
       money("gifts", "Gift cards", { rollup: { from: "gift_lines", via: "order_id", sum: "amount" } }),
+      // What the tax line stands under: everything but the tax.
+      money("before_tax", "Before tax", { formula: { add: [c0("net"), c0("shipping"), c0("gifts")] } }),
       money("total", "Total", { formula: { add: [c0("net"), c0("shipping"), c0("tax"), c0("gifts")] } }),
       // What payments hold, and what is left to pay.
       money("paid", "Paid", { rollup: { from: "payments", via: "order_id", sum: "kept", balance: { column: "due", of: "total" }, cap: true } }),
@@ -680,19 +695,22 @@ export const TABLES: Table[] = [
       // ── clocks ──
       at("placed_at", "Placed", { ...opt, rules: stamp("now", onCreate) }),
       // Paying online: the order waits this long for its payment.
-      at("pay_by", "Pay by", { ...opt, rules: stamp({ moment: { column: "placed_at", plus: { minutes: setting("pay_hold_minutes") } } }, { columns: ["placed_at"] }) }),
+      // (Counted from now, on the create that stamps `placed_at` now: a `moment` stamp cannot read a stamp of the same write.)
+      at("pay_by", "Pay by", { ...opt, rules: stamp({ addMinutes: { minutes: setting("pay_hold_minutes") } }, onCreate) }),
       // A bank transfer: so many shipping days, the order cancelled at the day's end.
       figure("transfer_days", "Shipping days to pay", { default: { from: setting("transfer_days") } }),
       date("transfer_by", "Pay by transfer by", { ...opt, rules: stamp(shipDays("placed_at", "transfer_days"), { columns: ["placed_at", "transfer_days"] }) }),
       // The bank details as they were when the order was placed: what the customer was told to pay into.
-      text("transfer_note", 400, "Bank details given", opt),
+      text("transfer_note", 400, "Bank details given", { ...opt, rules: { default: { from: setting("transfer_details") } } }),
       // Its stock stays held 45 days from placing: a paid order keeps its stock until it is packed.
-      at("stock_until", "Stock held until", { ...opt, rules: stamp({ moment: { column: "placed_at", plus: { days: 45 } } }, { columns: ["placed_at"] }) }),
+      at("stock_until", "Stock held until", { ...opt, rules: stamp({ addMinutes: { hours: 45 * 24 } }, onCreate) }),
       at("paid_at", "Paid at", { ...opt, rules: { rollup: { from: "payments", via: "order_id", latest: { of: "paid_at", by: "paid_at" } } } }),
       // When it ships and arrives, worked out from the payment: the same day before the cut-off, else the next shipping day.
-      date("ships_by", "Ships by", { ...opt, rules: stamp(shipDays("paid_at", 0), { columns: ["paid_at"] }) }),
-      date("arrives_from", "Arrives from", { ...opt, rules: stamp(shipDays("ships_by", "transit_min"), { columns: ["ships_by", "transit_min"] }) }),
-      date("arrives_to", "Arrives by", { ...opt, rules: stamp(shipDays("ships_by", "transit_max"), { columns: ["ships_by", "transit_max"] }) }),
+      // (And on the move to paid: an order a gift card pays in full has its payment in the create, before the move.)
+      date("ships_by", "Ships by", { ...opt, rules: stamp(shipDays("paid_at", 0), [{ columns: ["paid_at"] }, onState("status", "paid")]) }),
+      // (They watch the payment too: the payment's total moves `paid_at` alone, and works out only the stamps that watch it.)
+      date("arrives_from", "Arrives from", { ...opt, rules: stamp(shipDays("ships_by", "transit_min"), [{ columns: ["paid_at", "ships_by", "transit_min"] }, onState("status", "paid")]) }),
+      date("arrives_to", "Arrives by", { ...opt, rules: stamp(shipDays("ships_by", "transit_max"), [{ columns: ["paid_at", "ships_by", "transit_max"] }, onState("status", "paid")]) }),
       // The same, as told before paying: "if you pay now".
       date("est_ships_by", "Ships by, if paid now", { ...opt, rules: stamp(shipDays("placed_at", 0), { columns: ["placed_at"] }) }),
       date("est_from", "Arrives from, if paid now", { ...opt, rules: stamp(shipDays("est_ships_by", "transit_min"), { columns: ["est_ships_by", "transit_min"] }) }),
@@ -712,7 +730,7 @@ export const TABLES: Table[] = [
       // ── the order's own link ──
       text("link_token", 16, "Link code", { ...opt, rules: { code: { length: 16, hiddenFromStaff: true } } }),
       // The link works until well after the last day to send something back.
-      at("link_expires", "Link works until", { ...opt, rules: stamp({ moment: { column: "placed_at", plus: { days: 120 } } }, { columns: ["placed_at"] }) }),
+      at("link_expires", "Link works until", { ...opt, rules: stamp({ addMinutes: { hours: 120 * 24 } }, onCreate) }),
       bool("link_stopped", "Link stopped", false),
       // The tick at checkout ("Send me news"): theirs, written by nobody else.
       bool("news", "News e-mails", false),
@@ -735,7 +753,8 @@ export const TABLES: Table[] = [
         via: "order_id",
         reserve: { on: { create: true } },
         post: { on: { to: ["packed"] } },
-        reverse: { on: { to: ["cancelled"], from: ["paying", "awaiting_transfer", "paid"] } },
+        // (From packed too: the owner's cancel of a packed order puts what was taken back.)
+        reverse: { on: { to: ["cancelled"], from: ["paying", "awaiting_transfer", "paid", "packed"] } },
         heldUntil: { parent: "stock_until" },
         map: { what: "variant_id", quantity: "qty" },
       },
@@ -802,8 +821,9 @@ export const TABLES: Table[] = [
         needs: "gift-cards",
         via: "order_id",
         reserve: { on: { create: true } },
-        post: { on: { column: "paid_at", set: true } },
-        reverse: { on: { column: "cancelled_at", set: true } },
+        // On the order's own moves: its `paid_at` is a total of its payments, which moves no posting of a line.
+        post: { on: { to: ["paid"] } },
+        reverse: { on: { to: ["cancelled"], from: ["paying", "awaiting_transfer"] } },
         map: { amount: "load_amount", to_name: "to_name", to_email: "to_email", message: "message", sender: "sender", language: "language" },
       },
       {
@@ -811,7 +831,7 @@ export const TABLES: Table[] = [
         into: { addOn: "offers", ledger: "value", action: "recall" },
         needs: "gift-cards",
         via: "order_id",
-        post: { on: { column: "cancelled_at", set: true } },
+        post: { on: { to: ["cancelled"], from: ["paid", "sent"] } },
         map: { sale: { row: true } },
       },
     ],
@@ -881,7 +901,13 @@ export const TABLES: Table[] = [
       money("returned", "Given back", { rollup: { from: "payment_refunds", via: "payment_id", sum: "counted" } }),
       amount("refunded_elsewhere", "Given back at the service"),
       money("kept", "Kept", { formula: { sub: [c0("amount"), { add: [c0("returned"), c0("refunded_elsewhere")] }] } }),
-      at("paid_at", "Paid at", opt),
+      // When it landed: the payment page's moment, the day the owner says a transfer came, or, for a gift card, the
+      // moment the card paid (stamped: nobody types it). An order a card pays in full counts its ships-by from it.
+      // When it landed: the payment page's moment, the day the owner says a transfer came, or, for a gift card, the
+      // moment the card paid. A card's is stamped (`now`, as no minutes from now: a stamp of that kind keeps what the
+      // payment page and the owner write, and fires only when a card's code is given), so an order a card pays in
+      // full counts its ships-by from it.
+      at("paid_at", "Paid at", { ...opt, rules: stamp({ addMinutes: { minutes: 0 } }, { column: "card_code", filled: true }) }),
       text("note", 160, "Note", opt),
       text("made_by", 80, "Recorded by", { ...opt, rules: stamp({ byOrigin: { public: "customer", staff: "user-name" } }, onCreate) }),
       text("payment_ref", 64, "Online payment reference", { ...opt, unique: true }),
@@ -946,7 +972,7 @@ export const TABLES: Table[] = [
     },
     columns: [
       id,
-      int("number_seq", "Number (running)", { ...opt, rules: { sequence: { gapless: true, start: 1001 } } }),
+      int("number_seq", "Number (running)", { ...opt, rules: { sequence: { gapless: true, startSetting: setting("first_return_number") } } }),
       text("number", 16, "Number", { ...opt, unique: true, rules: { format: { from: "number_seq", prefix: "RT-" } } }),
       fk("order_id", "orders", "Order", { rules: { linkable: { where: [{ column: "status", eq: "shipped" }] } } }),
       // The signed-in customer who asked it; a return asked through the order's own link has none.
@@ -977,6 +1003,8 @@ export const TABLES: Table[] = [
       at("received_at", "Received", { ...opt, rules: stamp("now", onState("status", "received")) }),
       text("received_by", 80, "Received by", { ...opt, rules: stamp("user-name", onState("status", "received")) }),
       at("refunded_at", "Refunded at", { ...opt, rules: stamp("now", onState("status", "refunded")) }),
+      // Send it back by this day: five shipping days from the approval, told in the "Return approved" e-mail.
+      date("send_by", "Send it back by", { ...opt, rules: stamp({ addWorkingDays: { from: "now", days: 5, weekdays: SHIP_DAYS, closures: CLOSURES } }, onState("status", "approved")) }),
       language("language", frozen("order_id", "language")),
     ],
   },

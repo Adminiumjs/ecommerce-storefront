@@ -51,10 +51,12 @@ export const ORDER_SELECT = [
   "offer_id",
   "service_id",
   "tax_rate",
+  "free_from",
   "goods",
   "discount",
   "net",
   "shipping",
+  "before_tax",
   "tax",
   "gifts",
   "total",
@@ -85,19 +87,25 @@ export const ORDER_SELECT = [
 
 /** What placing an order answers: its figures and progress, never the shopper's own details back. */
 export const PLACED_SELECT = ORDER_SELECT.filter((c) => !["name", "email", "ship_name", "address_line1", "address_line2", "city", "zip", "transfer_note"].includes(c));
+/** A bank-transfer order's answer adds the bank details to pay into: the customer's own, for their own order. */
+export const PLACED_TRANSFER_SELECT = [...PLACED_SELECT, "transfer_note"];
 
 export const LINE_SELECT = ["id", "order_id", "variant_id", "qty", "sku", "product_id", "product_name", "colour", "size", "variant_label", "each", "line", "discount", "returned_qty", "returnable", "reviewed_at"];
 export const GIFT_SELECT = ["id", "order_id", "amount_id", "amount", "to_name", "to_email", "message", "sender"];
-export const PAYMENT_SELECT = ["id", "order_id", "method", "amount", "returned", "kept", "card_last4", "paid_at"];
+export const PAYMENT_SELECT = ["id", "order_id", "method", "amount", "returned", "kept", "card_last4", "paid_at", "provider"];
 export const REFUND_SELECT = ["id", "payment_id", "order_id", "return_id", "method", "amount", "refund_state", "made_at"];
 export const RETURN_SELECT = ["id", "number", "order_id", "order_number", "status", "reason", "note", "tracking", "staff_reason", "refund_goods", "shipping_refund", "refund_amount", "refunded_total", "asked_at", "approved_at", "declined_at", "received_at", "refunded_at"];
 export const RETURN_LINE_SELECT = ["id", "return_id", "line_id", "qty", "sku", "product_name", "variant_label", "refund"];
 
-/** The customer's own moves: a cancel while the order is not packed, with their own reason. */
-const OWN_CANCEL = {
+/**
+ * The customer's own moves: a cancel while the order is not packed, with their own reason; and "paid" once a gift
+ * card covered it all, while it waits for its money. The table's moves hold each: a paying order is cancelled by the
+ * clock alone (its move waits for the deadline), and it is paid only when nothing is left to pay (`due ≤ 0`).
+ */
+const OWN_MOVES = {
   writable: ["status", "cancel_reason"],
-  writableValues: { status: ["cancelled"], cancel_reason: ["customer"] },
-  writableWhen: { status: ["paid", "awaiting_transfer"] },
+  writableValues: { status: ["cancelled", "paid"], cancel_reason: ["customer"] },
+  writableWhen: { status: ["paying", "paid", "awaiting_transfer"] },
 };
 
 /** The rows under an order, read where the order is. */
@@ -108,7 +116,17 @@ function underOrder(key?: string) {
     { table: "gift_lines", ...keyed, methods: ["GET"], level: "verified", visibleWith: { table: "orders", via: "order_id" }, select: GIFT_SELECT },
     { table: "payments", ...keyed, methods: ["GET"], level: "verified", visibleWith: { table: "orders", via: "order_id" }, select: PAYMENT_SELECT },
     { table: "payment_refunds", ...keyed, methods: ["GET"], level: "verified", visibleWith: { table: "orders", via: "order_id" }, select: REFUND_SELECT },
-    { table: "returns", ...keyed, methods: ["GET"], level: "verified", visibleWith: { table: "orders", via: "order_id" }, select: RETURN_SELECT },
+    // The customer's own carrier number for the parcel coming back, typed once the return is approved.
+    {
+      table: "returns",
+      ...keyed,
+      methods: ["GET", "PATCH"],
+      level: "verified",
+      visibleWith: { table: "orders", via: "order_id" },
+      select: RETURN_SELECT,
+      writable: ["tracking"],
+      writableWhen: { status: ["approved"] },
+    },
     { table: "return_lines", ...keyed, methods: ["GET"], level: "verified", visibleWith: { table: "returns", via: "return_id" }, select: RETURN_LINE_SELECT },
   ];
 }
@@ -131,7 +149,7 @@ const CATALOGUE = [
     methods: ["GET"],
     select: PRODUCT_SELECT,
     filters: [{ column: "status", op: "eq", value: "active" }],
-    filterable: ["category_id", { column: "price", ops: ["gte", "lte"] }, "featured", "slug"],
+    filterable: [{ column: "id", ops: ["eq", "in"] }, "category_id", { column: "price", ops: ["gte", "lte"] }, "featured", "slug"],
     searchable: ["name", "category_name"],
     orderable: ["position", "created_at", "price", "name"],
     via: { entry: "variants", on: "product_id", columns: ["colour_code", "size_code", "sold_out"] },
@@ -204,7 +222,7 @@ function placeOrder(kind: Kind, pay: Pay) {
     methods: ["POST"],
     humanCheck: true,
     level: "verified",
-    select: PLACED_SELECT,
+    select: online ? PLACED_SELECT : PLACED_TRANSFER_SELECT,
     writable: [
       "name",
       "email",
@@ -273,15 +291,17 @@ export const PUBLIC_ACCESS = [
   {
     table: "customers",
     methods: ["GET", "PATCH"],
-    select: ["name", "email", "language", "news"],
-    writable: ["name", "language"],
+    select: ["id", "name", "email", "language", "news"],
+    // "Stop news e-mails" and saying yes again: the same tick, logged as Adminium's consent log keeps it.
+    writable: ["name", "language", "news"],
+    consent: NEWS_TICK,
     claim: { verify: "email-link", email: "email" },
     humanCheck: true,
     // "Delete my details" stops every link their orders were e-mailed with, takes back the newsletter, and drops
     // their waiting back-in-stock requests. Their orders stay, as tax law asks.
     forget: { columns: ["email", "name", "news"], stamp: "forgotten_at", links: true },
   },
-  { table: "orders", methods: ["GET", "PATCH"], level: "verified", claimedBy: { table: "customers", column: "customer_id" }, select: ORDER_SELECT, ...OWN_CANCEL },
+  { table: "orders", methods: ["GET", "PATCH"], level: "verified", claimedBy: { table: "customers", column: "customer_id" }, select: ORDER_SELECT, documents: ["receipt"], ...OWN_MOVES },
   ...underOrder(),
   askReturn(),
   // "Tell me when it's back": a signed-in customer's own requests, one a variant.
@@ -337,7 +357,8 @@ export const PUBLIC_ACCESS = [
     methods: ["GET", "PATCH"],
     select: ORDER_SELECT,
     claim: { by: "token", column: "link_token", expires: "link_expires", stopped: "link_stopped", own: true, address: "email" },
-    ...OWN_CANCEL,
+    documents: ["receipt"],
+    ...OWN_MOVES,
   },
   ...underOrder(LINK_KEY),
   // Through the order's own link a return is asked in two writes: the return, then each of its pieces, while it is
@@ -352,6 +373,9 @@ export const PUBLIC_ACCESS = [
     writable: ["order_id", "reason", "note", "tracking"],
     requires: ["order_id", "reason"],
   },
+  // A returned piece names its variant (copied from its line, for Inventory's "back in stock"): every key that makes
+  // one reads the variants it may name, on sale or not. Only what a returns page shows of one.
+  { table: "variants", key: LINK_KEY, methods: ["GET"], select: ["id", "product_id", "sku", "colour_label", "size_label"], filterable: [{ column: "id", ops: ["eq", "in"] }] },
   {
     table: "return_lines",
     key: LINK_KEY,

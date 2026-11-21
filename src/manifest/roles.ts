@@ -65,6 +65,7 @@ export const PACKER_ORDER_READS = [
   "zone_id",
   "offer_id",
   "service_id",
+  "service_label",
   "pieces",
   "weight_g",
   "placed_at",
@@ -81,7 +82,7 @@ export const PACKER_ORDER_READS = [
   "staff_note",
 ];
 export const PACKER_LINE_READS = ["id", "order_id", "variant_id", "qty", "sku", "product_id", "category_id", "product_name", "colour", "size", "variant_label", "weight_g", "line_weight_g", "returned_qty"];
-const PACKER_VARIANT_READS = ["id", "product_id", "colour_id", "size_id", "colour_code", "size_code", "colour_label", "size_label", "combo", "sku", "weight_g", "active", "sold_out", "category_id", "product_name", "product_status", "stock_name"];
+const PACKER_VARIANT_READS = ["id", "product_id", "colour_id", "size_id", "colour_code", "size_code", "colour_label", "size_label", "combo", "sku", "weight_g", "active", "sold_out", "category_id", "product_name", "product_status", "stock_label", "stock_head", "stock_name"];
 const PACKER_PRODUCT_READS = ["id", "name", "slug", "category_id", "category_name", "size_guide_id", "size_name", "status", "position"];
 const PACKER_RETURN_READS = ["id", "number", "order_id", "order_number", "status", "reason", "note", "tracking", "staff_note", "asked_at", "approved_at", "received_at", "received_by"];
 const PACKER_RETURN_LINE_READS = ["id", "return_id", "line_id", "qty", "variant_id", "sku", "product_name", "variant_label", "restock", "void_at"];
