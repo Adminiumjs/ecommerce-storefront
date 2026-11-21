@@ -18,7 +18,7 @@
  *     once: each lands (the order number's lock retried as the page does),
  *     numbered without a gap;
  *   - THE BANK-TRANSFER DOOR (payments off, transfers on): a guest refused,
- *     a signed-in customer's order waiting five shipping days, two unpaid at
+ *     a signed-in customer's order waiting five shipping days, one unpaid at
  *     most, cancelled by the clock at 23:59 on its last day;
  *   - THE GIFT-CARDS-ONLY DOOR: paid, and sent by the shop's rule;
  *   - the seventh unpaid order from one visitor in an hour: refused.
@@ -224,7 +224,7 @@ describe.skipIf(why !== null)(`Northline takes orders on a built Adminium${why =
         expect([401, 403, 404]).toContain(refused.status);
         });
 
-        it("takes a signed-in customer's order to pay in five shipping days, two unpaid at most", async () => {
+        it("takes a signed-in customer's order to pay in five shipping days, one unpaid at most", async () => {
           const { tab, who } = await signedIn("transfer", false);
           const ref = stand.placeRef("goods", "transfer");
           const first = await place(tab, ref, goodsOrder(shop, who, "OR", "standard", [["NL-RDG28-SLA", 1]]));
@@ -242,10 +242,9 @@ describe.skipIf(why !== null)(`Northline takes orders on a built Adminium${why =
           expect([waiting["status"], waiting["pay_method"]]).toEqual(["awaiting_transfer", "transfer"]);
           // Tuesday 18 August, before two: five shipping days on is Tuesday 25 August.
           expect(String(waiting["transfer_by"]).slice(0, 10)).toBe("2026-08-25");
+          // Its stock is held for days: a second unpaid transfer order waits until this one is paid or ends.
           const second = await place(tab, ref, goodsOrder(shop, who, "OR", "standard", [["NL-MUG-MOS", 1]]));
-          expect(second.status).toBe(201);
-          const third = await place(tab, ref, goodsOrder(shop, who, "OR", "standard", [["NL-MUG-MOS", 2]]));
-          expect([third.status, third.code]).toEqual([409, "PUBLIC_LIMIT_REACHED"]);
+          expect([second.status, second.code]).toEqual([409, "PUBLIC_LIMIT_REACHED"]);
         }, 120_000);
 
         it("cancels an unpaid transfer order by the clock at 23:59 on its last day, and not before", async () => {

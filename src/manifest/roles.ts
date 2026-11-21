@@ -85,7 +85,7 @@ export const PACKER_LINE_READS = ["id", "order_id", "variant_id", "qty", "sku", 
 const PACKER_VARIANT_READS = ["id", "product_id", "colour_id", "size_id", "colour_code", "size_code", "colour_label", "size_label", "combo", "sku", "weight_g", "active", "sold_out", "category_id", "product_name", "product_status", "stock_label", "stock_head", "stock_name"];
 const PACKER_PRODUCT_READS = ["id", "name", "slug", "category_id", "category_name", "size_guide_id", "size_name", "status", "position"];
 const PACKER_RETURN_READS = ["id", "number", "order_id", "order_number", "status", "reason", "note", "tracking", "staff_note", "asked_at", "approved_at", "received_at", "received_by"];
-const PACKER_RETURN_LINE_READS = ["id", "return_id", "line_id", "qty", "variant_id", "sku", "product_name", "variant_label", "restock", "void_at"];
+const PACKER_RETURN_LINE_READS = ["id", "return_id", "line_id", "qty", "variant_id", "sku", "product_name", "variant_label", "restock", "void_at", "received", "received_at"];
 
 /** Inventory's rows the desk reads to show each variant's stock: the packer without costs. */
 const INVENTORY_READS = [
@@ -156,7 +156,7 @@ export const ROLES = [
       variants: { readable: PACKER_VARIANT_READS },
       settings: { readable: ["id", "shop_name", "address_line1", "address_line2", "city", "state_code", "zip", "phone", "return_days"] },
       returns: { readable: PACKER_RETURN_READS, writable: ["status", "staff_note"], writableValues: { status: ["received"] }, writableFrom: { status: ["approved"] } },
-      return_lines: { readable: PACKER_RETURN_LINE_READS, writable: ["restock"] },
+      return_lines: { readable: PACKER_RETURN_LINE_READS, writable: ["restock", "received"] },
     },
     tables: INVENTORY_READS.map((entry) => (entry.table === "stock_points" ? { ...entry, limit: { readable: ["id", "item_id", "place_id", "on_hand", "available", "held", "low", "state"] } } : entry)),
   },

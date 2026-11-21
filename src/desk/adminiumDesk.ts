@@ -55,7 +55,7 @@ export const YES_NO: Readonly<Partial<Record<Table | string, readonly string[]>>
   customers: ["news"],
   orders: ["customer_proved", "link_stopped", "news"],
   payment_refunds: ["automatic"],
-  return_lines: ["restock"],
+  return_lines: ["restock", "received"],
   items: ["active"],
 };
 

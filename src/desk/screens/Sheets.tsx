@@ -461,8 +461,9 @@ function ReceiveSheet({ returnId }: { returnId: Id }) {
           onClick={() =>
             void run(async (d) => {
               for (const line of lines) {
+                // Each piece is marked received with its "put back in stock": the piece's own posting takes it back then.
                 const want = restock[String(line.id)] === true;
-                if ((line["restock"] !== false) !== want) await d.saveReturnLine(line, { restock: want });
+                if (line["received"] !== true) await d.saveReturnLine(line, { restock: want, received: true });
               }
               await d.moveReturn(ret, "received");
               closeSheet();

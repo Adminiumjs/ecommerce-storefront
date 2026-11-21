@@ -1021,13 +1021,14 @@ export const TABLES: Table[] = [
     labelPlural: l("Returned pieces"),
     keyField: "sku",
     postings: [
-      // Back in stock when the parcel is received, unless the shop says the piece is not fit to sell.
+      // Back in stock when the piece is received, unless the shop says it is not fit to sell. Said on the piece itself
+      // (the desk's Received marks each piece, then moves the return): a piece hanging its posting off its return could
+      // not be made through the order's own link, where each piece is its own write.
       {
         id: "restock",
         into: { addOn: "inventory", ledger: "stock", action: "return" },
         needs: "stock",
-        via: "return_id",
-        post: { on: { to: ["received"] } },
+        post: { on: { column: "received_at", set: true } },
         only: { column: "restock", eq: true },
         map: { what: "variant_id", quantity: "qty" },
       },
@@ -1061,6 +1062,9 @@ export const TABLES: Table[] = [
       }),
       // Put back in stock when it comes in: said at Received, off for a faulty piece.
       bool("restock", "Put back in stock", true),
+      // Marked by the desk's Received, one piece at a time; the moment it was is Adminium's.
+      bool("received", "Received", false),
+      at("received_at", "Received at", { ...opt, rules: stamp("now", { column: "received", values: [true] }) }),
       // Set by the desk's Decline, on each piece before the return moves: its pieces are free to come back in another.
       // (A copy that follows the return cannot feed the order line's total; the desk writes it in the same sheet.)
       at("void_at", "Freed", opt),

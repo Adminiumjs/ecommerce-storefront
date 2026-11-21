@@ -5915,12 +5915,10 @@
               "action": "return"
             },
             "needs": "stock",
-            "via": "return_id",
             "post": {
               "on": {
-                "to": [
-                  "received"
-                ]
+                "column": "received_at",
+                "set": true
               }
             },
             "only": {
@@ -6186,6 +6184,33 @@
             "default": true,
             "label": {
               "en-US": "Put back in stock"
+            }
+          },
+          {
+            "ref": "received",
+            "type": "bool",
+            "default": false,
+            "label": {
+              "en-US": "Received"
+            }
+          },
+          {
+            "ref": "received_at",
+            "type": "timestamptz",
+            "label": {
+              "en-US": "Received at"
+            },
+            "nullable": true,
+            "rules": {
+              "stamp": {
+                "set": "now",
+                "on": {
+                  "column": "received",
+                  "values": [
+                    true
+                  ]
+                }
+              }
             }
           },
           {
@@ -9536,10 +9561,13 @@
             "product_name",
             "variant_label",
             "restock",
-            "void_at"
+            "void_at",
+            "received",
+            "received_at"
           ],
           "writable": [
-            "restock"
+            "restock",
+            "received"
           ]
         }
       },
@@ -10484,7 +10512,7 @@
           ],
           "n": 3
         },
-        "perIpHour": 4,
+        "perIpHour": 6,
         "perKeyHour": 300,
         "plainText": [
           "name",
@@ -10685,7 +10713,7 @@
           ],
           "n": 3
         },
-        "perIpHour": 4,
+        "perIpHour": 6,
         "perKeyHour": 300,
         "plainText": [
           "name"
@@ -10858,7 +10886,7 @@
           ],
           "n": 3
         },
-        "perIpHour": 4,
+        "perIpHour": 6,
         "perKeyHour": 300,
         "plainText": [
           "name",
@@ -11054,7 +11082,7 @@
           ],
           "n": 3
         },
-        "perIpHour": 4,
+        "perIpHour": 6,
         "perKeyHour": 300,
         "plainText": [
           "name"

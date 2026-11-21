@@ -240,7 +240,7 @@ function placeOrder(kind: Kind, pay: Pay) {
     shareLink: "link_token",
     anonymous: {
       perValue: { columns: ["email"], n: 3 },
-      perIpHour: 4,
+      perIpHour: 6,
       perKeyHour: 300,
       plainText: goods
         ? ["name", "ship_name", "city"]

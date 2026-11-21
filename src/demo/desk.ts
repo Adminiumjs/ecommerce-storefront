@@ -221,7 +221,7 @@ export class DemoDesk implements DeskDoor {
 
   saveReturnLine(line: Row, values: Record<string, unknown>): Promise<Row> {
     return run(() => {
-      const row = this.world.update("return_lines", line.id, Object.fromEntries(Object.entries(values).filter(([k]) => ["restock", "void_at"].includes(k))));
+      const row = this.world.update("return_lines", line.id, Object.fromEntries(Object.entries(values).filter(([k]) => ["restock", "void_at", "received"].includes(k))));
       this.world.changed();
       return strip(row);
     });

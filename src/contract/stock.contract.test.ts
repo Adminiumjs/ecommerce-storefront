@@ -163,9 +163,11 @@ describe.skipIf(why !== null)(`Northline's stock on a built Adminium${why === nu
         const before = await stockOf("NL-RDG28-SLA");
         const line = (await stand.rows("order_lines")).find((l) => String(l["order_id"]) === String(placed["id"]))!;
         const asked = await stand.create("returns", { order_id: placed["id"], reason: "fit" });
-        await stand.create("return_lines", { return_id: asked["id"], line_id: line["id"], qty: 1 });
+        const piece = await stand.create("return_lines", { return_id: asked["id"], line_id: line["id"], qty: 1 });
         await stand.patch("returns", asked["id"], { status: "approved" });
         expect(await stockOf("NL-RDG28-SLA")).toEqual(before);
+        // The desk's Received: each piece marked received (back on the shelf then), and the return moved.
+        await stand.patch("return_lines", piece["id"], { received: true });
         await stand.patch("returns", asked["id"], { status: "received" });
         expect(await stockOf("NL-RDG28-SLA")).toEqual([before[0] + 1, before[1], before[2] + 1]);
       }, 120_000);

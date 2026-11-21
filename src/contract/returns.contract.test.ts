@@ -138,6 +138,7 @@ describe.skipIf(why !== null)(`sending something back to Northline${why === null
         expect((await stand.row("returns", second["id"]))["tracking"]).toBe("1ZRETURN0001");
         // Send it back within five shipping days of the approval: Tuesday 18 August, so by Tuesday 25 August.
         expect(String((await stand.row("returns", second["id"]))["send_by"]).slice(0, 10)).toBe("2026-08-25");
+        for (const piece of (await stand.rows("return_lines")).filter((l) => String(l["return_id"]) === String(second["id"]))) await stand.patch("return_lines", piece["id"], { received: true });
         await stand.patch("returns", second["id"], { status: "received" });
         const early = await stand.staff.patch(`${stand.data("returns")}/${String(second["id"])}`, { values: { status: "refunded" } });
         expect(early.status, JSON.stringify(early.body).slice(0, 400)).not.toBe(200);
@@ -170,10 +171,9 @@ describe.skipIf(why !== null)(`sending something back to Northline${why === null
         expect([row["status"], row["customer_id"]]).toEqual(["asked", null]);
       }, 240_000);
 
-      // KNOWN GAP (reported, engine): the second write, a piece of that return through the same link, is refused
-      // PUBLIC_WRITE_REFUSED with no reason, though the same row is taken from the desk and inside the signed-in
-      // customer's one-write return. Switched on once the engine takes a grandchild's create through a row's own link.
-      it.skipIf(process.env["CONTRACT_LINK_PIECES"] !== "1")("takes its piece in a second write through the same link", async () => {
+      // The second write: a piece of that return, through the same link. (Its restock posting is the piece's own, on
+      // `received_at`: a posting hung off the return could not be made in a child's create through a row's own link.)
+      it("takes its piece in a second write through the same link", async () => {
         const piece = await link.create(linkCreate("return_lines"), { values: { return_id: asked["id"], line_id: byLink.lines[0]!["id"], qty: 1 } });
         expect(piece.status, JSON.stringify(piece.body).slice(0, 600)).toBe(201);
         expect(money((await stand.row("returns", asked["id"]))["refund_amount"])).toBe("23.43");
