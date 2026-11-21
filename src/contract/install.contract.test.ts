@@ -22,7 +22,7 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { addOnBundle, appBundle, boot, Caller, ENGINES, missing, missingAddOn, ok, PORTS_PER_ENGINE, solve, type Engine, type Server } from "./harness.ts";
 import { MANIFEST_TEXT } from "./release.ts";
 
-const ADD_ONS = ["inventory", "offers", "invoices", "forms"] as const;
+const ADD_ONS = ["inventory", "offers", "invoices", "forms", "barcode-labels"] as const;
 const why = missing() ?? ADD_ONS.map((key) => missingAddOn(key)).find((reason) => reason !== null) ?? null;
 if (why !== null && process.env["ADMINIUM_REQUIRE_CONTRACT"] === "1") throw new Error(`the install contract must run here, and cannot: ${why}`);
 const PORT_BASE = Number(process.env["CONTRACT_PORT_BASE"] ?? 4960);
