@@ -54,7 +54,8 @@ import { useFormat, useT } from "../i18n/t.ts";
 import { labelFilename } from "../label.ts";
 import { parcelFor } from "../parcel.ts";
 import { cheapestCode, type QuotedRate } from "../rates.ts";
-import { carrier, findShipment, isDemo, labels, rememberRoute, setHostClock } from "../runtime.ts";
+import { carrier, carrierState, findShipment, isDemo, labels, rememberRoute, setHostClock } from "../runtime.ts";
+import { DemoNotice, NotConnected } from "./account.tsx";
 import { addressIsUsable, blankAddress, POSTCODE_HINT } from "../seed.ts";
 import {
   Button,
@@ -153,6 +154,9 @@ export function ReturnLabel({ payload }: { payload: RecordActionsPayload }) {
       </Panel>
     );
   }
+
+  // No DHL account and no demo, and no label made earlier: nothing can be quoted, and the card says so.
+  if (made === null && carrierState() === "not-connected") return <NotConnected />;
 
   const getRates = async () => {
     setBusy(true);
@@ -431,6 +435,7 @@ export function ReturnLabel({ payload }: { payload: RecordActionsPayload }) {
             {t("addon.shipping-dhl.returns.make")}
           </Button>
         )}
+        {rates === null && isDemo() && <DemoNotice />}
       </div>
 
       <div style={{ marginBlockStart: 10 }}>

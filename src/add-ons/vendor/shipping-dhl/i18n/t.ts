@@ -175,9 +175,12 @@ export function useFormat(): {
   timeOfDay: (hour: number, minute: number) => string;
   clock: (wire: string) => string;
   day: (iso: string, opts?: Intl.DateTimeFormatOptions) => string;
+  /** A short list in the reader's own separators: "2 × Mug, 1 × Coasters". */
+  list: (parts: readonly string[]) => string;
 } {
   const locale = useLocale();
   return {
+    list: (parts) => new Intl.ListFormat(locale, { type: "unit", style: "short" }).format(parts),
     number: (value, opts) => new Intl.NumberFormat(locale, opts).format(value),
     timeOfDay: (hour, minute) => timeOfDay(locale, hour, minute),
     clock: (wire) => clockFromWire(locale, wire),

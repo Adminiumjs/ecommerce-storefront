@@ -1,8 +1,3 @@
-/*
- * VENDORED from add-ons/packages/host/src/index.ts — synced by scripts/sync-add-ons.sh.
- * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
- * The ONE shared contract; the three add-ons here import it by relative path.
- */
 /**
  * `@adminium/add-on-host` — the host seam every add-on in this repo registers
  * against.
@@ -50,6 +45,7 @@ export type {
   CatalogueSample,
   CheckoutPayload,
   Dimensions,
+  DispatchBooking,
   DispatchPayload,
   HostProduct,
   LineOrder,

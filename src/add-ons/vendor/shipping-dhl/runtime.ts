@@ -65,10 +65,29 @@ export function shopClock(): Clock {
   return hostClock;
 }
 
+/**
+ * THE SHOP'S CURRENCY, as the host last told us (ISO 4217), or none yet.
+ *
+ * The demo carrier prices in it: a shop that sells in pounds is quoted in
+ * pounds, never in the dollars this repo's own sample is written in. Taken
+ * off the payload (an order's value, a basket's total) the way the clock is,
+ * and like the clock it rebuilds the demo only when it changes.
+ */
+let hostCurrency: string | null = null;
+
+/** Take the shop's currency off a payload; nothing when the payload names none. */
+export function setHostCurrency(currency: string | undefined | null): void {
+  const code = typeof currency === "string" && /^[A-Za-z]{3}$/.test(currency) ? currency.toUpperCase() : null;
+  if (code === null || code === hostCurrency) return;
+  hostCurrency = code;
+  demo = null;
+}
+
 function demoCarrier(): DemoCarrier {
   demo ??= createDemoCarrier({
     clock: hostClock,
     cutoff: publicSettings().collection_cutoff,
+    ...(hostCurrency === null ? {} : { currency: hostCurrency }),
   });
   return demo;
 }
@@ -113,11 +132,40 @@ export function useConnectedCarrier(carrier: ShippingCarrier): void {
  * condition, and now nothing can disagree with the label on the screen.
  */
 function usingDemo(): boolean {
-  return publicSettings().demo_transport || injected === null;
+  return publicSettings().demo_transport;
+}
+
+/**
+ * WHO ANSWERS, IN ONE WORD — and the third answer is the one that was missing.
+ *
+ *  - `demo`: the shop switched the demo carrier on (the default). It answers,
+ *    and every screen says so.
+ *  - `connected`: the demo is off and a real carrier client was handed in.
+ *  - `not-connected`: the demo is off and nothing real is behind it. This used
+ *    to fall through to the demo carrier, silently: a shop that had switched
+ *    the demo off was quoted and booked by it anyway, with nothing on screen
+ *    to say no DHL account was answering. Now nothing is quoted or booked, and
+ *    the screens say the account is not connected.
+ */
+export type CarrierState = "demo" | "connected" | "not-connected";
+
+export function carrierState(): CarrierState {
+  if (usingDemo()) return "demo";
+  return injected === null ? "not-connected" : "connected";
+}
+
+/** Asked of a carrier that is not there: what the screens never do, refused in words a works can act on. */
+export class CarrierNotConnected extends Error {
+  constructor() {
+    super("No DHL account is connected, and the demo carrier is switched off.");
+  }
 }
 
 export function carrier(): ShippingCarrier {
-  return usingDemo() ? demoCarrier() : injected!;
+  const state = carrierState();
+  if (state === "demo") return demoCarrier();
+  if (state === "not-connected") throw new CarrierNotConnected();
+  return injected!;
 }
 
 /**
@@ -170,6 +218,7 @@ export function findShipment(reference: string): Shipment | undefined {
 export function resetRuntime(): void {
   demo = null;
   injected = null;
+  hostCurrency = null;
   // The clock goes back to this repo's own pin, not to the last host's. A suite
   // that inherited the previous case's Thursday would pass for the wrong
   // reason, and a harness with no host has only the pin to fall back on.

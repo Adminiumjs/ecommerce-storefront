@@ -1,0 +1,2517 @@
+{
+  "format": "adminium.sample/1",
+  "app": "ecommerce-shop",
+  "addOn": "inventory",
+  "weekAnchor": "tue",
+  "tables": [
+    {
+      "ref": "places",
+      "rows": [
+        {
+          "@label": "place:stockroom",
+          "name": "Stockroom",
+          "for_sale": true,
+          "active": true,
+          "position": 0,
+          "address": "1400 NW Kearney St, Suite 210, Portland, OR 97209"
+        }
+      ]
+    },
+    {
+      "ref": "items",
+      "rows": [
+        {
+          "@label": "item:NL-RDG28-SLA",
+          "name": "Ridgeline 28 Daypack · Slate · NL-RDG28-SLA",
+          "sku": "NL-RDG28-SLA",
+          "active": true
+        },
+        {
+          "@label": "item:NL-RDG28-MOS",
+          "name": "Ridgeline 28 Daypack · Moss · NL-RDG28-MOS",
+          "sku": "NL-RDG28-MOS",
+          "active": true
+        },
+        {
+          "@label": "item:NL-RDG28-EMB",
+          "name": "Ridgeline 28 Daypack · Ember · NL-RDG28-EMB",
+          "sku": "NL-RDG28-EMB",
+          "active": true
+        },
+        {
+          "@label": "item:NL-CAS45-SLA-SM",
+          "name": "Cascade 45 Trekking Pack · Slate · S/M · NL-CAS45-SLA-SM",
+          "sku": "NL-CAS45-SLA-SM",
+          "active": true
+        },
+        {
+          "@label": "item:NL-CAS45-SLA-ML",
+          "name": "Cascade 45 Trekking Pack · Slate · M/L · NL-CAS45-SLA-ML",
+          "sku": "NL-CAS45-SLA-ML",
+          "active": true
+        },
+        {
+          "@label": "item:NL-CAS45-MOS-SM",
+          "name": "Cascade 45 Trekking Pack · Moss · S/M · NL-CAS45-MOS-SM",
+          "sku": "NL-CAS45-MOS-SM",
+          "active": true
+        },
+        {
+          "@label": "item:NL-CAS45-MOS-ML",
+          "name": "Cascade 45 Trekking Pack · Moss · M/L · NL-CAS45-MOS-ML",
+          "sku": "NL-CAS45-MOS-ML",
+          "active": true
+        },
+        {
+          "@label": "item:NL-HIP-SLA",
+          "name": "Trailhead Hip Pack · Slate · NL-HIP-SLA",
+          "sku": "NL-HIP-SLA",
+          "active": true
+        },
+        {
+          "@label": "item:NL-HIP-EMB",
+          "name": "Trailhead Hip Pack · Ember · NL-HIP-EMB",
+          "sku": "NL-HIP-EMB",
+          "active": true
+        },
+        {
+          "@label": "item:NL-HIP-SAN",
+          "name": "Trailhead Hip Pack · Sand · NL-HIP-SAN",
+          "sku": "NL-HIP-SAN",
+          "active": true
+        },
+        {
+          "@label": "item:NL-DRY20-EMB",
+          "name": "Dry Bag 20 L · Ember · NL-DRY20-EMB",
+          "sku": "NL-DRY20-EMB",
+          "active": true
+        },
+        {
+          "@label": "item:NL-DRY20-GLA",
+          "name": "Dry Bag 20 L · Glacier · NL-DRY20-GLA",
+          "sku": "NL-DRY20-GLA",
+          "active": true
+        },
+        {
+          "@label": "item:NL-DUF60-SLA",
+          "name": "Summit Duffel 60 L · Slate · NL-DUF60-SLA",
+          "sku": "NL-DUF60-SLA",
+          "active": true
+        },
+        {
+          "@label": "item:NL-BSH-SLA-XS",
+          "name": "Basalt Rain Shell · Slate · XS · NL-BSH-SLA-XS",
+          "sku": "NL-BSH-SLA-XS",
+          "active": true
+        },
+        {
+          "@label": "item:NL-BSH-SLA-S",
+          "name": "Basalt Rain Shell · Slate · S · NL-BSH-SLA-S",
+          "sku": "NL-BSH-SLA-S",
+          "active": true
+        },
+        {
+          "@label": "item:NL-BSH-SLA-M",
+          "name": "Basalt Rain Shell · Slate · M · NL-BSH-SLA-M",
+          "sku": "NL-BSH-SLA-M",
+          "active": true
+        },
+        {
+          "@label": "item:NL-BSH-SLA-L",
+          "name": "Basalt Rain Shell · Slate · L · NL-BSH-SLA-L",
+          "sku": "NL-BSH-SLA-L",
+          "active": true
+        },
+        {
+          "@label": "item:NL-BSH-SLA-XL",
+          "name": "Basalt Rain Shell · Slate · XL · NL-BSH-SLA-XL",
+          "sku": "NL-BSH-SLA-XL",
+          "active": true
+        },
+        {
+          "@label": "item:NL-BSH-EMB-S",
+          "name": "Basalt Rain Shell · Ember · S · NL-BSH-EMB-S",
+          "sku": "NL-BSH-EMB-S",
+          "active": true
+        },
+        {
+          "@label": "item:NL-BSH-EMB-M",
+          "name": "Basalt Rain Shell · Ember · M · NL-BSH-EMB-M",
+          "sku": "NL-BSH-EMB-M",
+          "active": true
+        },
+        {
+          "@label": "item:NL-BSH-EMB-L",
+          "name": "Basalt Rain Shell · Ember · L · NL-BSH-EMB-L",
+          "sku": "NL-BSH-EMB-L",
+          "active": true
+        },
+        {
+          "@label": "item:NL-BSH-EMB-XL",
+          "name": "Basalt Rain Shell · Ember · XL · NL-BSH-EMB-XL",
+          "sku": "NL-BSH-EMB-XL",
+          "active": true
+        },
+        {
+          "@label": "item:NL-FIR-MOS-S",
+          "name": "Fir Fleece Pullover · Moss · S · NL-FIR-MOS-S",
+          "sku": "NL-FIR-MOS-S",
+          "active": true
+        },
+        {
+          "@label": "item:NL-FIR-MOS-M",
+          "name": "Fir Fleece Pullover · Moss · M · NL-FIR-MOS-M",
+          "sku": "NL-FIR-MOS-M",
+          "active": true
+        },
+        {
+          "@label": "item:NL-FIR-MOS-L",
+          "name": "Fir Fleece Pullover · Moss · L · NL-FIR-MOS-L",
+          "sku": "NL-FIR-MOS-L",
+          "active": true
+        },
+        {
+          "@label": "item:NL-FIR-MOS-XL",
+          "name": "Fir Fleece Pullover · Moss · XL · NL-FIR-MOS-XL",
+          "sku": "NL-FIR-MOS-XL",
+          "active": true
+        },
+        {
+          "@label": "item:NL-FIR-SAN-S",
+          "name": "Fir Fleece Pullover · Sand · S · NL-FIR-SAN-S",
+          "sku": "NL-FIR-SAN-S",
+          "active": true
+        },
+        {
+          "@label": "item:NL-FIR-SAN-M",
+          "name": "Fir Fleece Pullover · Sand · M · NL-FIR-SAN-M",
+          "sku": "NL-FIR-SAN-M",
+          "active": true
+        },
+        {
+          "@label": "item:NL-FIR-SAN-L",
+          "name": "Fir Fleece Pullover · Sand · L · NL-FIR-SAN-L",
+          "sku": "NL-FIR-SAN-L",
+          "active": true
+        },
+        {
+          "@label": "item:NL-FIR-SAN-XL",
+          "name": "Fir Fleece Pullover · Sand · XL · NL-FIR-SAN-XL",
+          "sku": "NL-FIR-SAN-XL",
+          "active": true
+        },
+        {
+          "@label": "item:NL-FIR-SLA-S",
+          "name": "Fir Fleece Pullover · Slate · S · NL-FIR-SLA-S",
+          "sku": "NL-FIR-SLA-S",
+          "active": true
+        },
+        {
+          "@label": "item:NL-FIR-SLA-M",
+          "name": "Fir Fleece Pullover · Slate · M · NL-FIR-SLA-M",
+          "sku": "NL-FIR-SLA-M",
+          "active": true
+        },
+        {
+          "@label": "item:NL-FIR-SLA-L",
+          "name": "Fir Fleece Pullover · Slate · L · NL-FIR-SLA-L",
+          "sku": "NL-FIR-SLA-L",
+          "active": true
+        },
+        {
+          "@label": "item:NL-FIR-SLA-XL",
+          "name": "Fir Fleece Pullover · Slate · XL · NL-FIR-SLA-XL",
+          "sku": "NL-FIR-SLA-XL",
+          "active": true
+        },
+        {
+          "@label": "item:NL-MER-SLA-S",
+          "name": "Merino Base Layer Crew · Slate · S · NL-MER-SLA-S",
+          "sku": "NL-MER-SLA-S",
+          "active": true
+        },
+        {
+          "@label": "item:NL-MER-SLA-M",
+          "name": "Merino Base Layer Crew · Slate · M · NL-MER-SLA-M",
+          "sku": "NL-MER-SLA-M",
+          "active": true
+        },
+        {
+          "@label": "item:NL-MER-SLA-L",
+          "name": "Merino Base Layer Crew · Slate · L · NL-MER-SLA-L",
+          "sku": "NL-MER-SLA-L",
+          "active": true
+        },
+        {
+          "@label": "item:NL-MER-SLA-XL",
+          "name": "Merino Base Layer Crew · Slate · XL · NL-MER-SLA-XL",
+          "sku": "NL-MER-SLA-XL",
+          "active": true
+        },
+        {
+          "@label": "item:NL-MER-GLA-S",
+          "name": "Merino Base Layer Crew · Glacier · S · NL-MER-GLA-S",
+          "sku": "NL-MER-GLA-S",
+          "active": true
+        },
+        {
+          "@label": "item:NL-MER-GLA-M",
+          "name": "Merino Base Layer Crew · Glacier · M · NL-MER-GLA-M",
+          "sku": "NL-MER-GLA-M",
+          "active": true
+        },
+        {
+          "@label": "item:NL-MER-GLA-L",
+          "name": "Merino Base Layer Crew · Glacier · L · NL-MER-GLA-L",
+          "sku": "NL-MER-GLA-L",
+          "active": true
+        },
+        {
+          "@label": "item:NL-MER-GLA-XL",
+          "name": "Merino Base Layer Crew · Glacier · XL · NL-MER-GLA-XL",
+          "sku": "NL-MER-GLA-XL",
+          "active": true
+        },
+        {
+          "@label": "item:NL-TSH-SAN-30",
+          "name": "Trail Shorts · Sand · 30 · NL-TSH-SAN-30",
+          "sku": "NL-TSH-SAN-30",
+          "active": true
+        },
+        {
+          "@label": "item:NL-TSH-SAN-32",
+          "name": "Trail Shorts · Sand · 32 · NL-TSH-SAN-32",
+          "sku": "NL-TSH-SAN-32",
+          "active": true
+        },
+        {
+          "@label": "item:NL-TSH-SAN-34",
+          "name": "Trail Shorts · Sand · 34 · NL-TSH-SAN-34",
+          "sku": "NL-TSH-SAN-34",
+          "active": true
+        },
+        {
+          "@label": "item:NL-TSH-SLA-30",
+          "name": "Trail Shorts · Slate · 30 · NL-TSH-SLA-30",
+          "sku": "NL-TSH-SLA-30",
+          "active": true
+        },
+        {
+          "@label": "item:NL-TSH-SLA-32",
+          "name": "Trail Shorts · Slate · 32 · NL-TSH-SLA-32",
+          "sku": "NL-TSH-SLA-32",
+          "active": true
+        },
+        {
+          "@label": "item:NL-TSH-SLA-34",
+          "name": "Trail Shorts · Slate · 34 · NL-TSH-SLA-34",
+          "sku": "NL-TSH-SLA-34",
+          "active": true
+        },
+        {
+          "@label": "item:NL-TSH-SLA-36",
+          "name": "Trail Shorts · Slate · 36 · NL-TSH-SLA-36",
+          "sku": "NL-TSH-SLA-36",
+          "active": true
+        },
+        {
+          "@label": "item:NL-BEA-EMB",
+          "name": "Wool Beanie · Ember · NL-BEA-EMB",
+          "sku": "NL-BEA-EMB",
+          "active": true
+        },
+        {
+          "@label": "item:NL-BEA-MOS",
+          "name": "Wool Beanie · Moss · NL-BEA-MOS",
+          "sku": "NL-BEA-MOS",
+          "active": true
+        },
+        {
+          "@label": "item:NL-BEA-SLA",
+          "name": "Wool Beanie · Slate · NL-BEA-SLA",
+          "sku": "NL-BEA-SLA",
+          "active": true
+        },
+        {
+          "@label": "item:NL-SOX-SM",
+          "name": "Hiking Socks, two pairs · S/M · NL-SOX-SM",
+          "sku": "NL-SOX-SM",
+          "active": true
+        },
+        {
+          "@label": "item:NL-SOX-LXL",
+          "name": "Hiking Socks, two pairs · L/XL · NL-SOX-LXL",
+          "sku": "NL-SOX-LXL",
+          "active": true
+        },
+        {
+          "@label": "item:NL-TAL-7",
+          "name": "Talus Trail Runner · 7 · NL-TAL-7",
+          "sku": "NL-TAL-7",
+          "active": true
+        },
+        {
+          "@label": "item:NL-TAL-8",
+          "name": "Talus Trail Runner · 8 · NL-TAL-8",
+          "sku": "NL-TAL-8",
+          "active": true
+        },
+        {
+          "@label": "item:NL-TAL-9",
+          "name": "Talus Trail Runner · 9 · NL-TAL-9",
+          "sku": "NL-TAL-9",
+          "active": true
+        },
+        {
+          "@label": "item:NL-TAL-10",
+          "name": "Talus Trail Runner · 10 · NL-TAL-10",
+          "sku": "NL-TAL-10",
+          "active": true
+        },
+        {
+          "@label": "item:NL-TAL-11",
+          "name": "Talus Trail Runner · 11 · NL-TAL-11",
+          "sku": "NL-TAL-11",
+          "active": true
+        },
+        {
+          "@label": "item:NL-TAL-12",
+          "name": "Talus Trail Runner · 12 · NL-TAL-12",
+          "sku": "NL-TAL-12",
+          "active": true
+        },
+        {
+          "@label": "item:NL-RMB-7",
+          "name": "Ridge Mid Hiking Boot · 7 · NL-RMB-7",
+          "sku": "NL-RMB-7",
+          "active": true
+        },
+        {
+          "@label": "item:NL-RMB-8",
+          "name": "Ridge Mid Hiking Boot · 8 · NL-RMB-8",
+          "sku": "NL-RMB-8",
+          "active": true
+        },
+        {
+          "@label": "item:NL-RMB-9",
+          "name": "Ridge Mid Hiking Boot · 9 · NL-RMB-9",
+          "sku": "NL-RMB-9",
+          "active": true
+        },
+        {
+          "@label": "item:NL-RMB-10",
+          "name": "Ridge Mid Hiking Boot · 10 · NL-RMB-10",
+          "sku": "NL-RMB-10",
+          "active": true
+        },
+        {
+          "@label": "item:NL-RMB-11",
+          "name": "Ridge Mid Hiking Boot · 11 · NL-RMB-11",
+          "sku": "NL-RMB-11",
+          "active": true
+        },
+        {
+          "@label": "item:NL-RMB-12",
+          "name": "Ridge Mid Hiking Boot · 12 · NL-RMB-12",
+          "sku": "NL-RMB-12",
+          "active": true
+        },
+        {
+          "@label": "item:NL-SLD-SLA-S",
+          "name": "Camp Slide · Slate · S · NL-SLD-SLA-S",
+          "sku": "NL-SLD-SLA-S",
+          "active": true
+        },
+        {
+          "@label": "item:NL-SLD-SLA-M",
+          "name": "Camp Slide · Slate · M · NL-SLD-SLA-M",
+          "sku": "NL-SLD-SLA-M",
+          "active": true
+        },
+        {
+          "@label": "item:NL-SLD-SLA-L",
+          "name": "Camp Slide · Slate · L · NL-SLD-SLA-L",
+          "sku": "NL-SLD-SLA-L",
+          "active": true
+        },
+        {
+          "@label": "item:NL-SLD-MOS-S",
+          "name": "Camp Slide · Moss · S · NL-SLD-MOS-S",
+          "sku": "NL-SLD-MOS-S",
+          "active": true
+        },
+        {
+          "@label": "item:NL-SLD-MOS-M",
+          "name": "Camp Slide · Moss · M · NL-SLD-MOS-M",
+          "sku": "NL-SLD-MOS-M",
+          "active": true
+        },
+        {
+          "@label": "item:NL-SLD-MOS-L",
+          "name": "Camp Slide · Moss · L · NL-SLD-MOS-L",
+          "sku": "NL-SLD-MOS-L",
+          "active": true
+        },
+        {
+          "@label": "item:NL-EMB2",
+          "name": "Ember 2 Tent · NL-EMB2",
+          "sku": "NL-EMB2",
+          "active": true
+        },
+        {
+          "@label": "item:NL-LOF-REGULAR",
+          "name": "Loft 20° Sleeping Bag · Regular · NL-LOF-REGULAR",
+          "sku": "NL-LOF-REGULAR",
+          "active": true
+        },
+        {
+          "@label": "item:NL-LOF-LONG",
+          "name": "Loft 20° Sleeping Bag · Long · NL-LOF-LONG",
+          "sku": "NL-LOF-LONG",
+          "active": true
+        },
+        {
+          "@label": "item:NL-MUG-EMB",
+          "name": "Pine Mug 12 oz · Ember · NL-MUG-EMB",
+          "sku": "NL-MUG-EMB",
+          "active": true
+        },
+        {
+          "@label": "item:NL-MUG-MOS",
+          "name": "Pine Mug 12 oz · Moss · NL-MUG-MOS",
+          "sku": "NL-MUG-MOS",
+          "active": true
+        },
+        {
+          "@label": "item:NL-MUG-SLA",
+          "name": "Pine Mug 12 oz · Slate · NL-MUG-SLA",
+          "sku": "NL-MUG-SLA",
+          "active": true
+        },
+        {
+          "@label": "item:NL-STV",
+          "name": "Trail Stove · NL-STV",
+          "sku": "NL-STV",
+          "active": true
+        },
+        {
+          "@label": "item:NL-LMP",
+          "name": "Headlamp 400 · NL-LMP",
+          "sku": "NL-LMP",
+          "active": true
+        },
+        {
+          "@label": "item:NL-BTL-GLA",
+          "name": "Insulated Bottle 750 ml · Glacier · NL-BTL-GLA",
+          "sku": "NL-BTL-GLA",
+          "active": true
+        },
+        {
+          "@label": "item:NL-BTL-EMB",
+          "name": "Insulated Bottle 750 ml · Ember · NL-BTL-EMB",
+          "sku": "NL-BTL-EMB",
+          "active": true
+        },
+        {
+          "@label": "item:NL-BTL-MOS",
+          "name": "Insulated Bottle 750 ml · Moss · NL-BTL-MOS",
+          "sku": "NL-BTL-MOS",
+          "active": true
+        }
+      ]
+    },
+    {
+      "ref": "links",
+      "rows": [
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-RDG28-SLA"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-RDG28-SLA"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-RDG28-MOS"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-RDG28-MOS"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-RDG28-EMB"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-RDG28-EMB"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-CAS45-SLA-SM"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-CAS45-SLA-SM"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-CAS45-SLA-ML"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-CAS45-SLA-ML"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-CAS45-MOS-SM"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-CAS45-MOS-SM"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-CAS45-MOS-ML"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-CAS45-MOS-ML"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-HIP-SLA"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-HIP-SLA"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-HIP-EMB"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-HIP-EMB"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-HIP-SAN"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-HIP-SAN"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-DRY20-EMB"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-DRY20-EMB"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-DRY20-GLA"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-DRY20-GLA"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-DUF60-SLA"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-DUF60-SLA"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-BSH-SLA-XS"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-BSH-SLA-XS"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-BSH-SLA-S"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-BSH-SLA-S"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-BSH-SLA-M"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-BSH-SLA-M"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-BSH-SLA-L"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-BSH-SLA-L"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-BSH-SLA-XL"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-BSH-SLA-XL"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-BSH-EMB-S"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-BSH-EMB-S"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-BSH-EMB-M"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-BSH-EMB-M"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-BSH-EMB-L"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-BSH-EMB-L"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-BSH-EMB-XL"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-BSH-EMB-XL"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-FIR-MOS-S"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-FIR-MOS-S"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-FIR-MOS-M"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-FIR-MOS-M"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-FIR-MOS-L"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-FIR-MOS-L"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-FIR-MOS-XL"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-FIR-MOS-XL"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-FIR-SAN-S"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-FIR-SAN-S"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-FIR-SAN-M"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-FIR-SAN-M"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-FIR-SAN-L"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-FIR-SAN-L"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-FIR-SAN-XL"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-FIR-SAN-XL"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-FIR-SLA-S"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-FIR-SLA-S"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-FIR-SLA-M"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-FIR-SLA-M"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-FIR-SLA-L"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-FIR-SLA-L"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-FIR-SLA-XL"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-FIR-SLA-XL"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-MER-SLA-S"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-MER-SLA-S"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-MER-SLA-M"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-MER-SLA-M"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-MER-SLA-L"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-MER-SLA-L"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-MER-SLA-XL"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-MER-SLA-XL"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-MER-GLA-S"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-MER-GLA-S"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-MER-GLA-M"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-MER-GLA-M"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-MER-GLA-L"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-MER-GLA-L"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-MER-GLA-XL"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-MER-GLA-XL"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-TSH-SAN-30"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-TSH-SAN-30"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-TSH-SAN-32"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-TSH-SAN-32"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-TSH-SAN-34"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-TSH-SAN-34"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-TSH-SLA-30"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-TSH-SLA-30"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-TSH-SLA-32"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-TSH-SLA-32"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-TSH-SLA-34"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-TSH-SLA-34"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-TSH-SLA-36"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-TSH-SLA-36"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-BEA-EMB"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-BEA-EMB"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-BEA-MOS"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-BEA-MOS"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-BEA-SLA"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-BEA-SLA"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-SOX-SM"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-SOX-SM"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-SOX-LXL"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-SOX-LXL"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-TAL-7"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-TAL-7"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-TAL-8"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-TAL-8"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-TAL-9"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-TAL-9"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-TAL-10"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-TAL-10"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-TAL-11"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-TAL-11"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-TAL-12"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-TAL-12"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-RMB-7"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-RMB-7"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-RMB-8"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-RMB-8"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-RMB-9"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-RMB-9"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-RMB-10"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-RMB-10"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-RMB-11"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-RMB-11"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-RMB-12"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-RMB-12"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-SLD-SLA-S"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-SLD-SLA-S"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-SLD-SLA-M"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-SLD-SLA-M"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-SLD-SLA-L"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-SLD-SLA-L"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-SLD-MOS-S"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-SLD-MOS-S"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-SLD-MOS-M"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-SLD-MOS-M"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-SLD-MOS-L"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-SLD-MOS-L"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-EMB2"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-EMB2"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-LOF-REGULAR"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-LOF-REGULAR"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-LOF-LONG"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-LOF-LONG"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-MUG-EMB"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-MUG-EMB"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-MUG-MOS"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-MUG-MOS"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-MUG-SLA"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-MUG-SLA"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-STV"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-STV"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-LMP"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-LMP"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-BTL-GLA"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-BTL-GLA"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-BTL-EMB"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-BTL-EMB"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        },
+        {
+          "source_table": {
+            "@table": "variants"
+          },
+          "source_row": {
+            "@ref": "variant:NL-BTL-MOS"
+          },
+          "kind": "item",
+          "item_id": {
+            "@ref": "item:NL-BTL-MOS"
+          },
+          "qty": 1,
+          "per": "unit",
+          "action": "use"
+        }
+      ]
+    },
+    {
+      "ref": "receipts",
+      "rows": [
+        {
+          "@label": "receipt:opening",
+          "kind": "opening",
+          "place_id": {
+            "@ref": "place:stockroom"
+          },
+          "note": "Opening stock"
+        }
+      ]
+    },
+    {
+      "ref": "receipt_lines",
+      "rows": [
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-RDG28-SLA"
+          },
+          "qty_typed": 24
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-RDG28-MOS"
+          },
+          "qty_typed": 12
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-RDG28-EMB"
+          },
+          "qty_typed": 4
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-CAS45-SLA-SM"
+          },
+          "qty_typed": 10
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-CAS45-SLA-ML"
+          },
+          "qty_typed": 10
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-CAS45-MOS-SM"
+          },
+          "qty_typed": 10
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-CAS45-MOS-ML"
+          },
+          "qty_typed": 5
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-HIP-SLA"
+          },
+          "qty_typed": 8
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-HIP-EMB"
+          },
+          "qty_typed": 12
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-HIP-SAN"
+          },
+          "qty_typed": 14
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-DRY20-EMB"
+          },
+          "qty_typed": 16
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-DRY20-GLA"
+          },
+          "qty_typed": 16
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-DUF60-SLA"
+          },
+          "qty_typed": 10
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-BSH-SLA-XS"
+          },
+          "qty_typed": 10
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-BSH-SLA-S"
+          },
+          "qty_typed": 16
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-BSH-SLA-M"
+          },
+          "qty_typed": 20
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-BSH-SLA-L"
+          },
+          "qty_typed": 20
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-BSH-EMB-S"
+          },
+          "qty_typed": 8
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-BSH-EMB-M"
+          },
+          "qty_typed": 4
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-BSH-EMB-L"
+          },
+          "qty_typed": 12
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-BSH-EMB-XL"
+          },
+          "qty_typed": 8
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-FIR-MOS-S"
+          },
+          "qty_typed": 24
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-FIR-MOS-M"
+          },
+          "qty_typed": 14
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-FIR-MOS-L"
+          },
+          "qty_typed": 10
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-FIR-MOS-XL"
+          },
+          "qty_typed": 24
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-FIR-SAN-M"
+          },
+          "qty_typed": 10
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-FIR-SAN-L"
+          },
+          "qty_typed": 16
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-FIR-SAN-XL"
+          },
+          "qty_typed": 24
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-FIR-SLA-S"
+          },
+          "qty_typed": 14
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-FIR-SLA-M"
+          },
+          "qty_typed": 10
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-FIR-SLA-L"
+          },
+          "qty_typed": 12
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-FIR-SLA-XL"
+          },
+          "qty_typed": 12
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-MER-SLA-S"
+          },
+          "qty_typed": 8
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-MER-SLA-M"
+          },
+          "qty_typed": 8
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-MER-SLA-L"
+          },
+          "qty_typed": 16
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-MER-SLA-XL"
+          },
+          "qty_typed": 24
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-MER-GLA-S"
+          },
+          "qty_typed": 12
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-MER-GLA-M"
+          },
+          "qty_typed": 16
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-MER-GLA-L"
+          },
+          "qty_typed": 14
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-MER-GLA-XL"
+          },
+          "qty_typed": 10
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-TSH-SAN-30"
+          },
+          "qty_typed": 1
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-TSH-SAN-32"
+          },
+          "qty_typed": 10
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-TSH-SAN-34"
+          },
+          "qty_typed": 8
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-TSH-SLA-30"
+          },
+          "qty_typed": 8
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-TSH-SLA-32"
+          },
+          "qty_typed": 24
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-TSH-SLA-34"
+          },
+          "qty_typed": 10
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-TSH-SLA-36"
+          },
+          "qty_typed": 20
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-BEA-EMB"
+          },
+          "qty_typed": 16
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-BEA-MOS"
+          },
+          "qty_typed": 14
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-BEA-SLA"
+          },
+          "qty_typed": 16
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-SOX-SM"
+          },
+          "qty_typed": 20
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-SOX-LXL"
+          },
+          "qty_typed": 16
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-TAL-7"
+          },
+          "qty_typed": 8
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-TAL-8"
+          },
+          "qty_typed": 8
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-TAL-9"
+          },
+          "qty_typed": 3
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-TAL-10"
+          },
+          "qty_typed": 24
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-TAL-12"
+          },
+          "qty_typed": 20
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-RMB-7"
+          },
+          "qty_typed": 10
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-RMB-8"
+          },
+          "qty_typed": 20
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-RMB-9"
+          },
+          "qty_typed": 12
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-RMB-10"
+          },
+          "qty_typed": 24
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-RMB-11"
+          },
+          "qty_typed": 8
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-RMB-12"
+          },
+          "qty_typed": 8
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-SLD-SLA-S"
+          },
+          "qty_typed": 16
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-SLD-SLA-M"
+          },
+          "qty_typed": 14
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-SLD-SLA-L"
+          },
+          "qty_typed": 24
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-SLD-MOS-S"
+          },
+          "qty_typed": 8
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-SLD-MOS-M"
+          },
+          "qty_typed": 24
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-SLD-MOS-L"
+          },
+          "qty_typed": 24
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-EMB2"
+          },
+          "qty_typed": 3
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-LOF-REGULAR"
+          },
+          "qty_typed": 8
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-LOF-LONG"
+          },
+          "qty_typed": 12
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-MUG-EMB"
+          },
+          "qty_typed": 14
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-MUG-MOS"
+          },
+          "qty_typed": 20
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-MUG-SLA"
+          },
+          "qty_typed": 24
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-STV"
+          },
+          "qty_typed": 16
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-LMP"
+          },
+          "qty_typed": 8
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-BTL-GLA"
+          },
+          "qty_typed": 12
+        },
+        {
+          "receipt_id": {
+            "@ref": "receipt:opening"
+          },
+          "item_id": {
+            "@ref": "item:NL-BTL-EMB"
+          },
+          "qty_typed": 16
+        }
+      ]
+    }
+  ],
+  "moves": [
+    {
+      "ref": "receipt:opening",
+      "to": "posting"
+    },
+    {
+      "table": "receipt_lines",
+      "to": "posted"
+    },
+    {
+      "ref": "receipt:opening",
+      "to": "posted"
+    }
+  ]
+}

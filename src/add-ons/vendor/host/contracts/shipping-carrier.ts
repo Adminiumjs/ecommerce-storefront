@@ -1,8 +1,3 @@
-/*
- * VENDORED from add-ons/packages/host/src/contracts/shipping-carrier.ts — synced by scripts/sync-add-ons.sh.
- * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
- * The ONE shared contract; the three add-ons here import it by relative path.
- */
 /**
  * `shipping-carrier@1` — COPIED from `@adminium/add-on-contracts`
  * (`packages/add-on-contracts/src/shipping-carrier.ts`), not imported.
@@ -41,6 +36,8 @@ export interface Address {
   lines: string[];
   city: string;
   postcode: string;
+  /** A state, province or region, where the country has them: printed after the city, never checked. */
+  region?: string;
   country: string;
 }
 

@@ -30,7 +30,7 @@ export interface LabelFacts {
   reference: string;
   collection: string;
   delivery: string;
-  to: { name: string; lines: readonly string[]; city: string; postcode: string; country: string };
+  to: { name: string; lines: readonly string[]; city: string; postcode: string; region?: string; country: string };
   from: { name: string; city: string; postcode: string; country: string };
 }
 
@@ -40,7 +40,9 @@ export interface LabelFacts {
  * rather than an offset calculation.
  */
 function lines(facts: LabelFacts): { y: number; size: number; bold: boolean; text: string }[] {
-  const to = [facts.to.name, ...facts.to.lines, facts.to.city, facts.to.postcode, facts.to.country];
+  // A region, where the address has one, after the city ("Portland, OR").
+  const city = facts.to.region === undefined ? facts.to.city : `${facts.to.city}, ${facts.to.region}`;
+  const to = [facts.to.name, ...facts.to.lines, city, facts.to.postcode, facts.to.country];
   const rows: { y: number; size: number; bold: boolean; text: string }[] = [
     { y: 400, size: 9, bold: true, text: "DEMO LABEL - NOT VALID FOR CARRIAGE" },
     { y: 386, size: 7, bold: false, text: "Made by a seeded stand-in. No shipment exists." },

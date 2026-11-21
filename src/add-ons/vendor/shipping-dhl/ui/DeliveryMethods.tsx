@@ -26,14 +26,12 @@ import { collectionDay, dispatchDay } from "../clock.ts";
 import { useFormat, useT } from "../i18n/t.ts";
 import { parcelFor } from "../parcel.ts";
 import { cheapestCode, postponedTo, type QuotedRate } from "../rates.ts";
-import { carrier, isDemo, setHostClock } from "../runtime.ts";
+import { carrier, carrierState, isDemo, setHostClock, setHostCurrency } from "../runtime.ts";
 import { domesticStandIn, originOf } from "../seed.ts";
 import { publicSettings } from "../settings.ts";
 import { Monogram, Mono, NotAffiliated, Panel, PanelTitle, Tag } from "./atoms.tsx";
 import { contentsLine, serviceName } from "./labels.ts";
-
-/** This add-on's key, as its manifest declares it. */
-const ADD_ON_KEY = "shipping-dhl";
+import { ADD_ON_KEY } from "../add-on-key.ts";
 
 export function DeliveryMethods({
   items,
@@ -41,10 +39,12 @@ export function DeliveryMethods({
   destination,
   now,
   readyOn,
+  total,
   chosen = null,
   onChoose,
 }: CheckoutPayload) {
   const t = useT();
+  const currency = total?.currency;
   const { money, day, timeOfDay } = useFormat();
 
   const [rates, setRates] = useState<QuotedRate[] | null>(null);
@@ -91,6 +91,10 @@ export function DeliveryMethods({
      * line.
      */
     setHostClock({ iso: nowIso, hour: nowHour, minute: nowMinute });
+    // Priced in the shop's own currency, off the basket's total.
+    setHostCurrency(currency);
+    // No DHL account and no demo: the till shows the shop's own delivery and nothing of DHL's.
+    if (carrierState() === "not-connected") return;
     const estimate = parcelFor(items);
     const from = originOf({ origin });
     carrier()
@@ -142,7 +146,7 @@ export function DeliveryMethods({
     return () => {
       live = false;
     };
-  }, [collected, destination, dispatched, items, nowIso, nowHour, nowMinute, origin, t]);
+  }, [collected, currency, destination, dispatched, items, nowIso, nowHour, nowMinute, origin, t]);
 
   if (rates === null && refused === null) return null;
 

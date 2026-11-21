@@ -1,8 +1,3 @@
-/*
- * VENDORED from add-ons/packages/host/src/contracts/document-render.ts — synced by scripts/sync-add-ons.sh.
- * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
- * The ONE shared contract; the three add-ons here import it by relative path.
- */
 /**
  * `document-render@1` — COPIED from `@adminium/add-on-contracts`
  * (`packages/add-on-contracts/src/document-render.ts`), not imported.
@@ -85,9 +80,68 @@ export type OutlineSlotType =
   | 'percent'
   | 'currency'
   | 'number'
-  | 'collection';
+  | 'collection'
+  | 'qr'
+  | 'picture';
 
-export type OutlineSlotDefault = 'sequence' | 'connection' | 'setting' | 'now';
+/**
+ * A `qr` slot's value, made by the host (a provider needs no encoder): the
+ * text it encodes, its modules as rows of `0` and `1` with no quiet zone
+ * around them (a provider draws them as squares), and the same code as a PNG
+ * data URL (for a provider that draws HTML). A provider that declares a `qr`
+ * slot needs a host that knows the type.
+ */
+export interface DocumentQrValue {
+  text: string;
+  modules: readonly string[];
+  png: string;
+}
+
+/**
+ * The kinds of picture a `picture` slot carries: the two every HTML page and
+ * every PDF writer draws without a decoder of its own.
+ */
+export type DocumentPictureMediaType = 'image/png' | 'image/jpeg';
+
+/**
+ * A `picture` slot's value, made by the HOST from a file a column of the
+ * document's own row holds (a customer's drawn signature). A provider never
+ * reads the file store: it is handed the picture, or nothing.
+ *
+ * The host has already judged it: the row's own file, alive, one picture, a
+ * column the reader may read; a PNG or a JPEG by its own bytes, at most 5 MiB
+ * and 8192 pixels a side, with what a camera writes beside it removed.
+ * Anything short of that is no value at all: the slot is left out of
+ * `subject.fields`.
+ *
+ * `dataUrl` is `data:<mediaType>;base64,<the bytes>`; `width` and `height`
+ * are the picture's own pixels. A slot of this type is never a column of a
+ * `collection`. A provider that declares one needs a host that knows the type
+ * (Adminium 0.3.35); an older host leaves the slot empty.
+ */
+export interface DocumentPictureValue {
+  mediaType: DocumentPictureMediaType;
+  dataUrl: string;
+  width: number;
+  height: number;
+}
+
+/**
+ * Where an unmapped slot's value comes from, if anywhere.
+ *
+ * `sequence` — the engine's CAS document number, minted after render.
+ * `connection` — the connection's currency. `setting` — one of the add-on's
+ * own non-secret settings. `now` — `subject.now.iso`, never the provider's own
+ * clock. `pay-link` — the record's own live pay link (a `text` slot), or the
+ * same link as a code to scan (a `qr` slot, only when it is short enough),
+ * when the record can be paid online right now; otherwise the slot stays empty.
+ * A `date` slot of `pay-link` takes the day that same link stops opening, on
+ * the venue's clock (`YYYY-MM-DD`): what a printed document says under the
+ * link ("Works until …"). It is filled only beside a link, from Adminium
+ * 0.3.61; an earlier Adminium puts the link's text in it, so a provider prints
+ * the day only when the value is a `YYYY-MM-DD` day.
+ */
+export type OutlineSlotDefault = 'sequence' | 'connection' | 'setting' | 'now' | 'pay-link';
 
 export interface OutlineSlot {
   id: string;
@@ -134,7 +188,20 @@ export interface DocumentSubject {
   locale: string;
   /** ISO-4217. */
   currency: string;
-  business: { name: string; lines: readonly string[]; logoDataUrl?: string };
+  /**
+   * The letterhead, from the rendering add-on's own settings. The last three
+   * are optional and additive: a business's tax number, how to pay it, and a
+   * line for the foot of the page — an older server never sends them, and a
+   * provider draws each only when it is there.
+   */
+  business: {
+    name: string;
+    lines: readonly string[];
+    logoDataUrl?: string;
+    taxNumber?: string;
+    paymentInstructions?: string;
+    footer?: string;
+  };
   entity: RecordRef | null;
   /** `null` until minted; a re-render carries the number it already has. */
   number: string | null;

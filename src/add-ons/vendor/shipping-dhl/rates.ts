@@ -187,6 +187,21 @@ export function cheapestCode(rates: readonly QuotedRate[]): string | null {
 }
 
 /**
+ * The rate a dispatch screen opens with: the service the order stores when this
+ * add-on quoted it and still quotes it, else the first rate, as before.
+ */
+export function preselectedCode(
+  rates: readonly QuotedRate[],
+  chosen: { addOn: string; code: string } | null | undefined,
+  addOn: string,
+): string | null {
+  if (chosen != null && chosen.addOn === addOn && rates.some((rate) => rate.code === chosen.code)) {
+    return chosen.code;
+  }
+  return rates[0]?.code ?? null;
+}
+
+/**
  * The window the van calls in. Fixed at the afternoon round rather than derived
  * from the cut-off: the cut-off says whether you make TODAY's van, not when it
  * turns up.

@@ -42,8 +42,7 @@ export const strings = {
     "addon.shipping-dhl.what": "This lets the shop book a parcel collection from an order that is ready, get rates back and print a label, instead of typing tracking numbers into an email.",
     "addon.shipping-dhl.set.demo": "Use the demo carrier",
     "addon.shipping-dhl.set.demoOn": "Rates, labels and tracking come back from a seeded stand-in. Nothing reaches a real carrier.",
-    "addon.shipping-dhl.set.demoOff":
-      "In a real shop the calls would go to the carrier with the account details you entered. Nothing is sent from this demo either way — rates, labels and tracking still come back from the seeded stand-in.",
+    "addon.shipping-dhl.set.demoOff": "Rates, labels and tracking come from the carrier with the account you connected. With no account connected, nothing is quoted or booked.",
     "addon.shipping-dhl.set.cutoffLabel": "Collection cut-off",
     "addon.shipping-dhl.set.cutoffNote": "Book before this and the driver comes the same afternoon.",
     "addon.shipping-dhl.set.weights": "Default parcel weights",
@@ -59,6 +58,9 @@ export const strings = {
     // ── the add-on itself ──────────────────────────────────────────────────
     "addon.shipping-dhl.line": "Books a parcel collection from an order that is ready, and brings back a label and a tracking reference.",
     "addon.shipping-dhl.notAffiliated": "Adminium is not affiliated with this company.",
+    "addon.shipping-dhl.account.notConnectedTitle": "Your DHL account is not connected",
+    "addon.shipping-dhl.account.notConnectedBody": "No rates can be fetched and no collection booked until it is. Connect it in Add-ons, or switch on the demo carrier in DHL's settings to try the flow without sending anything.",
+    "addon.shipping-dhl.account.demoNotice": "Demo carrier: rates and bookings here are simulated and nothing reaches DHL. Connect your DHL account in Add-ons and switch the demo off to book for real.",
     "addon.shipping-dhl.demoChip": "Demo carrier — no real shipment was booked",
     "addon.shipping-dhl.onlyCarrier": "DHL is the only delivery company connected.",
     "addon.shipping-dhl.connectAnother": "Connect another in Add-ons.",
@@ -108,6 +110,8 @@ export const strings = {
     "addon.shipping-dhl.parcel.contentsFrom": "From order {ref}, quantity {quantity}",
     "addon.shipping-dhl.parcel.weightFrom": "{kg}kg — {quantity} at {each}g each, plus the box",
     "addon.shipping-dhl.parcel.weightAssumed": "{kg}kg — the shop has not said what these weigh: {what}. Type the real weight here.",
+    "addon.shipping-dhl.parcel.weightShop": "{kg}kg — order {ref}'s own weight, packed",
+    "addon.shipping-dhl.parcel.weightFromMany": "{kg}kg — {quantity} items weighing {grams}g, plus the box",
     "addon.shipping-dhl.parcel.dimsFrom": "A box sized for what is in it",
     "addon.shipping-dhl.parcel.dimsFromTube": "Rolled in a tube — the longest piece is over 60cm",
 
@@ -190,8 +194,7 @@ export const strings = {
     "addon.shipping-dhl.what": "Damit bucht der Betrieb eine Paketabholung direkt aus einem versandfertigen Auftrag, bekommt Preise zurück und druckt ein Label, statt Sendungsnummern in eine E-Mail zu tippen.",
     "addon.shipping-dhl.set.demo": "Den Demo-Versanddienst nutzen",
     "addon.shipping-dhl.set.demoOn": "Preise, Etiketten und Sendungsverfolgung kommen aus einem hinterlegten Ersatz. Nichts erreicht einen echten Versanddienst.",
-    "addon.shipping-dhl.set.demoOff":
-      "In einem echten Betrieb gingen die Anfragen mit den eingegebenen Kontodaten an den Versanddienst. Aus dieser Demo wird so oder so nichts gesendet — Preise, Etiketten und Sendungsverfolgung kommen weiterhin aus dem hinterlegten Ersatz.",
+    "addon.shipping-dhl.set.demoOff": "Preise, Etiketten und Sendungsverfolgung kommen vom Versender über das verbundene Konto. Ohne verbundenes Konto wird nichts angefragt oder gebucht.",
     "addon.shipping-dhl.set.cutoffLabel": "Annahmeschluss für die Abholung",
     "addon.shipping-dhl.set.cutoffNote": "Vorher gebucht, und der Fahrer kommt noch am selben Nachmittag.",
     "addon.shipping-dhl.set.weights": "Voreingestellte Paketgewichte",
@@ -206,6 +209,9 @@ export const strings = {
 
     "addon.shipping-dhl.line": "Bucht eine Paketabholung zu einem versandfertigen Auftrag und liefert Label und Sendungsnummer zurück.",
     "addon.shipping-dhl.notAffiliated": "Adminium steht in keiner Verbindung zu diesem Unternehmen.",
+    "addon.shipping-dhl.account.notConnectedTitle": "Ihr DHL-Konto ist nicht verbunden",
+    "addon.shipping-dhl.account.notConnectedBody": "Bis es verbunden ist, lassen sich keine Preise abrufen und keine Abholung buchen. Verbinden Sie es unter Add-ons oder schalten Sie in den DHL-Einstellungen den Demo-Versender ein, um den Ablauf zu testen, ohne etwas zu senden.",
+    "addon.shipping-dhl.account.demoNotice": "Demo-Versender: Preise und Buchungen hier sind simuliert, nichts erreicht DHL. Verbinden Sie Ihr DHL-Konto unter Add-ons und schalten Sie die Demo aus, um echt zu buchen.",
     "addon.shipping-dhl.demoChip": "Demo-Versender — es wurde keine echte Sendung gebucht",
     "addon.shipping-dhl.onlyCarrier": "DHL ist der einzige verbundene Lieferdienst.",
     "addon.shipping-dhl.connectAnother": "Weitere unter Add-ons verbinden.",
@@ -243,6 +249,8 @@ export const strings = {
     "addon.shipping-dhl.parcel.contentsFrom": "Aus Auftrag {ref}, Menge {quantity}",
     "addon.shipping-dhl.parcel.weightFrom": "{kg}kg — {quantity} à {each}g, plus Karton",
     "addon.shipping-dhl.parcel.weightAssumed": "{kg}kg — der Betrieb hat kein Gewicht angegeben für: {what}. Tragen Sie hier das echte Gewicht ein.",
+    "addon.shipping-dhl.parcel.weightShop": "{kg}kg — das eigene Gewicht von Auftrag {ref}, verpackt",
+    "addon.shipping-dhl.parcel.weightFromMany": "{kg}kg — {quantity} Stück mit zusammen {grams}g, plus Karton",
     "addon.shipping-dhl.parcel.dimsFrom": "Ein Karton, passend zum Inhalt",
     "addon.shipping-dhl.parcel.dimsFromTube": "Gerollt in einer Hülse — das längste Stück misst über 60cm",
 
@@ -321,8 +329,7 @@ export const strings = {
     "addon.shipping-dhl.what": "L'atelier réserve un enlèvement de colis depuis une commande prête, récupère les tarifs et imprime une étiquette, au lieu de recopier des numéros de suivi dans un e-mail.",
     "addon.shipping-dhl.set.demo": "Utiliser le transporteur de démonstration",
     "addon.shipping-dhl.set.demoOn": "Tarifs, étiquettes et suivi viennent d'un substitut pré-rempli. Rien n'atteint un vrai transporteur.",
-    "addon.shipping-dhl.set.demoOff":
-      "Dans une boutique réelle, les appels partiraient chez le transporteur avec les identifiants saisis. Rien ne quitte cette démo dans un cas comme dans l’autre : les tarifs, les étiquettes et le suivi viennent toujours du remplaçant intégré.",
+    "addon.shipping-dhl.set.demoOff": "Les tarifs, étiquettes et suivis viennent du transporteur avec le compte connecté. Sans compte connecté, rien n'est demandé ni réservé.",
     "addon.shipping-dhl.set.cutoffLabel": "Heure limite d'enlèvement",
     "addon.shipping-dhl.set.cutoffNote": "Réservez avant, et le chauffeur passe le même après-midi.",
     "addon.shipping-dhl.set.weights": "Poids de colis par défaut",
@@ -337,6 +344,9 @@ export const strings = {
 
     "addon.shipping-dhl.line": "Réserve un enlèvement de colis pour une commande prête et renvoie une étiquette et un numéro de suivi.",
     "addon.shipping-dhl.notAffiliated": "Adminium n'est affilié à aucune de ces sociétés.",
+    "addon.shipping-dhl.account.notConnectedTitle": "Votre compte DHL n'est pas connecté",
+    "addon.shipping-dhl.account.notConnectedBody": "Tant qu'il ne l'est pas, impossible d'obtenir les tarifs ou de réserver un enlèvement. Connectez-le dans Add-ons, ou activez le transporteur de démonstration dans les réglages DHL pour essayer sans rien envoyer.",
+    "addon.shipping-dhl.account.demoNotice": "Transporteur de démonstration : les tarifs et réservations ici sont simulés et rien n'arrive chez DHL. Connectez votre compte DHL dans Add-ons et désactivez la démonstration pour réserver pour de vrai.",
     "addon.shipping-dhl.demoChip": "Transporteur de démonstration — aucun envoi réel n'a été créé",
     "addon.shipping-dhl.onlyCarrier": "DHL est la seule société de livraison connectée.",
     "addon.shipping-dhl.connectAnother": "Connectez-en une autre dans Add-ons.",
@@ -374,6 +384,8 @@ export const strings = {
     "addon.shipping-dhl.parcel.contentsFrom": "Depuis la commande {ref}, quantité {quantity}",
     "addon.shipping-dhl.parcel.weightFrom": "{kg}kg — {quantity} à {each}g pièce, plus le carton",
     "addon.shipping-dhl.parcel.weightAssumed": "{kg}kg — l'atelier n'a pas donné de poids pour : {what}. Saisissez ici le poids réel.",
+    "addon.shipping-dhl.parcel.weightShop": "{kg}kg — le poids de la commande {ref}, emballée",
+    "addon.shipping-dhl.parcel.weightFromMany": "{kg}kg — {quantity} articles pesant {grams}g au total, plus le carton",
     "addon.shipping-dhl.parcel.dimsFrom": "Un carton à la taille du contenu",
     "addon.shipping-dhl.parcel.dimsFromTube": "Roulé en tube — la pièce la plus longue dépasse 60cm",
 
@@ -452,8 +464,7 @@ export const strings = {
     "addon.shipping-dhl.what": "Dílna si tím objedná svoz balíku přímo z připravené objednávky, dostane zpět ceny a vytiskne štítek, místo přepisování čísel zásilek do e-mailu.",
     "addon.shipping-dhl.set.demo": "Použít ukázkového dopravce",
     "addon.shipping-dhl.set.demoOn": "Ceny, štítky i sledování se vracejí z připravené náhrady. K opravdovému dopravci se nedostane nic.",
-    "addon.shipping-dhl.set.demoOff":
-      "Ve skutečném obchodě by dotazy šly k dopravci se zadanými údaji účtu. Z této ukázky se tak jako tak nic neodesílá — ceny, štítky i sledování stále vrací zabudovaná náhrada.",
+    "addon.shipping-dhl.set.demoOff": "Ceny, štítky a sledování přicházejí od dopravce přes připojený účet. Bez připojeného účtu se nic nepoptává ani neobjednává.",
     "addon.shipping-dhl.set.cutoffLabel": "Uzávěrka svozu",
     "addon.shipping-dhl.set.cutoffNote": "Objednejte dřív a řidič přijede ještě odpoledne.",
     "addon.shipping-dhl.set.weights": "Výchozí hmotnosti balíků",
@@ -468,6 +479,9 @@ export const strings = {
 
     "addon.shipping-dhl.line": "Objedná svoz balíku k připravené objednávce a vrátí štítek a číslo zásilky.",
     "addon.shipping-dhl.notAffiliated": "Adminium není nijak spojeno s touto společností.",
+    "addon.shipping-dhl.account.notConnectedTitle": "Váš účet DHL není připojen",
+    "addon.shipping-dhl.account.notConnectedBody": "Dokud není, nelze získat ceny ani objednat svoz. Připojte ho v Doplňcích, nebo v nastavení DHL zapněte ukázkového dopravce a vyzkoušejte postup, aniž by se cokoli odeslalo.",
+    "addon.shipping-dhl.account.demoNotice": "Ukázkový dopravce: ceny a objednávky jsou zde simulované a nic se nedostane k DHL. Chcete-li objednávat doopravdy, připojte svůj účet DHL v Doplňcích a ukázku vypněte.",
     "addon.shipping-dhl.demoChip": "Demo dopravce — žádná skutečná zásilka nevznikla",
     "addon.shipping-dhl.onlyCarrier": "DHL je jediný připojený dopravce.",
     "addon.shipping-dhl.connectAnother": "Další připojíte v Doplňcích.",
@@ -505,6 +519,8 @@ export const strings = {
     "addon.shipping-dhl.parcel.contentsFrom": "Z objednávky {ref}, množství {quantity}",
     "addon.shipping-dhl.parcel.weightFrom": "{kg}kg — {quantity} po {each}g, plus krabice",
     "addon.shipping-dhl.parcel.weightAssumed": "{kg}kg — dílna neuvedla hmotnost u: {what}. Napište sem skutečnou hmotnost.",
+    "addon.shipping-dhl.parcel.weightShop": "{kg}kg — vlastní hmotnost objednávky {ref}, zabalené",
+    "addon.shipping-dhl.parcel.weightFromMany": "{kg}kg — {quantity} ks o celkové hmotnosti {grams}g, plus krabice",
     "addon.shipping-dhl.parcel.dimsFrom": "Krabice na míru obsahu",
     "addon.shipping-dhl.parcel.dimsFromTube": "Sroluje se do tubusu — nejdelší kus přesahuje 60cm",
 
@@ -583,8 +599,7 @@ export const strings = {
     "addon.shipping-dhl.what": "Med den kan værkstedet bestille afhentning af en pakke direkte fra en ordre, der er klar, få priser retur og printe en label i stedet for at taste sporingsnumre ind i en mail.",
     "addon.shipping-dhl.set.demo": "Brug demo-fragtfirmaet",
     "addon.shipping-dhl.set.demoOn": "Priser, labels og sporing kommer fra en indlagt stedfortræder. Intet når et rigtigt fragtfirma.",
-    "addon.shipping-dhl.set.demoOff":
-      "I en rigtig butik ville kaldene gå til fragtfirmaet med de kontooplysninger, du indtastede. Der sendes ikke noget fra denne demo under nogen omstændigheder — priser, labels og sporing kommer stadig fra den indbyggede stedfortræder.",
+    "addon.shipping-dhl.set.demoOff": "Priser, etiketter og sporing kommer fra fragtfirmaet med den tilsluttede konto. Uden en tilsluttet konto bliver intet forespurgt eller booket.",
     "addon.shipping-dhl.set.cutoffLabel": "Sidste frist for afhentning",
     "addon.shipping-dhl.set.cutoffNote": "Bestil før den, og chaufføren kommer samme eftermiddag.",
     "addon.shipping-dhl.set.weights": "Standardvægte for pakker",
@@ -599,6 +614,9 @@ export const strings = {
 
     "addon.shipping-dhl.line": "Bestiller afhentning af en pakke til en ordre, der er klar, og henter label og sporingsnummer tilbage.",
     "addon.shipping-dhl.notAffiliated": "Adminium er ikke tilknyttet dette selskab.",
+    "addon.shipping-dhl.account.notConnectedTitle": "Din DHL-konto er ikke tilsluttet",
+    "addon.shipping-dhl.account.notConnectedBody": "Indtil den er, kan der ikke hentes priser eller bookes afhentning. Tilslut den under Add-ons, eller slå demo-fragtfirmaet til i DHL's indstillinger for at prøve forløbet uden at sende noget.",
+    "addon.shipping-dhl.account.demoNotice": "Demo-fragtfirma: priser og bookinger her er simulerede, og intet når frem til DHL. Tilslut din DHL-konto under Add-ons og slå demoen fra for at booke rigtigt.",
     "addon.shipping-dhl.demoChip": "Demo-fragtfirma — der blev ikke oprettet en rigtig forsendelse",
     "addon.shipping-dhl.onlyCarrier": "DHL er det eneste tilsluttede fragtfirma.",
     "addon.shipping-dhl.connectAnother": "Tilslut et mere under Add-ons.",
@@ -636,6 +654,8 @@ export const strings = {
     "addon.shipping-dhl.parcel.contentsFrom": "Fra ordre {ref}, antal {quantity}",
     "addon.shipping-dhl.parcel.weightFrom": "{kg}kg — {quantity} à {each}g stykket, plus kassen",
     "addon.shipping-dhl.parcel.weightAssumed": "{kg}kg — værkstedet har ikke oplyst vægten på: {what}. Skriv den rigtige vægt her.",
+    "addon.shipping-dhl.parcel.weightShop": "{kg}kg — ordre {ref}s egen vægt, pakket",
+    "addon.shipping-dhl.parcel.weightFromMany": "{kg}kg — {quantity} stk. der vejer {grams}g i alt, plus kassen",
     "addon.shipping-dhl.parcel.dimsFrom": "En kasse i størrelsen efter indholdet",
     "addon.shipping-dhl.parcel.dimsFromTube": "Rullet i et rør — det længste stykke er over 60cm",
 
@@ -714,8 +734,7 @@ export const strings = {
     "addon.shipping-dhl.what": "让店里直接从已备好的订单预约包裹取件，取回运费并打印面单，不必再把单号敲进邮件里。",
     "addon.shipping-dhl.set.demo": "使用演示快递",
     "addon.shipping-dhl.set.demoOn": "运价、面单和轨迹都来自预置的替身。没有任何内容送到真实快递公司。",
-    "addon.shipping-dhl.set.demoOff":
-      "在真实的店铺里，请求会带着您填的账号信息发往快递公司。但这个演示无论如何都不会向外发送任何东西——价格、面单和物流轨迹仍旧来自内置的替身。",
+    "addon.shipping-dhl.set.demoOff": "运费、面单和跟踪信息通过已连接的账户来自快递公司。未连接账户时，不会询价或预约。",
     "addon.shipping-dhl.set.cutoffLabel": "取件截止时间",
     "addon.shipping-dhl.set.cutoffNote": "在此之前预约，司机当天下午就来。",
     "addon.shipping-dhl.set.weights": "默认包裹重量",
@@ -730,6 +749,9 @@ export const strings = {
 
     "addon.shipping-dhl.line": "为已备好的订单预约包裹取件，并取回面单和运单号。",
     "addon.shipping-dhl.notAffiliated": "Adminium 与该公司没有任何关联。",
+    "addon.shipping-dhl.account.notConnectedTitle": "你的 DHL 账户尚未连接",
+    "addon.shipping-dhl.account.notConnectedBody": "连接之前无法获取运费，也无法预约揽收。请在“插件”中连接，或在 DHL 设置中打开演示快递，先试用流程而不发送任何内容。",
+    "addon.shipping-dhl.account.demoNotice": "演示快递：此处的运费和预约均为模拟，不会发送给 DHL。请在“插件”中连接你的 DHL 账户并关闭演示，才能真正预约。",
     "addon.shipping-dhl.demoChip": "演示承运商 — 未创建任何真实运单",
     "addon.shipping-dhl.onlyCarrier": "目前只连接了 DHL 一家快递公司。",
     "addon.shipping-dhl.connectAnother": "在“插件”中再连接一家。",
@@ -766,6 +788,8 @@ export const strings = {
     "addon.shipping-dhl.parcel.contentsFrom": "来自订单 {ref}，数量 {quantity}",
     "addon.shipping-dhl.parcel.weightFrom": "{kg} 公斤 — {quantity} 件，每件 {each} 克，加包装箱",
     "addon.shipping-dhl.parcel.weightAssumed": "{kg} 公斤 — 店里没有给出这些的重量：{what}。请在此填写实际重量。",
+    "addon.shipping-dhl.parcel.weightShop": "{kg} 公斤 — 订单 {ref} 自己记录的包装后重量",
+    "addon.shipping-dhl.parcel.weightFromMany": "{kg} 公斤 — {quantity} 件共重 {grams} 克，加包装箱",
     "addon.shipping-dhl.parcel.dimsFrom": "按内容物大小配的箱子",
     "addon.shipping-dhl.parcel.dimsFromTube": "卷成筒装——最长的一件超过 60 厘米",
 
@@ -838,8 +862,7 @@ export const strings = {
     "addon.shipping-dhl.what": "讓店裡直接從已備妥的訂單預約包裹取件，取回運費並列印面單，不必再把單號敲進郵件裡。",
     "addon.shipping-dhl.set.demo": "使用示範快遞",
     "addon.shipping-dhl.set.demoOn": "運價、面單和軌跡都來自預置的替身。沒有任何內容送到真實快遞公司。",
-    "addon.shipping-dhl.set.demoOff":
-      "在真實的店鋪裡，請求會帶著您填的帳號資訊送往快遞公司。但這個示範無論如何都不會向外送出任何東西——價格、面單和物流軌跡仍舊來自內建的替身。",
+    "addon.shipping-dhl.set.demoOff": "運費、標籤和追蹤資訊透過已連接的帳戶來自快遞業者。未連接帳戶時，不會詢價或預約。",
     "addon.shipping-dhl.set.cutoffLabel": "取件截止時間",
     "addon.shipping-dhl.set.cutoffNote": "在此之前預約，司機當天下午就來。",
     "addon.shipping-dhl.set.weights": "預設包裹重量",
@@ -854,6 +877,9 @@ export const strings = {
 
     "addon.shipping-dhl.line": "為已備妥的訂單預約包裹取件，並取回面單與追蹤號碼。",
     "addon.shipping-dhl.notAffiliated": "Adminium 與該公司並無任何關聯。",
+    "addon.shipping-dhl.account.notConnectedTitle": "你的 DHL 帳戶尚未連接",
+    "addon.shipping-dhl.account.notConnectedBody": "連接之前無法取得運費，也無法預約收件。請在「附加元件」中連接，或在 DHL 設定中開啟示範快遞，先試用流程而不傳送任何內容。",
+    "addon.shipping-dhl.account.demoNotice": "示範快遞：此處的運費和預約均為模擬，不會傳送給 DHL。請在「附加元件」中連接你的 DHL 帳戶並關閉示範，才能真正預約。",
     "addon.shipping-dhl.demoChip": "示範業者 — 未建立任何真實託運",
     "addon.shipping-dhl.onlyCarrier": "目前只連接了 DHL 一家貨運公司。",
     "addon.shipping-dhl.connectAnother": "在「附加元件」裡再連接一家。",
@@ -890,6 +916,8 @@ export const strings = {
     "addon.shipping-dhl.parcel.contentsFrom": "來自訂單 {ref}，數量 {quantity}",
     "addon.shipping-dhl.parcel.weightFrom": "{kg} 公斤 — {quantity} 件，每件 {each} 公克，加包裝箱",
     "addon.shipping-dhl.parcel.weightAssumed": "{kg} 公斤 — 店裡沒有提供這些的重量：{what}。請在此填入實際重量。",
+    "addon.shipping-dhl.parcel.weightShop": "{kg} 公斤 — 訂單 {ref} 自己記錄的包裝後重量",
+    "addon.shipping-dhl.parcel.weightFromMany": "{kg} 公斤 — {quantity} 件共重 {grams} 公克，加包裝箱",
     "addon.shipping-dhl.parcel.dimsFrom": "依內容物大小配的箱子",
     "addon.shipping-dhl.parcel.dimsFromTube": "捲成筒裝——最長的一件超過 60 公分",
 
@@ -962,8 +990,7 @@ export const strings = {
     "addon.shipping-dhl.what": "يتيح للمحل حجز استلام طرد من طلب جاهز، واسترجاع الأسعار وطباعة بطاقة الشحن، بدل كتابة أرقام التتبع في رسالة بريد.",
     "addon.shipping-dhl.set.demo": "استخدم شركة الشحن التجريبية",
     "addon.shipping-dhl.set.demoOn": "الأسعار والملصقات والتتبّع تأتي من بديل مُعدّ سلفًا. لا يصل شيء إلى شركة شحن حقيقية.",
-    "addon.shipping-dhl.set.demoOff":
-      "في متجر حقيقي كانت الطلبات ستذهب إلى شركة الشحن ببيانات الحساب التي أدخلتها. لا يُرسَل شيء من هذا العرض التوضيحي في الحالتين — الأسعار والملصقات والتتبّع تأتي دائمًا من البديل المضمَّن.",
+    "addon.shipping-dhl.set.demoOff": "تأتي الأسعار والملصقات والتتبع من شركة الشحن عبر الحساب المتصل. دون حساب متصل لا يُطلب سعر ولا يُحجز شيء.",
     "addon.shipping-dhl.set.cutoffLabel": "آخر موعد للاستلام",
     "addon.shipping-dhl.set.cutoffNote": "احجز قبله ويأتي السائق بعد ظهر اليوم نفسه.",
     "addon.shipping-dhl.set.weights": "أوزان الطرود الافتراضية",
@@ -978,6 +1005,9 @@ export const strings = {
 
     "addon.shipping-dhl.line": "يحجز استلام طرد لطلب جاهز، ويعيد بطاقة شحن ورقم تتبع.",
     "addon.shipping-dhl.notAffiliated": "لا توجد أي علاقة بين Adminium وهذه الشركة.",
+    "addon.shipping-dhl.account.notConnectedTitle": "حسابك في DHL غير متصل",
+    "addon.shipping-dhl.account.notConnectedBody": "لا يمكن جلب الأسعار أو حجز استلام حتى يتصل. اربطه من صفحة الإضافات، أو شغّل شركة الشحن التجريبية في إعدادات DHL لتجربة الخطوات دون إرسال أي شيء.",
+    "addon.shipping-dhl.account.demoNotice": "شركة شحن تجريبية: الأسعار والحجوزات هنا محاكاة ولا يصل شيء إلى DHL. اربط حسابك في DHL من صفحة الإضافات وأوقف التجربة للحجز فعلًا.",
     "addon.shipping-dhl.demoChip": "شركة شحن تجريبية — لم تُنشأ أي شحنة حقيقية",
     "addon.shipping-dhl.onlyCarrier": "‏DHL هي شركة التوصيل الوحيدة الموصولة.",
     "addon.shipping-dhl.connectAnother": "أضف غيرها من صفحة الإضافات.",
@@ -1014,6 +1044,8 @@ export const strings = {
     "addon.shipping-dhl.parcel.contentsFrom": "من الطلب {ref}، الكمية {quantity}",
     "addon.shipping-dhl.parcel.weightFrom": "{kg} كجم — {quantity} بوزن {each} جم للقطعة، زائد الصندوق",
     "addon.shipping-dhl.parcel.weightAssumed": "{kg} كجم — لم يذكر المحل وزن: {what}. اكتب الوزن الحقيقي هنا.",
+    "addon.shipping-dhl.parcel.weightShop": "{kg} كجم — وزن الطلب {ref} نفسه، مغلفًا",
+    "addon.shipping-dhl.parcel.weightFromMany": "{kg} كجم — {quantity} قطع وزنها معًا {grams} جم، زائد الصندوق",
     "addon.shipping-dhl.parcel.dimsFrom": "صندوق بمقاس ما بداخله",
     "addon.shipping-dhl.parcel.dimsFromTube": "ملفوف في أسطوانة — أطول قطعة تتجاوز ٦٠ سم",
 

@@ -1,8 +1,3 @@
-/*
- * VENDORED from add-ons/packages/host/src/slots.ts — synced by scripts/sync-add-ons.sh.
- * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
- * The ONE shared contract; the three add-ons here import it by relative path.
- */
 /**
  * The slots a host app offers, and how each behaves.
  *

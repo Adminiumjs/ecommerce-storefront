@@ -11,4 +11,8 @@ npm-debug.log
 .env.*
 docker-compose.yml
 db
-manifest.json
+
+# manifest.json is DELIBERATELY NOT EXCLUDED, though the served image never
+# reads it. `npm run build` is `tsc -b && vite build`, and `src/manifest.test.ts`
+# imports the document by path — so leaving it out of the build context does not
+# make a smaller image, it makes `docker build` fail on TS2307 at the last step.

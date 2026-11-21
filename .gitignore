@@ -5,8 +5,17 @@ dist
 *.local
 .vercel
 
-# .env holds a real ADMINIUM_SECRET — README and .env.example both tell the
-# reader to put one there, so it must never be committable by a stray `git add`.
+# Your own secrets. `.env.example` is the committed template; `.env` is the copy
+# of it that holds a real ADMINIUM_SECRET, and README.md tells every reader to
+# make one — so it is ignored here rather than left to whoever types `git add .`.
 .env
 .env.*
 !.env.example
+
+# Scratch output of the provenance build in src/builtOutput.test.ts — the same
+# app built a second time with sourcemaps, so the ban grep can tell a
+# dependency chunk from one of ours. Evidence, not output; deleted after use.
+.provenance
+
+# The hosted surfaces `build:surface:*` writes.
+dist-surface

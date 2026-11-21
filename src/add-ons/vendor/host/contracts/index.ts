@@ -1,8 +1,3 @@
-/*
- * VENDORED from add-ons/packages/host/src/contracts/index.ts — synced by scripts/sync-add-ons.sh.
- * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
- * The ONE shared contract; the three add-ons here import it by relative path.
- */
 /**
  * The contract mirror, in one entry point.
  *
@@ -36,6 +31,9 @@ export type {
   DocumentLocaleId,
   DocumentOutline,
   DocumentPaper,
+  DocumentPictureMediaType,
+  DocumentPictureValue,
+  DocumentQrValue,
   DocumentRenderer,
   DocumentSubject,
   LocalizedText,
@@ -68,3 +66,83 @@ export type {
   ShippingCarrier,
   TrackEvent,
 } from './shipping-carrier.ts';
+export {
+  CHECKOUT_STATUSES,
+  DISPUTE_STATUSES,
+  PAYMENT_EVENT_KINDS,
+  PAYMENT_MODES,
+  PAYMENT_PROVIDER_CONTRACT,
+  PAYMENT_PROVIDER_FACTORY,
+  PAYMENT_WEBHOOK_EVENTS_EXPORT,
+  PAYMENT_KEY_APP_EXPORT,
+  PAYMENT_PROVIDER_VERSION,
+  PROVIDER_ERROR_CODES,
+  REFUND_REASONS,
+  REFUND_STATUSES,
+  isProviderError,
+  providerError,
+} from './payment-provider.ts';
+export type {
+  CheckoutCreated,
+  CheckoutInput,
+  CheckoutPayable,
+  CheckoutState,
+  CheckoutStatus,
+  CreatePaymentProvider,
+  CredentialCheck,
+  ExpireResult,
+  MethodList,
+  MethodQuery,
+  MinorAmount,
+  MissedEvents,
+  PaidWith,
+  PaymentCredentials,
+  PaymentEvent,
+  PaymentEventKind,
+  PaymentDispute,
+  DisputeStatus,
+  PaymentHttpClient,
+  PaymentHttpResponse,
+  PaymentMethodInfo,
+  PaymentMode,
+  PaymentProvider,
+  PaymentProviderContext,
+  ProviderError,
+  ProviderErrorCode,
+  RefundInput,
+  RefundReason,
+  RefundState,
+  RefundStatus,
+  WebhookDelivery,
+} from './payment-provider.ts';
+export {
+  addAmounts,
+  compareAmounts,
+  decimalToMinor,
+  isoExponent,
+  minorToDecimal,
+  sameAmount,
+  subtractAmounts,
+} from './payment-money.ts';
+
+export {
+  CARD_TERMINAL_CONTRACT,
+  CARD_TERMINAL_FACTORY,
+  CARD_TERMINAL_VERSION,
+  READER_CHARGE_STATUSES,
+} from './card-terminal.ts';
+export type {
+  CardTerminal,
+  CreateCardTerminal,
+  PairingFinished,
+  PairingStarted,
+  Reader,
+  ReaderChargeInput,
+  ReaderChargeState,
+  ReaderChargeStatus,
+  ReaderList,
+  ReaderLocation,
+  ReaderLocations,
+  ReaderUnpaired,
+  TerminalEvents,
+} from './card-terminal.ts';

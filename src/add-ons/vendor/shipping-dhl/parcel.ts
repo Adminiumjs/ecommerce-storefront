@@ -95,8 +95,18 @@ export interface ParcelEstimate {
     lines: number;
     /** The first line's name, already translated by the host. */
     label: string;
-    /** What one of them weighs, rounded to a tenth of a gram. */
+    /** What one of them weighs, rounded to a tenth of a gram (an average, where the lines differ). */
     unitGrams: number;
+    /** What the goods weigh together, in grams, before wrap and box. */
+    goodsGrams: number;
+    /** Each line, by its own label and quantity, in the host's order: what the contents line names. */
+    items: readonly { label: string; quantity: number }[];
+    /**
+     * True when the weight is the shop's own figure for the packed parcel
+     * (`OutboundOrder.parcelWeightGrams`), taken as it is: the screen then
+     * says it is the shop's, and adds no box of its own on top.
+     */
+    weighed: boolean;
     /**
      * The lines the shop gave no weight for, by their own labels. EMPTY is the
      * ordinary case and is what lets the screen say nothing; non-empty is what
@@ -133,7 +143,7 @@ function longestSideCm(item: Weighable): number {
  * The same function serves a single order line, a whole order and a whole
  * basket, because from a van's point of view those are the same question.
  */
-export function parcelFor(items: readonly Weighable[]): ParcelEstimate {
+export function parcelFor(items: readonly Weighable[], shop: { packedGrams?: number | undefined } = {}): ParcelEstimate {
   const assumed: string[] = [];
   let goodsGrams = 0;
   let quantity = 0;
@@ -145,7 +155,10 @@ export function parcelFor(items: readonly Weighable[]): ParcelEstimate {
     quantity += item.quantity;
   }
 
-  const weightKg = Math.max(kg((goodsGrams / 1000) * (1 + WRAP) + PACKING_KG), FLOOR_KG);
+  // The shop's own figure for the packed parcel, where it keeps one, is THE weight: never a second guess beside it.
+  const packed = shop.packedGrams;
+  const weighed = typeof packed === "number" && Number.isFinite(packed) && packed > 0;
+  const weightKg = weighed ? Math.round(packed) / 1000 : Math.max(kg((goodsGrams / 1000) * (1 + WRAP) + PACKING_KG), FLOOR_KG);
   const longest = items.reduce((max, item) => Math.max(max, longestSideCm(item)), 0);
   const rolled = longest >= ROLLED_FROM_CM;
 
@@ -163,8 +176,11 @@ export function parcelFor(items: readonly Weighable[]): ParcelEstimate {
       lines: items.length,
       label: first?.label ?? "",
       unitGrams: quantity === 0 ? 0 : Math.round((goodsGrams / quantity) * 10) / 10,
+      goodsGrams: Math.round(goodsGrams * 10) / 10,
+      items: items.map((item) => ({ label: item.label, quantity: item.quantity })),
       assumed,
       rolled,
+      weighed,
     },
   };
 }

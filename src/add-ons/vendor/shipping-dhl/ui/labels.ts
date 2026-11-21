@@ -33,18 +33,28 @@ import type { TrackEvent } from "../../host/contracts/index.ts";
  */
 export function contentsLine(
   t: TFunction,
-  estimate: { from: { quantity: number; lines: number; label: string } },
+  estimate: { from: { items: readonly { label: string; quantity: number }[] } },
+  list: (parts: readonly string[]) => string = (parts) => parts.join(", "),
 ): string {
-  const { quantity, lines, label } = estimate.from;
-  if (lines <= 1) {
-    return t("addon.shipping-dhl.parcel.contentsValue", { quantity, what: label });
-  }
-  return t("addon.shipping-dhl.parcel.contentsValueMore", {
-    quantity,
-    what: label,
-    more: lines - 1,
-  });
+  /*
+   * EACH LINE BY ITS OWN QUANTITY. This read "{every item} × {the first
+   * line's name} and {lines − 1} more", so two mugs and a set of coasters went
+   * to the carrier as "3 × Stoneware mug and 1 more": three mugs that were
+   * never in the box. Up to three lines are each named with their own count;
+   * past that, the third says how many more lines follow.
+   */
+  const lines = estimate.from.items.filter((item) => item.quantity > 0);
+  const one = (item: { label: string; quantity: number }) => t("addon.shipping-dhl.parcel.contentsValue", { quantity: item.quantity, what: item.label });
+  if (lines.length <= MAX_NAMED) return list(lines.map(one));
+  const last = lines[MAX_NAMED - 1]!;
+  return list([
+    ...lines.slice(0, MAX_NAMED - 1).map(one),
+    t("addon.shipping-dhl.parcel.contentsValueMore", { quantity: last.quantity, what: last.label, more: lines.length - MAX_NAMED }),
+  ]);
 }
+
+/** How many lines the contents line names before it says how many more follow. */
+const MAX_NAMED = 3;
 
 /**
  * A service's message key, and the hour it promises where it names one.

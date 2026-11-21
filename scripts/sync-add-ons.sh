@@ -1,101 +1,60 @@
 #!/usr/bin/env bash
-# sync-add-ons.sh — vendor the add-on client halves into this app, and prove the
-# copies have not drifted from the repository they came from.
+# sync-add-ons.sh — vendor the one add-on client half this studio mounts, and
+# prove the copy has not drifted from the repository it came from.
 #
-# THIS SCRIPT SHIPS IN THIS REPO, and that is the whole reason it exists here.
-# The anti-drift check used to live only in the author's local workplan tree,
-# which is gitignored: `src/add-ons/registry.ts` told a reader to "re-run the
-# sync script", CI had no script to run, and a cloner could not have run one if
-# they had wanted to. A gate nobody but one laptop can execute is not a gate.
+# THIS SCRIPT SHIPS IN THIS REPO so a cloner and CI can run the drift check,
+# not only the laptop that made the copy.
 #
-# ── WHAT THIS STOREFRONT VENDORS, AND WHAT IT DOES NOT ─────────────────────
+# ── WHAT THE STUDIO VENDORS, AND WHY SO LITTLE ─────────────────────────────
 #
-# Two targets, not four. The print works and the maker studio each host every
-# slot in the registry and vendor three add-ons between them; this app declares
-# only a CUSTOMER frontend in `manifest.json`, so it hosts the two customer
-# surfaces plus the settings panel and vendors the one add-on that fills them.
-# Widening the list is a decision about what a shopper downloads, which is why
-# it is a list here rather than a glob over the monorepo.
+# The studio mounts ONE add-on surface: DHL Shipping's dispatch flow
+# (`order.dispatch.actions`) on the post office run, for each parcel. So it
+# vendors exactly two packages from the add-ons monorepo:
 #
-# ── ONE SOURCE REPOSITORY, NOT THREE ────────────────────────────────────────
-#
-# The add-ons used to be three standalone repositories and this script pulled
-# from three sibling checkouts. They are ONE monorepo now, and the reason is the
-# same reason this script exists: each of the three carried its own copy of the
-# host contract, and within a day the copies disagreed — the `AddOn` interface
-# had 19 members in one, 18 in another, 18 in the third, and two members the
-# host declares (`nameKey`, `inDemo`) in none of them. Nothing failed and
-# nothing could have, because no suite anywhere had two copies in front of it.
-#
-#   <somewhere>/ecommerce-storefront  ← this repo, the HOST
+#   <somewhere>/ecommerce-storefront ← this repo, the HOST
 #   <somewhere>/add-ons         ← the monorepo
-#       packages/host/              the ONE shared contract
-#       packages/design-studio/
-#       packages/shipping-dhl/
-#       packages/import-canva/
+#       packages/host/              the shared contract the add-on imports
+#       packages/shipping-dhl/      the delivery add-on's client half
 #
-# Override with ADD_ONS_DIR=/path/to/add-ons if yours lives elsewhere. NOTE the
-# changed meaning: it used to name the directory CONTAINING three checkouts, and
-# it now names the monorepo checkout itself. A stale value is caught below and
-# reported as such rather than as a missing file.
+#   src/add-ons/vendor/host/<file>          from add-ons/packages/host/src/<file>
+#   src/add-ons/vendor/shipping-dhl/<file>  from add-ons/packages/shipping-dhl/src/<file>
 #
-# ── WHAT THE HOST VENDORS, AND WHY `vendor/host/` EXISTS ────────────────────
+# Override with ADD_ONS_DIR=/path/to/add-ons if yours lives elsewhere.
 #
-#   src/add-ons/vendor/host/<file>   from add-ons/packages/host/src/<file>
-#   src/add-ons/vendor/<key>/<file>  from add-ons/packages/<key>/src/<file>
+# The add-on's sources import their contract as `@adminium/add-on-host`. This
+# app has no node_modules for that package (it is a standalone repo built from
+# a clean clone), so the contract is vendored too, and the copied files' imports
+# are rewritten to reach it by relative path (see REWRITES below).
 #
-# The add-on sources import their shared contract as `@adminium/add-on-host`.
-# This app has no node_modules for that package and never will: it is a static
-# Vite SPA published standalone to the Adminiumjs org, built from a clean clone
-# with no sibling checkout of anything. So the shared package is VENDORED TOO,
-# once, into `vendor/host/`, and the copied files' imports are rewritten to
-# reach it by relative path (see REWRITES below). The vendored tree is then
-# self-contained: it compiles with nothing beside it.
-#
-# AND THIS REPO KEEPS NO SECOND DECLARATION OF `AddOn`, which is where it
-# departs from the two hosts that had the seam first. Both of those carry their
-# own `src/add-ons/host.ts` beside the vendored copy, and the monorepo's
-# `host-mirror.test.ts` reads those two files by name and fails when they drift
-# from the package. That arrangement earns its keep in a host that helped design
-# the contract and can therefore be AHEAD of it; a retrofit is behind it by
-# definition, and a hand-written mirror here would be a second copy of 700 lines
-# with nothing on the far side reading it — the exact defect the monorepo was
-# consolidated to end ("19 members in one, 18 in another"). So this app imports
-# the vendored contract directly, `vendor/host/` is the only declaration, and
-# `npx tsc -b` compares what the add-on returns with what this app mounts
-# through the payload generic instead of through a duplicated interface.
+# `src/add-ons/host.ts` is this app's own seam and stays authoritative.
+# `src/add-ons/registry.ts` assigns the object the vendored `register()`
+# returns into `readonly AddOn[]` typed by our own `host.ts`, so `tsc` in this
+# repo is itself the check that the two still describe the same shape.
 #
 # THE MONOREPO IS THE SOURCE OF TRUTH. Edit it, then re-run `sync` here. A
-# hand-edit under vendor/ is invisible until it is a bug in two places at once,
-# which is exactly what `status` is for.
+# hand-edit under vendor/ is what `status` is for.
 #
-# Every vendored file carries a header naming its source and saying it is synced
-# rather than hand-edited. `status` strips that header back off, and applies the
-# same import rewrite to the source, before comparing — so neither the header
-# nor the rewrite is itself a source of drift.
+# Every vendored file carries a header naming its source. `status` strips that
+# header back off, and applies the same import rewrite to the source, before
+# comparing — so neither the header nor the rewrite is itself a source of drift.
 #
-# WHAT IS DELIBERATELY NOT COPIED, and none of it is an oversight:
-#   *.test.ts(x)   the monorepo runs its own suites; re-running them here would
-#                  assert the copy rather than the thing (and the conformance
-#                  suites pull in zod, which the host does not carry).
-#   src/testing/   the copied conformance harness and build helpers, same
-#                  reason. The shared package's `testing/` entry point — where
-#                  its zod validators live — is never vendored either.
-#   slots.ts       each package's `FILLED_SLOTS` is read only by its own
-#                  manifest suite. This app has its own `src/add-ons/slots.ts`,
-#                  which is the authoritative list of what it hosts — and it is
-#                  a STRICT SUBSET of the registry, asserted by the kit's mounts
-#                  guard, because this app hosts three of the twelve.
-#   src/carrier.ts src/http.ts src/server.ts src/server/artwork-source.ts
-#                  the SERVER halves. Secrets are server-only and the
-#                  client bundle must not be able to reach the module that holds
-#                  them. `status` fails if one ever appears under vendor/.
-#   vite-env.d.ts  ambient Vite types the host already has.
+# WHAT IS DELIBERATELY NOT COPIED:
+#   *.test.ts(x)   the monorepo runs its own suites.
+#   src/testing/   the conformance harness (it pulls in zod); never shipped.
+#   slots.ts       the add-on's own `FILLED_SLOTS`; this app's
+#                  `src/add-ons/slots.ts` is the list of what it hosts.
+#   carrier.ts http.ts server.ts
+#                  the SERVER half. Secrets are server-only and the client
+#                  bundle must not be able to reach the module that holds them.
+#                  `status` fails if one ever appears under vendor/.
+#
+# `runtime/index.ts` IS copied: the host's loader ABI for a bundle served by
+# Adminium. On a real install the studio loads DHL's client half from Adminium
+# (`src/add-ons/connected.ts`) and publishes its React to it through this
+# module; only the demo build compiles the vendored client half in.
 #
 # With no monorepo checkout present, `status` reports SOURCE-MISSING and exits 0
-# — a clean clone of this app alone still builds, and its own suites still
-# assert what is vendored. `sync` in that situation is an error, because there
-# is nothing to sync FROM.
+# — a clean clone of this app alone still builds. `sync` is then an error.
 #
 # Usage:
 #   scripts/sync-add-ons.sh status   what is vendored, and whether it matches
@@ -108,47 +67,35 @@ HOST="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 MONO="${ADD_ONS_DIR:-$(cd "$HOST/.." && pwd)/add-ons}"
 VENDOR="$HOST/src/add-ons/vendor"
 
-# Vendoring targets, in the order they are written. `host` FIRST: it is the
-# shared contract the other three import, and a reader of the output should see
-# what everything else depends on before the things that depend on it.
-#
-# For an add-on the target name is its manifest key AND the directory name under
-# vendor/, so a reader who sees `vendor/shipping-dhl/` knows exactly which
-# package to go and read.
+# Vendoring targets, in the order they are written: the contract first, then
+# the add-on that imports it. The target name is the add-on's manifest key and
+# its directory under vendor/.
 TARGETS=(host shipping-dhl)
 
-# The shared contract, vendored ONCE. `testing/` is not here and must not be.
+# The shared contract, and the loader ABI a served bundle reads. `testing/` is not here and must not be.
 FILES_host=(
-  index.ts host.ts payloads.ts slots.ts delivery.ts
+  index.ts host.ts payloads.ts slots.ts delivery.ts runtime/index.ts
   contracts/index.ts contracts/common.ts
   contracts/artwork-source.ts contracts/shipping-carrier.ts
   contracts/product-personalizer.ts contracts/document-render.ts
+  contracts/payment-provider.ts contracts/payment-money.ts
 )
 
-# Reachable from each client entry point, and nothing else. Kept as an explicit
-# list rather than a glob so that adding a file to a package is a decision here
-# too — a new module appearing in the demo bundle without anyone naming it is
-# how a server half ends up in a browser.
+# Reachable from the client entry point, and nothing else. An explicit list
+# rather than a glob, so a new module reaching the studio's bundle is a
+# decision made here too.
 FILES_shipping_dhl=(
-  add-on-facts.ts
+  add-on-facts.ts add-on-key.ts
   label-store.ts clock.ts parcel.ts rates.ts label.ts seed.ts
   demo-carrier.ts settings.ts runtime.ts index.ts
   i18n/strings.ts i18n/t.ts
   ui/atoms.tsx ui/labels.ts ui/DispatchAction.tsx ui/DeliveryMethods.tsx
-  ui/SettingsPanel.tsx ui/TrackingPanel.tsx ui/ReturnLabel.tsx
+  ui/SettingsPanel.tsx ui/TrackingPanel.tsx ui/ReturnLabel.tsx ui/account.tsx
 )
-# Modules that must never be reachable from the browser half, and the
-# server ENTRY POINTS a manifest's `provides[].server` names. The delivery
-# add-on's `carrier.ts` and `http.ts` hold the real transport and the credential
-# it authenticates with; a copy of either under `vendor/` would put a secret one
-# import away from a shopper's browser.
-#
-# THE LIST IS THE MONOREPO'S AND NOT THIS APP'S, deliberately. Two of the four
-# names below belong to packages this app does not vendor at all, so they can
-# never appear — and they stay, because the check costs nothing and the day this
-# app vendors a second add-on is exactly the day somebody would forget to add
-# them back.
-FORBIDDEN=(carrier.ts http.ts server.ts server/artwork-source.ts)
+
+# Modules that must never be reachable from the browser half: the server
+# half, where the credentials live.
+FORBIDDEN=(carrier.ts http.ts server.ts)
 
 # Files the OLD three-repo layout vendored and this one does not: each add-on's
 # private copy of the contract, now shared in `vendor/host/`. Finding one is not
@@ -165,14 +112,10 @@ files_of() { local v; v="FILES_$(var "$1")[@]"; printf '%s\n' "${!v}"; }
 pkg_of() { printf 'packages/%s' "$1"; }
 src_of() { printf '%s/packages/%s/src' "$MONO" "$1"; }
 
-# `src/add-ons/` does not exist before the first sync, so the check is on `src/`
-# — the thing that identifies a host checkout at all. Checking for the directory
-# this script CREATES would make the first run of it impossible.
-[ -d "$HOST/src" ] || die "run this from inside the ecommerce-storefront checkout"
+[ -d "$HOST/src/add-ons" ] || die "run this from inside the ecommerce-storefront checkout"
 
-# Is the monorepo where we think it is? One directory to find, not three — and
-# if what we find is the pre-monorepo layout, say THAT, because the fix is a
-# different one (update ADD_ONS_DIR) from "clone it".
+# Is the monorepo where we think it is? If what we find is the pre-monorepo
+# layout, say THAT, because the fix is a different one (update ADD_ONS_DIR).
 SOURCE_MISSING=0
 if [ ! -d "$MONO/packages/host/src" ]; then
   SOURCE_MISSING=1
@@ -247,7 +190,7 @@ unresolved_in() { # $1 = file
 
 note_of() { # $1 = target → the header's third line
   if [ "$1" = host ]; then
-    printf '%s' 'The ONE shared contract; the three add-ons here import it by relative path.'
+    printf '%s' 'The shared contract; the vendored add-on imports it by relative path.'
   else
     printf 'The add-on key is `%s`; its manifest, tests and README live in the monorepo.' "$1"
   fi
@@ -341,8 +284,7 @@ cmd_status() {
       done < <(cd "$dest" && find . -type f | sed 's|^\./||' | sort)
 
       if [ "$key" != host ]; then
-        # Secrets stay server-side: the server half must not be reachable from a
-        # browser bundle.
+        # The server half must not be reachable from a browser bundle.
         for f in "${FORBIDDEN[@]}"; do
           [ -e "$dest/$f" ] && { state="SECRET-LEAK $f"; drift=1; }
         done
@@ -357,8 +299,8 @@ cmd_status() {
     printf '%-16s %-28s %-8s %s\n' "$key" "$(pkg_of "$key")" "$n/$want" "$state"
   done
 
-  # A directory under vendor/ that is not a target at all — the three-repo
-  # layout's leftovers land here if one is ever removed from TARGETS.
+  # A directory under vendor/ that is not a target at all: a package that was
+  # dropped from TARGETS and left behind.
   if [ -d "$VENDOR" ]; then
     while IFS= read -r dir; do
       printf '%s\n' "${TARGETS[@]}" | grep -qxF "$dir" ||
