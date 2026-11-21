@@ -105,7 +105,7 @@ const variants: Row[] = [
 /** Inventory: an item per variant; Slate XL sold out, Ember M low, the Cascade short (on hand below what is held). */
 const stockOf: Record<number, { on: number; held: number; available: number; state: string }> = {
   104: { on: 0, held: 0, available: 0, state: "out" },
-  112: { on: 4, held: 1, available: 3, state: "low" },
+  111: { on: 4, held: 1, available: 3, state: "low" },
   200: { on: 0, held: 1, available: 0, state: "out" },
 };
 const stock = {
@@ -195,7 +195,7 @@ const lines: Row[] = [
   line(4, 59, 112, 1, "189.00"),
   line(5, 66, 112, 1, "189.00"),
   line(6, 58, 101, 1, "189.00"),
-  line(7, 5, 111, 1, "189.00"),
+  line(7, 5, 110, 1, "189.00"),
   line(8, 8, 103, 1, "58.00"),
   line(9, 70, 100, 1, "68.00"),
 ];

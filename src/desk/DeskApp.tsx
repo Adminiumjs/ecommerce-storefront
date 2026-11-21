@@ -326,8 +326,10 @@ function SearchBox() {
         autoComplete="off"
         value={query}
         placeholder={t("desk.search.placeholder")}
+        role="combobox"
+        aria-autocomplete="list"
         aria-expanded={shown}
-        aria-controls="desk-search-res"
+        aria-controls={shown ? "desk-search-res" : undefined}
         onFocus={() => setOpen(true)}
         onChange={(e) => {
           useDesk.setState({ query: e.target.value });
