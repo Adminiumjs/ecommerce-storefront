@@ -217,7 +217,7 @@ export function OrderScreen() {
   const kept = keptPayments(data, order);
   // Refund reads the panel's `mayRefund` (ACC-15), never the role's name; money a gift card or a transfer holds is the refund row's to give back.
   const onlineKept = kept.some((p) => text(p["method"]) === "online");
-  const canRefund = money && kept.length > 0 && who.can("payment_refunds", "create") && panel !== null && (panel.mayRefund || !onlineKept) && s !== "paying";
+  const canRefund = money && kept.length > 0 && who.can("payment_refunds", "create") && (onlineKept ? panel?.mayRefund === true : true) && s !== "paying";
   const draft = note ?? text(order["staff_note"]) ?? "";
 
   const banner = bannerOf();
