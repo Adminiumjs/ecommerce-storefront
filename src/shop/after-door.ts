@@ -245,7 +245,7 @@ export class AdminiumAfter implements AfterPort {
       // The product list filters by category, price and slug, never by key: an order's few products are found by
       // paging the list (a shop's on-sale catalogue, read once for "Order again").
       const wanted = new Set(unique);
-      return (await all(this.shop.client, this.shop.refs.products, { limit: await this.shop.pageSize(this.shop.refs.products) })).filter((p) => wanted.has(String(p["id"]))).map(productOf);
+      return (await this.shop.allProducts()).filter((p) => wanted.has(String(p["id"]))).map(productOf);
     });
   }
 }

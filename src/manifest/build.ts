@@ -21,7 +21,7 @@ import { ROLES } from "./roles.ts";
 import { SETTINGS } from "./settings.ts";
 import { TABLES } from "./tables.ts";
 
-export const VERSION = "0.2.1";
+export const VERSION = "0.2.2";
 
 /**
  * The Adminium release that first reads everything below: shoppers' filters,

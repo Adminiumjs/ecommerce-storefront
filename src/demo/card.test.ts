@@ -11,6 +11,7 @@ import { icons } from "lucide-react";
 import { describe, expect, it } from "vitest";
 
 import { buildDemoJson } from "../../demo-emit.ts";
+import { demoNote } from "../../demo-note.ts";
 import WORLD from "../sample/northline-data.json";
 import { DEMO_LOCALES, demoJsonIssues } from "../demo-types.ts";
 import { SCREEN_IDS, SHORTCUT_IDS } from "./shortcuts.ts";
@@ -35,6 +36,14 @@ describe("demo.json", () => {
     expect(demoJsonIssues(doc, { appKey: "ecommerce-shop", dir: "ecommerce-storefront", icons: ICONS })).toEqual([]);
     expect(doc.base).toBe("/demo/ecommerce-storefront/app/");
     expect(doc.frames).toEqual(["desktop", "phone"]);
+  });
+
+  it("says no money moves, in all eight languages (R6)", () => {
+    const note = demoNote({ labelKey: "note.demo", messages: CARD_MESSAGES });
+    expect(Object.keys(note.labels).sort()).toEqual([...DEMO_LOCALES].sort());
+    expect(note.labels["en-US"]).toBe("Demo: no money moves");
+    expect(demoJsonIssues({ ...doc, note }, { appKey: "ecommerce-shop", dir: "ecommerce-storefront", icons: ICONS })).toEqual([]);
+    expect(() => demoNote({ labelKey: "note.missing", messages: CARD_MESSAGES })).toThrow(/no en-US string/);
   });
 
   it("offers the shopper's fourteen screens and the shop desk's eight, with no Overview (R7)", () => {

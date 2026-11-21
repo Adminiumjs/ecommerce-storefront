@@ -93,6 +93,7 @@ const WORDS: Record<string, Eight<string>> = {
 
   "persona.shopper": ["Shopper", "Kundschaft", "Client", "Kunde", "Zákazník", "المتسوق", "顾客", "顧客"],
   "persona.desk": ["Shop desk", "Shop-Team", "Équipe", "Butikken", "Obchod", "مكتب المتجر", "店铺后台", "商店後台"],
+  "note.demo": ["Demo: no money moves", "Demo: Es fließt kein Geld", "Démo : aucun argent ne circule", "Demo: ingen penge flyttes", "Ukázka: žádné peníze se nepřevádějí", "عرض تجريبي: لا تنتقل أي أموال", "演示：不涉及真实资金", "示範：不涉及真實金流"],
   "clock.day": ["+1 business day", "+1 Werktag", "+1 jour ouvré", "+1 hverdag", "+1 pracovní den", "+1 يوم عمل", "+1 个工作日", "+1 個工作天"],
   "clock.reset": ["Back to Tuesday morning", "Zurück zum Dienstagmorgen", "Retour à mardi matin", "Tilbage til tirsdag morgen", "Zpět na úterní ráno", "العودة إلى صباح الثلاثاء", "回到星期二上午", "回到星期二上午"],
 };
