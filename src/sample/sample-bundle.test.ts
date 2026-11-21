@@ -179,6 +179,7 @@ const WRITTEN_ANYWAY: Record<string, Record<string, string>> = {
 
 /** Inventory 1.0.33's columns of the tables the shop's file writes, and the ones its ledger keeps (never written). */
 const INVENTORY: Record<string, { columns: string[]; kept: string[] }> = {
+  settings: { columns: ["id", "default_place_id", "default_unit_id", "when_out_staff", "when_out_public", "show_left_below", "count_stale_days", "po_prefix", "business_name", "deliver_to", "supplier_language", "po_show_prices", "reply_to"], kept: [] },
   places: { columns: ["id", "name", "for_sale", "active", "position", "address"], kept: [] },
   items: {
     columns: ["id", "name", "sku", "barcode", "category_id", "unit_id", "unit", "decimals", "tracks_batches", "when_out", "allow_short", "active", "note", "pack_name", "pack_size", "cost_avg", "supplier_cost", "on_hand", "value", "receipt_id"],

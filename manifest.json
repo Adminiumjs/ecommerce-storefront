@@ -510,6 +510,28 @@
             }
           },
           {
+            "ref": "transfer_details",
+            "type": "text",
+            "maxLength": 400,
+            "nullable": true,
+            "label": {
+              "en-US": "Bank details"
+            },
+            "rules": {
+              "formula": {
+                "join": [
+                  "transfer_name",
+                  "\n",
+                  "transfer_bank",
+                  "\n",
+                  "transfer_routing",
+                  "\n",
+                  "transfer_account"
+                ]
+              }
+            }
+          },
+          {
             "ref": "transfer_days",
             "type": "int",
             "label": {
@@ -3166,6 +3188,39 @@
             }
           },
           {
+            "ref": "before_tax",
+            "type": "decimal",
+            "scale": "currency",
+            "nullable": true,
+            "label": {
+              "en-US": "Before tax"
+            },
+            "rules": {
+              "formula": {
+                "add": [
+                  {
+                    "coalesce": [
+                      "net",
+                      0
+                    ]
+                  },
+                  {
+                    "coalesce": [
+                      "shipping",
+                      0
+                    ]
+                  },
+                  {
+                    "coalesce": [
+                      "gifts",
+                      0
+                    ]
+                  }
+                ]
+              }
+            }
+          },
+          {
             "ref": "total",
             "type": "decimal",
             "scale": "currency",
@@ -3412,7 +3467,15 @@
             "label": {
               "en-US": "Bank details given"
             },
-            "nullable": true
+            "nullable": true,
+            "rules": {
+              "default": {
+                "from": {
+                  "table": "settings",
+                  "column": "transfer_details"
+                }
+              }
+            }
           },
           {
             "ref": "stock_until",
@@ -9536,6 +9599,7 @@
         "PATCH"
       ],
       "select": [
+        "id",
         "name",
         "email",
         "language",
@@ -9543,8 +9607,26 @@
       ],
       "writable": [
         "name",
-        "language"
+        "language",
+        "news"
       ],
+      "consent": {
+        "column": "news",
+        "purpose": "newsletter",
+        "wording": {
+          "version": 1,
+          "text": {
+            "en-US": "Send me news and offers from Northline. You can stop them from any e-mail.",
+            "de-DE": "Send me news and offers from Northline. You can stop them from any e-mail.",
+            "fr-FR": "Send me news and offers from Northline. You can stop them from any e-mail.",
+            "da-DK": "Send me news and offers from Northline. You can stop them from any e-mail.",
+            "cs-CZ": "Send me news and offers from Northline. You can stop them from any e-mail.",
+            "ar-EG": "Send me news and offers from Northline. You can stop them from any e-mail.",
+            "zh-CN": "Send me news and offers from Northline. You can stop them from any e-mail.",
+            "zh-TW": "Send me news and offers from Northline. You can stop them from any e-mail."
+          }
+        }
+      },
       "claim": {
         "verify": "email-link",
         "email": "email"
@@ -9589,10 +9671,12 @@
         "offer_id",
         "service_id",
         "tax_rate",
+        "free_from",
         "goods",
         "discount",
         "net",
         "shipping",
+        "before_tax",
         "tax",
         "gifts",
         "total",
@@ -9619,6 +9703,9 @@
         "cancel_reason",
         "link_expires",
         "customer_proved"
+      ],
+      "documents": [
+        "receipt"
       ],
       "writable": [
         "status",
@@ -9709,7 +9796,8 @@
         "returned",
         "kept",
         "card_last4",
-        "paid_at"
+        "paid_at",
+        "provider"
       ]
     },
     {
@@ -9736,7 +9824,8 @@
     {
       "table": "returns",
       "methods": [
-        "GET"
+        "GET",
+        "PATCH"
       ],
       "level": "verified",
       "visibleWith": {
@@ -9762,7 +9851,15 @@
         "declined_at",
         "received_at",
         "refunded_at"
-      ]
+      ],
+      "writable": [
+        "tracking"
+      ],
+      "writableWhen": {
+        "status": [
+          "approved"
+        ]
+      }
     },
     {
       "table": "return_lines",
@@ -9914,6 +10011,13 @@
         }
       ],
       "filterable": [
+        {
+          "column": "id",
+          "ops": [
+            "eq",
+            "in"
+          ]
+        },
         "category_id",
         {
           "column": "price",
@@ -10267,10 +10371,12 @@
         "offer_id",
         "service_id",
         "tax_rate",
+        "free_from",
         "goods",
         "discount",
         "net",
         "shipping",
+        "before_tax",
         "tax",
         "gifts",
         "total",
@@ -10497,10 +10603,12 @@
         "offer_id",
         "service_id",
         "tax_rate",
+        "free_from",
         "goods",
         "discount",
         "net",
         "shipping",
+        "before_tax",
         "tax",
         "gifts",
         "total",
@@ -10677,10 +10785,12 @@
         "offer_id",
         "service_id",
         "tax_rate",
+        "free_from",
         "goods",
         "discount",
         "net",
         "shipping",
+        "before_tax",
         "tax",
         "gifts",
         "total",
@@ -10705,7 +10815,8 @@
         "cancelled_at",
         "cancel_reason",
         "link_expires",
-        "customer_proved"
+        "customer_proved",
+        "transfer_note"
       ],
       "writable": [
         "name",
@@ -10901,10 +11012,12 @@
         "offer_id",
         "service_id",
         "tax_rate",
+        "free_from",
         "goods",
         "discount",
         "net",
         "shipping",
+        "before_tax",
         "tax",
         "gifts",
         "total",
@@ -10929,7 +11042,8 @@
         "cancelled_at",
         "cancel_reason",
         "link_expires",
-        "customer_proved"
+        "customer_proved",
+        "transfer_note"
       ],
       "writable": [
         "name",
@@ -11184,10 +11298,12 @@
         "offer_id",
         "service_id",
         "tax_rate",
+        "free_from",
         "goods",
         "discount",
         "net",
         "shipping",
+        "before_tax",
         "tax",
         "gifts",
         "total",
@@ -11223,6 +11339,9 @@
         "own": true,
         "address": "email"
       },
+      "documents": [
+        "receipt"
+      ],
       "writable": [
         "status",
         "cancel_reason"
@@ -11315,7 +11434,8 @@
         "returned",
         "kept",
         "card_last4",
-        "paid_at"
+        "paid_at",
+        "provider"
       ]
     },
     {
@@ -11344,7 +11464,8 @@
       "table": "returns",
       "key": "link",
       "methods": [
-        "GET"
+        "GET",
+        "PATCH"
       ],
       "level": "verified",
       "visibleWith": {
@@ -11370,7 +11491,15 @@
         "declined_at",
         "received_at",
         "refunded_at"
-      ]
+      ],
+      "writable": [
+        "tracking"
+      ],
+      "writableWhen": {
+        "status": [
+          "approved"
+        ]
+      }
     },
     {
       "table": "return_lines",

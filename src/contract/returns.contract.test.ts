@@ -129,7 +129,13 @@ describe.skipIf(why !== null)(`sending something back to Northline${why === null
 
       let second: Row;
       it("puts received pieces back on the shelf, and is refunded only once refunds cover what it gives back", async () => {
+        // The customer's own carrier number: not while the return is only asked, yes once it is approved.
+        const early$ = await ruth.tab.patch(`${PREFIX}returns_verified`, second["id"], { tracking: "1ZRETURN0001" });
+        expect(early$.status, JSON.stringify(early$.body).slice(0, 300)).not.toBe(200);
         await stand.patch("returns", second["id"], { status: "approved" });
+        const typed = await ruth.tab.patch(`${PREFIX}returns_verified`, second["id"], { tracking: "1ZRETURN0001" });
+        expect(typed.status, JSON.stringify(typed.body).slice(0, 300)).toBe(200);
+        expect((await stand.row("returns", second["id"]))["tracking"]).toBe("1ZRETURN0001");
         // Send it back within five shipping days of the approval: Tuesday 18 August, so by Tuesday 25 August.
         expect(String((await stand.row("returns", second["id"]))["send_by"]).slice(0, 10)).toBe("2026-08-25");
         await stand.patch("returns", second["id"], { status: "received" });

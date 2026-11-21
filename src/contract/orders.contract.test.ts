@@ -31,7 +31,7 @@ import { readFileSync } from "node:fs";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 import { ENGINES, missing, missingAddOn, ok, PORTS_PER_ENGINE, until, type Engine } from "./harness.ts";
-import { ADD_ONS, ADMIN, CLOCK, customer, giftOrder, goodsOrder, num, place, retryKey, shopOf, standUp, type Row, type Shop, type Shopper, type Stand } from "./stand.ts";
+import { ADD_ONS, ADMIN, CLOCK, PREFIX, customer, giftOrder, goodsOrder, num, place, retryKey, shopOf, standUp, type Row, type Shop, type Shopper, type Stand } from "./stand.ts";
 
 const why = missing() ?? ADD_ONS.map((key) => missingAddOn(key)).find((reason) => reason !== null) ?? null;
 if (why !== null && process.env["ADMINIUM_REQUIRE_CONTRACT"] === "1") throw new Error(`the orders contract must run here, and cannot: ${why}`);
@@ -86,6 +86,7 @@ describe.skipIf(why !== null)(`Northline takes orders on a built Adminium${why =
       describe("paying online", () => {
         let placed: Row;
         let payUrl: string;
+        let linkSession: string | null = null;
         it("places an order once: priced by a dry run, sent with the total seen, numbered after the sample, waiting for its money", async () => {
           const ref = stand.placeRef("goods", "online");
           const made = await place(paying, ref, goodsOrder(shop, guest("ada"), "WA", "standard", [["NL-RDG28-SLA", 1]]));
@@ -96,6 +97,10 @@ describe.skipIf(why !== null)(`Northline takes orders on a built Adminium${why =
           expect([placed["goods"], placed["shipping"], placed["tax"], placed["total"], placed["due"]].map(money)).toEqual(["129.00", "0.00", "8.39", "137.39", "137.39"]);
           expect(made.body.payUrl).toMatch(/\/pay\//);
           payUrl = made.body.payUrl!;
+          // What the summary prints above the tax, and from what Standard is free; never the bank details here.
+          expect([placed["before_tax"], placed["free_from"]].map(money)).toEqual(["129.00", "100.00"]);
+          expect("transfer_note" in placed).toBe(false);
+          linkSession = made.body.link!.session;
           // The pay deadline and the stock's own hold are stamped once, from placing: 30 minutes, and 45 days.
           const row = await stand.row("orders", placed["id"]);
           expect(Date.parse(String(row["pay_by"])) - Date.parse(String(row["placed_at"]))).toBe(30 * 60_000);
@@ -116,6 +121,14 @@ describe.skipIf(why !== null)(`Northline takes orders on a built Adminium${why =
           const payments = (await stand.rows("payments")).filter((p) => String(p["order_id"]) === String(placed["id"]));
           expect(payments.map((p) => [p["method"], money(p["amount"])])).toEqual([["online", "137.39"]]);
           expect(paid["paid_at"]).not.toBeNull();
+          // Read back by the order's own link: the payment, with the service it came by, and the receipt drawn.
+          const link = stand.shopper("link");
+          link.session = linkSession;
+          const paidBy = await link.get<Row[]>(`/api/v1/public/records/${PREFIX}payments_verified_2?limit=10`);
+          expect(paidBy.status, JSON.stringify(paidBy.body).slice(0, 400)).toBe(200);
+          expect(paidBy.body.data.map((p) => [p["method"], p["provider"]])).toEqual([["online", "Demo"]]);
+          const receipt = await link.raw("POST", "/api/v1/public/documents/render", { kind: "receipt", ref: `${PREFIX}orders_claimed`, id: placed["id"] });
+          expect([200, 201], JSON.stringify(receipt.body).slice(0, 600)).toContain(receipt.status);
           expect([paid["ships_by"], paid["arrives_from"], paid["arrives_to"]].map((d) => String(d).slice(0, 10))).toEqual(["2026-08-18", "2026-08-21", "2026-08-25"]);
         }, 120_000);
       });
@@ -126,6 +139,10 @@ describe.skipIf(why !== null)(`Northline takes orders on a built Adminium${why =
           const w = WORLD.ORDERS.find((o) => o.number === number)!;
           expect(FIGURES.includes(`| ${number} |`) || w.ship!.state === "WA", number).toBe(true);
           const quote = await paying.quote(ref, goodsOrder(shop, guest("quote"), w.ship!.state, w.service!, w.lines.map((l) => [l.sku, l.qty])));
+          // The basket's products, read by their keys as the basket reads them.
+          const ids = [...new Set(w.lines.map((l) => shop.variant(l.sku)["product_id"]))];
+          const products = await paying.list(`${PREFIX}products`, `&where=${encodeURIComponent(JSON.stringify({ and: [{ column: "id", op: "in", value: ids }] }))}`);
+          expect(products.map((p) => p["id"]).sort(), number).toEqual([...ids].sort());
           expect(quote.status, `${number}: ${JSON.stringify(quote.body).slice(0, 600)}`).toBe(200);
           const q = quote.body.data;
           expect([q["goods"], q["discount"] ?? 0, q["shipping"], q["tax"], q["total"]].map(money), number).toEqual([w.goods, "0.00", w.shipping, w.tax, w.total]);
@@ -213,6 +230,15 @@ describe.skipIf(why !== null)(`Northline takes orders on a built Adminium${why =
           const first = await place(tab, ref, goodsOrder(shop, who, "OR", "standard", [["NL-RDG28-SLA", 1]]));
           expect(first.status, JSON.stringify(first.body).slice(0, 600)).toBe(201);
           waiting = first.body.data;
+          // The bank details to pay into, as the shop's settings held them when it was placed: the customer's own.
+          expect(String(waiting["transfer_note"])).toContain("Northline Outdoor LLC");
+          // "Stop news e-mails", and yes again, through their own details.
+          const me = (await tab.list(`${PREFIX}customers_claimed`))[0]!;
+          for (const news of [false, true]) {
+            const said = await tab.patch(`${PREFIX}customers_claimed`, me["id"], { news });
+            expect(said.status, JSON.stringify(said.body).slice(0, 400)).toBe(200);
+            expect(Boolean((await stand.row("customers", me["id"]))["news"])).toBe(news);
+          }
           expect([waiting["status"], waiting["pay_method"]]).toEqual(["awaiting_transfer", "transfer"]);
           // Tuesday 18 August, before two: five shipping days on is Tuesday 25 August.
           expect(String(waiting["transfer_by"]).slice(0, 10)).toBe("2026-08-25");

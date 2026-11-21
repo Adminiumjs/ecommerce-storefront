@@ -267,6 +267,8 @@ export const TABLES: Table[] = [
       text("transfer_bank", 80, "Bank", { ...opt, rules: { personal: false } }),
       text("transfer_routing", 16, "Routing number", { ...opt, rules: { personal: false } }),
       text("transfer_account", 24, "Account number", { ...opt, rules: { personal: false } }),
+      // The bank details as one text, what a transfer order is given to pay into: worked out, never typed twice.
+      copied("transfer_details", 400, "Bank details", { formula: { join: ["transfer_name", "\n", "transfer_bank", "\n", "transfer_routing", "\n", "transfer_account"] } }),
       int("transfer_days", "Shipping days to pay a bank transfer", { default: 5, rules: { validation: { min: 1, max: 20 } } }),
       // Returns: how long after shipping, and whether a faulty item's shipping comes back too.
       int("return_days", "Days to send something back", { default: 30, rules: { validation: { min: 0, max: 365 } } }),
@@ -679,6 +681,8 @@ export const TABLES: Table[] = [
       // Sales tax on the goods after reductions, once for the order, never on shipping.
       money("tax", "Sales tax", { formula: { round: [{ div: [{ mul: [c0("net"), c0("tax_rate")] }, 100] }, 2] } }),
       money("gifts", "Gift cards", { rollup: { from: "gift_lines", via: "order_id", sum: "amount" } }),
+      // What the tax line stands under: everything but the tax.
+      money("before_tax", "Before tax", { formula: { add: [c0("net"), c0("shipping"), c0("gifts")] } }),
       money("total", "Total", { formula: { add: [c0("net"), c0("shipping"), c0("tax"), c0("gifts")] } }),
       // What payments hold, and what is left to pay.
       money("paid", "Paid", { rollup: { from: "payments", via: "order_id", sum: "kept", balance: { column: "due", of: "total" }, cap: true } }),
@@ -697,7 +701,7 @@ export const TABLES: Table[] = [
       figure("transfer_days", "Shipping days to pay", { default: { from: setting("transfer_days") } }),
       date("transfer_by", "Pay by transfer by", { ...opt, rules: stamp(shipDays("placed_at", "transfer_days"), { columns: ["placed_at", "transfer_days"] }) }),
       // The bank details as they were when the order was placed: what the customer was told to pay into.
-      text("transfer_note", 400, "Bank details given", opt),
+      text("transfer_note", 400, "Bank details given", { ...opt, rules: { default: { from: setting("transfer_details") } } }),
       // Its stock stays held 45 days from placing: a paid order keeps its stock until it is packed.
       at("stock_until", "Stock held until", { ...opt, rules: stamp({ addMinutes: { hours: 45 * 24 } }, onCreate) }),
       at("paid_at", "Paid at", { ...opt, rules: { rollup: { from: "payments", via: "order_id", latest: { of: "paid_at", by: "paid_at" } } } }),
