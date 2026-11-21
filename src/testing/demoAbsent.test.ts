@@ -1,5 +1,5 @@
 /**
- * The demo's Birch Row, its doors, the card's words and the card's protocol
+ * The demo's Northline, its doors, the card's words and the card's protocol
  * are in the demo build and in no other: a hosted surface (either side) and a
  * connected build carry none of them. The control is the demo build, which
  * must carry every marker — a marker it lacked would prove nothing absent.
@@ -13,8 +13,8 @@ import { afterAll, beforeAll, describe, expect, it } from "vitest";
 
 const REPO = resolve(__dirname, "..", "..");
 
-/** Literals only the demo's modules hold: a closure from the sample, a card label, a shortcut's words, the protocol's prefix. */
-const MARKERS = ["Whitby craft fair", "Back to Thursday afternoon", "The Okonkwo-Hartley family", "adminium:demo:"];
+/** Literals only the demo's modules hold: a gift card's whole code in its world, a card label, its pay step's address, the protocol's prefix. */
+const MARKERS = ["K2PX9QWAM4TD", "Back to Tuesday morning", "demo-pay:", "adminium:demo:"];
 
 function build(env: Record<string, string>, base: string): string {
   const out = mkdtempSync(join(tmpdir(), "demo-absent-"));
@@ -38,9 +38,9 @@ let bundles: Record<string, string> = {};
 
 beforeAll(() => {
   bundles = {
-    demo: build({}, "/demo/maker-shop/app/"),
-    staff: build({ VITE_ADMINIUM_SURFACE_SIDE: "staff" }, "/apps/maker/staff/"),
-    customer: build({ VITE_ADMINIUM_SURFACE_SIDE: "customer" }, "/apps/maker/customer/"),
+    demo: build({}, "/demo/ecommerce-storefront/app/"),
+    staff: build({ VITE_ADMINIUM_SURFACE_SIDE: "staff" }, "/apps/ecommerce-shop/staff/"),
+    customer: build({ VITE_ADMINIUM_SURFACE_SIDE: "customer" }, "/apps/ecommerce-shop/customer/"),
     connected: build({ VITE_ADMINIUM_API_BASE_URL: "https://admin.example.com", VITE_ADMINIUM_PUBLISHABLE_KEY: "adm_pub_example" }, "/"),
   };
 }, 300_000);
