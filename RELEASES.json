@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "releases": [
+    {
+      "name": "@adminiumjs/app-ecommerce-shop",
+      "version": "0.2.0",
+      "integrity": "sha512-jfsEnx0elxPH9M7Ebj+3qsdiY70gCjNzOGBkFwluy0MVKXphKIY90vuAu6bTjJhHNYLoDjriiUFx0JpCmEgSLw==",
+      "publishedAt": "2026-11-21T04:20:05.000Z"
+    }
+  ]
+}
