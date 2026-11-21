@@ -13,6 +13,7 @@
  *
  * Tests only; nothing that ships imports it.
  */
+import { randomBytes } from "node:crypto";
 import { rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -108,7 +109,12 @@ export class Shopper {
   /** Sign in as the shop's pages do: an e-mailed link and code, the code typed back. */
   async signIn(server: Server, email: string): Promise<void> {
     const before = (await inbox(server)).length;
-    const asked = await this.proved("claim", "/api/v1/public/claim/link", { email });
+    let asked = await this.proved("claim", "/api/v1/public/claim/link", { email });
+    // Five links a minute from one visitor: a contract signing in many customers waits its turn, as a person would.
+    for (let tries = 0; asked.code === "PUBLIC_RATE_LIMITED" && tries < 8; tries += 1) {
+      await new Promise((resolve) => setTimeout(resolve, 10_000));
+      asked = await this.proved("claim", "/api/v1/public/claim/link", { email });
+    }
     if (asked.status !== 202 && asked.status !== 200) throw new Error(`sign-in link for ${email}: ${String(asked.status)} ${JSON.stringify(asked.body).slice(0, 400)}`);
     const mail = await until(async () => (await inbox(server)).slice(before).find((m) => m.to.includes(email)), `the sign-in e-mail to ${email}`, 90_000);
     const code = /\b(\d{6})\b/.exec(mail.text)?.[1];
@@ -229,18 +235,14 @@ export async function standUp(engine: Engine, port: number, name: string, option
       return reply.body.data;
     };
 
-    // The four place-order entries, told apart by what each writes by default (`kind`, `pay_method`).
+    // The four place-order entries, in the manifest's order: goods and gift cards paid online, then by bank transfer.
     const placeRef = (kind: "goods" | "gift", pay: "online" | "transfer"): string => {
-      const found = Object.entries(refs).find(([, entry]) => {
-        const text = JSON.stringify(entry);
-        return entry["table"] === `${PREFIX}orders` && text.includes(`"kind":"${kind}"`) && text.includes(`"pay_method":"${pay}"`);
-      });
-      if (found !== undefined) return found[0];
-      // The config may not show an entry's defaults: the entries are listed in the manifest's order.
-      const places = Object.keys(refs).filter((r) => r.startsWith(`${PREFIX}orders_verified`) && JSON.stringify(refs[r]).includes('"POST"'));
-      const order = ["goods/online", "gift/online", "goods/transfer", "gift/transfer"].indexOf(`${kind}/${pay}`);
-      const ref = places[order];
-      if (ref === undefined) throw new Error(`no place-order entry ${kind}/${pay} in ${JSON.stringify(Object.keys(refs))}`);
+      const suffix = (ref: string) => Number(/_(\d+)$/.exec(ref)?.[1] ?? 1);
+      const places = Object.keys(refs)
+        .filter((r) => r.startsWith(`${PREFIX}orders_verified`) && JSON.stringify(refs[r]?.["actions"] ?? []) === '["create"]')
+        .sort((a, b) => suffix(a) - suffix(b));
+      const ref = places[["goods/online", "gift/online", "goods/transfer", "gift/transfer"].indexOf(`${kind}/${pay}`)];
+      if (ref === undefined || places.length !== 4) throw new Error(`no place-order entry ${kind}/${pay} in ${JSON.stringify(Object.keys(refs))}`);
       return ref;
     };
 
@@ -284,3 +286,91 @@ export async function standUp(engine: Engine, port: number, name: string, option
 
 export const num = (value: unknown) => Number(value);
 export const yes = (value: unknown) => value === true || value === 1 || value === "1" || value === "true";
+
+// ── the shop's rows a basket names, and an order as the checkout sends it ────
+
+export interface Shop {
+  variant(sku: string): Row;
+  region(code: string): Row;
+  /** The shipping offer of a service (`standard`, `express`, `overnight`) to a state's zone. */
+  offer(service: string, state: string): Row;
+  giftAmount(amount: number): Row;
+  settings: Row;
+}
+
+export async function shopOf(stand: Stand): Promise<Shop> {
+  const [variants, regions, offers, services, amounts, settings] = await Promise.all(["variants", "regions", "shipping_offers", "shipping_services", "gift_amounts", "settings"].map((ref) => stand.rows(ref)));
+  const find = <T>(list: Row[], test: (row: Row) => boolean, what: string): Row => {
+    const found = list.find(test);
+    if (found === undefined) throw new Error(`no ${what}`);
+    return found as Row & T;
+  };
+  return {
+    variant: (sku) => find(variants!, (v) => v["sku"] === sku, `variant ${sku}`),
+    region: (code) => find(regions!, (r) => r["code"] === code, `state ${code}`),
+    offer: (service, state) => {
+      const zone = find(regions!, (r) => r["code"] === state, `state ${state}`)["zone_id"];
+      const serviceId = find(services!, (s) => s["code"] === service, `service ${service}`)["id"];
+      return find(offers!, (o) => String(o["service_id"]) === String(serviceId) && String(o["zone_id"]) === String(zone), `${service} to ${state}`);
+    },
+    giftAmount: (amount) => find(amounts!, (a) => num(a["amount"]) === amount, `gift amount ${String(amount)}`),
+    settings: settings![0]!,
+  };
+}
+
+export interface Who {
+  name: string;
+  email: string;
+}
+
+/** A goods order as the checkout writes it: who, where to, how it ships, and its lines by SKU. */
+export function goodsOrder(shop: Shop, who: Who, state: string, service: string, lines: [string, number][], more: { codes?: string[]; card?: string; gifts?: Row[] } = {}): { values: Row; children: Record<string, { values: Row }[]> } {
+  return {
+    values: { name: who.name, email: who.email, language: "en-US", ship_name: who.name, address_line1: "500 Pine St", city: "Springfield", zip: "97477", region_id: shop.region(state)["id"], offer_id: shop.offer(service, state)["id"] },
+    children: {
+      order_lines: lines.map(([sku, qty]) => ({ values: { variant_id: shop.variant(sku)["id"], qty } })),
+      ...(more.gifts === undefined ? {} : { gift_lines: more.gifts.map((values) => ({ values })) }),
+      ...(more.codes === undefined ? {} : { order_codes: more.codes.map((typed) => ({ values: { typed } })) }),
+      ...(more.card === undefined ? {} : { payments: [{ values: { card_code: more.card } }] }),
+    },
+  };
+}
+
+/** A gift-cards-only order: who buys, and each card's amount and recipient. */
+export function giftOrder(shop: Shop, who: Who, cards: { amount: number; to_name: string; to_email: string; message?: string }[], more: { card?: string; codes?: string[] } = {}): { values: Row; children: Record<string, { values: Row }[]> } {
+  return {
+    values: { name: who.name, email: who.email, language: "en-US" },
+    children: {
+      gift_lines: cards.map((c) => ({ values: { amount_id: shop.giftAmount(c.amount)["id"], to_name: c.to_name, to_email: c.to_email, ...(c.message === undefined ? {} : { message: c.message }) } })),
+      ...(more.codes === undefined ? {} : { order_codes: more.codes.map((typed) => ({ values: { typed } })) }),
+      ...(more.card === undefined ? {} : { payments: [{ values: { card_code: more.card } }] }),
+    },
+  };
+}
+
+/** A retry key as the checkout makes one, once per order the shopper means to place: 22 to 64 letters, digits, `-` and `_`. */
+export const retryKey = (label: string) => `${label}-${randomBytes(16).toString("hex")}`.slice(0, 64);
+
+/**
+ * Place as the checkout places: priced by a dry run, sent with the total the
+ * shopper saw and a retry key, and sent again (the same key) when the order
+ * number's lock was busy, twice at most with a back-off — as the page does.
+ */
+export async function place(shopper: Shopper, ref: string, write: { values: Row; children: Record<string, { values: Row }[]> }, key = retryKey("nl")): Promise<PublicReply & { quoted: Row }> {
+  const quote = await shopper.quote(ref, write);
+  if (quote.status !== 200) return { ...quote, quoted: {} };
+  const total = num(quote.body.data["total"]).toFixed(2);
+  for (let attempt = 0; ; attempt += 1) {
+    const made = await shopper.create(ref, { values: { ...write.values, client_key: key }, children: write.children, expect: { total } });
+    if (made.code === "PUBLIC_SLOT_BUSY" && attempt < 2) {
+      await new Promise((resolve) => setTimeout(resolve, 400 * (attempt + 1) + Math.random() * 300));
+      continue;
+    }
+    return { ...made, quoted: quote.body.data };
+  }
+}
+
+/** A customer of the shop on an address that gets mail (not one kept for examples), made as the desk makes one. */
+export async function customer(stand: Stand, name: string, email: string): Promise<Row> {
+  return stand.create("customers", { name, email, language: "en-US" });
+}
