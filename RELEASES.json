@@ -12,6 +12,12 @@
       "version": "0.2.1",
       "integrity": "sha512-rtdI6rD1GDilcJg6ydMSeBDo1SLT5AAq2he0EBcAehPWmvGu2jx2cSY+9an1XGAlB3EeTW7tsBOJcMjCTgE8hQ==",
       "publishedAt": "2026-11-21T05:23:33.000Z"
+    },
+    {
+      "name": "@adminiumjs/app-ecommerce-shop",
+      "version": "0.2.2",
+      "integrity": "sha512-UhlMBqi2U4rBZf8bOFVbWXLSkoGW7LcYAXHnMjd/QweIkNwGn2sqfzP4693WEy+gLYatJNOLxUjL2J+g6XdFCA==",
+      "publishedAt": "2026-11-21T12:18:39.000Z"
     }
   ]
 }
