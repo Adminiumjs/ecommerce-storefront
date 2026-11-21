@@ -697,19 +697,21 @@ export const TABLES: Table[] = [
       // ── clocks ──
       at("placed_at", "Placed", { ...opt, rules: stamp("now", onCreate) }),
       // Paying online: the order waits this long for its payment.
-      at("pay_by", "Pay by", { ...opt, rules: stamp({ moment: { column: "placed_at", plus: { minutes: setting("pay_hold_minutes") } } }, { columns: ["placed_at"] }) }),
+      // (Counted from now, on the create that stamps `placed_at` now: a `moment` stamp cannot read a stamp of the same write.)
+      at("pay_by", "Pay by", { ...opt, rules: stamp({ addMinutes: { minutes: setting("pay_hold_minutes") } }, onCreate) }),
       // A bank transfer: so many shipping days, the order cancelled at the day's end.
       figure("transfer_days", "Shipping days to pay", { default: { from: setting("transfer_days") } }),
       date("transfer_by", "Pay by transfer by", { ...opt, rules: stamp(shipDays("placed_at", "transfer_days"), { columns: ["placed_at", "transfer_days"] }) }),
       // The bank details as they were when the order was placed: what the customer was told to pay into.
       text("transfer_note", 400, "Bank details given", opt),
       // Its stock stays held 45 days from placing: a paid order keeps its stock until it is packed.
-      at("stock_until", "Stock held until", { ...opt, rules: stamp({ moment: { column: "placed_at", plus: { days: 45 } } }, { columns: ["placed_at"] }) }),
+      at("stock_until", "Stock held until", { ...opt, rules: stamp({ addMinutes: { hours: 45 * 24 } }, onCreate) }),
       at("paid_at", "Paid at", { ...opt, rules: { rollup: { from: "payments", via: "order_id", latest: { of: "paid_at", by: "paid_at" } } } }),
       // When it ships and arrives, worked out from the payment: the same day before the cut-off, else the next shipping day.
       date("ships_by", "Ships by", { ...opt, rules: stamp(shipDays("paid_at", 0), { columns: ["paid_at"] }) }),
-      date("arrives_from", "Arrives from", { ...opt, rules: stamp(shipDays("ships_by", "transit_min"), { columns: ["ships_by", "transit_min"] }) }),
-      date("arrives_to", "Arrives by", { ...opt, rules: stamp(shipDays("ships_by", "transit_max"), { columns: ["ships_by", "transit_max"] }) }),
+      // (They watch the payment too: the payment's total moves `paid_at` alone, and works out only the stamps that watch it.)
+      date("arrives_from", "Arrives from", { ...opt, rules: stamp(shipDays("ships_by", "transit_min"), { columns: ["paid_at", "ships_by", "transit_min"] }) }),
+      date("arrives_to", "Arrives by", { ...opt, rules: stamp(shipDays("ships_by", "transit_max"), { columns: ["paid_at", "ships_by", "transit_max"] }) }),
       // The same, as told before paying: "if you pay now".
       date("est_ships_by", "Ships by, if paid now", { ...opt, rules: stamp(shipDays("placed_at", 0), { columns: ["placed_at"] }) }),
       date("est_from", "Arrives from, if paid now", { ...opt, rules: stamp(shipDays("est_ships_by", "transit_min"), { columns: ["est_ships_by", "transit_min"] }) }),
@@ -729,7 +731,7 @@ export const TABLES: Table[] = [
       // ── the order's own link ──
       text("link_token", 16, "Link code", { ...opt, rules: { code: { length: 16, hiddenFromStaff: true } } }),
       // The link works until well after the last day to send something back.
-      at("link_expires", "Link works until", { ...opt, rules: stamp({ moment: { column: "placed_at", plus: { days: 120 } } }, { columns: ["placed_at"] }) }),
+      at("link_expires", "Link works until", { ...opt, rules: stamp({ addMinutes: { hours: 120 * 24 } }, onCreate) }),
       bool("link_stopped", "Link stopped", false),
       // The tick at checkout ("Send me news"): theirs, written by nobody else.
       bool("news", "News e-mails", false),
@@ -898,7 +900,13 @@ export const TABLES: Table[] = [
       money("returned", "Given back", { rollup: { from: "payment_refunds", via: "payment_id", sum: "counted" } }),
       amount("refunded_elsewhere", "Given back at the service"),
       money("kept", "Kept", { formula: { sub: [c0("amount"), { add: [c0("returned"), c0("refunded_elsewhere")] }] } }),
-      at("paid_at", "Paid at", opt),
+      // When it landed: the payment page's moment, the day the owner says a transfer came, or, for a gift card, the
+      // moment the card paid (stamped: nobody types it). An order a card pays in full counts its ships-by from it.
+      // When it landed: the payment page's moment, the day the owner says a transfer came, or, for a gift card, the
+      // moment the card paid. A card's is stamped (`now`, as no minutes from now: a stamp of that kind keeps what the
+      // payment page and the owner write, and fires only when a card's code is given), so an order a card pays in
+      // full counts its ships-by from it.
+      at("paid_at", "Paid at", { ...opt, rules: stamp({ addMinutes: { minutes: 0 } }, { column: "card_code", filled: true }) }),
       text("note", 160, "Note", opt),
       text("made_by", 80, "Recorded by", { ...opt, rules: stamp({ byOrigin: { public: "customer", staff: "user-name" } }, onCreate) }),
       text("payment_ref", 64, "Online payment reference", { ...opt, unique: true }),

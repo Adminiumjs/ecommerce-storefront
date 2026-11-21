@@ -3270,21 +3270,14 @@
             "rules": {
               "stamp": {
                 "set": {
-                  "moment": {
-                    "column": "placed_at",
-                    "plus": {
-                      "minutes": {
-                        "table": "settings",
-                        "column": "pay_hold_minutes"
-                      }
+                  "addMinutes": {
+                    "minutes": {
+                      "table": "settings",
+                      "column": "pay_hold_minutes"
                     }
                   }
                 },
-                "on": {
-                  "columns": [
-                    "placed_at"
-                  ]
-                }
+                "on": "create"
               }
             }
           },
@@ -3355,18 +3348,11 @@
             "rules": {
               "stamp": {
                 "set": {
-                  "moment": {
-                    "column": "placed_at",
-                    "plus": {
-                      "days": 45
-                    }
+                  "addMinutes": {
+                    "hours": 1080
                   }
                 },
-                "on": {
-                  "columns": [
-                    "placed_at"
-                  ]
-                }
+                "on": "create"
               }
             }
           },
@@ -3444,6 +3430,7 @@
                 },
                 "on": {
                   "columns": [
+                    "paid_at",
                     "ships_by",
                     "transit_min"
                   ]
@@ -3476,6 +3463,7 @@
                 },
                 "on": {
                   "columns": [
+                    "paid_at",
                     "ships_by",
                     "transit_max"
                   ]
@@ -3795,18 +3783,11 @@
             "rules": {
               "stamp": {
                 "set": {
-                  "moment": {
-                    "column": "placed_at",
-                    "plus": {
-                      "days": 120
-                    }
+                  "addMinutes": {
+                    "hours": 2880
                   }
                 },
-                "on": {
-                  "columns": [
-                    "placed_at"
-                  ]
-                }
+                "on": "create"
               }
             }
           },
@@ -4787,7 +4768,20 @@
             "label": {
               "en-US": "Paid at"
             },
-            "nullable": true
+            "nullable": true,
+            "rules": {
+              "stamp": {
+                "set": {
+                  "addMinutes": {
+                    "minutes": 0
+                  }
+                },
+                "on": {
+                  "column": "card_code",
+                  "filled": true
+                }
+              }
+            }
           },
           {
             "ref": "note",
@@ -9466,7 +9460,8 @@
       ],
       "writableValues": {
         "status": [
-          "cancelled"
+          "cancelled",
+          "paid"
         ],
         "cancel_reason": [
           "customer"
@@ -9474,6 +9469,7 @@
       },
       "writableWhen": {
         "status": [
+          "paying",
           "paid",
           "awaiting_transfer"
         ]
@@ -11067,7 +11063,8 @@
       ],
       "writableValues": {
         "status": [
-          "cancelled"
+          "cancelled",
+          "paid"
         ],
         "cancel_reason": [
           "customer"
@@ -11075,6 +11072,7 @@
       },
       "writableWhen": {
         "status": [
+          "paying",
           "paid",
           "awaiting_transfer"
         ]

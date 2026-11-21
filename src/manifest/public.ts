@@ -93,11 +93,15 @@ export const REFUND_SELECT = ["id", "payment_id", "order_id", "return_id", "meth
 export const RETURN_SELECT = ["id", "number", "order_id", "order_number", "status", "reason", "note", "tracking", "staff_reason", "refund_goods", "shipping_refund", "refund_amount", "refunded_total", "asked_at", "approved_at", "declined_at", "received_at", "refunded_at"];
 export const RETURN_LINE_SELECT = ["id", "return_id", "line_id", "qty", "sku", "product_name", "variant_label", "refund"];
 
-/** The customer's own moves: a cancel while the order is not packed, with their own reason. */
-const OWN_CANCEL = {
+/**
+ * The customer's own moves: a cancel while the order is not packed, with their own reason; and "paid" once a gift
+ * card covered it all, while it waits for its money. The table's moves hold each: a paying order is cancelled by the
+ * clock alone (its move waits for the deadline), and it is paid only when nothing is left to pay (`due ≤ 0`).
+ */
+const OWN_MOVES = {
   writable: ["status", "cancel_reason"],
-  writableValues: { status: ["cancelled"], cancel_reason: ["customer"] },
-  writableWhen: { status: ["paid", "awaiting_transfer"] },
+  writableValues: { status: ["cancelled", "paid"], cancel_reason: ["customer"] },
+  writableWhen: { status: ["paying", "paid", "awaiting_transfer"] },
 };
 
 /** The rows under an order, read where the order is. */
@@ -281,7 +285,7 @@ export const PUBLIC_ACCESS = [
     // their waiting back-in-stock requests. Their orders stay, as tax law asks.
     forget: { columns: ["email", "name", "news"], stamp: "forgotten_at", links: true },
   },
-  { table: "orders", methods: ["GET", "PATCH"], level: "verified", claimedBy: { table: "customers", column: "customer_id" }, select: ORDER_SELECT, ...OWN_CANCEL },
+  { table: "orders", methods: ["GET", "PATCH"], level: "verified", claimedBy: { table: "customers", column: "customer_id" }, select: ORDER_SELECT, ...OWN_MOVES },
   ...underOrder(),
   askReturn(),
   // "Tell me when it's back": a signed-in customer's own requests, one a variant.
@@ -337,7 +341,7 @@ export const PUBLIC_ACCESS = [
     methods: ["GET", "PATCH"],
     select: ORDER_SELECT,
     claim: { by: "token", column: "link_token", expires: "link_expires", stopped: "link_stopped", own: true, address: "email" },
-    ...OWN_CANCEL,
+    ...OWN_MOVES,
   },
   ...underOrder(LINK_KEY),
   // Through the order's own link a return is asked in two writes: the return, then each of its pieces, while it is
