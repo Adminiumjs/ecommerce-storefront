@@ -5,15 +5,6 @@
   "weekAnchor": "tue",
   "tables": [
     {
-      "ref": "settings",
-      "onlyIfEmpty": true,
-      "rows": [
-        {
-          "show_left_below": 5
-        }
-      ]
-    },
-    {
       "ref": "places",
       "rows": [
         {

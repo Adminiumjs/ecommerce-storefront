@@ -809,9 +809,6 @@ export function stockName(v: Variant): string {
   return [p.name, label("colour", v.colour), label("size", v.size), v.sku].filter((part) => part !== null && part !== "").join(" · ");
 }
 
-/** Below this many, a shopper is told how many are left. */
-const SHOW_LEFT_BELOW = 5;
-
 /** Where the stock is kept: the shop's back room on NW Kearney Street, the one place it sells from. */
 const PLACE = { label: "place:stockroom", name: "Stockroom" };
 
@@ -832,8 +829,6 @@ export function inventorySection(): SampleBundle {
     addOn: "inventory",
     weekAnchor: "tue",
     tables: [
-      // "Only 3 left" on the shop: Inventory tells a shopper how many are left below five (its owner's setting).
-      { ref: "settings", onlyIfEmpty: true, rows: [{ show_left_below: SHOW_LEFT_BELOW }] },
       { ref: "places", rows: [{ "@label": PLACE.label, name: PLACE.name, for_sale: true, active: true, position: 0, address: `${SHOP.line1}, ${SHOP.city}, ${SHOP.state} ${SHOP.zip}` }] },
       { ref: "items", rows: WORLD.VARIANTS.map((v) => ({ "@label": `item:${v.sku}`, name: stockName(v), sku: v.sku, active: true })) },
       {
