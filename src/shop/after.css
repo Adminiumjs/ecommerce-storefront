@@ -1,0 +1,342 @@
+/*
+ * The pages after an order: Your order, Find your order, Sign in, Your
+ * account, Send something back and the review dialog. Tokens only, logical
+ * properties only, so Arabic mirrors; figures are mono 500/600.
+ */
+
+.nl-page.nl-after { max-inline-size: 900px; }
+.nl-page.nl-after--narrow { max-inline-size: 520px; padding-block: clamp(24px, 5vw, 56px); }
+.nl-page.nl-after--account { max-inline-size: 820px; }
+.nl-page.nl-after--return { max-inline-size: 860px; }
+.nl-after-title { margin-block: 6px 4px; }
+.nl-after-p { margin: 0; line-height: 1.55; }
+.nl-pill--info { background: var(--accent-soft); color: var(--accent); }
+
+.nl-after-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-block-end: 16px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--danger-soft);
+  color: var(--danger);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.nl-after-alert svg { flex-shrink: 0; margin-block-start: 2px; }
+
+.nl-after-bylink { display: inline-flex; align-items: flex-start; gap: 7px; margin-block-end: 10px; font-size: 12.5px; font-weight: 600; color: var(--fg-subtle); line-height: 1.5; }
+.nl-after-bylink svg { flex-shrink: 0; margin-block-start: 2px; }
+.nl-after-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-block-size: 44px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--fg-muted) !important;
+  cursor: pointer;
+}
+.nl-after-back:hover { color: var(--fg) !important; }
+
+.nl-after-head { display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
+.nl-after-number { font-weight: 600; white-space: nowrap; }
+.nl-after-placed { margin-block-start: 5px; font-size: 13px; color: var(--fg-muted); }
+.nl-after-arrives { margin: 10px 0 0; font-size: 13px; font-weight: 600; color: var(--fg-muted); }
+.nl-after-until { margin: 10px 0 0; font-size: 12.5px; color: var(--fg-muted); }
+
+/* ── a row of steps: an order's, a return's ───────────────────────────── */
+
+.nl-steps {
+  list-style: none;
+  margin: 22px 0 0;
+  padding: 18px clamp(14px, 3vw, 22px);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  display: grid;
+  grid-template-columns: repeat(var(--nl-steps, 3), minmax(0, 1fr));
+  gap: 6px;
+}
+.nl-step { display: flex; flex-direction: column; gap: 7px; min-inline-size: 0; }
+.nl-step-mark { display: flex; align-items: center; gap: 6px; }
+.nl-step-dot {
+  inline-size: 26px;
+  block-size: 26px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface-3);
+  color: var(--fg-subtle);
+}
+.nl-step--done .nl-step-dot { background: var(--accent); color: var(--accent-fg); }
+.nl-step-bar { flex: 1; block-size: 2px; border-radius: 2px; background: var(--border-strong); }
+.nl-step-bar--done { background: var(--accent); }
+.nl-step-label { font-size: 13px; font-weight: 800; line-height: 1.3; overflow-wrap: anywhere; }
+.nl-step-sub { font-size: 11.5px; color: var(--fg-muted); line-height: 1.4; }
+.nl-step[aria-current="step"] .nl-step-label { color: var(--accent); }
+
+/* ── paying, cancelled, refunds, tracking ──────────────────────────────── */
+
+.nl-after-pay { margin-block-start: 16px; display: flex; flex-direction: column; gap: 12px; }
+.nl-after-paybtn { align-self: flex-start; }
+.nl-after-transfer {
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.7;
+  white-space: pre-line;
+  text-align: start;
+  overflow-wrap: anywhere;
+}
+.nl-after-warn { padding: 12px 14px; border-radius: 12px; background: var(--warn-soft); color: var(--warn); font-size: 13px; font-weight: 700; line-height: 1.5; }
+.nl-after-cancelled,
+.nl-after-sent {
+  margin-block-start: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.nl-after-cancelled svg { color: var(--fg-muted); flex-shrink: 0; }
+.nl-after-sent { background: var(--pos-soft); color: var(--pos); border-color: transparent; }
+.nl-after-declined {
+  margin-block-start: 16px;
+  padding: 16px 18px;
+  border-radius: 16px;
+  background: var(--danger-soft);
+  color: var(--danger);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13.5px;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.nl-after-refunds { margin-block-start: 12px; display: flex; flex-direction: column; gap: 8px; }
+.nl-after-refund {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: var(--warn-soft);
+  color: var(--fg);
+  font-size: 13.5px;
+  font-weight: 600;
+}
+.nl-after-refund svg { color: var(--warn); flex-shrink: 0; }
+.nl-after-refund--done { background: var(--pos-soft); }
+.nl-after-refund--done svg { color: var(--pos); }
+.nl-after-track {
+  margin-block-start: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding: 14px 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+}
+.nl-after-track-label { font-size: 12px; font-weight: 700; color: var(--fg-subtle); }
+.nl-after-track-no { display: block; font-size: 14px; font-weight: 600; text-align: start; overflow-wrap: anywhere; }
+
+.nl-after-actions { margin-block-start: 16px; display: flex; flex-wrap: wrap; gap: 10px; }
+.nl-after-actions--center { justify-content: center; }
+.nl-after-actions .nl-btn { white-space: nowrap; }
+.nl-after-returns { margin-block-start: 18px; display: flex; flex-direction: column; gap: 8px; }
+.nl-after-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  inline-size: 100%;
+  min-block-size: 48px;
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  color: var(--fg);
+  font: inherit;
+  font-size: 13.5px;
+  text-align: start;
+  cursor: pointer;
+}
+.nl-after-row:hover { border-color: var(--border-strong); }
+
+/* ── lines, totals, where it ships ─────────────────────────────────────── */
+
+.nl-after-cols { margin-block-start: 16px; display: flex; flex-wrap: wrap; gap: 16px; align-items: flex-start; }
+.nl-after-items { flex: 1 1 420px; min-inline-size: 0; display: flex; flex-direction: column; gap: 12px; }
+.nl-after-ship { flex: 0 1 260px; min-inline-size: min(240px, 100%); display: flex; flex-direction: column; gap: 10px; }
+.nl-after-line { display: flex; gap: 12px; align-items: center; }
+.nl-after-line-pic { inline-size: 56px; flex-shrink: 0; }
+.nl-after-line-total { font-size: 14px; font-weight: 600; white-space: nowrap; }
+.nl-after-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-block-start: 5px;
+  padding: 3px 9px;
+  border-radius: 20px;
+  background: var(--surface-3);
+  color: var(--fg-muted);
+  font-size: 11.5px;
+  font-weight: 700;
+}
+.nl-after-totals { border-block-start: 1px solid var(--border); padding-block-start: 12px; }
+.nl-after-address { display: flex; flex-direction: column; font-style: normal; font-size: 13.5px; line-height: 1.6; color: var(--fg-muted); overflow-wrap: anywhere; }
+.nl-after-newlink { margin-block-start: 20px; padding-block-start: 16px; border-block-start: 1px solid var(--border); display: flex; flex-direction: column; align-items: flex-start; gap: 8px; }
+.nl-after-newlink p { margin: 0; line-height: 1.5; }
+.nl-after-status:empty { display: none; }
+
+/* ── the review dialog ─────────────────────────────────────────────────── */
+
+.nl-dialog--wide { inline-size: 520px; }
+.nl-after-form { display: flex; flex-direction: column; gap: 16px; }
+.nl-after-form .nl-after-actions { margin-block-start: 0; }
+.nl-after-stars { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+.nl-after-star {
+  inline-size: 44px;
+  block-size: 44px;
+  border-radius: 10px;
+  border: 1px solid var(--border-strong);
+  background: var(--surface);
+  color: var(--border-strong);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+.nl-after-star--on { color: var(--nl-star, var(--warn)); border-color: var(--nl-star, var(--warn)); }
+.nl-after-star-word { margin-inline-start: 10px; font-size: 13px; font-weight: 700; color: var(--fg-muted); }
+
+/* ── confirm sheets ────────────────────────────────────────────────────── */
+
+.nl-sheet { inline-size: 440px; overflow: hidden; }
+.nl-sheet-body { padding: 22px; display: flex; flex-direction: column; gap: 10px; }
+.nl-sheet-q { margin: 0; font-size: 17px; font-weight: 800; letter-spacing: -0.02em; }
+.nl-sheet-text { margin: 0; font-size: 14px; color: var(--fg-muted); line-height: 1.55; }
+.nl-sheet-foot { display: flex; gap: 10px; flex-wrap: wrap; padding: 16px 22px; border-block-start: 1px solid var(--border); background: var(--surface-2); }
+.nl-sheet-foot--inline { padding: 12px 0 0; border: none; background: transparent; }
+.nl-sheet-btn { flex: 1; min-inline-size: 120px; min-block-size: 48px; }
+.nl-sheet-code { margin-block-start: 6px; display: flex; flex-direction: column; gap: 12px; }
+
+/* ── the code ──────────────────────────────────────────────────────────── */
+
+.nl-code-card { border-radius: 22px; padding: clamp(22px, 4vw, 32px); display: flex; flex-direction: column; gap: 14px; }
+.nl-code-sheet { inline-size: 440px; }
+.nl-code-form { display: flex; flex-direction: column; gap: 12px; }
+.nl-code-sub { margin: 0; font-size: 14px; color: var(--fg-muted); line-height: 1.55; }
+.nl-code-email { font-weight: 700; color: var(--fg); overflow-wrap: anywhere; }
+.nl-code-boxes { display: flex; gap: 8px; }
+.nl-code-box {
+  inline-size: clamp(38px, 11vw, 48px);
+  block-size: 54px;
+  padding: 0;
+  text-align: center;
+  font-size: 20px;
+  font-weight: 600;
+}
+.nl-code-alt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 44px;
+  border: none;
+  background: transparent;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--fg-muted) !important;
+  text-align: center;
+  cursor: pointer;
+}
+.nl-code-alt:disabled { color: var(--fg-subtle) !important; cursor: default; }
+.nl-code-alt--on { color: var(--accent) !important; }
+
+/* ── the account ───────────────────────────────────────────────────────── */
+
+.nl-acc-head { display: flex; align-items: center; gap: 14px; margin-block-end: 22px; flex-wrap: wrap; }
+.nl-acc-badge {
+  inline-size: 52px;
+  block-size: 52px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 16px;
+}
+.nl-acc-email { overflow-wrap: anywhere; }
+.nl-acc-section { margin-block-start: 26px; display: flex; flex-direction: column; gap: 10px; }
+.nl-acc-section p { margin: 0; }
+.nl-acc-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  padding: 16px 18px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--surface);
+  box-shadow: var(--shadow);
+  color: var(--fg) !important;
+}
+.nl-acc-row:hover { border-color: var(--border-strong); }
+.nl-acc-row--return { box-shadow: none; padding-block: 14px; }
+.nl-acc-number { display: block; font-size: 14.5px; font-weight: 600; text-align: start; }
+.nl-acc-meta { display: block; margin-block-start: 2px; font-size: 12.5px; color: var(--fg-muted); }
+.nl-acc-total { font-size: 14.5px; font-weight: 600; }
+.nl-acc-delete { color: var(--danger) !important; }
+.nl-acc-news { margin-block-start: 26px; display: flex; align-items: center; gap: 14px; flex-wrap: wrap; padding: 18px 20px; }
+.nl-acc-news-state { flex: 1; min-inline-size: 180px; font-size: 15px; font-weight: 800; }
+.nl-acc-news-line { flex-basis: 100%; }
+.nl-acc-news-line:empty { display: none; }
+
+/* ── sending something back ────────────────────────────────────────────── */
+
+.nl-ret-form { margin-block-start: 20px; display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+.nl-ret-main { flex: 1 1 440px; min-inline-size: 0; display: flex; flex-direction: column; gap: 16px; }
+.nl-ret-set { margin: 0; display: flex; flex-direction: column; gap: 10px; min-inline-size: 0; }
+.nl-ret-legend { padding: 0 6px; font-size: 15px; font-weight: 800; }
+.nl-ret-line { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.nl-ret-pick { display: flex; align-items: center; gap: 12px; flex: 1; min-inline-size: 200px; cursor: pointer; }
+.nl-ret-pick > span:last-child { display: flex; flex-direction: column; }
+.nl-ret-pick input,
+.nl-ret-reason input { inline-size: 20px; block-size: 20px; margin: 0; accent-color: var(--accent); flex-shrink: 0; }
+.nl-ret-reason { display: flex; align-items: center; gap: 10px; min-block-size: 44px; font-size: 14px; font-weight: 600; cursor: pointer; }
+.nl-ret-note { margin-block-start: 8px; }
+.nl-ret-aside { flex: 0 1 300px; min-inline-size: min(260px, 100%); display: flex; flex-direction: column; gap: 12px; position: sticky; inset-block-start: 84px; }
+.nl-ret-what { flex: 1 1 300px; min-inline-size: 0; display: flex; flex-direction: column; gap: 10px; }
+.nl-ret-refund { border-block-start: 1px solid var(--border); padding-block-start: 10px; }
+.nl-ret-to { flex: 1 1 260px; min-inline-size: 0; display: flex; flex-direction: column; gap: 10px; }
+.nl-ret-to .nl-text-link { margin-block-start: 0; }
+
+@media (max-width: 599.98px) {
+  .nl-steps { padding: 14px; }
+  .nl-step-label { font-size: 12px; }
+  .nl-ret-aside { position: static; }
+  .nl-after-actions .nl-btn { flex: 1 1 auto; }
+}
