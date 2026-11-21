@@ -181,7 +181,7 @@
   backdrop-filter: blur(12px);
   border-block-end: 1px solid var(--border);
 }
-.dk-menu-btn {
+.dk-iconbtn.dk-menu-btn {
   display: none;
 }
 .dk-search {
@@ -1402,7 +1402,7 @@ textarea.dk-input {
     z-index: 150;
     background: var(--scrim);
   }
-  .dk-menu-btn {
+  .dk-iconbtn.dk-menu-btn {
     display: inline-flex;
   }
   .dk-person {
