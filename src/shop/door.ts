@@ -393,11 +393,19 @@ export class AdminiumShop implements ShopPort {
     return body as T;
   }
 
+  /** A page as large as the entry allows (its config's `limit`: 60 states, 48 products…), never more. */
+  async pageSize(ref: string): Promise<number> {
+    const config = await this.clientConfig().catch(() => null);
+    const most = (config?.refs[ref] as { limit?: number } | undefined)?.limit;
+    return typeof most === "number" && most > 0 ? Math.min(PAGE, most) : PAGE;
+  }
+
   private async all(ref: string, options: ListOptions = {}): Promise<Row[]> {
     const rows: Row[] = [];
     let cursor: string | undefined;
+    const limit = await this.pageSize(ref);
     for (let i = 0; i < 20; i += 1) {
-      const page = await this.client.list<Row>(ref, { ...options, limit: PAGE, ...(cursor === undefined ? {} : { cursor }) });
+      const page = await this.client.list<Row>(ref, { ...options, limit, ...(cursor === undefined ? {} : { cursor }) });
       rows.push(...page.data);
       const next = page.cursor?.next ?? null;
       if (next === null || next === "" || page.data.length === 0) break;

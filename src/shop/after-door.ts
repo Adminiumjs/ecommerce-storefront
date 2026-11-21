@@ -24,7 +24,7 @@ async function all(client: PublicClient, ref: string, options: Parameters<Public
   const rows: Row[] = [];
   let cursor: string | undefined;
   for (let i = 0; i < 20; i += 1) {
-    const page = await client.list<Row>(ref, { ...options, limit: PAGE, ...(cursor === undefined ? {} : { cursor }) });
+    const page = await client.list<Row>(ref, { limit: PAGE, ...options, ...(cursor === undefined ? {} : { cursor }) });
     rows.push(...page.data);
     const next = page.cursor?.next ?? null;
     if (next === null || next === "" || page.data.length === 0) break;
@@ -134,18 +134,20 @@ export class AdminiumAfter implements AfterPort {
       returns: r?.myReturns ?? l.returns,
       returnLines: r?.myReturnLines ?? l.returnLines,
     };
-    const where = { where: { column: "order_id", op: "eq" as const, value: order["id"] } };
-    const [lines, gifts, payments, refunds, returns] = await Promise.all([all(client, ref.lines, where), all(client, ref.gifts, where), all(client, ref.payments, where), all(client, ref.refunds, where), all(client, ref.returns, where)]);
-    const ids = returns.map((x) => x["id"]);
-    const returnLines = ids.length === 0 ? [] : await all(client, ref.returnLines, { where: { column: "return_id", op: "in", value: ids as never } });
+    // These entries take no filter: a session reaches only its own orders' rows, so they are read whole and the
+    // order's own kept (a signed-in customer's few orders; through a link, the one order).
+    const mine = (rows: Row[]) => rows.filter((x) => String(x["order_id"]) === String(order["id"]));
+    const [lines, gifts, payments, refunds, returns] = (await Promise.all([all(client, ref.lines), all(client, ref.gifts), all(client, ref.payments), all(client, ref.refunds), all(client, ref.returns)])).map(mine) as [Row[], Row[], Row[], Row[], Row[]];
+    const ids = new Set(returns.map((x) => String(x["id"])));
+    const returnLines = ids.size === 0 ? [] : (await all(client, ref.returnLines)).filter((x) => ids.has(String(x["return_id"])));
     const byId = (a: Row, b: Row) => Number(a["id"]) - Number(b["id"]);
     return { via, order, lines: lines.sort(byId), gifts: gifts.sort(byId), payments: payments.sort(byId), refunds: refunds.sort(byId), returns: returns.sort(newestFirst("asked_at")), returnLines: returnLines.sort(byId) };
   }
 
   readMine(orderId: Id): Promise<OrderRead | null> {
     return answer(async () => {
-      const page = await this.shop.client.list<Row>(this.shop.refs.myOrders, { where: { column: "id", op: "eq", value: orderId }, limit: 1 });
-      const order = page.data[0];
+      // The customer's own orders take no filter: read them and keep the one asked.
+      const order = (await all(this.shop.client, this.shop.refs.myOrders)).find((o) => String(o["id"]) === String(orderId));
       return order === undefined ? null : this.under("mine", order);
     });
   }
@@ -240,7 +242,10 @@ export class AdminiumAfter implements AfterPort {
     return answer(async () => {
       const unique = [...new Set(ids.map(String))];
       if (unique.length === 0) return [];
-      return (await all(this.shop.client, this.shop.refs.products, { where: { column: "id", op: "in", value: unique } })).map(productOf);
+      // The product list filters by category, price and slug, never by key: an order's few products are found by
+      // paging the list (a shop's on-sale catalogue, read once for "Order again").
+      const wanted = new Set(unique);
+      return (await all(this.shop.client, this.shop.refs.products, { limit: await this.shop.pageSize(this.shop.refs.products) })).filter((p) => wanted.has(String(p["id"]))).map(productOf);
     });
   }
 }

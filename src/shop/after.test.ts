@@ -106,8 +106,9 @@ describe("an order's own link", () => {
         "/api/v1/public/records/ecommerce_shop_returns_verified_3",
       ].sort(),
     );
-    // The lines are read for that order only.
-    expect(JSON.parse(reads.find((r) => r.path.endsWith("order_lines_verified_2"))!.query.get("where")!)).toEqual({ column: "order_id", op: "eq", value: 1065 });
+    // The entries under an order take no filter (Adminium refuses one): they are read whole, the link's session
+    // reaching only its own order's rows.
+    expect(reads.find((r) => r.path.endsWith("order_lines_verified_2"))!.query.get("where")).toBeNull();
   });
 
   it("says an unknown code and a stopped link apart", async () => {
