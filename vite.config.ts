@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 
 import { surfaceJsonPlugin } from "./surface-emit.ts";
 import { demoJsonPlugin } from "./demo-emit.ts";
+import { demoNotePlugin } from "./demo-note.ts";
 import { CARD_MESSAGES, DEMO_CARD } from "./src/demo/card.ts";
 import { MESSAGES } from "./src/i18n/messages/index.ts";
 import { APP_KEY, APP_LABEL_KEY, SURFACE_NAV } from "./src/surface-nav.ts";
@@ -57,6 +58,7 @@ const config: ViteWithVitest = {
      * build writes it.
      */
     demoJsonPlugin({ ...DEMO_CARD, messages: CARD_MESSAGES }),
+    demoNotePlugin({ labelKey: "note.demo", messages: CARD_MESSAGES }),
   ],
   /*
    * How long a suite may take, here rather than as a flag on the command
