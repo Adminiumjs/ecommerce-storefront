@@ -398,6 +398,8 @@ const bankDetails = (all: EmailWords): Block =>
   );
 /** What a cancelled order's money does: what was paid goes back, or nothing was taken. */
 const moneyBack = (all: EmailWords): Block[] => [only(text("refund", all.refunding), "order.paid_at"), unless(text("nothing", all.nothingTaken), "order.paid_at")];
+/** When it arrives, as Adminium dated it from the payment: left out while it has no date. */
+const arrival = (all: EmailWords): Block => only(facts("arrives", [row(all.arrives, "{{order.arrives_from}} – {{order.arrives_to}}")]), "order.arrives_from");
 const yourOrder = (all: EmailWords): Block => button("order", all.yourOrder, ORDER_LINK);
 const yourReturn = (all: EmailWords): Block => button("return", all.yourReturn, ORDER_LINK);
 
@@ -409,7 +411,7 @@ function layout(kind: Kind, all: EmailWords) {
   switch (kind) {
     case "order-paid":
       blocks.push(text("meta", all.orderMeta));
-      blocks.push(facts("when", [row(all.paid, "{{order.paid}}"), row(all.shipsBy, "{{order.ships_by}}"), row(all.arrives, "{{order.arrives_from}} – {{order.arrives_to}}")]));
+      blocks.push(facts("when", [row(all.paid, "{{order.paid}}"), row(all.shipsBy, "{{order.ships_by}}")]), arrival(all));
       blocks.push(...orderLines(all), ...totals(all, all.total));
       blocks.push(yourOrder(all));
       blocks.push(text("return-days", all.returnDays));
@@ -438,7 +440,7 @@ function layout(kind: Kind, all: EmailWords) {
       break;
     case "order-shipped":
       blocks.push(text("meta", all.shippedMeta));
-      blocks.push(facts("arrives", [row(all.arrives, "{{order.arrives_from}} – {{order.arrives_to}}")]));
+      blocks.push(arrival(all));
       blocks.push(facts("carrier", [row(all.service, "{{order.service.label}}"), row(all.carrier, "{{order.carrier}}")]));
       // One parcel and one number an order; a carrier with no number (the DHL demo fills none) shows the carrier alone.
       blocks.push(only(facts("tracking", [row(all.tracking, "{{order.tracking}}")]), "order.tracking"));

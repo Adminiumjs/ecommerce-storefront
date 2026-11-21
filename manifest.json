@@ -12027,12 +12027,21 @@
                   {
                     "label": "Ships by",
                     "amount": "{{order.ships_by}}"
-                  },
+                  }
+                ]
+              }
+            },
+            {
+              "block": "email.tax-breakdown",
+              "id": "arrives",
+              "data": {
+                "lines": [
                   {
                     "label": "Arrives",
                     "amount": "{{order.arrives_from}} – {{order.arrives_to}}"
                   }
-                ]
+                ],
+                "onlyWith": "order.arrives_from"
               }
             },
             {
@@ -12179,12 +12188,21 @@
                   {
                     "label": "Versand bis",
                     "amount": "{{order.ships_by}}"
-                  },
+                  }
+                ]
+              }
+            },
+            {
+              "block": "email.tax-breakdown",
+              "id": "arrives",
+              "data": {
+                "lines": [
                   {
                     "label": "Zustellung",
                     "amount": "{{order.arrives_from}} – {{order.arrives_to}}"
                   }
-                ]
+                ],
+                "onlyWith": "order.arrives_from"
               }
             },
             {
@@ -12331,12 +12349,21 @@
                   {
                     "label": "Expédition au plus tard",
                     "amount": "{{order.ships_by}}"
-                  },
+                  }
+                ]
+              }
+            },
+            {
+              "block": "email.tax-breakdown",
+              "id": "arrives",
+              "data": {
+                "lines": [
                   {
                     "label": "Livraison",
                     "amount": "{{order.arrives_from}} – {{order.arrives_to}}"
                   }
-                ]
+                ],
+                "onlyWith": "order.arrives_from"
               }
             },
             {
@@ -12483,12 +12510,21 @@
                   {
                     "label": "Afsendes senest",
                     "amount": "{{order.ships_by}}"
-                  },
+                  }
+                ]
+              }
+            },
+            {
+              "block": "email.tax-breakdown",
+              "id": "arrives",
+              "data": {
+                "lines": [
                   {
                     "label": "Leveres",
                     "amount": "{{order.arrives_from}} – {{order.arrives_to}}"
                   }
-                ]
+                ],
+                "onlyWith": "order.arrives_from"
               }
             },
             {
@@ -12635,12 +12671,21 @@
                   {
                     "label": "Odeslání nejpozději",
                     "amount": "{{order.ships_by}}"
-                  },
+                  }
+                ]
+              }
+            },
+            {
+              "block": "email.tax-breakdown",
+              "id": "arrives",
+              "data": {
+                "lines": [
                   {
                     "label": "Doručení",
                     "amount": "{{order.arrives_from}} – {{order.arrives_to}}"
                   }
-                ]
+                ],
+                "onlyWith": "order.arrives_from"
               }
             },
             {
@@ -12787,12 +12832,21 @@
                   {
                     "label": "يُشحن قبل",
                     "amount": "{{order.ships_by}}"
-                  },
+                  }
+                ]
+              }
+            },
+            {
+              "block": "email.tax-breakdown",
+              "id": "arrives",
+              "data": {
+                "lines": [
                   {
                     "label": "يصل",
                     "amount": "{{order.arrives_from}} – {{order.arrives_to}}"
                   }
-                ]
+                ],
+                "onlyWith": "order.arrives_from"
               }
             },
             {
@@ -12939,12 +12993,21 @@
                   {
                     "label": "最迟发货",
                     "amount": "{{order.ships_by}}"
-                  },
+                  }
+                ]
+              }
+            },
+            {
+              "block": "email.tax-breakdown",
+              "id": "arrives",
+              "data": {
+                "lines": [
                   {
                     "label": "预计送达",
                     "amount": "{{order.arrives_from}} – {{order.arrives_to}}"
                   }
-                ]
+                ],
+                "onlyWith": "order.arrives_from"
               }
             },
             {
@@ -13091,12 +13154,21 @@
                   {
                     "label": "最晚出貨",
                     "amount": "{{order.ships_by}}"
-                  },
+                  }
+                ]
+              }
+            },
+            {
+              "block": "email.tax-breakdown",
+              "id": "arrives",
+              "data": {
+                "lines": [
                   {
                     "label": "預計送達",
                     "amount": "{{order.arrives_from}} – {{order.arrives_to}}"
                   }
-                ]
+                ],
+                "onlyWith": "order.arrives_from"
               }
             },
             {
@@ -19443,7 +19515,8 @@
                     "label": "Arrives",
                     "amount": "{{order.arrives_from}} – {{order.arrives_to}}"
                   }
-                ]
+                ],
+                "onlyWith": "order.arrives_from"
               }
             },
             {
@@ -19552,7 +19625,8 @@
                     "label": "Zustellung",
                     "amount": "{{order.arrives_from}} – {{order.arrives_to}}"
                   }
-                ]
+                ],
+                "onlyWith": "order.arrives_from"
               }
             },
             {
@@ -19661,7 +19735,8 @@
                     "label": "Livraison",
                     "amount": "{{order.arrives_from}} – {{order.arrives_to}}"
                   }
-                ]
+                ],
+                "onlyWith": "order.arrives_from"
               }
             },
             {
@@ -19770,7 +19845,8 @@
                     "label": "Leveres",
                     "amount": "{{order.arrives_from}} – {{order.arrives_to}}"
                   }
-                ]
+                ],
+                "onlyWith": "order.arrives_from"
               }
             },
             {
@@ -19879,7 +19955,8 @@
                     "label": "Doručení",
                     "amount": "{{order.arrives_from}} – {{order.arrives_to}}"
                   }
-                ]
+                ],
+                "onlyWith": "order.arrives_from"
               }
             },
             {
@@ -19988,7 +20065,8 @@
                     "label": "يصل",
                     "amount": "{{order.arrives_from}} – {{order.arrives_to}}"
                   }
-                ]
+                ],
+                "onlyWith": "order.arrives_from"
               }
             },
             {
@@ -20097,7 +20175,8 @@
                     "label": "预计送达",
                     "amount": "{{order.arrives_from}} – {{order.arrives_to}}"
                   }
-                ]
+                ],
+                "onlyWith": "order.arrives_from"
               }
             },
             {
@@ -20206,7 +20285,8 @@
                     "label": "預計送達",
                     "amount": "{{order.arrives_from}} – {{order.arrives_to}}"
                   }
-                ]
+                ],
+                "onlyWith": "order.arrives_from"
               }
             },
             {
