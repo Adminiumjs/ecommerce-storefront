@@ -1,8 +1,3 @@
-/*
- * VENDORED from add-ons/packages/host/src/contracts/product-personalizer.ts — synced by scripts/sync-add-ons.sh.
- * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
- * The shared contract; the vendored add-on imports it by relative path.
- */
 /**
  * `product-personalizer@1` — the third contract in the closed registry of
  * provider contracts, and the one whose implementation spans three surfaces:

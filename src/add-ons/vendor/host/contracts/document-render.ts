@@ -1,8 +1,3 @@
-/*
- * VENDORED from add-ons/packages/host/src/contracts/document-render.ts — synced by scripts/sync-add-ons.sh.
- * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
- * The shared contract; the vendored add-on imports it by relative path.
- */
 /**
  * `document-render@1` — COPIED from `@adminium/add-on-contracts`
  * (`packages/add-on-contracts/src/document-render.ts`), not imported.
@@ -131,6 +126,21 @@ export interface DocumentPictureValue {
   height: number;
 }
 
+/**
+ * Where an unmapped slot's value comes from, if anywhere.
+ *
+ * `sequence` — the engine's CAS document number, minted after render.
+ * `connection` — the connection's currency. `setting` — one of the add-on's
+ * own non-secret settings. `now` — `subject.now.iso`, never the provider's own
+ * clock. `pay-link` — the record's own live pay link (a `text` slot), or the
+ * same link as a code to scan (a `qr` slot, only when it is short enough),
+ * when the record can be paid online right now; otherwise the slot stays empty.
+ * A `date` slot of `pay-link` takes the day that same link stops opening, on
+ * the venue's clock (`YYYY-MM-DD`): what a printed document says under the
+ * link ("Works until …"). It is filled only beside a link, from Adminium
+ * 0.3.61; an earlier Adminium puts the link's text in it, so a provider prints
+ * the day only when the value is a `YYYY-MM-DD` day.
+ */
 export type OutlineSlotDefault = 'sequence' | 'connection' | 'setting' | 'now' | 'pay-link';
 
 export interface OutlineSlot {

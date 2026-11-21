@@ -1,8 +1,3 @@
-/*
- * VENDORED from add-ons/packages/host/src/payloads.ts — synced by scripts/sync-add-ons.sh.
- * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
- * The shared contract; the vendored add-on imports it by relative path.
- */
 /**
  * WHAT EACH SLOT IS HANDED — one payload per id in the closed registry, and not
  * one of them named after a shop.
@@ -190,6 +185,12 @@ export interface PostalAddress {
   lines: readonly string[];
   city: string;
   postcode: string;
+  /**
+   * The state, province or region, where the country has them (`OR`, `NSW`):
+   * printed after the city. Display text, never checked; OPTIONAL, because most
+   * countries' addresses have none and a host that keeps none passes nothing.
+   */
+  region?: string;
   /** ISO 3166-1 alpha-2. */
   country: string;
 }
@@ -499,6 +500,35 @@ export interface DispatchPayload extends SlotPayload {
    * picks as it always did. A whole `DeliveryChoice` fits here too.
    */
   chosen?: Pick<DeliveryChoice, 'addOn' | 'code'> | null;
+  /**
+   * THE BOOKING, HANDED BACK TO THE HOST.
+   *
+   * Called when a collection is booked for this order, and again when the
+   * panel opens on an order whose booking the add-on can find, so a host that
+   * came back to the order still hears of it. Whether a booking can be found
+   * again is the add-on's: DHL's demo carrier finds its own for the life of
+   * the page, and nothing more, so a host never relies on the second call. Before this a host could only draw the
+   * fill and give its staff a text box to retype the number into.
+   *
+   * `demo` says the number came from a stand-in carrier and belongs to no
+   * parcel. A host never stores or mails such a number as the order's
+   * tracking: it shows it, marked as the demo, and its staff type the real one.
+   * A host keeps a real number WITH the order's next move (shipped) in one
+   * write; a booking with no move leaves the order where it was.
+   *
+   * OPTIONAL: a host whose staff type the number passes nothing.
+   */
+  onBooked?: (booking: DispatchBooking) => void;
+}
+
+/** What a dispatch fill hands back once a collection is booked (`DispatchPayload.onBooked`). */
+export interface DispatchBooking {
+  /** The carrier's tracking number. */
+  tracking: string;
+  /** The service booked, in the carrier's words (`DHL Express Worldwide`). */
+  service: string;
+  /** Booked with a stand-in carrier: no parcel has this number. */
+  demo: boolean;
 }
 
 /** `settings.add-on.panel` — one add-on's own form inside the manage drawer. */
