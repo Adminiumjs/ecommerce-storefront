@@ -1,3 +1,8 @@
+/*
+ * VENDORED from add-ons/packages/host/src/runtime/index.ts — synced by scripts/sync-add-ons.sh.
+ * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
+ * The shared contract; the vendored add-on imports it by relative path.
+ */
 /**
  * THE ADD-ON RUNTIME CONTRACT — how a client bundle gets React from its host.
  *

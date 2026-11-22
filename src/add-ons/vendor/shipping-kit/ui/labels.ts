@@ -1,7 +1,7 @@
 /*
- * VENDORED from add-ons/packages/shipping-dhl/src/ui/labels.ts — synced by scripts/sync-add-ons.sh.
+ * VENDORED from add-ons/packages/shipping-kit/src/ui/labels.ts — synced by scripts/sync-add-ons.sh.
  * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
- * The add-on key is `shipping-dhl`; its manifest, tests and README live in the monorepo.
+ * The screens every carrier shares; its tests live in the monorepo.
  */
 /**
  * Data keys → message keys.
@@ -44,12 +44,12 @@ export function contentsLine(
    * past that, the third says how many more lines follow.
    */
   const lines = estimate.from.items.filter((item) => item.quantity > 0);
-  const one = (item: { label: string; quantity: number }) => t("addon.shipping-dhl.parcel.contentsValue", { quantity: item.quantity, what: item.label });
+  const one = (item: { label: string; quantity: number }) => t("addon.shipping-kit.parcel.contentsValue", { quantity: item.quantity, what: item.label });
   if (lines.length <= MAX_NAMED) return list(lines.map(one));
   const last = lines[MAX_NAMED - 1]!;
   return list([
     ...lines.slice(0, MAX_NAMED - 1).map(one),
-    t("addon.shipping-dhl.parcel.contentsValueMore", { quantity: last.quantity, what: last.label, more: lines.length - MAX_NAMED }),
+    t("addon.shipping-kit.parcel.contentsValueMore", { quantity: last.quantity, what: last.label, more: lines.length - MAX_NAMED }),
   ]);
 }
 
@@ -67,9 +67,9 @@ const MAX_NAMED = 3;
  * placeholder.
  */
 const SERVICE: Readonly<Record<string, { key: StringKey; by?: readonly [number, number] }>> = {
-  "EXP-1200": { key: "addon.shipping-dhl.service.exp1200", by: [12, 0] },
-  "EXP-NWD": { key: "addon.shipping-dhl.service.expNwd" },
-  "ECO-2WD": { key: "addon.shipping-dhl.service.eco2wd" },
+  "EXP-1200": { key: "addon.shipping-kit.service.exp1200", by: [12, 0] },
+  "EXP-NWD": { key: "addon.shipping-kit.service.expNwd" },
+  "ECO-2WD": { key: "addon.shipping-kit.service.eco2wd" },
 };
 
 /**
@@ -107,11 +107,11 @@ export function serviceName(
 export function eventText(t: TFunction, event: TrackEvent): string {
   switch (event.status) {
     case "collected":
-      return t("addon.shipping-dhl.event.collected");
+      return t("addon.shipping-kit.event.collected");
     case "at-hub":
-      return t("addon.shipping-dhl.event.atHub");
+      return t("addon.shipping-kit.event.atHub");
     case "out-for-delivery":
-      return t("addon.shipping-dhl.event.outForDelivery");
+      return t("addon.shipping-kit.event.outForDelivery");
     default:
       return event.description;
   }

@@ -70,7 +70,9 @@ VENDOR="$HOST/src/add-ons/vendor"
 # Vendoring targets, in the order they are written: the contract first, then
 # the add-on that imports it. The target name is the add-on's manifest key and
 # its directory under vendor/.
-TARGETS=(host shipping-dhl)
+# The kit comes before the add-on that imports it. Factory and Support Desk stay on
+# their frozen copy (plan 79, D15) and have no kit.
+TARGETS=(host shipping-kit shipping-dhl)
 
 # The shared contract, and the loader ABI a served bundle reads. `testing/` is not here and must not be.
 FILES_host=(
@@ -78,19 +80,26 @@ FILES_host=(
   contracts/index.ts contracts/common.ts
   contracts/artwork-source.ts contracts/shipping-carrier.ts
   contracts/product-personalizer.ts contracts/document-render.ts
-  contracts/payment-provider.ts contracts/payment-money.ts
+  contracts/payment-provider.ts contracts/payment-money.ts contracts/card-terminal.ts
+  engine-carrier.ts
+  runtime/react.ts runtime/jsx-runtime.ts slot-content.ts
+)
+
+# The screens, copy and demo every carrier add-on shares. Client code only: no
+# transport and no credential is reachable from any of it.
+FILES_shipping_kit=(
+  brand.ts label-store.ts clock.ts parcel.ts rates.ts label.ts seed.ts
+  demo-carrier.ts settings.ts runtime.ts index.ts
+  i18n/strings.ts i18n/t.ts
+  ui/atoms.tsx ui/labels.ts ui/DispatchAction.tsx ui/DeliveryMethods.tsx
+  ui/SettingsPanel.tsx ui/TrackingPanel.tsx ui/ReturnLabel.tsx ui/account.tsx
 )
 
 # Reachable from the client entry point, and nothing else. An explicit list
 # rather than a glob, so a new module reaching the studio's bundle is a
 # decision made here too.
 FILES_shipping_dhl=(
-  add-on-facts.ts add-on-key.ts
-  label-store.ts clock.ts parcel.ts rates.ts label.ts seed.ts
-  demo-carrier.ts settings.ts runtime.ts index.ts
-  i18n/strings.ts i18n/t.ts
-  ui/atoms.tsx ui/labels.ts ui/DispatchAction.tsx ui/DeliveryMethods.tsx
-  ui/SettingsPanel.tsx ui/TrackingPanel.tsx ui/ReturnLabel.tsx ui/account.tsx
+  add-on-facts.ts add-on-key.ts brand.ts demo-carrier.ts index.ts i18n/strings.ts
 )
 
 # Modules that must never be reachable from the browser half: the server
@@ -159,6 +168,12 @@ rewrite() { # $1 = path within src/  → filter stdin
   # applies the same rewrite to the source and the two therefore still agree.
   # `unresolved_in` below is the check that caught it, and it stays.
   sed \
+    -e "s|\"@adminium/add-on-shipping-kit/|\"${up}../shipping-kit/|g" \
+    -e "s|'@adminium/add-on-shipping-kit/|'${up}../shipping-kit/|g" \
+    -e "s|\"@adminium/add-on-shipping-kit\"|\"${up}../shipping-kit/index.ts\"|g" \
+    -e "s|'@adminium/add-on-shipping-kit'|'${up}../shipping-kit/index.ts'|g" \
+    -e "s|\"@adminium/add-on-host/engine-carrier\"|\"${up}../host/engine-carrier.ts\"|g" \
+    -e "s|'@adminium/add-on-host/engine-carrier'|'${up}../host/engine-carrier.ts'|g" \
     -e "s|\"@adminium/add-on-host/contracts\"|\"${up}../host/contracts/index.ts\"|g" \
     -e "s|'@adminium/add-on-host/contracts'|'${up}../host/contracts/index.ts'|g" \
     -e "s|\"@adminium/add-on-host\"|\"${up}../host/index.ts\"|g" \
@@ -191,6 +206,8 @@ unresolved_in() { # $1 = file
 note_of() { # $1 = target → the header's third line
   if [ "$1" = host ]; then
     printf '%s' 'The shared contract; the vendored add-on imports it by relative path.'
+  elif [ "$1" = shipping-kit ]; then
+    printf '%s' 'The screens every carrier shares; its tests live in the monorepo.'
   else
     printf 'The add-on key is `%s`; its manifest, tests and README live in the monorepo.' "$1"
   fi

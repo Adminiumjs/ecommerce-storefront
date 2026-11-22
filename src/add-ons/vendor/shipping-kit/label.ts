@@ -1,7 +1,7 @@
 /*
- * VENDORED from add-ons/packages/shipping-dhl/src/label.ts — synced by scripts/sync-add-ons.sh.
+ * VENDORED from add-ons/packages/shipping-kit/src/label.ts — synced by scripts/sync-add-ons.sh.
  * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
- * The add-on key is `shipping-dhl`; its manifest, tests and README live in the monorepo.
+ * The screens every carrier shares; its tests live in the monorepo.
  */
 /**
  * The label the demo transport hands back.
@@ -25,6 +25,8 @@ function pdfText(value: string): string {
 }
 
 export interface LabelFacts {
+  /** The company named on this made-up label. */
+  carrier: string;
   tracking: string;
   service: string;
   reference: string;
@@ -46,7 +48,7 @@ function lines(facts: LabelFacts): { y: number; size: number; bold: boolean; tex
   const rows: { y: number; size: number; bold: boolean; text: string }[] = [
     { y: 400, size: 9, bold: true, text: "DEMO LABEL - NOT VALID FOR CARRIAGE" },
     { y: 386, size: 7, bold: false, text: "Made by a seeded stand-in. No shipment exists." },
-    { y: 360, size: 8, bold: false, text: `Carrier   DHL (simulated)` },
+    { y: 360, size: 8, bold: false, text: `Carrier   ${facts.carrier} (simulated)` },
     { y: 348, size: 8, bold: false, text: `Service   ${facts.service}` },
     { y: 336, size: 8, bold: false, text: `Order     ${facts.reference}` },
     { y: 318, size: 7, bold: false, text: "TRACKING" },
@@ -121,6 +123,6 @@ export function renderLabelPdf(facts: LabelFacts): string {
 }
 
 /** `00 3400 1234 5678 9012` → a filename that survives a shell and a download. */
-export function labelFilename(tracking: string): string {
-  return `dhl-label-${tracking.replace(/\s+/g, "-")}.pdf`;
+export function labelFilename(tracking: string, idPrefix: string): string {
+  return `${idPrefix}-label-${tracking.replace(/\s+/g, "-")}.pdf`;
 }

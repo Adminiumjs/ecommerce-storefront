@@ -1,7 +1,7 @@
 /*
- * VENDORED from add-ons/packages/shipping-dhl/src/parcel.ts — synced by scripts/sync-add-ons.sh.
+ * VENDORED from add-ons/packages/shipping-kit/src/parcel.ts — synced by scripts/sync-add-ons.sh.
  * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
- * The add-on key is `shipping-dhl`; its manifest, tests and README live in the monorepo.
+ * The screens every carrier shares; its tests live in the monorepo.
  */
 /**
  * THE PARCEL, worked out from what the shop says is in it.

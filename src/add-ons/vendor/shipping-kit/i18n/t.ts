@@ -1,7 +1,7 @@
 /*
- * VENDORED from add-ons/packages/shipping-dhl/src/i18n/t.ts — synced by scripts/sync-add-ons.sh.
+ * VENDORED from add-ons/packages/shipping-kit/src/i18n/t.ts — synced by scripts/sync-add-ons.sh.
  * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
- * The add-on key is `shipping-dhl`; its manifest, tests and README live in the monorepo.
+ * The screens every carrier shares; its tests live in the monorepo.
  */
 /**
  * A ~70-line message lookup, and the reason it exists rather than a hook from
@@ -22,6 +22,7 @@
 
 import { useCallback, useSyncExternalStore } from "react";
 
+import { kitBrand } from "../brand.ts";
 import { strings, type LocaleTag, type StringKey } from "./strings.ts";
 
 const DEFAULT_LOCALE: LocaleTag = "en-US";
@@ -86,11 +87,12 @@ export function translate(
   params?: Record<string, string | number>,
 ): string {
   const raw = strings[locale][key] ?? strings[DEFAULT_LOCALE][key] ?? key;
-  if (params === undefined) return raw;
+  // The company is a parameter of every string, so no call site has to remember to pass it.
+  const filled: Record<string, string | number> = { carrier: kitBrand().name, ...params };
   const nf = new Intl.NumberFormat(locale);
   return raw.replace(/\{(\w+)\}/g, (whole, name: string) => {
-    if (!(name in params)) return whole;
-    const value = params[name];
+    if (!(name in filled)) return whole;
+    const value = filled[name]!;
     return typeof value === "number" ? nf.format(value) : String(value);
   });
 }

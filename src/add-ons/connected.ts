@@ -52,6 +52,7 @@ import * as JsxRuntime from "react/jsx-runtime";
 import type { AddOn } from "./host.ts";
 import { installAddOnRuntime, type AddOnRuntime } from "./vendor/host/runtime/index.ts";
 import { withInstall } from "../desk/transport/staffConnection.ts";
+import { createEngineCarrier, type EngineSend } from "./vendor/host/engine-carrier.ts";
 
 /** The panels' host API, once a screen has asked for one: kept, so a later install never takes it away. */
 let panelHost: unknown;
@@ -118,7 +119,7 @@ export interface ConnectedAttachment {
 /** Why one add-on did not make it. A list, not a throw: one broken add-on leaves its slot empty, never the studio. */
 export interface ConnectedProblem {
   key: string;
-  code: "LIST_UNAVAILABLE" | "NO_BUNDLE" | "UNSAFE_URL" | "BUNDLE_UNAVAILABLE" | "INTEGRITY_MISMATCH" | "NO_REGISTER" | "KEY_MISMATCH" | "NO_DISCLAIMER" | "MALFORMED";
+  code: "NO_ENGINE_CLIENT" | "LIST_UNAVAILABLE" | "NO_BUNDLE" | "UNSAFE_URL" | "BUNDLE_UNAVAILABLE" | "INTEGRITY_MISMATCH" | "NO_REGISTER" | "KEY_MISMATCH" | "NO_DISCLAIMER" | "MALFORMED";
   detail: string;
 }
 
@@ -262,6 +263,8 @@ export interface ConnectedOptions {
    * narrowed to when its attachments do not say which install they join.
    */
   allowed?: ReadonlySet<string>;
+  /** The signed-in person's CSRF token, read when a write is sent. */
+  csrfToken?: () => string | null;
   /** Injected for the suite; the default is why this file is declared in `sources.test.ts`. */
   request?: typeof fetch;
   /** Injected for the suite. Same. */
@@ -270,6 +273,35 @@ export interface ConnectedOptions {
 
 interface BundleModule {
   register?: unknown;
+  connectEngineCarrier?: unknown;
+}
+
+const ENGINE_SHIPPING_PATH = /^\/api\/v1\/apps\/[^/]+\/shipping(?:\/|$)/;
+
+/**
+ * THE ONE WAY A CARRIER'S SCREENS REACH ADMINIUM (plan 79, W2). The kit's client
+ * names no sender, so this file, already the declared one, is its `send`: this
+ * origin and this app's shipping routes only, with the session cookie, the
+ * install header (`request` carries it) and the CSRF token on a write. A
+ * redirect is refused rather than followed, and nothing is retried here: a
+ * purchase is asked for once.
+ */
+export function engineSend(request: typeof fetch, origin: string, csrfToken: () => string | null): EngineSend {
+  return async (path, init) => {
+    const target = new URL(path, origin);
+    if (target.origin !== new URL(origin).origin || !ENGINE_SHIPPING_PATH.test(target.pathname)) {
+      throw new Error("not one of this app's shipping routes");
+    }
+    const token = init.method === "GET" ? null : csrfToken();
+    const res = await request(target.toString(), {
+      method: init.method,
+      credentials: "same-origin",
+      redirect: "error",
+      headers: { ...init.headers, ...(token === null ? {} : { "x-adminium-csrf": token }) },
+      ...(init.body === undefined ? {} : { body: init.body }),
+    });
+    return { status: res.status, text: () => res.text() };
+  };
 }
 
 /**
@@ -374,6 +406,16 @@ export async function loadConnectedAddOns(options: ConnectedOptions): Promise<Co
     if (refusal !== null) {
       problems.push(refusal);
       continue;
+    }
+    // A carrier built on the shared kit takes this app's client for its shipping routes. An older bundle has no such
+    // export and stays as it was, so it can never reach a carrier from here.
+    if (typeof module.connectEngineCarrier === "function") {
+      try {
+        const send = engineSend(request, origin, options.csrfToken ?? (() => null));
+        (module.connectEngineCarrier as (client: unknown) => void)(createEngineCarrier({ send, appKey, addOnKey: addOn.key }));
+      } catch (cause) {
+        problems.push({ key: dto.key, code: "NO_ENGINE_CLIENT", detail: cause instanceof Error ? cause.message : String(cause) });
+      }
     }
     addOns.push(addOn);
   }

@@ -1,3 +1,8 @@
+/*
+ * VENDORED from add-ons/packages/host/src/payloads.ts — synced by scripts/sync-add-ons.sh.
+ * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
+ * The shared contract; the vendored add-on imports it by relative path.
+ */
 /**
  * WHAT EACH SLOT IS HANDED — one payload per id in the closed registry, and not
  * one of them named after a shop.
@@ -193,6 +198,11 @@ export interface PostalAddress {
   region?: string;
   /** ISO 3166-1 alpha-2. */
   country: string;
+  /** A business at this address, when there is one. */
+  company?: string;
+  /** Plain text, as the host holds it. Sent to a carrier only when the carrier needs it. */
+  phone?: string;
+  email?: string;
 }
 
 /**

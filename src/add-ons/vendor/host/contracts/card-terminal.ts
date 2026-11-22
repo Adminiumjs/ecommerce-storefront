@@ -1,3 +1,8 @@
+/*
+ * VENDORED from add-ons/packages/host/src/contracts/card-terminal.ts — synced by scripts/sync-add-ons.sh.
+ * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
+ * The shared contract; the vendored add-on imports it by relative path.
+ */
 /**
  * `card-terminal@1` — COPIED from `@adminium/add-on-contracts`
  * (`packages/add-on-contracts/src/card-terminal.ts`), not imported, with its

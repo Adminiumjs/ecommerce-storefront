@@ -1,3 +1,8 @@
+/*
+ * VENDORED from add-ons/packages/host/src/slot-content.ts — synced by scripts/sync-add-ons.sh.
+ * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
+ * The shared contract; the vendored add-on imports it by relative path.
+ */
 /**
  * DID THE FILL ACTUALLY DRAW ANYTHING? — the question `:empty` only half asks.
  *

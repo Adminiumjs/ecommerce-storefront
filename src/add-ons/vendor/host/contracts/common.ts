@@ -1,3 +1,8 @@
+/*
+ * VENDORED from add-ons/packages/host/src/contracts/common.ts — synced by scripts/sync-add-ons.sh.
+ * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
+ * The shared contract; the vendored add-on imports it by relative path.
+ */
 /**
  * The one shape more than one contract uses.
  *

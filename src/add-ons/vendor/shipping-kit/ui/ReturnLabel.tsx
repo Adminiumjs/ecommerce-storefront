@@ -1,7 +1,7 @@
 /*
- * VENDORED from add-ons/packages/shipping-dhl/src/ui/ReturnLabel.tsx — synced by scripts/sync-add-ons.sh.
+ * VENDORED from add-ons/packages/shipping-kit/src/ui/ReturnLabel.tsx — synced by scripts/sync-add-ons.sh.
  * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
- * The add-on key is `shipping-dhl`; its manifest, tests and README live in the monorepo.
+ * The screens every carrier shares; its tests live in the monorepo.
  */
 /**
  * `record.actions` — a prepaid return label for the record in front of you.
@@ -45,6 +45,7 @@
  * paint-detection exists for.
  */
 
+import { kitBrand } from "../brand.ts";
 import { useEffect, useState } from "react";
 import { CircleX, CornerDownRight, RefreshCw, Undo2 } from "lucide-react";
 
@@ -145,17 +146,17 @@ export function ReturnLabel({ payload }: { payload: RecordActionsPayload }) {
     return (
       <Panel>
         <div style={{ display: "flex", alignItems: "center", gap: 11, color: "var(--fg-muted)" }}>
-          <Monogram letters="DHL" size={34} />
-          <span style={{ fontSize: 13.5 }}>{t("addon.shipping-dhl.returns.notSetUp")}</span>
+          <Monogram letters={kitBrand().monogram} size={34} />
+          <span style={{ fontSize: 13.5 }}>{t("addon.shipping-kit.returns.notSetUp")}</span>
         </div>
         <div style={{ marginBlockStart: 8 }}>
-          <NotAffiliated>{t("addon.shipping-dhl.notAffiliated")}</NotAffiliated>
+          <NotAffiliated>{t("addon.shipping-kit.notAffiliated")}</NotAffiliated>
         </div>
       </Panel>
     );
   }
 
-  // No DHL account and no demo, and no label made earlier: nothing can be quoted, and the card says so.
+  // No carrier account and no demo, and no label made earlier: nothing can be quoted, and the card says so.
   if (made === null && carrierState() === "not-connected") return <NotConnected />;
 
   const getRates = async () => {
@@ -214,20 +215,20 @@ export function ReturnLabel({ payload }: { payload: RecordActionsPayload }) {
     return (
       <Panel>
         <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10 }}>
-          <PanelTitle tone="pos">{t("addon.shipping-dhl.returns.made")}</PanelTitle>
-          {isDemo() && <Tag tone="warn">{t("addon.shipping-dhl.demoChip")}</Tag>}
+          <PanelTitle tone="pos">{t("addon.shipping-kit.returns.made")}</PanelTitle>
+          {isDemo() && <Tag tone="warn">{t("addon.shipping-kit.demoChip")}</Tag>}
         </div>
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: 18, marginBlockStart: 12 }}>
           <div>
             <div style={{ fontSize: 11.5, color: "var(--fg-subtle)" }}>
-              {t("addon.shipping-dhl.booked.tracking")}
+              {t("addon.shipping-kit.booked.tracking")}
             </div>
             <Code style={{ fontSize: 14.5, fontWeight: 700 }}>{made.tracking}</Code>
           </div>
           <div>
             <div style={{ fontSize: 11.5, color: "var(--fg-subtle)" }}>
-              {t("addon.shipping-dhl.booked.service")}
+              {t("addon.shipping-kit.booked.service")}
             </div>
             <span style={{ fontSize: 13, fontWeight: 700 }}>
               {serviceName(t, made.rate, timeOfDay)}
@@ -236,7 +237,7 @@ export function ReturnLabel({ payload }: { payload: RecordActionsPayload }) {
         </div>
 
         <p style={{ margin: "12px 0 0", fontSize: 12.5, lineHeight: 1.5, color: "var(--fg-muted)" }}>
-          {t("addon.shipping-dhl.returns.apply")}
+          {t("addon.shipping-kit.returns.apply")}
         </p>
 
         <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBlockStart: 12 }}>
@@ -248,17 +249,17 @@ export function ReturnLabel({ payload }: { payload: RecordActionsPayload }) {
               withLabelBlob(bytes, (url) => {
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = labelFilename(made.tracking);
+                a.download = labelFilename(made.tracking, kitBrand().idPrefix);
                 a.click();
               });
             }}
           >
-            {t("addon.shipping-dhl.label.download")}
+            {t("addon.shipping-kit.label.download")}
           </Button>
         </div>
 
         <div style={{ marginBlockStart: 10 }}>
-          <NotAffiliated>{t("addon.shipping-dhl.notAffiliated")}</NotAffiliated>
+          <NotAffiliated>{t("addon.shipping-kit.notAffiliated")}</NotAffiliated>
         </div>
       </Panel>
     );
@@ -268,31 +269,31 @@ export function ReturnLabel({ payload }: { payload: RecordActionsPayload }) {
     <Panel>
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10 }}>
         <Undo2 size={16} aria-hidden="true" style={{ color: "var(--fg-muted)" }} />
-        <PanelTitle>{t("addon.shipping-dhl.returns.title")}</PanelTitle>
+        <PanelTitle>{t("addon.shipping-kit.returns.title")}</PanelTitle>
         {isDemo() && rates !== null && (
           <span style={{ marginInlineStart: "auto" }}>
-            <Tag tone="warn">{t("addon.shipping-dhl.rates.simulated")}</Tag>
+            <Tag tone="warn">{t("addon.shipping-kit.rates.simulated")}</Tag>
           </span>
         )}
       </div>
 
       <p style={{ margin: "6px 0 0", fontSize: 12.5, lineHeight: 1.5, color: "var(--fg-muted)" }}>
-        {t("addon.shipping-dhl.returns.intro")}{" "}
-        {t("addon.shipping-dhl.returns.toDepot", { name: depot.name, city: depot.city })}
+        {t("addon.shipping-kit.returns.intro")}{" "}
+        {t("addon.shipping-kit.returns.toDepot", { name: depot.name, city: depot.city })}
       </p>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 11, marginBlockStart: 12 }}>
         <div style={{ fontSize: 12.5, fontWeight: 700, color: "var(--fg-muted)" }}>
-          {t("addon.shipping-dhl.returns.sender")}
+          {t("addon.shipping-kit.returns.sender")}
         </div>
-        <Field label={t("addon.shipping-dhl.returns.senderName")}>
+        <Field label={t("addon.shipping-kit.returns.senderName")}>
           <input
             value={sender.name}
             onChange={(e) => setSender({ ...sender, name: e.target.value })}
             style={inputStyle}
           />
         </Field>
-        <Field label={t("addon.shipping-dhl.dest.street")}>
+        <Field label={t("addon.shipping-kit.dest.street")}>
           <input
             value={sender.lines.join(", ")}
             onChange={(e) =>
@@ -308,21 +309,21 @@ export function ReturnLabel({ payload }: { payload: RecordActionsPayload }) {
             gap: 12,
           }}
         >
-          <Field label={t("addon.shipping-dhl.dest.city")}>
+          <Field label={t("addon.shipping-kit.dest.city")}>
             <input
               value={sender.city}
               onChange={(e) => setSender({ ...sender, city: e.target.value })}
               style={inputStyle}
             />
           </Field>
-          <Field label={t("addon.shipping-dhl.error.postcode")}>
+          <Field label={t("addon.shipping-kit.error.postcode")}>
             <input
               value={sender.postcode}
               onChange={(e) => setSender({ ...sender, postcode: e.target.value })}
               style={monoInputStyle}
             />
           </Field>
-          <Field label={t("addon.shipping-dhl.error.country")}>
+          <Field label={t("addon.shipping-kit.error.country")}>
             <input
               value={sender.country}
               onChange={(e) => setSender({ ...sender, country: e.target.value })}
@@ -333,7 +334,7 @@ export function ReturnLabel({ payload }: { payload: RecordActionsPayload }) {
       </div>
 
       <p style={{ margin: "10px 0 0", fontSize: 11.5, lineHeight: 1.5, color: "var(--fg-subtle)" }}>
-        {t("addon.shipping-dhl.returns.parcelNote", { kg: parcelFor([]).weightKg })}
+        {t("addon.shipping-kit.returns.parcelNote", { kg: parcelFor([]).weightKg })}
       </p>
 
       {failure !== null && (
@@ -352,11 +353,11 @@ export function ReturnLabel({ payload }: { payload: RecordActionsPayload }) {
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 9 }}>
             <CircleX size={16} aria-hidden="true" style={{ color: "var(--danger)" }} />
             <span style={{ fontSize: 13, fontWeight: 700 }}>
-              {t("addon.shipping-dhl.error.title")}
+              {t("addon.shipping-kit.error.title")}
             </span>
             {isDemo() && (
               <span style={{ marginInlineStart: "auto" }}>
-                <Tag tone="warn">{t("addon.shipping-dhl.error.simulated")}</Tag>
+                <Tag tone="warn">{t("addon.shipping-kit.error.simulated")}</Tag>
               </span>
             )}
           </div>
@@ -369,7 +370,7 @@ export function ReturnLabel({ payload }: { payload: RecordActionsPayload }) {
               style={{ color: "var(--fg-subtle)", flex: "0 0 auto", marginBlockStart: 2 }}
             />
             <span style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--fg-muted)" }}>
-              {t("addon.shipping-dhl.error.remedy1", {
+              {t("addon.shipping-kit.error.remedy1", {
                 country: sender.country,
                 example: POSTCODE_HINT[sender.country] ?? "—",
               })}
@@ -405,11 +406,11 @@ export function ReturnLabel({ payload }: { payload: RecordActionsPayload }) {
                     {serviceName(t, rate, timeOfDay)}
                   </span>
                   <Mono style={{ fontSize: 11.5, color: "var(--fg-subtle)", whiteSpace: "normal" }}>
-                    {t("addon.shipping-dhl.rates.arrives", { date: day(rate.estimatedDelivery) })}
+                    {t("addon.shipping-kit.rates.arrives", { date: day(rate.estimatedDelivery) })}
                   </Mono>
                 </span>
                 {rate.code === cheapestCode(rates) && (
-                  <Tag tone="pos">{t("addon.shipping-dhl.rates.cheapest")}</Tag>
+                  <Tag tone="pos">{t("addon.shipping-kit.rates.cheapest")}</Tag>
                 )}
                 <Mono style={{ fontSize: 13.5, fontWeight: 700 }}>
                   {money(rate.amount, rate.currency)}
@@ -428,18 +429,18 @@ export function ReturnLabel({ payload }: { payload: RecordActionsPayload }) {
             disabled={busy || !addressIsUsable(sender)}
           >
             {failure !== null && <RefreshCw size={15} aria-hidden="true" />}
-            {t(failure === null ? "addon.shipping-dhl.rates.get" : "addon.shipping-dhl.error.retry")}
+            {t(failure === null ? "addon.shipping-kit.rates.get" : "addon.shipping-kit.error.retry")}
           </Button>
         ) : (
           <Button variant="solid" onClick={() => void makeLabel()} disabled={busy}>
-            {t("addon.shipping-dhl.returns.make")}
+            {t("addon.shipping-kit.returns.make")}
           </Button>
         )}
         {rates === null && isDemo() && <DemoNotice />}
       </div>
 
       <div style={{ marginBlockStart: 10 }}>
-        <NotAffiliated>{t("addon.shipping-dhl.notAffiliated")}</NotAffiliated>
+        <NotAffiliated>{t("addon.shipping-kit.notAffiliated")}</NotAffiliated>
       </div>
     </Panel>
   );

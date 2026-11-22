@@ -1,7 +1,7 @@
 /*
- * VENDORED from add-ons/packages/shipping-dhl/src/ui/DeliveryMethods.tsx — synced by scripts/sync-add-ons.sh.
+ * VENDORED from add-ons/packages/shipping-kit/src/ui/DeliveryMethods.tsx — synced by scripts/sync-add-ons.sh.
  * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
- * The add-on key is `shipping-dhl`; its manifest, tests and README live in the monorepo.
+ * The screens every carrier shares; its tests live in the monorepo.
  */
 /**
  * `checkout.delivery.methods` — the customer's half of the same rate list.
@@ -31,7 +31,7 @@ import { domesticStandIn, originOf } from "../seed.ts";
 import { publicSettings } from "../settings.ts";
 import { Monogram, Mono, NotAffiliated, Panel, PanelTitle, Tag } from "./atoms.tsx";
 import { contentsLine, serviceName } from "./labels.ts";
-import { ADD_ON_KEY } from "../add-on-key.ts";
+import { kitBrand } from "../brand.ts";
 
 export function DeliveryMethods({
   items,
@@ -93,7 +93,7 @@ export function DeliveryMethods({
     setHostClock({ iso: nowIso, hour: nowHour, minute: nowMinute });
     // Priced in the shop's own currency, off the basket's total.
     setHostCurrency(currency);
-    // No DHL account and no demo: the till shows the shop's own delivery and nothing of DHL's.
+    // No carrier account and no demo: the till shows the shop's own delivery and nothing of the carrier's.
     if (carrierState() === "not-connected") return;
     const estimate = parcelFor(items);
     const from = originOf({ origin });
@@ -155,11 +155,11 @@ export function DeliveryMethods({
   return (
     <Panel>
       <div style={{ display: "flex", alignItems: "center", gap: 11, marginBlockEnd: 12 }}>
-        <Monogram letters="DHL" size={34} />
+        <Monogram letters={kitBrand().monogram} size={34} />
         <div style={{ minInlineSize: 0 }}>
-          <PanelTitle>{t("addon.shipping-dhl.checkout.title")}</PanelTitle>
+          <PanelTitle>{t("addon.shipping-kit.checkout.title")}</PanelTitle>
           <div style={{ fontSize: 12.5, color: "var(--fg-subtle)", marginBlockStart: 2 }}>
-            {t("addon.shipping-dhl.checkout.sub")}
+            {t("addon.shipping-kit.checkout.sub")}
           </div>
           {/*
             WHY THE DATES ARE FURTHER OUT THAN THE CUT-OFF WOULD SUGGEST.
@@ -171,7 +171,7 @@ export function DeliveryMethods({
            */}
           {postponed && (
             <div style={{ fontSize: 12.5, color: "var(--fg-muted)", marginBlockStart: 3 }}>
-              {t("addon.shipping-dhl.checkout.fromReady", { day: day(dispatched) })}
+              {t("addon.shipping-kit.checkout.fromReady", { day: day(dispatched) })}
             </div>
           )}
         </div>
@@ -204,15 +204,15 @@ export function DeliveryMethods({
           chip. */}
       {isDemo() && ((rates ?? []).length > 0 || refused !== null) && (
         <div style={{ marginBlockEnd: 10 }}>
-          <Tag tone="warn">{t("addon.shipping-dhl.checkout.simulated")}</Tag>
+          <Tag tone="warn">{t("addon.shipping-kit.checkout.simulated")}</Tag>
         </div>
       )}
 
       <div style={{ display: "flex", flexDirection: "column", gap: 9 }}>
         {(rates ?? []).map((rate) => {
-          const selected = chosen?.addOn === ADD_ON_KEY && chosen.code === rate.code;
+          const selected = chosen?.addOn === kitBrand().addOnKey && chosen.code === rate.code;
           const choice: DeliveryChoice = {
-            addOn: ADD_ON_KEY,
+            addOn: kitBrand().addOnKey,
             code: rate.code,
             // Translated here, because the words for a delivery service belong
             // to whoever sells it — the host renders this string as it stands.
@@ -264,10 +264,10 @@ export function DeliveryMethods({
                   {serviceName(t, rate, timeOfDay)}
                 </span>
                 <Mono style={{ fontSize: 11.5, color: "var(--fg-subtle)", whiteSpace: "normal" }}>
-                  {t("addon.shipping-dhl.rates.arrives", { date: day(rate.estimatedDelivery) })}
+                  {t("addon.shipping-kit.rates.arrives", { date: day(rate.estimatedDelivery) })}
                 </Mono>
               </span>
-              {rate.code === cheapest && <Tag tone="pos">{t("addon.shipping-dhl.rates.cheapest")}</Tag>}
+              {rate.code === cheapest && <Tag tone="pos">{t("addon.shipping-kit.rates.cheapest")}</Tag>}
               <Mono style={{ fontSize: 14, fontWeight: 700 }}>{money(rate.amount, rate.currency)}</Mono>
             </button>
           );
@@ -275,7 +275,7 @@ export function DeliveryMethods({
       </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBlockStart: 12 }}>
-        <NotAffiliated>{t("addon.shipping-dhl.notAffiliated")}</NotAffiliated>
+        <NotAffiliated>{t("addon.shipping-kit.notAffiliated")}</NotAffiliated>
       </div>
     </Panel>
   );

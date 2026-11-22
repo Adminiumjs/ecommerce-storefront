@@ -108,6 +108,7 @@ export class AdminiumDesk implements DeskDoor {
       appKey: APP_KEY,
       origin: this.options.origin ?? window.location.origin,
       request: this.fetchImpl,
+      csrfToken: () => this.cfg.csrfToken,
       installId: this.cfg.installId,
       allowed: new Set(Object.keys(this.cfg.addOns)),
       ...(this.options.importBundle === undefined ? {} : { importBundle: this.options.importBundle }),

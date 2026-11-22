@@ -20,15 +20,34 @@
 import { createElement } from "react";
 
 import type { AddOn } from "../host/index.ts";
-import { strings } from "./i18n/strings.ts";
-import { applySettings, DEFAULT_SETTINGS } from "./settings.ts";
-import { DeliveryMethods } from "./ui/DeliveryMethods.tsx";
-import { DispatchAction } from "./ui/DispatchAction.tsx";
-import { ReturnLabel } from "./ui/ReturnLabel.tsx";
-import { SettingsPanel } from "./ui/SettingsPanel.tsx";
-import { TrackingPanel } from "./ui/TrackingPanel.tsx";
+import {
+  applySettings,
+  configureShippingKit,
+  DEFAULT_SETTINGS,
+  DeliveryMethods,
+  DispatchAction,
+  kitMessages,
+  ReturnLabel,
+  SettingsPanel,
+  TrackingPanel,
+} from "../shipping-kit/index.ts";
+import { DHL_BRAND } from "./brand.ts";
+import { strings as ownStrings, type LocaleTag } from "./i18n/strings.ts";
+
+/**
+ * DHL's own words and the shared screens' copy with its name written in: one
+ * bundle for the host to merge, in all eight locales.
+ */
+export const strings = (() => {
+  const kit = kitMessages(DHL_BRAND.name);
+  const merged = {} as Record<LocaleTag, Record<string, string>>;
+  for (const locale of Object.keys(ownStrings) as LocaleTag[]) merged[locale] = { ...kit[locale], ...ownStrings[locale] };
+  return merged;
+})();
 
 export function register(): AddOn {
+  // The one place the shared screens learn whose name to show.
+  configureShippingKit(DHL_BRAND);
   return {
     key: "shipping-dhl",
     // A product name, not a message key: a translated product name is a
@@ -186,9 +205,6 @@ export function register(): AddOn {
   };
 }
 
-/** The strings the host merges into its own bundle before rendering any fill. */
-export { strings } from "./i18n/strings.ts";
-
 /**
  * Settings and the connected-mode seam — the client's whole public surface.
  *
@@ -198,5 +214,10 @@ export { strings } from "./i18n/strings.ts";
  * browser. The real transport belongs to the server half and lives behind
  * `src/server.ts`; `sources.test.ts` walks the import graph to keep it there.
  */
-export { applySettings, DEFAULT_SETTINGS, type PublicSettings } from "./settings.ts";
-export { useConnectedCarrier } from "./runtime.ts";
+export {
+  applySettings,
+  connectEngineCarrier,
+  DEFAULT_SETTINGS,
+  useConnectedCarrier,
+  type PublicSettings,
+} from "../shipping-kit/index.ts";

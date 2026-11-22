@@ -1,7 +1,7 @@
 /*
- * VENDORED from add-ons/packages/shipping-dhl/src/ui/DispatchAction.tsx — synced by scripts/sync-add-ons.sh.
+ * VENDORED from add-ons/packages/shipping-kit/src/ui/DispatchAction.tsx — synced by scripts/sync-add-ons.sh.
  * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
- * The add-on key is `shipping-dhl`; its manifest, tests and README live in the monorepo.
+ * The screens every carrier shares; its tests live in the monorepo.
  */
 /**
  * `order.dispatch.actions` — the works books a collection.
@@ -38,7 +38,7 @@ import { CarrierError, type Address, type FileRef, type Shipment, type TrackEven
 import type { DispatchPayload } from "../../host/index.ts";
 import { parseNumber, useFormat, useT } from "../i18n/t.ts";
 import { parcelFor, type ParcelEstimate } from "../parcel.ts";
-import { ADD_ON_KEY } from "../add-on-key.ts";
+import { kitBrand } from "../brand.ts";
 import { cheapestCode, COLLECTION_WINDOW, preselectedCode, type QuotedRate } from "../rates.ts";
 import { carrier, carrierState, findShipment, isDemo, labels, rememberRoute, setHostClock, setHostCurrency } from "../runtime.ts";
 import {
@@ -160,7 +160,7 @@ export function UnresolvedDestination({
         />
         <div style={{ minInlineSize: 0 }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: "var(--fg)" }}>
-            {t("addon.shipping-dhl.dest.unknownTitle")}
+            {t("addon.shipping-kit.dest.unknownTitle")}
           </div>
           <div
             style={{
@@ -170,15 +170,15 @@ export function UnresolvedDestination({
               marginBlockStart: 3,
             }}
           >
-            {t("addon.shipping-dhl.dest.unknownBody", { customer })}
+            {t("addon.shipping-kit.dest.unknownBody", { customer })}
           </div>
         </div>
       </div>
 
-      <Field label={t("addon.shipping-dhl.dest.name")}>
+      <Field label={t("addon.shipping-kit.dest.name")}>
         <input value={to.name} onChange={(e) => onChange({ ...to, name: e.target.value })} style={inputStyle} />
       </Field>
-      <Field label={t("addon.shipping-dhl.dest.street")}>
+      <Field label={t("addon.shipping-kit.dest.street")}>
         <input
           value={to.lines.join(", ")}
           onChange={(e) => onChange({ ...to, lines: e.target.value.split(",").map((l) => l.trim()) })}
@@ -186,17 +186,17 @@ export function UnresolvedDestination({
         />
       </Field>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))", gap: 12 }}>
-        <Field label={t("addon.shipping-dhl.dest.city")}>
+        <Field label={t("addon.shipping-kit.dest.city")}>
           <input value={to.city} onChange={(e) => onChange({ ...to, city: e.target.value })} style={inputStyle} />
         </Field>
-        <Field label={t("addon.shipping-dhl.error.postcode")}>
+        <Field label={t("addon.shipping-kit.error.postcode")}>
           <input
             value={to.postcode}
             onChange={(e) => onChange({ ...to, postcode: e.target.value })}
             style={monoInputStyle}
           />
         </Field>
-        <Field label={t("addon.shipping-dhl.error.country")}>
+        <Field label={t("addon.shipping-kit.error.country")}>
           <input value={to.country} onChange={(e) => onChange({ ...to, country: e.target.value })} style={inputStyle} />
         </Field>
       </div>
@@ -359,7 +359,7 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
       )) as QuotedRate[];
       setRates(quoted);
       // The service the shopper chose at checkout, kept on the order, comes first.
-      setSelected(preselectedCode(quoted, chosen, ADD_ON_KEY));
+      setSelected(preselectedCode(quoted, chosen, kitBrand().addOnKey));
     } catch (err) {
       // A refusal is DATA. It renders; it does not go to the console and leave
       // the works watching a spinner.
@@ -404,7 +404,7 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
     return (
       <Button variant="ghost" onClick={() => setOpen(true)} style={{ fontSize: 12.5, padding: "9px 14px" }}>
         <Truck size={15} aria-hidden="true" />
-        {t("addon.shipping-dhl.action.book")}
+        {t("addon.shipping-kit.action.book")}
       </Button>
     );
   }
@@ -437,19 +437,19 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
       {/* The line that makes the plural obvious: one carrier is a choice the
           shop made, not the way the app works. */}
       <p style={{ margin: 0, fontSize: 13, color: "var(--fg-muted)" }}>
-        {t("addon.shipping-dhl.onlyCarrier")} {t("addon.shipping-dhl.connectAnother")}
+        {t("addon.shipping-kit.onlyCarrier")} {t("addon.shipping-kit.connectAnother")}
       </p>
 
       <Panel>
-        <PanelTitle>{t("addon.shipping-dhl.parcel.title")}</PanelTitle>
+        <PanelTitle>{t("addon.shipping-kit.parcel.title")}</PanelTitle>
         <div style={{ fontSize: 12.5, color: "var(--fg-subtle)", marginBlock: "4px 14px" }}>
-          {t("addon.shipping-dhl.parcel.sub")}
+          {t("addon.shipping-kit.parcel.sub")}
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: 13 }}>
           <Field
-            label={t("addon.shipping-dhl.parcel.contents")}
-            hint={t("addon.shipping-dhl.parcel.contentsFrom", {
+            label={t("addon.shipping-kit.parcel.contents")}
+            hint={t("addon.shipping-kit.parcel.contentsFrom", {
               ref: order.ref,
               quantity: estimate.from.quantity,
             })}
@@ -463,7 +463,7 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(190px, 1fr))", gap: 12 }}>
             <Field
-              label={t("addon.shipping-dhl.parcel.weight")}
+              label={t("addon.shipping-kit.parcel.weight")}
               /*
                * WHERE THE NUMBER CAME FROM, and when it came from nowhere.
                *
@@ -475,19 +475,19 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
                */
               hint={
                 estimate.from.weighed
-                  ? t("addon.shipping-dhl.parcel.weightShop", { kg: estimate.weightKg, ref: order.ref })
+                  ? t("addon.shipping-kit.parcel.weightShop", { kg: estimate.weightKg, ref: order.ref })
                   : estimate.from.assumed.length > 0
-                  ? t("addon.shipping-dhl.parcel.weightAssumed", {
+                  ? t("addon.shipping-kit.parcel.weightAssumed", {
                       kg: estimate.weightKg,
                       what: estimate.from.assumed.join(", "),
                     })
                   : estimate.from.lines > 1
-                    ? t("addon.shipping-dhl.parcel.weightFromMany", {
+                    ? t("addon.shipping-kit.parcel.weightFromMany", {
                         kg: estimate.weightKg,
                         quantity: estimate.from.quantity,
                         grams: estimate.from.goodsGrams,
                       })
-                    : t("addon.shipping-dhl.parcel.weightFrom", {
+                    : t("addon.shipping-kit.parcel.weightFrom", {
                         kg: estimate.weightKg,
                         quantity: estimate.from.quantity,
                         each: estimate.from.unitGrams,
@@ -506,11 +506,11 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
             </Field>
 
             <Field
-              label={t("addon.shipping-dhl.parcel.dims")}
+              label={t("addon.shipping-kit.parcel.dims")}
               hint={t(
                 estimate.from.rolled
-                  ? "addon.shipping-dhl.parcel.dimsFromTube"
-                  : "addon.shipping-dhl.parcel.dimsFrom",
+                  ? "addon.shipping-kit.parcel.dimsFromTube"
+                  : "addon.shipping-kit.parcel.dimsFrom",
               )}
             >
               <span style={{ display: "flex", alignItems: "center", ...inputStyle, padding: 0 }}>
@@ -526,7 +526,7 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
 
           <div>
             <div style={{ fontSize: 12, fontWeight: 700, color: "var(--fg-muted)", marginBlockEnd: 6 }}>
-              {t("addon.shipping-dhl.parcel.goingTo")}
+              {t("addon.shipping-kit.parcel.goingTo")}
             </div>
             {unresolved ? (
               <UnresolvedDestination customer={destination.customer} to={to} onChange={setTo} />
@@ -573,7 +573,7 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
             }}
           >
             <CircleX size={18} aria-hidden="true" style={{ color: "var(--danger)" }} />
-            <PanelTitle tone="danger">{t("addon.shipping-dhl.error.title")}</PanelTitle>
+            <PanelTitle tone="danger">{t("addon.shipping-kit.error.title")}</PanelTitle>
             {/* Simulated results are labelled — and a refusal is a result like
                 any other, and this one was written by the demo carrier: no real
                 carrier ever saw this address. The rates card that carried the
@@ -581,7 +581,7 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
                 say it itself. */}
             {isDemo() && (
               <span style={{ marginInlineStart: "auto" }}>
-                <Tag tone="warn">{t("addon.shipping-dhl.error.simulated")}</Tag>
+                <Tag tone="warn">{t("addon.shipping-kit.error.simulated")}</Tag>
               </span>
             )}
           </div>
@@ -606,11 +606,11 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
 
           <div style={{ display: "flex", flexDirection: "column", gap: 7, marginBlockEnd: 14 }}>
             {[
-              t("addon.shipping-dhl.error.remedy1", {
+              t("addon.shipping-kit.error.remedy1", {
                 country: to.country,
                 example: POSTCODE_HINT[to.country] ?? "—",
               }),
-              t("addon.shipping-dhl.error.remedy2"),
+              t("addon.shipping-kit.error.remedy2"),
             ].map((remedy) => (
               <div key={remedy} style={{ display: "flex", gap: 9, alignItems: "flex-start" }}>
                 <CornerDownRight
@@ -631,14 +631,14 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
               marginBlockEnd: 14,
             }}
           >
-            <Field label={t("addon.shipping-dhl.error.postcode")}>
+            <Field label={t("addon.shipping-kit.error.postcode")}>
               <input
                 value={to.postcode}
                 onChange={(e) => setTo({ ...to, postcode: e.target.value })}
                 style={{ ...monoInputStyle, borderColor: "var(--danger)" }}
               />
             </Field>
-            <Field label={t("addon.shipping-dhl.error.country")}>
+            <Field label={t("addon.shipping-kit.error.country")}>
               <input
                 value={to.country}
                 onChange={(e) => setTo({ ...to, country: e.target.value })}
@@ -653,7 +653,7 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
             disabled={busy || !addressIsUsable(to)}
           >
             <RefreshCw size={15} aria-hidden="true" />
-            {t("addon.shipping-dhl.error.retry")}
+            {t("addon.shipping-kit.error.retry")}
           </Button>
         </Panel>
       )}
@@ -661,7 +661,7 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
       {rates !== null && booked === null && (
         <Panel>
           <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10 }}>
-            <PanelTitle>{t("addon.shipping-dhl.rates.title")}</PanelTitle>
+            <PanelTitle>{t("addon.shipping-kit.rates.title")}</PanelTitle>
             {/* Simulated results are labelled — the services, the prices and
                 the delivery dates below are all simulated, so the panel that
                 shows them says so. The chip on the booked result is not
@@ -669,7 +669,7 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
                 before that panel ever renders. */}
             {isDemo() && (
               <span style={{ marginInlineStart: "auto" }}>
-                <Tag tone="warn">{t("addon.shipping-dhl.rates.simulated")}</Tag>
+                <Tag tone="warn">{t("addon.shipping-kit.rates.simulated")}</Tag>
               </span>
             )}
           </div>
@@ -719,11 +719,11 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
                       {serviceName(t, rate, timeOfDay)}
                     </span>
                     <Mono style={{ fontSize: 11.5, color: "var(--fg-subtle)", whiteSpace: "normal" }}>
-                      {t("addon.shipping-dhl.rates.arrives", { date: day(rate.estimatedDelivery) })}
+                      {t("addon.shipping-kit.rates.arrives", { date: day(rate.estimatedDelivery) })}
                     </Mono>
                   </span>
                   {rate.code === cheapest && (
-                    <Tag tone="pos">{t("addon.shipping-dhl.rates.cheapest")}</Tag>
+                    <Tag tone="pos">{t("addon.shipping-kit.rates.cheapest")}</Tag>
                   )}
                   <Mono style={{ fontSize: 14, fontWeight: 700 }}>
                     {money(rate.amount, rate.currency)}
@@ -743,12 +743,12 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
             }}
           >
             <Button onClick={() => void book()} disabled={busy}>
-              {t("addon.shipping-dhl.rates.book")}
+              {t("addon.shipping-kit.rates.book")}
             </Button>
             <span style={{ fontSize: 12.5, color: "var(--fg-muted)" }}>
               {madeTheVan
-                ? t("addon.shipping-dhl.rates.cutoffLine", { cutoff: cutoffText, now: clock })
-                : t("addon.shipping-dhl.rates.cutoffMissed", {
+                ? t("addon.shipping-kit.rates.cutoffLine", { cutoff: cutoffText, now: clock })
+                : t("addon.shipping-kit.rates.cutoffMissed", {
                     cutoff: cutoffText,
                     now: clock,
                     day: vanDay,
@@ -771,12 +771,12 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
               }}
             >
               <PackageCheck size={19} aria-hidden="true" style={{ color: "var(--pos)" }} />
-              <PanelTitle tone="pos">{t("addon.shipping-dhl.booked.title")}</PanelTitle>
+              <PanelTitle tone="pos">{t("addon.shipping-kit.booked.title")}</PanelTitle>
               {/* Simulated results are labelled — wherever a real shipment
                   would have been created, the screen says one was not. */}
               {isDemo() && (
                 <span style={{ marginInlineStart: "auto" }}>
-                  <Tag tone="warn">{t("addon.shipping-dhl.demoChip")}</Tag>
+                  <Tag tone="warn">{t("addon.shipping-kit.demoChip")}</Tag>
                 </span>
               )}
             </div>
@@ -792,22 +792,24 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
                 <div>
                   <div style={{ fontSize: 11.5, color: "var(--fg-subtle)", marginBlockEnd: 3 }}>
-                    {t("addon.shipping-dhl.booked.tracking")}
+                    {t("addon.shipping-kit.booked.tracking")}
                   </div>
                   <Code style={{ fontSize: 19, fontWeight: 700 }}>{booked.shipment.tracking}</Code>
                 </div>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 18 }}>
-                  <div>
-                    <div style={{ fontSize: 11.5, color: "var(--fg-subtle)", marginBlockEnd: 3 }}>
-                      {t("addon.shipping-dhl.booked.window")}
+                  {booked.shipment.collectionFrom !== undefined && (
+                    <div>
+                      <div style={{ fontSize: 11.5, color: "var(--fg-subtle)", marginBlockEnd: 3 }}>
+                        {t("addon.shipping-kit.booked.window")}
+                      </div>
+                      <Mono style={{ fontSize: 12.5, fontWeight: 600 }}>
+                        {`${day(booked.shipment.collectionFrom.slice(0, 10))} ${clockOf(COLLECTION_WINDOW.from)}–${clockOf(COLLECTION_WINDOW.to)}`}
+                      </Mono>
                     </div>
-                    <Mono style={{ fontSize: 12.5, fontWeight: 600 }}>
-                      {`${day(booked.shipment.collectionFrom.slice(0, 10))} ${clockOf(COLLECTION_WINDOW.from)}–${clockOf(COLLECTION_WINDOW.to)}`}
-                    </Mono>
-                  </div>
+                  )}
                   <div>
                     <div style={{ fontSize: 11.5, color: "var(--fg-subtle)", marginBlockEnd: 3 }}>
-                      {t("addon.shipping-dhl.booked.service")}
+                      {t("addon.shipping-kit.booked.service")}
                     </div>
                     <span style={{ fontSize: 13, fontWeight: 700 }}>
                       {serviceName(t, booked.shipment.rate, timeOfDay)}
@@ -865,7 +867,7 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
                     style={{ flex: 1, fontSize: 12.5, padding: 8 }}
                   >
                     <Download size={14} aria-hidden="true" />
-                    {t("addon.shipping-dhl.label.download")}
+                    {t("addon.shipping-kit.label.download")}
                   </Button>
                   <Button
                     variant="ghost"
@@ -883,7 +885,7 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
                     style={{ flex: 1, fontSize: 12.5, padding: 8 }}
                   >
                     <Printer size={14} aria-hidden="true" />
-                    {t("addon.shipping-dhl.label.print")}
+                    {t("addon.shipping-kit.label.print")}
                   </Button>
                 </div>
               </div>
@@ -892,7 +894,7 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
 
           <Panel>
             <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10 }}>
-              <PanelTitle>{t("addon.shipping-dhl.tracking.title")}</PanelTitle>
+              <PanelTitle>{t("addon.shipping-kit.tracking.title")}</PanelTitle>
               {/* Simulated results are labelled — scans with places and times
                   read as a parcel that moved. These were seeded from the pinned
                   clock, and the chip on the card above does not reach this one:
@@ -900,7 +902,7 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
                   screenshots it on its own. */}
               {isDemo() && (
                 <span style={{ marginInlineStart: "auto" }}>
-                  <Tag tone="warn">{t("addon.shipping-dhl.tracking.simulated")}</Tag>
+                  <Tag tone="warn">{t("addon.shipping-kit.tracking.simulated")}</Tag>
                 </span>
               )}
             </div>
@@ -954,19 +956,19 @@ export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload
             style={{ alignSelf: "flex-start" }}
           >
             <Search size={15} aria-hidden="true" />
-            {t("addon.shipping-dhl.rates.get")}
+            {t("addon.shipping-kit.rates.get")}
           </Button>
           {!addressIsUsable(to) && (
             <span style={{ fontSize: 12.5, color: "var(--fg-muted)" }}>
-              {t("addon.shipping-dhl.dest.needAddress")}
+              {t("addon.shipping-kit.dest.needAddress")}
             </span>
           )}
-          {/* Said BEFORE the rates, not only on them: the works knows nothing will reach DHL before it quotes. */}
+          {/* Said BEFORE the rates, not only on them: the works knows nothing will reach the carrier before it quotes. */}
           {isDemo() && <DemoNotice />}
         </div>
       )}
 
-      <NotAffiliated>{t("addon.shipping-dhl.notAffiliated")}</NotAffiliated>
+      <NotAffiliated>{t("addon.shipping-kit.notAffiliated")}</NotAffiliated>
     </div>
   );
 }

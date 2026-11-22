@@ -1,3 +1,8 @@
+/*
+ * VENDORED from add-ons/packages/host/src/contracts/index.ts — synced by scripts/sync-add-ons.sh.
+ * Never hand-edit this copy: edit the monorepo and re-run `sync-add-ons.sh sync`.
+ * The shared contract; the vendored add-on imports it by relative path.
+ */
 /**
  * The contract mirror, in one entry point.
  *
@@ -56,15 +61,51 @@ export type {
   ZoneFinish,
   ZoneKind,
 } from './product-personalizer.ts';
-export { CarrierError } from './shipping-carrier.ts';
+export {
+  BOOK_OUTCOME_UNKNOWN,
+  CANCEL_STATES,
+  CARRIER_OUTCOMES,
+  CARRIER_REFUSALS,
+  CUSTOMS_CONTENTS,
+  CarrierError,
+  HANDOVER_KINDS,
+  LABEL_SIZES,
+  SHIPMENT_DOCUMENT_KINDS,
+  SHIPMENT_PURPOSES,
+  SHIPPING_CARRIER_FACTORY,
+  classifyBookFailure,
+} from './shipping-carrier.ts';
 export type {
   Address,
+  BookFailure,
+  BookingDetails,
+  CancelResult,
+  CancelState,
+  CarrierCredentialCheck,
+  CarrierOutcome,
+  CarrierRefusal,
+  CredentialCheckQuery,
+  CustomsContents,
+  CustomsDeclaration,
+  CustomsItem,
+  HandoverKind,
+  LabelSize,
   OrderRef,
   Parcel,
+  QuoteOptions,
   Rate,
+  RecoveryResult,
   Shipment,
+  ShipmentDocument,
+  ShipmentDocumentFile,
+  ShipmentDocumentKind,
+  ShipmentPurpose,
   ShippingCarrier,
+  ShippingCarrierContext,
+  ShippingHttpClient,
+  ShippingHttpResponse,
   TrackEvent,
+  TrackOptions,
 } from './shipping-carrier.ts';
 export {
   CHECKOUT_STATUSES,
