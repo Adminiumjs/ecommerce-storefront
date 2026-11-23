@@ -159,7 +159,7 @@ export const ROLES = [
     limits: {
       orders: {
         readable: PACKER_ORDER_READS,
-        writable: ["status", "carrier", "tracking", "new_number_at", "staff_note"],
+        writable: ["status", "carrier", "tracking", "staff_note"],
         writableValues: { status: ["packed", "shipped", "paid"] },
         writableFrom: { status: ["paid", "packed"] },
       },

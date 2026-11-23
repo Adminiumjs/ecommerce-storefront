@@ -18,7 +18,7 @@ import type { NeedsAttentionListProps, OpenParcelsRefreshProps } from "../add-on
 import { useT, type MessageKey } from "../i18n/index.tsx";
 import type { ShipFromValues, ShippingStatus } from "./door.ts";
 import { useData, useEnv, useRun } from "./env.tsx";
-import { DHL, orderMoves, status } from "./facts.ts";
+import { DHL, isOwner, orderMoves, status } from "./facts.ts";
 import { go } from "./store.ts";
 import { Card, Chip, Fig } from "./ui.tsx";
 import { text, type Row } from "./wire.ts";
@@ -103,7 +103,9 @@ export function ShipmentCard({ order }: { order: Row }) {
   const number = text(order["number"]) ?? "";
   const real = bookings.find((b) => !b.test && b.state === "booked" && b.tracking !== null);
   const mayHandOver = real !== undefined && orderMoves(order, door.who()).shipped;
-  const newNumber = real !== undefined && real.track?.newNumber === true && s === "shipped" && shown !== null && shown !== real.tracking && door.who().can("orders", "update");
+  const newNumber = real !== undefined && real.track?.newNumber === true && s === "shipped" && shown !== null && shown !== real.tracking;
+  // A shipped order is the owner's to change: Adminium refuses the packer's write, so they see the note and no button.
+  const mayTell = newNumber && isOwner(door.who()) && door.who().can("orders", "update");
   const paidLabelWarning = real !== undefined && (s === "paid" || s === "packed");
   return (
     <Card id="od-shipment" title={t("desk.shipment.title")} icon={<Truck size={18} />}>
@@ -156,20 +158,22 @@ export function ShipmentCard({ order }: { order: Row }) {
           <div className="dk-banner dk-banner--warn" role="note">
             {t("desk.shipment.newNumberNote", { tracking: real.tracking ?? "", old: shown ?? "" })}
           </div>
-          <button
-            type="button"
-            className="dk-btn"
-            disabled={busy}
-            onClick={() =>
-              void run(async (d) => {
-                await d.saveOrder(order, { tracking: real.tracking, new_number_at: new Date(door.now()).toISOString() });
-                return t("desk.shipment.newNumberToast");
-              })
-            }
-          >
-            <Send size={16} aria-hidden="true" />
-            {t("desk.shipment.newNumber")}
-          </button>
+          {mayTell && (
+            <button
+              type="button"
+              className="dk-btn"
+              disabled={busy}
+              onClick={() =>
+                void run(async (d) => {
+                  await d.saveOrder(order, { tracking: real.tracking, new_number_at: new Date(door.now()).toISOString() });
+                  return t("desk.shipment.newNumberToast");
+                })
+              }
+            >
+              <Send size={16} aria-hidden="true" />
+              {t("desk.shipment.newNumber")}
+            </button>
+          )}
         </>
       )}
     </Card>

@@ -13353,7 +13353,6 @@
             "status",
             "carrier",
             "tracking",
-            "new_number_at",
             "staff_note"
           ],
           "writableValues": {
