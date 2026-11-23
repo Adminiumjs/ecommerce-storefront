@@ -20,8 +20,9 @@ import { ArrowLeft, Ban, Check, CircleAlert, Gift, Info, Mail, PackageCheck, Tru
 
 import { useData, useEnv, useRun } from "../env.tsx";
 import type { PaymentPanel } from "../door.ts";
-import { codesOf, customerOf, DHL, filterOrders, giftLinesOf, isGift, isOwner, keptPayments, linesOf, messagesOf, orderMoves, paymentsOf, providerName, refundsOf, shipsByOf, showsMoney, status } from "../facts.ts";
+import { codesOf, customerOf, filterOrders, giftLinesOf, isGift, isOwner, keptPayments, linesOf, messagesOf, orderMoves, paymentsOf, providerName, refundsOf, shipsByOf, showsMoney, status } from "../facts.ts";
 import { useFmt } from "../format.ts";
+import { hasCarrier, ShipmentCard, ShipmentsCard } from "../shipping.tsx";
 import { go, NO_FILTER, openSheet, useDesk } from "../store.ts";
 import { Card, Chip, Fig, Latin } from "../ui.tsx";
 import { orderStatusWord, payWord, serviceWord, wayWord } from "../words.ts";
@@ -55,6 +56,7 @@ export function OrdersScreen() {
         <h1 className="dk-h1">{t("desk.orders.title")}</h1>
         <span className="dk-sub">{filtered ? t("desk.orders.countOf", { shown: rows.length, all: data.orders.length }) : t("desk.orders.count", undefined, data.orders.length)}</span>
       </div>
+      <ShipmentsCard />
       <div className="dk-filters">
         <div className="dk-field dk-field--filter">
           <label htmlFor="of-status">{t("desk.orders.fStatus")}</label>
@@ -212,7 +214,7 @@ export function OrderScreen() {
   const lines = linesOf(data, order);
   const gifts = giftLinesOf(data, order);
   const s = status(order);
-  const dhl = door.facts().addOns.includes(DHL);
+  const carrierOn = hasCarrier(door.facts().addOns);
   const confirmation = messagesOf(data, order).filter((m) => text(m["kind"]) === "order-paid" && text(m["status"]) !== "queued").at(-1);
   const kept = keptPayments(data, order);
   // Refund reads the panel's `mayRefund` (ACC-15), never the role's name; money a gift card or a transfer holds is the refund row's to give back.
@@ -289,10 +291,10 @@ export function OrderScreen() {
               {t("desk.move.shipped")}
             </button>
           )}
-          {moves.shipped && dhl && (
+          {moves.shipped && carrierOn && (
             <button type="button" className="dk-btn" disabled={busy} onClick={() => openSheet({ kind: "dispatch", orderIds: [order.id], at: 0 })}>
               <Truck size={16} aria-hidden="true" />
-              {t("desk.move.dhl")}
+              {t("desk.move.label")}
             </button>
           )}
           {moves.markPaid && (
@@ -418,6 +420,7 @@ export function OrderScreen() {
               )}
             </Card>
           )}
+          <ShipmentCard order={order} />
           <Card id="od-cust" title={t("desk.order.customer")}>
             <div className="dk-stack">
               {customerOf(data, order) !== undefined ? (
@@ -582,6 +585,7 @@ const EMAIL_WORDS: Record<string, MessageKey> = {
   "order-transfer": "desk.mail.orderTransfer",
   "order-paid": "desk.mail.orderPaid",
   "order-shipped": "desk.mail.orderShipped",
+  "order-new-number": "desk.mail.orderNewNumber",
   "order-cancelled": "desk.mail.orderCancelled",
   "order-cancelled-unpaid": "desk.mail.orderCancelled",
   "order-refunded": "desk.mail.orderRefunded",

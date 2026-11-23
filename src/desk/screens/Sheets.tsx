@@ -10,8 +10,9 @@ import { Truck } from "lucide-react";
 
 import { useData, useEnv, useRun } from "../env.tsx";
 import type { DeskData } from "../door.ts";
-import { isGift, keptPayments, linesOf, returnLinesOf, splitRefund, status } from "../facts.ts";
+import { DHL, isGift, keptPayments, linesOf, returnLinesOf, splitRefund, status } from "../facts.ts";
 import { useFmt } from "../format.ts";
+import { activeCarrier, useShippingAccess } from "../shipping.tsx";
 import { closeSheet, openSheet, useDesk, type Overlay } from "../store.ts";
 import { dayIn } from "../time.ts";
 import { Chip, Fig, FieldError, Sheet } from "../ui.tsx";
@@ -531,32 +532,31 @@ function HideSheet({ reviewId }: { reviewId: Id }) {
   );
 }
 
-/** "Hand over to DHL": each order's DHL panel in turn (ADD-4). A real booking ships the order; a demo one only shows its number. */
+/** The shipping label: each order's carrier panel in turn (ADD-4). A label moves no order; a demo booking only shows its number. */
 function DispatchSheet({ overlay }: { overlay: Extract<Overlay, { kind: "dispatch" }> }) {
   const t = useT();
   const data = useData();
-  const { busy, run } = useRun();
+  const { busy } = useRun();
   const [demo, setDemo] = useState<string | null>(null);
+  const { door } = useEnv();
+  const access = useShippingAccess();
+  // The demo chip is for the demo carrier: a shop on a real carrier never sees it.
+  const showsDemo = activeCarrier(door.facts().addOns, access) === DHL && (access === null || access.mode === null);
   const id = overlay.orderIds[overlay.at];
   const order = id === undefined ? undefined : orderIn(data, id);
   if (order === undefined) return null;
   const number = text(order["number"]) ?? "";
   const last = overlay.at >= overlay.orderIds.length - 1;
   const onBooked = (booking: { tracking: string; service: string; demo: boolean }) => {
-    if (booking.demo) {
-      setDemo(booking.tracking);
-      return;
-    }
-    if (status(order) !== "packed") return;
-    void run(async (d) => (await d.moveOrder(order, "shipped", { carrier: "DHL", tracking: booking.tracking }), t("desk.toast.shipped", { number })));
+    if (booking.demo) setDemo(booking.tracking);
   };
   return (
     <Sheet labelledBy="dhl-h" wide>
       <div className="dk-title-row">
         <h2 id="dhl-h" className="dk-sheet-title">
-          <Truck size={18} aria-hidden="true" /> {t("desk.dhl.title")}
+          <Truck size={18} aria-hidden="true" /> {t(showsDemo ? "desk.dhl.title" : "desk.move.label")}
         </h2>
-        <Chip tone="warn">{t("desk.dhl.demoCarrier")}</Chip>
+        {showsDemo && <Chip tone="warn">{t("desk.dhl.demoCarrier")}</Chip>}
         <span className="dk-push dk-muted">
           <Fig>{t("desk.dhl.step", { at: overlay.at + 1, of: overlay.orderIds.length })}</Fig>
         </span>

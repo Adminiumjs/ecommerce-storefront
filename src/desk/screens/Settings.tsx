@@ -19,6 +19,7 @@ import { Check, ExternalLink, FileText, Hash, Info, Landmark, Percent, Store, Tr
 import { useData, useEnv, useRun } from "../env.tsx";
 import { INVENTORY } from "../facts.ts";
 import { useFmt } from "../format.ts";
+import { ShipFromCard } from "../shipping.tsx";
 import { Card, Fig, FieldError, Switch } from "../ui.tsx";
 import { num, same, text, type Row } from "../wire.ts";
 import { useT, type MessageKey } from "../../i18n/index.tsx";
@@ -224,6 +225,8 @@ export function SettingsScreen() {
           {consoleLink(CONSOLE.page("ecommerce-shipping-prices"), "desk.set.managePrices")}
         </div>
       </Card>
+
+      <ShipFromCard settings={settings} />
 
       <Card id="set-tax" title={t("desk.set.tax")} icon={<Percent size={18} />}>
         <div className="dk-rows">

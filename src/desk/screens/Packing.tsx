@@ -22,6 +22,7 @@ import { serviceWord } from "../words.ts";
 import { num, text, type Row } from "../wire.ts";
 import { useT } from "../../i18n/index.tsx";
 import { dhlCutoff } from "./Today.tsx";
+import { hasCarrier } from "../shipping.tsx";
 
 /** At most this many slips in one print job. */
 export const SLIPS_A_RUN = 50;
@@ -38,6 +39,7 @@ export function PackingScreen() {
   const picks = pickList(data);
   const pieces = picks.reduce((n, p) => n + p.qty, 0);
   const dhlOn = facts.addOns.includes(DHL);
+  const carrierOn = hasCarrier(facts.addOns);
   const cutoff = dhlOn ? dhlCutoff(facts.addOnSettings[DHL]) : null;
   const slips = facts.addOns.includes(INVOICES);
   const mayUpdate = who.can("orders", "update");
@@ -242,7 +244,7 @@ export function PackingScreen() {
                   <Truck size={16} aria-hidden="true" />
                   {t("desk.packing.markShipped")}
                 </button>
-                {dhlOn && (
+                {carrierOn && (
                   <>
                     <span className="dk-muted">{t("desk.packing.handNote", undefined, done.length)}</span>
                     <button type="button" className="dk-btn" disabled={busy} onClick={() => openSheet({ kind: "dispatch", orderIds: done.map((o) => o.id), at: 0 })}>

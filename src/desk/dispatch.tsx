@@ -1,18 +1,16 @@
 /**
- * DHL's own dispatch flow on the desk: its `order.dispatch.actions` fill (the
- * parcel, its rates, booking the collection, the label), handed the order as
- * the shop keeps it and the service the customer chose, so it opens with
- * that service picked (the service's `dhl_product`).
+ * The carrier's dispatch flow on the desk: its `order.dispatch.actions` fill
+ * (the parcel, its rates, buying the label), handed the order as the shop
+ * keeps it, which row it is, and what the customer was promised.
  *
  * WHERE IT COMES FROM is the door's (`DeskDoor.addOnRegistry`): the add-on's
  * client half as Adminium serves it for this app (`add-ons/connected.ts`).
- * Nothing of it loads without DHL attached: the registry is asked for the
- * first time a screen needs it.
+ * Nothing of it loads without a carrier attached: the registry is asked for
+ * the first time a screen needs it. Only the shop's active carrier draws.
  *
- * THE BOOKING COMES BACK (CR-DHL-2, `onBooked`). A real number is kept with
- * the order's Shipped move, in one write. A demo booking (this round's only
- * kind, C4) belongs to no parcel: it is shown, marked as the demo, and never
- * stored or mailed; the order stays Packed until someone types the real one.
+ * A REAL LABEL MOVES NOTHING. Adminium records it, and the order moves when
+ * staff press "Handed over" on its Shipment card. `onBooked` is the demo's
+ * alone: its booking belongs to no parcel, and is shown and never stored.
  */
 import { useEffect, useState } from "react";
 
@@ -22,6 +20,7 @@ import type { DispatchBooking } from "../add-ons/vendor/host/payloads.ts";
 import type { DeskData, DeskDoor } from "./door.ts";
 import { useData, useEnv } from "./env.tsx";
 import { DHL, linesOf, serviceOf } from "./facts.ts";
+import { activeCarrier, hasCarrier, useShippingAccess } from "./shipping.tsx";
 import { dayIn } from "./time.ts";
 import { num, text, type Row } from "./wire.ts";
 
@@ -43,8 +42,13 @@ export function outboundOrder(data: DeskData, order: Row, currency: string): Out
   const weight = num(order["weight_g"]);
   const line1 = text(order["address_line1"]);
   const promised = text(order["ships_by"]);
+  const service = serviceOf(data, order);
+  const promiseLabel = text(service?.["label"]) ?? text(order["service_label"]);
+  const maxDays = num(service?.["transit_max"]);
   return {
     ref: text(order["number"]) ?? String(order.id),
+    source: { table: "orders", id: String(order.id) },
+    ...(promiseLabel === null ? {} : { deliveryPromise: { label: promiseLabel, ...(maxDays === null ? {} : { maxDays }) } }),
     recipient: { name: text(order["ship_name"]) ?? text(order["name"]) ?? "", key: String(order["customer_id"] ?? order.id) },
     items: linesOf(data, order).map((line) => {
       const grams = num(line["weight_g"]);
@@ -65,7 +69,7 @@ export function outboundOrder(data: DeskData, order: Row, currency: string): Out
             lines: [line1, text(order["address_line2"])].filter((l): l is string => l !== null),
             city: text(order["city"]) ?? "",
             postcode: text(order["zip"]) ?? "",
-            country: "US",
+            country: text(order["ship_country"]) ?? "US",
             ...(text(order["state_code"]) === null ? {} : { region: text(order["state_code"])! }),
           } as OutboundOrder["origin"],
         }),
@@ -107,15 +111,17 @@ export function useRegistry(wanted: boolean): AddOnRegistry | null {
   return wanted ? registry : null;
 }
 
-/** DHL's dispatch flow for one order; `fallback` while it loads, or when nothing fills the slot. */
+/** The active carrier's dispatch flow for one order; `fallback` while it loads, or when nothing fills the slot. */
 export function DispatchFill({ order, onBooked, fallback }: { order: Row; onBooked: (b: DispatchBooking) => void; fallback: React.ReactNode }) {
   const data = useData();
   const { door } = useEnv();
   const facts = door.facts();
-  const on = facts.addOns.includes(DHL);
+  const on = hasCarrier(facts.addOns);
+  const access = useShippingAccess();
   const registry = useRegistry(on);
   if (!on || registry === null) return <>{fallback}</>;
-  const fills = registry.fillsFor("order.dispatch.actions", new Set(facts.addOns));
+  const active = activeCarrier(facts.addOns, access);
+  const fills = registry.fillsFor("order.dispatch.actions", new Set(facts.addOns)).filter((entry) => entry.addOn === active);
   if (fills.length === 0) return <>{fallback}</>;
   const payload = dispatchPayload(data, order, { currency: facts.currency, zone: facts.zone, now: door.now(), onBooked });
   return (

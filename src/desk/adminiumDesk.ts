@@ -18,6 +18,9 @@
  * wall time with no zone, and 0 or 1); every row is read back here as the
  * screens expect it, an ISO instant and a boolean.
  */
+import { createEngineCarrier, type EngineCarrier } from "../add-ons/vendor/host/engine-carrier.ts";
+import { engineSend } from "../add-ons/connected.ts";
+import type { ShipFromValues, ShippingStatus } from "./door.ts";
 import { withInstall, type StaffConfig } from "./transport/staffConnection.ts";
 import { SessionPortError, type SessionTransport } from "./transport/sessionSource.ts";
 import { momentOf } from "./time.ts";
@@ -92,6 +95,7 @@ export class AdminiumDesk implements DeskDoor {
   private readonly fetchImpl: typeof fetch;
   private readonly options: DeskDoorOptions;
   private registry: Promise<AddOnRegistry> | null = null;
+  private engineClient: EngineCarrier | null | undefined;
   /** Why an add-on Adminium listed for this app did not load (its slot stays empty). */
   addOnProblems: ConnectedProblem[] = [];
 
@@ -117,6 +121,27 @@ export class AdminiumDesk implements DeskDoor {
       return createRegistry(loaded.addOns);
     });
     return this.registry;
+  }
+
+  shippingClient(): EngineCarrier | null {
+    if (this.engineClient !== undefined) return this.engineClient;
+    const attached = ["shipping-shippo", "shipping-dhl"].find((key) => key in this.cfg.addOns);
+    this.engineClient =
+      attached === undefined
+        ? null
+        : createEngineCarrier({ send: engineSend(this.fetchImpl, this.options.origin ?? window.location.origin, () => this.cfg.csrfToken), appKey: APP_KEY, addOnKey: attached });
+    return this.engineClient;
+  }
+
+  shippingStatus(): Promise<ShippingStatus> {
+    return this.run(async () => (await this.t.get<{ data: ShippingStatus }>(`/api/v1/apps/${APP_KEY}/shipping`)).data);
+  }
+
+  saveShipFrom(values: ShipFromValues): Promise<ShippingStatus> {
+    return this.run(async () => {
+      await this.t.port.config();
+      return (await this.t.mutate<{ data: ShippingStatus }>(`/api/v1/apps/${APP_KEY}/shipping/ship-from`, "PUT", values)).data;
+    });
   }
 
   // ── the wire ──────────────────────────────────────────────────────────────

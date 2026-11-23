@@ -9,6 +9,7 @@
  * door hands rows back as the API answers them and never adds a figure of
  * its own.
  */
+import type { EngineCarrier } from "../add-ons/vendor/host/engine-carrier.ts";
 import type { Id, Row } from "./wire.ts";
 import type { AddOnRegistry } from "../add-ons/host.ts";
 
@@ -146,6 +147,26 @@ export interface Drawn {
   printUrl: string | null;
 }
 
+/** The shop's Ship from, as a form sends it. */
+export interface ShipFromValues {
+  name?: string;
+  lines?: string[];
+  city?: string;
+  region?: string;
+  postcode?: string;
+  country?: string;
+  phone?: string;
+  email?: string;
+}
+
+/** What someone who manages shipping reads of this app's set-up. */
+export interface ShippingStatus {
+  carriers: { key: string; name: string }[];
+  activeCarrier: string | null;
+  shipFrom: ShipFromValues | null;
+  shipFromMissing: string[];
+}
+
 export interface DeskDoor {
   who(): Person;
   facts(): DeskFacts;
@@ -154,6 +175,11 @@ export interface DeskDoor {
   payments(): StaffPayments | null;
   /** The add-ons' client halves the desk's slots draw (DHL's dispatch flow). Asked only once a screen needs one. */
   addOnRegistry(): Promise<AddOnRegistry>;
+  /** Adminium's shipping routes for this app; absent in the demo, null with no carrier attached. */
+  shippingClient?(): EngineCarrier | null;
+  /** Refused unless this person manages shipping. */
+  shippingStatus?(): Promise<ShippingStatus>;
+  saveShipFrom?(values: ShipFromValues): Promise<ShippingStatus>;
   signOut?(): Promise<void>;
   load(): Promise<DeskData>;
 
