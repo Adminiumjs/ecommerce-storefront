@@ -11,7 +11,7 @@
  * WHO MAY DO WHAT is what Adminium answers (`access`), never a role's name.
  */
 import { lazy, Suspense, useEffect, useState, type ComponentType } from "react";
-import { MapPin, PackageCheck, Send, Truck } from "lucide-react";
+import { Ban, MapPin, PackageCheck, Send, Truck, Undo2 } from "lucide-react";
 
 import type { EngineAccess, EngineBooking, EngineCarrier } from "../add-ons/vendor/host/engine-carrier.ts";
 import type { NeedsAttentionListProps, OpenParcelsRefreshProps } from "../add-ons/vendor/shipping-kit/index.ts";
@@ -19,7 +19,7 @@ import { useT, type MessageKey } from "../i18n/index.tsx";
 import type { ShipFromValues, ShippingStatus } from "./door.ts";
 import { useData, useEnv, useRun } from "./env.tsx";
 import { DHL, isOwner, orderMoves, status } from "./facts.ts";
-import { go } from "./store.ts";
+import { go, openSheet } from "./store.ts";
 import { Card, Chip, Fig } from "./ui.tsx";
 import { text, type Row } from "./wire.ts";
 
@@ -107,6 +107,10 @@ export function ShipmentCard({ order }: { order: Row }) {
   // A shipped order is the owner's to change: Adminium refuses the packer's write, so they see the note and no button.
   const mayTell = newNumber && isOwner(door.who()) && door.who().can("orders", "update");
   const paidLabelWarning = real !== undefined && (s === "paid" || s === "packed");
+  // The order holds a label nobody has handed over: it can still go back, and Adminium asks what happens to the label.
+  const mayMoveBack = real !== undefined && s === "packed" && orderMoves(order, door.who()).unpack;
+  const mayCancel = real !== undefined && s === "packed" && isOwner(door.who()) && door.who().can("orders", "update");
+  const paidWord = t("desk.status.paid");
   return (
     <Card id="od-shipment" title={t("desk.shipment.title")} icon={<Truck size={18} />}>
       {bookings.map((b) => (
@@ -152,6 +156,32 @@ export function ShipmentCard({ order }: { order: Row }) {
           </button>
           <div className="dk-foot">{t("desk.shipment.handNote")}</div>
         </>
+      )}
+      {(mayMoveBack || mayCancel) && (
+        <div className="dk-moves">
+          {mayMoveBack && (
+            <button
+              type="button"
+              className="dk-btn"
+              disabled={busy}
+              onClick={() =>
+                void run(async (d) => {
+                  await d.moveOrder(order, "paid");
+                  return t("desk.shipment.movedBack", { status: paidWord });
+                })
+              }
+            >
+              <Undo2 size={16} aria-hidden="true" />
+              {t("desk.shipment.moveBack", { status: paidWord })}
+            </button>
+          )}
+          {mayCancel && (
+            <button type="button" className="dk-btn dk-btn--danger" disabled={busy} onClick={() => openSheet({ kind: "cancel", orderId: order.id })}>
+              <Ban size={16} aria-hidden="true" />
+              {t("desk.shipment.cancelOrder")}
+            </button>
+          )}
+        </div>
       )}
       {newNumber && (
         <>
