@@ -44,7 +44,7 @@ export const CONTRACT_REGISTRY = [
     version: 1,
     summary:
       'One delivery company: rates, booking, tracking, labels. Implemented so the second one is a copy.',
-    implementations: 1,
+    implementations: 2,
   },
   {
     id: 'product-personalizer',

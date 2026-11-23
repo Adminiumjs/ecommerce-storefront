@@ -419,7 +419,15 @@
           "country": "ship_country"
         },
         "tracking": "label_tracking",
-        "carrier": "label_carrier"
+        "carrier": "label_carrier",
+        "returns": {
+          "table": "returns",
+          "order": "order_id",
+          "status": "status",
+          "approved": [
+            "approved"
+          ]
+        }
       }
     ]
   },

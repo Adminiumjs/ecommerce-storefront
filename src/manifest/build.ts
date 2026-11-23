@@ -104,6 +104,7 @@ export function buildManifest(): Record<string, unknown> {
           address: { name: "ship_name", lines: ["address_line1", "address_line2"], city: "city", region: "state_code", postcode: "zip", country: "ship_country" },
           tracking: "label_tracking",
           carrier: "label_carrier",
+          returns: { table: "returns", order: "order_id", status: "status", approved: ["approved"] },
         },
       ],
     },
