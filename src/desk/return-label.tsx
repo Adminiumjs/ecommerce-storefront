@@ -6,7 +6,7 @@
  * customer otherwise posts it with any carrier (ADD-5). Adminium itself checks
  * again that this is the owner and that the return is approved.
  */
-import type { RecordActionsPayload } from "../add-ons/payloads.ts";
+import type { RecordActionsPayload } from "../add-ons/vendor/host/payloads.ts";
 import { shopClock, useRegistry } from "./dispatch.tsx";
 import { useEnv } from "./env.tsx";
 import type { Row } from "./wire.ts";
