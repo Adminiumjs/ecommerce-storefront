@@ -197,6 +197,7 @@ export function ShipmentsCard() {
   const data = useData();
   const { door } = useEnv();
   const client = door.shippingClient?.() ?? null;
+  const access = useShippingAccess();
   const [reload, setReload] = useState(0);
   const [Parts] = useState(() =>
     client === null
@@ -206,7 +207,8 @@ export function ShipmentsCard() {
           Attention: lazy(async () => ({ default: (await loadKit(client)).Attention })),
         },
   );
-  if (client === null || Parts === null) return null;
+  // Only on a real carrier's key: a shop on the demo has no labels to list.
+  if (client === null || Parts === null || access === null || access.mode === null) return null;
   const labelled = data.orders.filter((o) => text(o["label_tracking"]) !== null);
   const unused = labelled.filter((o) => status(o) === "paid" || status(o) === "packed");
   const onWay = labelled.filter((o) => status(o) === "shipped");
