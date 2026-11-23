@@ -14,7 +14,7 @@
  *
  * First focus is on "Go back": the press that opened this must not answer it.
  */
-import { useEffect, useId, useState, useSyncExternalStore } from "react";
+import { Fragment, useEffect, useId, useState, useSyncExternalStore } from "react";
 import type { EngineBooking } from "../../host/engine-carrier.ts";
 
 import { useLocale, useT } from "../i18n/t.ts";
@@ -165,7 +165,7 @@ function LabelLine({ label, booking }: { label: PaidLabel; booking: EngineBookin
   const t = useT();
   const locale = useLocale();
   const price = booking?.amount !== undefined && booking.currency !== undefined ? moneyText(booking.amount, booking.currency, locale) : null;
-  const named = [booking?.carrierName ?? label.carrier, booking?.service, price].filter((part) => part !== undefined && part !== null).join(" · ");
+  const named = [booking?.carrierName ?? label.carrier, booking?.service, price].filter((part): part is string => part !== undefined && part !== null);
   const claim = label.scanned
     ? t("addon.shipping-kit.engine.refund.scanned")
     : label.tooLate
@@ -173,7 +173,15 @@ function LabelLine({ label, booking }: { label: PaidLabel; booking: EngineBookin
       : t("addon.shipping-kit.engine.refund.lastDay", { d: dayOf(label.claimBy, locale) });
   return (
     <li data-testid="paid-label-line">
-      <div style={{ fontWeight: 700 }}>{named}</div>
+      {/* Each part keeps its own direction: a Latin name beside an Arabic price otherwise reads out of order. */}
+      <div style={{ fontWeight: 700 }}>
+        {named.map((part, index) => (
+          <Fragment key={part}>
+            {index > 0 && " · "}
+            <bdi>{part}</bdi>
+          </Fragment>
+        ))}
+      </div>
       <div>{claim}</div>
     </li>
   );

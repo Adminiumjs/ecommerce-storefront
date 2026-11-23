@@ -30,7 +30,7 @@ export const strings = {
     "addon.shipping-dhl.act.2": "{when} · rates fetched · {ref}",
     "addon.shipping-dhl.act.3": "{when} · label downloaded · {ref}",
 
-    "addon.shipping-dhl.line": "Books a parcel collection from an order that is ready, and brings back a label and a tracking reference.",
+    "addon.shipping-dhl.line": "A demo carrier: practise booking a collection, with a sample label and tracking reference. It books no real parcel.",
     "addon.shipping-dhl.notAffiliated": "Adminium is not affiliated with this company.",
 
     "addon.shipping-dhl.perm.rates": "Fetch rates for a parcel you are sending",
@@ -76,7 +76,7 @@ export const strings = {
     "addon.shipping-dhl.act.2": "{when} · Preise abgerufen · {ref}",
     "addon.shipping-dhl.act.3": "{when} · Etikett geladen · {ref}",
 
-    "addon.shipping-dhl.line": "Bucht eine Paketabholung zu einem versandfertigen Auftrag und liefert Label und Sendungsnummer zurück.",
+    "addon.shipping-dhl.line": "Ein Demo-Versanddienstleister: Üben Sie das Buchen einer Abholung mit Musteretikett und Mustersendungsnummer. Es wird kein echtes Paket gebucht.",
     "addon.shipping-dhl.notAffiliated": "Adminium steht in keiner Verbindung zu diesem Unternehmen.",
 
     "addon.shipping-dhl.perm.rates": "Preise für ein Paket abrufen, das Sie versenden",
@@ -112,7 +112,7 @@ export const strings = {
     "addon.shipping-dhl.act.2": "{when} · tarifs demandés · {ref}",
     "addon.shipping-dhl.act.3": "{when} · étiquette téléchargée · {ref}",
 
-    "addon.shipping-dhl.line": "Réserve un enlèvement de colis pour une commande prête et renvoie une étiquette et un numéro de suivi.",
+    "addon.shipping-dhl.line": "Transporteur de démonstration pour vous entraîner à réserver un enlèvement, avec une étiquette et une référence de suivi d'exemple. Aucun vrai colis n'est réservé.",
     "addon.shipping-dhl.notAffiliated": "Adminium n'est affilié à aucune de ces sociétés.",
 
     "addon.shipping-dhl.perm.rates": "Obtenir les tarifs d'un colis que vous envoyez",
@@ -148,7 +148,7 @@ export const strings = {
     "addon.shipping-dhl.act.2": "{when} · ceny načteny · {ref}",
     "addon.shipping-dhl.act.3": "{when} · štítek stažen · {ref}",
 
-    "addon.shipping-dhl.line": "Objedná svoz balíku k připravené objednávce a vrátí štítek a číslo zásilky.",
+    "addon.shipping-dhl.line": "Ukázkový dopravce: vyzkoušejte si objednání svozu s ukázkovým štítkem a sledovacím číslem. Žádný skutečný balík se neobjedná.",
     "addon.shipping-dhl.notAffiliated": "Adminium není nijak spojeno s touto společností.",
 
     "addon.shipping-dhl.perm.rates": "Zjistit sazby u zásilky, kterou posíláte",
@@ -184,7 +184,7 @@ export const strings = {
     "addon.shipping-dhl.act.2": "{when} · priser hentet · {ref}",
     "addon.shipping-dhl.act.3": "{when} · label hentet · {ref}",
 
-    "addon.shipping-dhl.line": "Bestiller afhentning af en pakke til en ordre, der er klar, og henter label og sporingsnummer tilbage.",
+    "addon.shipping-dhl.line": "Et demo-fragtfirma: øv dig i at booke en afhentning med en prøveetiket og et prøvesporingsnummer. Der bookes ingen rigtig pakke.",
     "addon.shipping-dhl.notAffiliated": "Adminium er ikke tilknyttet dette selskab.",
 
     "addon.shipping-dhl.perm.rates": "Hente priser på en pakke, du sender",
@@ -220,7 +220,7 @@ export const strings = {
     "addon.shipping-dhl.act.2": "{when} · 已取运价 · {ref}",
     "addon.shipping-dhl.act.3": "{when} · 已下载面单 · {ref}",
 
-    "addon.shipping-dhl.line": "为已备好的订单预约包裹取件，并取回面单和运单号。",
+    "addon.shipping-dhl.line": "演示承运商：练习预约取件，并获得示例面单和跟踪编号。不会预订真实包裹。",
     "addon.shipping-dhl.notAffiliated": "Adminium 与该公司没有任何关联。",
 
     "addon.shipping-dhl.perm.rates": "查询你要寄出的包裹运费",
@@ -256,7 +256,7 @@ export const strings = {
     "addon.shipping-dhl.act.2": "{when} · 已取運價 · {ref}",
     "addon.shipping-dhl.act.3": "{when} · 已下載面單 · {ref}",
 
-    "addon.shipping-dhl.line": "為已備妥的訂單預約包裹取件，並取回面單與追蹤號碼。",
+    "addon.shipping-dhl.line": "示範貨運公司：練習預約取件，並取得範例標籤和追蹤編號。不會預訂真實包裹。",
     "addon.shipping-dhl.notAffiliated": "Adminium 與該公司並無任何關聯。",
 
     "addon.shipping-dhl.perm.rates": "查詢你要寄出的包裹運費",
@@ -292,7 +292,7 @@ export const strings = {
     "addon.shipping-dhl.act.2": "{when} · جُلبت الأسعار · {ref}",
     "addon.shipping-dhl.act.3": "{when} · نُزّل الملصق · {ref}",
 
-    "addon.shipping-dhl.line": "يحجز استلام طرد لطلب جاهز، ويعيد بطاقة شحن ورقم تتبع.",
+    "addon.shipping-dhl.line": "شركة شحن تجريبية: تدرّب على حجز استلام طرد مع ملصق ورقم تتبع تجريبيين. لا يُحجز أي طرد حقيقي.",
     "addon.shipping-dhl.notAffiliated": "لا توجد أي علاقة بين Adminium وهذه الشركة.",
 
     "addon.shipping-dhl.perm.rates": "جلب أسعار طرد أنت بصدد إرساله",
