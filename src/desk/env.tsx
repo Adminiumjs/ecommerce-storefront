@@ -8,6 +8,7 @@
  * reader's words, and the rows are read again too, so the screen shows what
  * is true now.
  */
+import { isPaidLabelStopped } from "../add-ons/paid-label.tsx";
 import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
 
 import type { DeskData, DeskDoor } from "./door.ts";
@@ -82,6 +83,7 @@ export function useRun(): { busy: boolean; run: (work: (door: DeskDoor, data: De
         if (typeof said === "string") toast(said, "pos");
         return true;
       } catch (error) {
+        if (isPaidLabelStopped(error)) return false;
         const words = refusalWords(t, error);
         toast(words.text, words.tone);
         return false;

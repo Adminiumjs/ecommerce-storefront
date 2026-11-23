@@ -10,6 +10,7 @@
  * database. Every screen's address is kept in step with the URL, and, inside
  * the dashboard, with the host's sidebar, theme and language.
  */
+import { PaidLabelSlot } from "../add-ons/paid-label.tsx";
 import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 
@@ -98,6 +99,7 @@ export async function bootDesk(mount: HTMLElement): Promise<void> {
     <StrictMode>
       <I18nProvider>
         <HostLocale />
+        <PaidLabelSlot />
         <DeskProvider env={env}>
           <DeskApp />
         </DeskProvider>

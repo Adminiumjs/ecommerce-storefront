@@ -24,7 +24,7 @@ import { useLocale, useT } from "../../i18n/t.ts";
 import { moneyText, readFailure, stampOf } from "./flow.ts";
 import { Dialog, FlowButton } from "./parts.tsx";
 
-const dayOf = (at: number, locale: string): string => new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(at));
+export const dayOf = (at: number, locale: string): string => new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(at));
 
 const BOX = { border: "1px solid var(--border-strong)", borderRadius: 11, padding: "12px 14px", display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, lineHeight: 1.5, color: "var(--fg-muted)" } as const;
 const HEAD = { fontSize: 13, fontWeight: 800, color: "var(--fg)" } as const;

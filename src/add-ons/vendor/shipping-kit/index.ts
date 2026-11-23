@@ -24,6 +24,7 @@ export { NeedsAttentionList, type NeedsAttentionListProps } from "./ui/NeedsAtte
 export { OpenParcelsRefresh, type OpenParcelsRefreshProps } from "./ui/OpenParcelsRefresh.tsx";
 export { ReturnLabel } from "./ui/ReturnLabel.tsx";
 export { EngineReturnLabel } from "./ui/EngineReturnLabel.tsx";
+export { clearPaidLabel, isPaidLabelStopped, PAID_LABEL_HEADER, PaidLabelHost, withPaidLabel } from "./ui/PaidLabelDialog.tsx";
 export { SettingsPanel } from "./ui/SettingsPanel.tsx";
 export { TrackingPanel } from "./ui/TrackingPanel.tsx";
 
