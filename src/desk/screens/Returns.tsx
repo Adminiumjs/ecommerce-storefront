@@ -16,6 +16,7 @@ import { Check, CircleAlert, PackageOpen, Undo2, X } from "lucide-react";
 import { useData, useEnv, useRun } from "../env.tsx";
 import { isOwner, returnLinesOf, returnsIn, returnStatus } from "../facts.ts";
 import { useFmt } from "../format.ts";
+import { ReturnLabelFill } from "../return-label.tsx";
 import { go, openSheet } from "../store.ts";
 import { Chip, Fig } from "../ui.tsx";
 import { returnReasonWord, returnStatusWord } from "../words.ts";
@@ -157,6 +158,7 @@ function ReturnCard({ ret }: { ret: Row }) {
           )}
         </div>
       </div>
+      {owner && s === "approved" && order !== undefined && <ReturnLabelFill ret={ret} order={order} />}
     </article>
   );
 }
