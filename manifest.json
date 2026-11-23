@@ -3,7 +3,7 @@
   "manifestVersion": 1,
   "key": "ecommerce-shop",
   "name": "Online Shop",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "publisher": {
     "id": "adminium",
     "name": "Adminium",
@@ -198,7 +198,7 @@
       },
       {
         "key": "shipping-shippo",
-        "range": "^1.0.33",
+        "range": "^1.0.35",
         "reason": {
           "en-US": "Buy shipping labels on your own Shippo account.",
           "de-DE": "Kaufen Sie Versandetiketten über Ihr eigenes Shippo-Konto.",
