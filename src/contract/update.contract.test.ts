@@ -303,7 +303,7 @@ describe.skipIf(why !== null)(`a shop on the old example takes the rework${why =
 
       it("installs with its four add-ons, and leaves every old table byte for byte as it was", async () => {
         const fresh = ok(await staff.post<{ plan: { checksum: string } }>("/api/v1/apps/plan", { ...body(), addOns: addOns.map((a) => a.key) })).plan;
-        const install = await staff.post<{ rules: { skipped: unknown[] } }>("/api/v1/apps/install", { ...body(), planChecksum: fresh.checksum, addOns: addOns.map((a) => ({ key: a.key, version: a.version })) });
+        const install = await staff.post<{ rules: { skipped: unknown[] } }>("/api/v1/apps/install", { ...body(), planChecksum: fresh.checksum, shippingUnticked: [], addOns: addOns.map((a) => ({ key: a.key, version: a.version })) });
         expect(install.status, JSON.stringify(install.body).slice(0, 3000)).toBe(200);
         expect(JSON.stringify(install.body.rules.skipped)).toBe("[]");
         expect(await snapshot(place)).toEqual(before);

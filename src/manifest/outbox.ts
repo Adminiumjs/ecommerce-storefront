@@ -51,6 +51,7 @@ export const KINDS = [
   "order-cancelled",
   "order-cancelled-by-us",
   "order-shipped",
+  "order-new-number",
   "gift-sent",
   "return-asked",
   "return-approved",
@@ -81,6 +82,7 @@ export const KIND_NAMES: Record<Kind, string> = {
   "order-cancelled": "Cancelled as the customer asked",
   "order-cancelled-by-us": "Cancelled by the shop",
   "order-shipped": "Order shipped",
+  "order-new-number": "Your parcel has a new tracking number",
   "gift-sent": "Gift cards sent",
   "return-asked": "Return asked",
   "return-approved": "Return approved",
@@ -170,6 +172,8 @@ export const OUTBOX = {
     { kind: "order-cancelled", link: "order_id", ...onOrder("cancelled", { column: "cancel_reason", in: ["customer", "asked"] }) },
     { kind: "order-cancelled-by-us", link: "order_id", ...onOrder("cancelled", { column: "cancel_reason", in: ["address", "stock", "other"] }) },
     { kind: "order-shipped", link: "order_id", ...onOrder("shipped") },
+    // Never by a carrier's word alone: staff press to tell the customer, and that press stamps this column.
+    { kind: "order-new-number", link: "order_id", onChange: { table: "orders", columns: ["new_number_at"], changed: true, where: { column: "new_number_at", isNull: false } } },
     // A gift-cards-only order is sent once it is paid; each card's code goes from Offers & gift cards to its person.
     { kind: "gift-sent", link: "order_id", gate: { feature: "gift-cards" }, ...onOrder("sent") },
     { kind: "return-asked", link: "return_id", onCreate: { table: "returns" }, holdSeconds: ONCE_ITS_PIECES_ARE_IN },

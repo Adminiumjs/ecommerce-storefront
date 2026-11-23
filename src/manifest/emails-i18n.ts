@@ -123,6 +123,13 @@ export const EMAIL_TRANSLATIONS: Record<Exclude<Tag, "en-US">, EmailWords> = {
       heading: "Wir mussten Bestellung {{order.number}} stornieren",
       paras: ["Es tut uns leid, {{recipient.first_name}}. Wir konnten deine Bestellung nicht verschicken und haben sie deshalb storniert."],
     },
+    "order-new-number": {
+      name: 'Neue Sendungsnummer',
+      subject: 'Dein Paket hat eine neue Sendungsnummer',
+      preheader: 'Bestellung {{order.number}}: Verfolge sie mit dieser Nummer.',
+      heading: 'Dein Paket hat eine neue Sendungsnummer',
+      paras: ['Verfolge Bestellung {{order.number}} mit dieser Nummer. Die alte wird eventuell nicht mehr aktualisiert.'],
+    },
     "order-shipped": {
       name: "Bestellung verschickt",
       subject: "Deine Bestellung {{order.number}} ist unterwegs",
@@ -321,6 +328,13 @@ export const EMAIL_TRANSLATIONS: Record<Exclude<Tag, "en-US">, EmailWords> = {
       preheader: "Nous sommes désolés : nous n'avons pas pu envoyer votre commande.",
       heading: "Nous avons dû annuler la commande {{order.number}}",
       paras: ["Nous sommes désolés, {{recipient.first_name}}. Nous n'avons pas pu envoyer votre commande, nous l'avons donc annulée."],
+    },
+    "order-new-number": {
+      name: 'Nouveau numéro de suivi',
+      subject: 'Votre colis a un nouveau numéro de suivi',
+      preheader: 'Commande {{order.number}} : suivez-la avec ce numéro.',
+      heading: 'Votre colis a un nouveau numéro de suivi',
+      paras: ["Suivez la commande {{order.number}} avec ce numéro. L'ancien peut ne plus être mis à jour."],
     },
     "order-shipped": {
       name: "Commande expédiée",
@@ -521,6 +535,13 @@ export const EMAIL_TRANSLATIONS: Record<Exclude<Tag, "en-US">, EmailWords> = {
       heading: "Vi var nødt til at annullere ordre {{order.number}}",
       paras: ["Vi beklager, {{recipient.first_name}}. Vi kunne ikke sende din ordre, så vi har annulleret den."],
     },
+    "order-new-number": {
+      name: 'Nyt sporingsnummer',
+      subject: 'Din pakke har et nyt sporingsnummer',
+      preheader: 'Ordre {{order.number}}: Følg den med dette nummer.',
+      heading: 'Din pakke har et nyt sporingsnummer',
+      paras: ['Følg ordre {{order.number}} med dette nummer. Det gamle bliver måske ikke længere opdateret.'],
+    },
     "order-shipped": {
       name: "Ordre afsendt",
       subject: "Din ordre {{order.number}} er på vej",
@@ -719,6 +740,13 @@ export const EMAIL_TRANSLATIONS: Record<Exclude<Tag, "en-US">, EmailWords> = {
       preheader: "Omlouváme se: vaši objednávku jsme nemohli odeslat.",
       heading: "Objednávku {{order.number}} jsme museli zrušit",
       paras: ["Omlouváme se, {{recipient.first_name}}. Vaši objednávku jsme nemohli odeslat, a tak jsme ji zrušili."],
+    },
+    "order-new-number": {
+      name: 'Nové sledovací číslo',
+      subject: 'Vaše zásilka má nové sledovací číslo',
+      preheader: 'Objednávka {{order.number}}: sledujte ji tímto číslem.',
+      heading: 'Vaše zásilka má nové sledovací číslo',
+      paras: ['Objednávku {{order.number}} sledujte tímto číslem. Staré se už nemusí aktualizovat.'],
     },
     "order-shipped": {
       name: "Objednávka odeslána",
@@ -919,6 +947,13 @@ export const EMAIL_TRANSLATIONS: Record<Exclude<Tag, "en-US">, EmailWords> = {
       heading: "اضطررنا إلى إلغاء الطلب {{order.number}}",
       paras: ["نأسف يا {{recipient.first_name}}. لم نتمكن من إرسال طلبك، لذا ألغيناه."],
     },
+    "order-new-number": {
+      name: 'رقم تتبع جديد',
+      subject: 'لطردك رقم تتبع جديد',
+      preheader: 'الطلب {{order.number}}: تابعه بهذا الرقم.',
+      heading: 'لطردك رقم تتبع جديد',
+      paras: ['تابع الطلب {{order.number}} بهذا الرقم. قد يتوقف تحديث الرقم القديم.'],
+    },
     "order-shipped": {
       name: "تم شحن الطلب",
       subject: "طلبك {{order.number}} في الطريق",
@@ -1118,6 +1153,13 @@ export const EMAIL_TRANSLATIONS: Record<Exclude<Tag, "en-US">, EmailWords> = {
       heading: "我们不得不取消订单 {{order.number}}",
       paras: ["很抱歉，{{recipient.first_name}}。我们无法寄出你的订单，因此已将其取消。"],
     },
+    "order-new-number": {
+      name: '新运单号',
+      subject: '您的包裹有新的运单号',
+      preheader: '订单 {{order.number}}：请用此单号跟踪。',
+      heading: '您的包裹有新的运单号',
+      paras: ['请用此单号跟踪订单 {{order.number}}。旧单号可能不再更新。'],
+    },
     "order-shipped": {
       name: "订单已发货",
       subject: "你的订单 {{order.number}} 已在路上",
@@ -1316,6 +1358,13 @@ export const EMAIL_TRANSLATIONS: Record<Exclude<Tag, "en-US">, EmailWords> = {
       preheader: "很抱歉：我們無法寄出你的訂單。",
       heading: "我們不得不取消訂單 {{order.number}}",
       paras: ["很抱歉，{{recipient.first_name}}。我們無法寄出你的訂單，因此已將其取消。"],
+    },
+    "order-new-number": {
+      name: '新追蹤號碼',
+      subject: '您的包裹有新的追蹤號碼',
+      preheader: '訂單 {{order.number}}：請用此號碼追蹤。',
+      heading: '您的包裹有新的追蹤號碼',
+      paras: ['請用此號碼追蹤訂單 {{order.number}}。舊號碼可能不再更新。'],
     },
     "order-shipped": {
       name: "訂單已出貨",

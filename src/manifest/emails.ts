@@ -229,6 +229,13 @@ export const EMAIL_EN: EmailWords = {
     paras: [],
     after: ["Tell us how it went — you can review it from your order."],
   },
+  "order-new-number": {
+    name: "Your parcel has a new tracking number",
+    subject: "Your parcel has a new tracking number",
+    preheader: "Order {{order.number}}: use this number to follow it.",
+    heading: "Your parcel has a new tracking number",
+    paras: ["Use this number to follow order {{order.number}}. The old one may stop updating."],
+  },
   "gift-sent": {
     name: "Gift cards sent",
     subject: "Your gift card is on its way",
@@ -445,6 +452,9 @@ function layout(kind: Kind, all: EmailWords) {
       // One parcel and one number an order; a carrier with no number (the DHL demo fills none) shows the carrier alone.
       blocks.push(only(facts("tracking", [row(all.tracking, "{{order.tracking}}")]), "order.tracking"));
       blocks.push(yourOrder(all), LINES);
+      break;
+    case "order-new-number":
+      blocks.push(...body, facts("carrier", [row(all.carrier, "{{order.carrier}}"), row(all.tracking, "{{order.tracking}}")]), yourOrder(all));
       break;
     case "gift-sent":
       blocks.push(...body, giftLines(all), facts("order", [row(all.order, "{{order.number}}"), row(all.paid, "{{order.paid}}")]), yourOrder(all));

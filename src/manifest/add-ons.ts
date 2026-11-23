@@ -8,8 +8,9 @@
  * the receipt and the packing slip (`receipts`, `packing-slips`); Forms &
  * surveys keeps the customers' reviews and confirms a newsletter sign-up
  * (`reviews`, `news-confirm`). Without one, its feature is off and the rest
- * of the shop works as before. Shipping (DHL) is a demo of the dispatch flow
- * this round (`labels`): real shops type the carrier and tracking number.
+ * of the shop works as before. Shipping labels buys real labels on the shop's
+ * own Shippo account (`shipping-labels`). DHL stays a demo of the dispatch flow
+ * (`labels`). Without either, staff type the carrier and tracking number.
  *
  * Every range names this round's add-ons release: Inventory's words for a
  * hold, Offers' cards sold online and their recall, Invoices' packing slip and
@@ -27,9 +28,9 @@ export const ADD_ONS = {
     { key: "invoices", range: ADD_ONS_RANGE, checked: true, reason: l("Give customers a receipt, and print packing slips for a day's orders.") },
     { key: "forms", range: ADD_ONS_RANGE, checked: true, reason: l("Take reviews from customers who bought, and confirm newsletter sign-ups.") },
     { key: "shipping-dhl", range: ADD_ONS_RANGE, reason: l("Try DHL's dispatch flow on the desk (a demo carrier this release).") },
+    { key: "shipping-shippo", range: ADD_ONS_RANGE, reason: l("Buy shipping labels on your own Shippo account.") },
     { key: "barcode-labels", range: ADD_ONS_RANGE, reason: l("Print SKU labels for the stockroom.") },
     { key: "live-chat", range: ADD_ONS_RANGE, reason: l("Answer shoppers in a chat window on the shop.") },
-    { key: "pages", range: ADD_ONS_RANGE, reason: l("Make landing pages for a season or a sale.") },
   ],
   features: [
     { id: "stock", label: l("Stock per size and colour"), requires: ["inventory"] },
@@ -40,6 +41,7 @@ export const ADD_ONS = {
     { id: "reviews", label: l("Customer reviews"), requires: ["forms"] },
     { id: "news-confirm", label: l("Confirm newsletter sign-ups by e-mail"), requires: ["forms"] },
     { id: "labels", label: l("DHL dispatch (demo carrier)"), requires: ["shipping-dhl"] },
+    { id: "shipping-labels", label: l("Shipping labels"), requires: ["shipping-shippo"] },
     { id: "sku-labels", label: l("SKU labels"), requires: ["barcode-labels"] },
   ],
 };

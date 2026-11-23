@@ -121,6 +121,7 @@ describe("the private link", () => {
       "order-cancelled",
       "order-cancelled-by-us",
       "order-shipped",
+      "order-new-number",
       "gift-sent",
       "return-asked",
       "return-approved",

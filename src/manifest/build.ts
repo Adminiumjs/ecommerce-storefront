@@ -35,7 +35,7 @@ export const VERSION = "0.2.4";
  * through the order's own link, filters a catalogue through variants that
  * also answer stock words, and bundles the 1.0.33 add-ons.
  */
-export const MIN_ADMINIUM = "0.3.70";
+export const MIN_ADMINIUM = "0.3.72";
 
 const ENV = {
   VITE_ADMINIUM_API_BASE_URL: { required: false, example: "https://admin.example.com" },
@@ -95,6 +95,18 @@ export function buildManifest(): Record<string, unknown> {
     ],
     settings: SETTINGS,
     addOns: ADD_ONS,
+    // Where an order keeps what a carrier needs. No phone or e-mail: a domestic label does not need them.
+    shipping: {
+      orders: [
+        {
+          table: "orders",
+          reference: "number",
+          address: { name: "ship_name", lines: ["address_line1", "address_line2"], city: "city", region: "state_code", postcode: "zip", country: "ship_country" },
+          tracking: "label_tracking",
+          carrier: "label_carrier",
+        },
+      ],
+    },
     navGroups: NAV_GROUPS,
     requiredSchema: { prefixed: true, tables: TABLES },
     pages: pages(),

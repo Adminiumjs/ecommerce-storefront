@@ -125,7 +125,7 @@ describe.skipIf(why !== null)(`the desk on a built Adminium${why === null ? "" :
         const body = { key: app.key, version: app.version, connectionId };
         const plan = ok(await admin.post<{ plan: { checksum: string; installable: boolean } }>("/api/v1/apps/plan", { ...body, addOns: addOns.map((a) => a.key) })).plan;
         if (!plan.installable) throw new Error(`not installable: ${JSON.stringify(plan).slice(0, 3000)}`);
-        ok(await admin.post("/api/v1/apps/install", { ...body, planChecksum: plan.checksum, addOns: addOns.map((a) => ({ key: a.key, version: a.version })) }));
+        ok(await admin.post("/api/v1/apps/install", { ...body, planChecksum: plan.checksum, shippingUnticked: [], addOns: addOns.map((a) => ({ key: a.key, version: a.version })) }));
         ok(await admin.patch(`/api/v1/connections/${connectionId}`, { timezone: "America/Los_Angeles", currency: "USD" }));
         await server.setClock(CLOCK, true);
         await addSample(admin);

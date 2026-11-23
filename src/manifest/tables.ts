@@ -609,7 +609,7 @@ export const TABLES: Table[] = [
         sent: [{ to: "cancelled", roles: ["owner"], requires: { where: [{ column: "cancel_reason", isNull: false }] } }],
       },
       // The owner's cancel of a sent gift order names its reason in the same save as the move.
-      lock: { when: ["shipped", "sent", "cancelled"], except: ["link_stopped", "staff_note", "tracking", "carrier", "cancel_reason"] },
+      lock: { when: ["shipped", "sent", "cancelled"], except: ["link_stopped", "staff_note", "tracking", "carrier", "label_tracking", "label_carrier", "new_number_at", "cancel_reason"] },
       children: {
         order_lines: { via: "order_id", lock: true },
         gift_lines: { via: "order_id", lock: true },
@@ -646,6 +646,8 @@ export const TABLES: Table[] = [
       text("address_line2", 120, "Address, second line", opt),
       text("city", 80, "City", opt),
       text("zip", 10, "ZIP code", opt),
+      // Always the US this round. A carrier needs the code stored, and Adminium never guesses one.
+      text("ship_country", 2, "Ship to country", { default: "US", rules: { personal: false } }),
       fk("region_id", "regions", "State", { ...opt, rules: { linkable: { where: [{ column: "active", eq: true }] } } }),
       copied("state_code", 2, "State code", frozen("region_id", "code")),
       fk("zone_id", "zones", "Shipping zone", { ...opt, rules: frozen("region_id", "zone_id") }),
@@ -723,9 +725,14 @@ export const TABLES: Table[] = [
       text("packed_by", 80, "Packed by", { ...opt, rules: { stamp: { set: "user-name", on: onState("status", "packed"), clearOnBack: true } } }),
       at("shipped_at", "Shipped", { ...opt, rules: stamp("now", onState("status", "shipped", "sent")) }),
       text("shipped_by", 80, "Shipped by", { ...opt, rules: stamp("user-name", onState("status", "shipped")) }),
-      // One parcel and one tracking number an order. A DHL booking made in the demo fills nothing here.
+      // One parcel and one tracking number an order: what the customer is told, set by the hand-over.
       text("carrier", 40, "Carrier", opt),
       text("tracking", 64, "Tracking number", opt),
+      // What a bought label says, written by Adminium. Staff only: buying a label tells the customer nothing.
+      text("label_carrier", 40, "Label carrier", { ...opt, rules: { personal: false } }),
+      text("label_tracking", 64, "Label tracking number", { ...opt, rules: { personal: false } }),
+      // Set when staff press to tell the customer about a carrier's new number: that press is what sends the e-mail.
+      at("new_number_at", "New number told", opt),
       at("cancelled_at", "Cancelled", { ...opt, rules: stamp("now", onState("status", "cancelled")) }),
       text("cancelled_by", 80, "Cancelled by", { ...opt, rules: stamp({ byOrigin: { public: "customer", staff: "user-name" } }, onState("status", "cancelled")) }),
       choice("cancel_reason", "Why it was cancelled", CANCEL_REASONS, opt),

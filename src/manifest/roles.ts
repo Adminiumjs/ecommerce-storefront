@@ -10,7 +10,8 @@
  *            the orders to pack and ship (who and where, never an e-mail
  *            address and never money), marking them packed and shipped with
  *            a carrier and a tracking number, a return received and whether
- *            each piece goes back in stock. Never a price, a refund, a
+ *            each piece goes back in stock; buying a label with its price
+ *            hidden, inside the owner's limits. Never a price, a refund, a
  *            customer, a payment, a cancel or "Mark as paid".
  *
  * The desk shows or hides a button by the role, but the grants and limits
@@ -44,6 +45,8 @@ const typed = (ref: string, ...leaveOut: string[]): string[] =>
 
 /** The customer's own on an order: their tick, the link's code, their retry key; and what an add-on or the payment decides. */
 export const CUSTOMERS_OWN = ["news", "link_token", "client_key", "discount", "due", "customer_proved", "status", "kind", "pay_method"];
+/** Adminium's to write: the country this round's orders all ship to, and what a bought label says. */
+export const SHIPPING_DECIDED = ["ship_country", "label_carrier", "label_tracking"];
 
 /** A gift card's whole code is typed and never read back. */
 const PAYMENT_READS = TABLES.find((t) => t.ref === "payments")!.columns.map((c) => c.ref).filter((ref) => ref !== "card_code");
@@ -60,6 +63,7 @@ export const PACKER_ORDER_READS = [
   "address_line2",
   "city",
   "zip",
+  "ship_country",
   "region_id",
   "state_code",
   "zone_id",
@@ -78,6 +82,9 @@ export const PACKER_ORDER_READS = [
   "shipped_by",
   "carrier",
   "tracking",
+  "label_carrier",
+  "label_tracking",
+  "new_number_at",
   "cancelled_at",
   "staff_note",
 ];
@@ -119,11 +126,14 @@ export const ROLES = [
       "privacy:@:people",
       // Giving back money a customer paid online for one of the shop's orders, and only those (shown at install).
       "payments:@:refund",
+      // Buying a label and asking for its refund, on this shop's own carrier account (asked at install).
+      "shipping:@:book",
+      "shipping:@:cancel",
     ],
     limits: {
       orders: {
-        writable: typed("orders", ...CUSTOMERS_OWN).concat(["status"]),
-        creatable: typed("orders", ...CUSTOMERS_OWN),
+        writable: typed("orders", ...CUSTOMERS_OWN, ...SHIPPING_DECIDED).concat(["status"]),
+        creatable: typed("orders", ...CUSTOMERS_OWN, ...SHIPPING_DECIDED),
         writableValues: { cancel_reason: SHOP_CANCEL_REASONS },
       },
       // "Mark as paid": a bank transfer the owner records, with its amount, day and note. Money online is Adminium's.
@@ -143,11 +153,13 @@ export const ROLES = [
       ...grant("orders", "update"),
       ...grant("returns", "update"),
       ...grant("return_lines", "update"),
+      // A label with its price hidden, inside the limits the owner sets. With none set, the owner books.
+      "shipping:@:book",
     ],
     limits: {
       orders: {
         readable: PACKER_ORDER_READS,
-        writable: ["status", "carrier", "tracking", "staff_note"],
+        writable: ["status", "carrier", "tracking", "new_number_at", "staff_note"],
         writableValues: { status: ["packed", "shipped", "paid"] },
         writableFrom: { status: ["paid", "packed"] },
       },
