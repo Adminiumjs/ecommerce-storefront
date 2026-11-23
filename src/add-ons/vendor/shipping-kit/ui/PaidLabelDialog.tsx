@@ -147,8 +147,9 @@ export async function withPaidLabel<T>(source: PaidLabelSource, attempt: (keep: 
 export async function clearPaidLabel(source: PaidLabelSource, attempt: (keep: readonly string[]) => Promise<unknown>): Promise<{ keep: readonly string[]; moved: boolean }> {
   const client = engineCarrier();
   if (client === null) return { keep: [], moved: false };
-  const { bookings } = await client.bookings({ table: source.table, id: source.id });
-  if (!bookings.some((one) => one.state === "booked" && !one.test)) return { keep: [], moved: false };
+  // Someone with no shipping right may not read the labels. Then the engine decides, when the move is tried.
+  const read = await client.bookings({ table: source.table, id: source.id }).catch(() => null);
+  if (read !== null && !read.bookings.some((one) => one.state === "booked" && !one.test)) return { keep: [], moved: false };
   let asked = false;
   let moved = false;
   const keep = await withPaidLabel<readonly string[]>(source, async (chosen) => {
