@@ -33,7 +33,7 @@ import type {
 import { kitBrand } from "../../brand.ts";
 import type { StringKey } from "../../i18n/strings.ts";
 import { useLocale, useT } from "../../i18n/t.ts";
-import { Code, Mono, Tag } from "../atoms.tsx";
+import { Code, Tag } from "../atoms.tsx";
 import { labelFileName, moneyText, readFailure, stampOf } from "./flow.ts";
 import { Detail, FlowButton, SampleStamp, Worded } from "./parts.tsx";
 import { HANDOVER } from "./RatesPanel.tsx";
@@ -333,9 +333,9 @@ function TrackingBlock({
         </Tag>
         <span style={{ flex: 1 }} />
         <span style={{ fontSize: 12.5, color: "var(--fg-muted)" }}>{t("addon.shipping-kit.engine.track.lastChecked")}</span>
-        <Mono style={{ fontSize: 12.5, fontWeight: 500 }}>
+        <span style={{ fontSize: 12.5, fontWeight: 500 }}>
           {track?.checkedAt != null ? stampOf(track.checkedAt, locale) : t("addon.shipping-kit.engine.track.never")}
-        </Mono>
+        </span>
         <FlowButton variant="ghost" busy={refreshing} onClick={() => void refresh()} testId="engine-track-refresh" style={{ fontSize: 13, fontWeight: 700, padding: "8px 13px" }}>
           <RefreshCw size={14} aria-hidden="true" />
           {refreshing ? t("addon.shipping-kit.engine.unknown.checking") : t("addon.shipping-kit.engine.track.refresh")}

@@ -25,7 +25,6 @@ import type { EngineCarrier, EngineRefreshOpen } from "../../host/engine-carrier
 
 import { useLocale, useT } from "../i18n/t.ts";
 import { engineCarrier } from "../runtime.ts";
-import { Mono } from "./atoms.tsx";
 import { readFailure, stampOf, timeOf } from "./engine/flow.ts";
 import { FlowButton } from "./engine/parts.tsx";
 
@@ -122,9 +121,9 @@ export function OpenParcelsRefresh({ oldestCheckedAt, nowMs, oldAfterMs = OPEN_P
     <div data-testid="open-parcels" style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 6, minInlineSize: 0 }}>
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "flex-end", gap: "8px 10px" }}>
         <span style={{ fontSize: 12.5, color: "var(--fg-muted)" }}>{t("addon.shipping-kit.engine.track.lastChecked")}</span>
-        <Mono style={{ fontSize: 12.5, fontWeight: 500 }}>
-          <span data-testid="open-parcels-checked">{checkedAt === null ? t("addon.shipping-kit.engine.track.never") : stampOf(checkedAt, locale)}</span>
-        </Mono>
+        <span data-testid="open-parcels-checked" style={{ fontSize: 12.5, fontWeight: 500 }}>
+          {checkedAt === null ? t("addon.shipping-kit.engine.track.never") : stampOf(checkedAt, locale)}
+        </span>
         <FlowButton
           variant="ghost"
           busy={busy}

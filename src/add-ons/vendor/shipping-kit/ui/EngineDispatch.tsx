@@ -290,6 +290,8 @@ export function EngineDispatch({
     setOpened(true);
     setAftermath(null);
     setKeyChanged(false);
+    // Every row may be under the old key, so the list alone cannot show that the key moved.
+    void askMode().catch(() => undefined);
     void load(next);
   };
 

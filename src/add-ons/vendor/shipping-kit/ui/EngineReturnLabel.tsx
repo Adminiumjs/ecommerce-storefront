@@ -123,7 +123,7 @@ export function EngineReturnLabel({ payload }: { payload: RecordActionsPayload }
             <label key={rate.rateId} style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 13 }}>
               <input type="radio" name={weightId} checked={rateId === rate.rateId} disabled={!rate.withinLimit} onChange={() => setRateId(rate.rateId)} />
               <span dir="auto" style={{ flex: 1 }}>{rate.service}</span>
-              {rate.priced && <strong>{moneyText(rate.amountDecimal, rate.currency, locale)}</strong>}
+              {rate.priced && <strong dir="ltr">{moneyText(rate.amountDecimal, rate.currency, locale)}</strong>}
             </label>
           ))}
           <div><FlowButton variant="accent" busy={busy} disabled={rateId === null} onClick={() => void buy()} testId="engine-return-buy">{t("addon.shipping-kit.engine.return.buy")}</FlowButton></div>

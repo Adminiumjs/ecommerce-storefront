@@ -24,6 +24,9 @@ import { useLocale, useT } from "../../i18n/t.ts";
 import { moneyText, readFailure, stampOf } from "./flow.ts";
 import { Dialog, FlowButton } from "./parts.tsx";
 
+/** A price inside a sentence keeps its own order, whichever way the sentence runs. */
+const isolated = (text: string): string => `\u2066${text}\u2069`;
+
 export const dayOf = (at: number, locale: string): string => new Intl.DateTimeFormat(locale, { day: "numeric", month: "short", year: "numeric", timeZone: "UTC" }).format(new Date(at));
 
 const BOX = { border: "1px solid var(--border-strong)", borderRadius: 11, padding: "12px 14px", display: "flex", flexDirection: "column", gap: 6, fontSize: 12.5, lineHeight: 1.5, color: "var(--fg-muted)" } as const;
@@ -33,8 +36,8 @@ const HEAD = { fontSize: 13, fontWeight: 800, color: "var(--fg)" } as const;
 function creditLine(booking: EngineBooking, access: EngineAccess, company: string, locale: string, t: ReturnType<typeof useT>): string {
   const refund = booking.refund;
   if (!booking.test && !access.pricesHidden) {
-    if (refund?.amount !== undefined && refund.currency !== undefined) return t("addon.shipping-kit.engine.refund.creditAmount", { company, x: moneyText(refund.amount, refund.currency, locale) });
-    if (booking.amount !== undefined && booking.currency !== undefined) return t("addon.shipping-kit.engine.refund.creditPrice", { company, x: moneyText(booking.amount, booking.currency, locale) });
+    if (refund?.amount !== undefined && refund.currency !== undefined) return t("addon.shipping-kit.engine.refund.creditAmount", { company, x: isolated(moneyText(refund.amount, refund.currency, locale)) });
+    if (booking.amount !== undefined && booking.currency !== undefined) return t("addon.shipping-kit.engine.refund.creditPrice", { company, x: isolated(moneyText(booking.amount, booking.currency, locale)) });
   }
   return t("addon.shipping-kit.engine.refund.credit", { company });
 }
@@ -218,7 +221,7 @@ export function RefundBlock({
             <FlowButton variant="ghost" firstFocus onClick={() => setDialog(null)} testId="engine-refund-keep">
               {t("addon.shipping-kit.engine.refund.keep")}
             </FlowButton>
-            <FlowButton variant="accent" busy={busy} onClick={() => void request()} testId="engine-refund-confirm" style={{ background: "var(--danger)", borderColor: "var(--danger)", color: "var(--danger-fg, #fff)" }}>
+            <FlowButton variant="accent" busy={busy} onClick={() => void request()} testId="engine-refund-confirm" style={{ background: "var(--danger)", borderColor: "var(--danger)", color: "var(--accent-fg)" }}>
               {t("addon.shipping-kit.engine.refund.request")}
             </FlowButton>
           </div>

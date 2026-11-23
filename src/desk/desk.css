@@ -1261,6 +1261,7 @@ textarea.dk-input {
   flex-wrap: wrap;
   padding-block-start: 4px;
 }
+.dk-paid-layer { position: relative; z-index: 350; }
 .dk-toasts {
   position: fixed;
   inset-block-end: 26px;
