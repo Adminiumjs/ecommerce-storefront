@@ -45,6 +45,7 @@ import { useT } from "../i18n/t.ts";
 import { NotAffiliated } from "./atoms.tsx";
 import { holderOf, holdersIn, latestOf, mergedBooking, nextParcel, outboundIn, standingOn, type EngineRate } from "./engine/flow.ts";
 import { LabelCard } from "./engine/LabelCard.tsx";
+import { RefundedCard } from "./engine/RefundBlock.tsx";
 import { AddressBlock, ParcelBooking } from "./engine/ParcelBooking.tsx";
 import { FlowButton, LiveRegion, StatusCard, TestBanner, useSay } from "./engine/parts.tsx";
 import { UnknownCard } from "./engine/UnknownCard.tsx";
@@ -81,6 +82,8 @@ export function EngineDispatch({
   const [loadFailed, setLoadFailed] = useState(false);
   const [parcelNumber, setParcelNumber] = useState(1);
   const [adding, setAdding] = useState(false);
+  /** The label with a refund pending that a person chose to replace (S33). */
+  const [replacing, setReplacing] = useState<string | null>(null);
   const [opened, setOpened] = useState(false);
   const [aftermath, setAftermath] = useState<Aftermath>(null);
   const [focusId, setFocusId] = useState<string | null>(null);
@@ -169,7 +172,8 @@ export function EngineDispatch({
   const inMode = outboundIn(all, mode);
   const mine = [...inMode, ...all.filter((one) => kept.includes(one.id) && !inMode.includes(one))];
   const holders = holdersIn(mine);
-  const booked = holders.filter((one) => one.state === "booked");
+  // A label that lost its place to a replacement still stands: it is paid for, and someone has to see it.
+  const booked = [...holders.filter((one) => one.state === "booked" || one.state === "voiding"), ...mine.filter((one) => (one.state === "booked" || one.state === "voiding") && !holders.includes(one))];
   const unknown = holders.filter((one) => one.state === "unknown");
   const underWay = holders.filter((one) => one.state === "reserved" || one.state === "calling");
   const active = holderOf(mine, parcelNumber);
@@ -231,6 +235,7 @@ export function EngineDispatch({
         .then(() => load(parcelNumber));
     }
     setAdding(false);
+    setReplacing(null);
     setFocusId(booking.id);
     say(t("addon.shipping-kit.engine.label.title"));
   };
@@ -301,11 +306,11 @@ export function EngineDispatch({
     loaded &&
     !loadFailed &&
     (aftermath === null || aftermath === "found") &&
-    active === null &&
-    slot?.bookable === true &&
     !unsettled &&
-    (opened || adding || booked.length === 0);
-  const showOpener = showForm && !opened && !adding && booked.length === 0;
+    // Chosen on S33: the old label stays blocked, and the engine lets it give up its place.
+    (replacing !== null ? active?.id === replacing && access.mayBook : active === null && slot?.bookable === true && (opened || adding || booked.length === 0));
+  const showOpener = showForm && replacing === null && !opened && !adding && booked.length === 0;
+  const refunded = active === null ? latestOf(mine, parcelNumber) : null;
   const blocked = loaded && !loadFailed && aftermath === null && active === null && !unsettled && slot !== null && !slot.bookable && (adding || booked.length === 0);
   const locked = booked.length > 0 || unsettled;
 
@@ -508,8 +513,11 @@ export function EngineDispatch({
           say={say}
           onChange={merge}
           onStale={() => void load(parcelNumber)}
+          onReplace={booking.state === "voiding" && booking.parcelNumber === parcelNumber && active?.id === booking.id && access.mayBook && access.mayCancel ? () => setReplacing(booking.id) : undefined}
         />
       ))}
+
+      {refunded?.state === "voided" && <RefundedCard booking={refunded} access={access} />}
 
       {canAdd && (
         <div>
@@ -557,7 +565,8 @@ export function EngineDispatch({
           onRefused={afterRefusal}
           onModeMoved={onModeMoved}
           onQuoted={() => setKeyChanged(false)}
-          onClose={adding ? closeParcel : undefined}
+          onClose={adding ? closeParcel : replacing !== null ? () => setReplacing(null) : undefined}
+          replaceRefunding={replacing !== null}
         />
       )}
 

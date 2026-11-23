@@ -60,6 +60,10 @@ function reasonLine(item: EngineAttentionItem, t: TFunction, locale: string): st
         : t("addon.shipping-kit.engine.attention.unknownAsked", { time: stampOf(booking.calledAt, locale) });
     case "duplicates":
       return t("addon.shipping-kit.engine.label.duplicates", { company: carrier, n: booking.duplicates });
+    case "refund-refused":
+      return t("addon.shipping-kit.engine.refund.refusedTitle", { company: carrier });
+    case "refund-pending":
+      return t("addon.shipping-kit.engine.refund.pendingTitle");
     case "label-owed":
       return t("addon.shipping-kit.engine.label.owedBody", { company: carrier });
     case "new-number":

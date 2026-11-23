@@ -127,7 +127,7 @@ export function ownerBooksAll(rates: readonly EngineRate[], speed: CustomerSpeed
 
 // ── which booking holds a parcel ────────────────────────────────────────────
 
-const HOLDS: ReadonlySet<EngineBooking["state"]> = new Set(["reserved", "calling", "unknown", "booked"]);
+const HOLDS: ReadonlySet<EngineBooking["state"]> = new Set(["reserved", "calling", "unknown", "booked", "voiding"]);
 
 /** This order's outbound bookings under the key in use. A test label has no bearing on a live parcel. */
 export function outboundIn(list: readonly EngineBooking[], mode: EngineMode): EngineBooking[] {

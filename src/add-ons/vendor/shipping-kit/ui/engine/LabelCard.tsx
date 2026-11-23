@@ -37,6 +37,7 @@ import { Code, Mono, Tag } from "../atoms.tsx";
 import { labelFileName, moneyText, readFailure, stampOf } from "./flow.ts";
 import { Detail, FlowButton, SampleStamp, Worded } from "./parts.tsx";
 import { HANDOVER } from "./RatesPanel.tsx";
+import { RefundBlock } from "./RefundBlock.tsx";
 
 /** Named by type from the client, so a renamed code fails the build rather than this comparison. */
 const NO_DOWNLOAD: typeof ENGINE_NO_DOWNLOAD = "ENGINE_NO_DOWNLOAD";
@@ -362,6 +363,7 @@ export function LabelCard({
   say,
   onChange,
   onStale,
+  onReplace,
 }: {
   booking: EngineBooking;
   access: EngineAccess;
@@ -374,6 +376,8 @@ export function LabelCard({
   say: (text: string) => void;
   onChange: (fresh: EngineBooking) => void;
   onStale: () => void;
+  /** Offered on a label with a refund pending, when this person may book another. */
+  onReplace?: (() => void) | undefined;
 }) {
   const t = useT();
   const locale = useLocale();
@@ -388,16 +392,19 @@ export function LabelCard({
   const how = HANDOVER[handover ?? "unknown"];
   const HowIcon = how.icon;
   const service = booking.carrierName === null ? booking.service : `${booking.carrierName} · ${booking.service}`;
+  const voiding = booking.state === "voiding";
+  const refused = booking.refund?.state === "refused";
+  const edge = voiding ? "var(--warn)" : refused ? "var(--danger)" : "var(--pos)";
 
   return (
     <section
       data-testid={`engine-label-card-${booking.parcelNumber}`}
-      style={{ border: "1.5px solid var(--pos)", background: "var(--surface)", borderRadius: 14, padding: 17, display: "flex", flexDirection: "column", gap: 14, minInlineSize: 0 }}
+      style={{ border: `1.5px solid ${edge}`, background: "var(--surface)", borderRadius: 14, padding: 17, display: "flex", flexDirection: "column", gap: 14, minInlineSize: 0 }}
     >
       <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px 10px" }}>
-        <PackageCheck size={19} aria-hidden="true" style={{ color: "var(--pos)", flex: "0 0 auto" }} />
-        <h3 ref={heading} tabIndex={-1} style={{ margin: 0, fontSize: 15.5, fontWeight: 800, color: "var(--pos)", lineHeight: 1.35, flex: "1 1 160px", outline: "none" }}>
-          {t("addon.shipping-kit.engine.label.title")}
+        <PackageCheck size={19} aria-hidden="true" style={{ color: edge, flex: "0 0 auto" }} />
+        <h3 ref={heading} tabIndex={-1} style={{ margin: 0, fontSize: 15.5, fontWeight: 800, color: edge, lineHeight: 1.35, flex: "1 1 160px", outline: "none" }}>
+          {voiding ? t("addon.shipping-kit.engine.refund.requestedTitle") : refused ? t("addon.shipping-kit.engine.refund.refusedTitle", { company }) : t("addon.shipping-kit.engine.label.title")}
         </h3>
         {many && <Tag>{t("addon.shipping-kit.engine.parcelN", { n: booking.parcelNumber })}</Tag>}
       </div>
@@ -444,14 +451,25 @@ export function LabelCard({
         </div>
       )}
 
-      <LabelActions booking={booking} client={client} orderRef={orderRef} say={say} onChange={onChange} onStale={onStale} />
-
-      <div style={{ border: "1px solid var(--border-strong)", background: "var(--surface-2)", borderRadius: 11, padding: "12px 14px", display: "flex", flexDirection: "column", gap: 6 }}>
-        <div style={{ fontSize: 13, fontWeight: 800 }}>{t("addon.shipping-kit.engine.label.nextTitle")}</div>
-        <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--fg-muted)" }}>
-          {t(test ? "addon.shipping-kit.engine.label.nextTest" : "addon.shipping-kit.engine.label.nextBody")}
+      {voiding ? (
+        <div role="note" data-testid="engine-refund-blocked" style={{ display: "flex", gap: 7, alignItems: "flex-start", fontSize: 12.5, fontWeight: 600, color: "var(--warn)" }}>
+          <TriangleAlert size={14} aria-hidden="true" style={{ flex: "0 0 auto", marginBlockStart: 2 }} />
+          <span>{t("addon.shipping-kit.engine.refund.doNotUse")}</span>
         </div>
-      </div>
+      ) : (
+        <LabelActions booking={booking} client={client} orderRef={orderRef} say={say} onChange={onChange} onStale={onStale} />
+      )}
+
+      {!voiding && booking.purpose !== "return" && (
+        <div style={{ border: "1px solid var(--border-strong)", background: "var(--surface-2)", borderRadius: 11, padding: "12px 14px", display: "flex", flexDirection: "column", gap: 6 }}>
+          <div style={{ fontSize: 13, fontWeight: 800 }}>{t("addon.shipping-kit.engine.label.nextTitle")}</div>
+          <div style={{ fontSize: 12.5, lineHeight: 1.5, color: "var(--fg-muted)" }}>
+            {t(test ? "addon.shipping-kit.engine.label.nextTest" : "addon.shipping-kit.engine.label.nextBody")}
+          </div>
+        </div>
+      )}
+
+      <RefundBlock booking={booking} access={access} client={client} company={company} say={say} onChange={onChange} onStale={onStale} onReplace={onReplace} />
 
       <TrackingBlock booking={booking} client={client} say={say} onChange={onChange} />
     </section>

@@ -93,9 +93,9 @@ FILES_shipping_kit=(
   i18n/strings.ts i18n/t.ts
   ui/atoms.tsx ui/labels.ts ui/DispatchAction.tsx ui/DeliveryMethods.tsx
   ui/SettingsPanel.tsx ui/TrackingPanel.tsx ui/ReturnLabel.tsx ui/account.tsx
-  ui/EngineDispatch.tsx ui/NeedsAttentionList.tsx ui/OpenParcelsRefresh.tsx
+  ui/EngineDispatch.tsx ui/EngineReturnLabel.tsx ui/NeedsAttentionList.tsx ui/OpenParcelsRefresh.tsx
   ui/engine/EngineGate.tsx ui/engine/LabelCard.tsx ui/engine/ParcelBooking.tsx
-  ui/engine/RatesPanel.tsx ui/engine/UnknownCard.tsx ui/engine/flow.ts ui/engine/parts.tsx
+  ui/engine/RatesPanel.tsx ui/engine/RefundBlock.tsx ui/engine/UnknownCard.tsx ui/engine/flow.ts ui/engine/parts.tsx
 )
 
 # Reachable from the client entry point, and nothing else. An explicit list

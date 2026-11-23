@@ -23,6 +23,7 @@ export { DispatchAction } from "./ui/DispatchAction.tsx";
 export { NeedsAttentionList, type NeedsAttentionListProps } from "./ui/NeedsAttentionList.tsx";
 export { OpenParcelsRefresh, type OpenParcelsRefreshProps } from "./ui/OpenParcelsRefresh.tsx";
 export { ReturnLabel } from "./ui/ReturnLabel.tsx";
+export { EngineReturnLabel } from "./ui/EngineReturnLabel.tsx";
 export { SettingsPanel } from "./ui/SettingsPanel.tsx";
 export { TrackingPanel } from "./ui/TrackingPanel.tsx";
 

@@ -240,6 +240,7 @@ export function ParcelBooking({
   onModeMoved,
   onQuoted,
   onClose,
+  replaceRefunding = false,
 }: {
   client: EngineCarrier;
   access: EngineAccess;
@@ -260,6 +261,8 @@ export function ParcelBooking({
   onQuoted: () => void;
   /** Leaves an added parcel's form. Absent on the first parcel. */
   onClose?: (() => void) | undefined;
+  /** Someone was told both labels stay paid until the refund lands, and chose to book another. */
+  replaceRefunding?: boolean | undefined;
 }) {
   const t = useT();
   const locale = useLocale();
@@ -395,7 +398,7 @@ export function ParcelBooking({
     setBooking(true);
     say(t("addon.shipping-kit.engine.say.booking"));
     try {
-      const answer = await client.book({ quoteId: shownQuote.quoteId, rateId: rate.rateId, ...(confirmEarlier ? { confirmEarlier: true } : {}) });
+      const answer = await client.book({ quoteId: shownQuote.quoteId, rateId: rate.rateId, ...(confirmEarlier ? { confirmEarlier: true } : {}), ...(replaceRefunding ? { replaceRefunding: true } : {}) });
       onAnswered(answer, rate);
     } catch (err) {
       if (classifyBookFailure(err).outcome !== "refused") {

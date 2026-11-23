@@ -111,6 +111,8 @@ export interface OrderRef {
   purpose?: ShipmentPurpose;
   /** Which parcel of the order, from 1. Absent means 1. */
   parcel?: number;
+  /** On a look-up: the carrier's handles for every rate this order may have been bought at. */
+  rateRefs?: string[];
 }
 
 export interface CustomsItem {
@@ -228,7 +230,8 @@ export type CarrierCredentialCheck =
  * the carrier may not have indexed the purchase yet, so it never frees an order.
  */
 export type RecoveryResult =
-  | { outcome: 'found'; shipment: Shipment }
+  /** `duplicates`: further labels for the same purchase, for a person to refund. */
+  | { outcome: 'found'; shipment: Shipment; duplicates?: Shipment[] }
   | { outcome: 'not-bought'; carrierMessage?: string }
   | { outcome: 'no-match' };
 
