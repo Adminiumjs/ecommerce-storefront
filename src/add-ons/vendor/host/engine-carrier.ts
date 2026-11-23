@@ -47,6 +47,7 @@ import {
   type CarrierOutcome,
   type CarrierRefusal,
   type HandoverKind,
+  type ShipmentDocumentKind,
   type ShipmentPurpose,
 } from './contracts/shipping-carrier.ts';
 
@@ -61,6 +62,12 @@ export interface EngineRequest {
 export interface EngineReply {
   readonly status: number;
   text(): Promise<string>;
+  /**
+   * The body as a file, for a label. Optional so an app built before labels
+   * still compiles: without it `downloadDocument` refuses and the screen says so.
+   * A plain link cannot stand in, because it would not carry the install header.
+   */
+  blob?(): Promise<Blob>;
 }
 
 /** Same origin, with the session, the CSRF token and the install header. The app's own. */
@@ -132,6 +139,50 @@ export type EngineQuote =
   | (EngineQuoteFields & { pricesHidden: false; rates: PricedEngineRate[] })
   | (EngineQuoteFields & { pricesHidden: true; rates: PricelessEngineRate[] });
 
+export type EngineLabelState = 'none' | 'ready' | 'owed' | 'gone';
+
+/** Where a bought label's file stands. Offer a download only on `ready`. */
+export interface EngineLabel {
+  state: EngineLabelState;
+  /** The size asked for. */
+  size: string | null;
+  /** The size the carrier's file really is, when it can be read. */
+  sizeGot: string | null;
+  sizeDiffers: boolean;
+  customsInvoice: boolean;
+}
+
+export type EngineTrackStatus = 'UNKNOWN' | 'PRE_TRANSIT' | 'TRANSIT' | 'FAILURE' | 'RETURNED' | 'DELIVERED';
+
+/** Where a parcel is. `checkedAt` is a person's Refresh, never a webhook. */
+export interface EngineTrack {
+  status: EngineTrackStatus | null;
+  statusAt: number | null;
+  checkedAt: number | null;
+  flag: string | null;
+  newNumber: boolean;
+}
+
+export type EngineRefreshOutcome = 'updated' | 'unchanged' | 'no-events' | 'recent' | 'test' | 'not-open' | 'other-account' | 'no-answer' | 'rate-limited';
+
+export interface EngineRefresh {
+  outcome: EngineRefreshOutcome;
+  track: EngineTrack | null;
+}
+
+/** "Refresh open parcels". `oldestCheckedAt` is the oldest check, so nothing reads fresher than it is. */
+export interface EngineRefreshOpen {
+  outcome: 'done' | 'recent' | 'rate-limited';
+  checked: number;
+  updated: number;
+  failed: number;
+  remaining: number;
+  more: boolean;
+  oldestCheckedAt: number | null;
+  neverChecked: number;
+  retryAt: number | null;
+}
+
 export interface EngineBooking {
   id: string;
   state: EngineBookingState;
@@ -149,9 +200,12 @@ export interface EngineBooking {
   checkedAt: number | null;
   releaseAfter: number | null;
   applied: boolean;
+  label: EngineLabel;
   amount?: string;
   currency?: string;
   chargeDiffers?: boolean;
+  /** Absent or null until the parcel has a tracking record. */
+  track?: EngineTrack | null;
 }
 
 export interface EngineBookings {
@@ -164,6 +218,26 @@ export interface EngineBookings {
 export interface EngineLookUp {
   outcome: EngineLookUpOutcome;
   booking: EngineBooking;
+}
+
+export const ENGINE_ATTENTION_REASONS = ['unknown', 'duplicates', 'label-owed', 'new-number', 'tracking-failed', 'returned', 'ambiguous', 'quiet'] as const;
+export type EngineAttentionReason = (typeof ENGINE_ATTENTION_REASONS)[number];
+
+/** A label that needs a person, on an order this person reaches. */
+export interface EngineAttentionItem {
+  /** Most pressing first. A reason this build has no word for is left out, so the list can be empty. */
+  reasons: EngineAttentionReason[];
+  reference: string;
+  source: { table: string; id: string };
+  /** The order was deleted, so there is none to open. Only ever true for someone who manages shipping. */
+  orderGone: boolean;
+  booking: EngineBooking;
+}
+
+export interface EngineAttention {
+  items: EngineAttentionItem[];
+  /** The engine stopped looking, so more may be waiting. */
+  more: boolean;
 }
 
 export interface EngineQuoteRequest {
@@ -198,6 +272,14 @@ export interface EngineCarrier {
   checkBooking(id: string): Promise<EngineLookUp>;
   /** The person's own declaration that no label exists. */
   releaseBooking(id: string): Promise<EngineBooking>;
+  /** Asks the carrier for a file that is owed. The booking comes back with its new `label`. */
+  fetchDocument(id: string, kind: ShipmentDocumentKind): Promise<EngineBooking>;
+  /** The stored file. Only for a label whose `state` is `ready`. */
+  downloadDocument(id: string, kind: ShipmentDocumentKind): Promise<Blob>;
+  refreshBooking(id: string): Promise<EngineRefresh>;
+  refreshOpenParcels(): Promise<EngineRefreshOpen>;
+  /** The labels that need a person. Reads what is stored: no carrier is asked. */
+  attention(): Promise<EngineAttention>;
 }
 
 // ── failures ────────────────────────────────────────────────────────────────
@@ -205,6 +287,8 @@ export interface EngineCarrier {
 export const ENGINE_NO_ANSWER = 'ENGINE_NO_ANSWER';
 export const ENGINE_BAD_ANSWER = 'ENGINE_BAD_ANSWER';
 export const ENGINE_OTHER_CARRIER = 'ENGINE_OTHER_CARRIER';
+/** The app's sender cannot hand back a file yet. */
+export const ENGINE_NO_DOWNLOAD = 'ENGINE_NO_DOWNLOAD';
 
 /**
  * A refusal, read by shape through `classifyBookFailure` like any `CarrierError`.
@@ -251,7 +335,12 @@ export class EngineCarrierError extends CarrierError {
  */
 const REFUSED_BEFORE_BUYING: ReadonlySet<string> = new Set([
   'UNAUTHENTICATED',
+  'SESSION_EXPIRED',
   'FORBIDDEN',
+  'TABLE_FORBIDDEN',
+  'APP_SCREENS_ONLY',
+  'READ_ONLY_MODE',
+  'APP_INSTALL_AMBIGUOUS',
   'CSRF_FAILED',
   'VALIDATION_FAILED',
   'RATE_LIMITED',
@@ -365,6 +454,32 @@ const BOOKING_BLOCKS = ['booking', 'label-on-order', 'no-carrier'] as const;
 const LOOK_UP_OUTCOMES = ['found', 'not-bought', 'no-match', 'no-answer', 'cannot-check', 'other-account', 'other-rate'] as const;
 const MODES = ['live', 'test'] as const;
 const BOOKING_ROOM = ['open', 'no-limit', 'daily-limit', 'no-right'] as const;
+const LABEL_STATES = ['none', 'ready', 'owed', 'gone'] as const;
+const TRACK_STATUSES = ['UNKNOWN', 'PRE_TRANSIT', 'TRANSIT', 'FAILURE', 'RETURNED', 'DELIVERED'] as const;
+const REFRESH_OUTCOMES = ['updated', 'unchanged', 'no-events', 'recent', 'test', 'not-open', 'other-account', 'no-answer', 'rate-limited'] as const;
+const REFRESH_OPEN_OUTCOMES = ['done', 'recent', 'rate-limited'] as const;
+
+function readLabel(read: Reader, value: unknown): EngineLabel {
+  const raw = read.object(value);
+  return {
+    state: read.oneOf(raw, 'state', LABEL_STATES),
+    size: read.orNull(raw, 'size', read.text),
+    sizeGot: read.orNull(raw, 'sizeGot', read.text),
+    sizeDiffers: read.flag(raw, 'sizeDiffers'),
+    customsInvoice: read.flag(raw, 'customsInvoice'),
+  };
+}
+
+function readTrack(read: Reader, value: unknown): EngineTrack {
+  const raw = read.object(value);
+  return {
+    status: read.orNull(raw, 'status', (from, key) => read.oneOf(from, key, TRACK_STATUSES)),
+    statusAt: read.orNull(raw, 'statusAt', read.number),
+    checkedAt: read.orNull(raw, 'checkedAt', read.number),
+    flag: read.orNull(raw, 'flag', read.text),
+    newNumber: read.flag(raw, 'newNumber'),
+  };
+}
 
 function readBooking(read: Reader, value: unknown): EngineBooking {
   const raw = read.object(value);
@@ -387,9 +502,24 @@ function readBooking(read: Reader, value: unknown): EngineBooking {
     checkedAt: read.orNull(raw, 'checkedAt', read.number),
     releaseAfter: read.orNull(raw, 'releaseAfter', read.number),
     applied: read.flag(raw, 'applied'),
+    label: readLabel(read, raw.label),
     ...optional('amount', read.maybe(raw, 'amount', read.text)),
     ...optional('currency', read.maybe(raw, 'currency', read.text)),
     ...optional('chargeDiffers', read.maybe(raw, 'chargeDiffers', read.flag)),
+    ...(raw.track === undefined ? {} : { track: raw.track === null ? null : readTrack(read, raw.track) }),
+  };
+}
+
+function readAttentionItem(read: Reader, value: unknown): EngineAttentionItem {
+  const raw = read.object(value);
+  const source = read.object(raw.source);
+  return {
+    // An engine newer than this build can name a reason it has no word for. The row still shows.
+    reasons: read.list(raw.reasons).filter((reason): reason is EngineAttentionReason => (ENGINE_ATTENTION_REASONS as readonly unknown[]).includes(reason)),
+    reference: read.text(raw, 'reference'),
+    source: { table: read.text(source, 'table'), id: read.text(source, 'id') },
+    orderGone: read.flag(raw, 'orderGone'),
+    booking: readBooking(read, raw.booking),
   };
 }
 
@@ -605,6 +735,68 @@ export function createEngineCarrier(options: EngineCarrierOptions): EngineCarrie
     async releaseBooking(id) {
       const body = { declaration: 'no-label-exists' };
       return readBooking(reader(false), await ask('POST', `/bookings/${encodeURIComponent(id)}/release`, body, false));
+    },
+
+    async fetchDocument(id, kind) {
+      return readBooking(reader(false), await ask('POST', `/bookings/${encodeURIComponent(id)}/documents/${encodeURIComponent(kind)}`, undefined, false));
+    },
+
+    async downloadDocument(id, kind) {
+      const noAnswer = () => new EngineCarrierError({ code: ENGINE_NO_ANSWER, message: 'Adminium did not answer.', status: null, retryable: true });
+      let reply: EngineReply;
+      try {
+        reply = await send(`${base}/bookings/${encodeURIComponent(id)}/documents/${encodeURIComponent(kind)}`, { method: 'GET', headers: { accept: 'application/pdf, image/png, application/json' } });
+      } catch {
+        throw noAnswer();
+      }
+      if (reply.status < 200 || reply.status >= 300) {
+        let parsed: unknown;
+        try {
+          parsed = JSON.parse(await reply.text());
+        } catch {
+          parsed = undefined;
+        }
+        throw refusalFrom(reply.status, parsed, false);
+      }
+      if (reply.blob === undefined) {
+        throw new EngineCarrierError({ code: ENGINE_NO_DOWNLOAD, message: 'This app cannot download a label yet.', status: null, retryable: false });
+      }
+      try {
+        return await reply.blob();
+      } catch {
+        throw noAnswer();
+      }
+    },
+
+    async refreshBooking(id) {
+      const read = reader(false);
+      const raw = read.object(await ask('POST', `/bookings/${encodeURIComponent(id)}/refresh`, undefined, false));
+      return { outcome: read.oneOf(raw, 'outcome', REFRESH_OUTCOMES), track: raw.track === null ? null : readTrack(read, raw.track) };
+    },
+
+    async refreshOpenParcels() {
+      const read = reader(false);
+      const raw = read.object(await ask('POST', '/tracking/refresh', undefined, false));
+      return {
+        outcome: read.oneOf(raw, 'outcome', REFRESH_OPEN_OUTCOMES),
+        checked: read.number(raw, 'checked'),
+        updated: read.number(raw, 'updated'),
+        failed: read.number(raw, 'failed'),
+        remaining: read.number(raw, 'remaining'),
+        more: read.flag(raw, 'more'),
+        oldestCheckedAt: read.orNull(raw, 'oldestCheckedAt', read.number),
+        neverChecked: read.number(raw, 'neverChecked'),
+        retryAt: read.orNull(raw, 'retryAt', read.number),
+      };
+    },
+
+    async attention() {
+      const read = reader(false);
+      const raw = read.object(await ask('GET', '/attention', undefined, false));
+      return {
+        items: read.list(raw.items).map((item) => readAttentionItem(read, item)),
+        more: read.flag(raw, 'more'),
+      };
     },
   };
 }

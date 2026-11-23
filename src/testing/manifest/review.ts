@@ -53,7 +53,9 @@ const pathSchema = z.array(refSchema).min(1).max(3);
 
 /** A review's states, the reasons it is hidden for, and what staff change of one. */
 export const REVIEW_STATES = ['waiting', 'published', 'hidden'] as const;
-export const REVIEW_HIDE_REASONS = ['abusive', 'names-someone', 'not-about-us', 'looks-fake'] as const;
+export const REVIEW_HIDE_REASONS = ['abusive', 'names-someone', 'not-about-us', 'looks-fake', 'author-asked'] as const;
+/** The reasons every keeping add-on holds. The fifth, "the author asked", came later: an add-on released before it still fits. */
+const REVIEW_HIDE_REASONS_FIRST = REVIEW_HIDE_REASONS.slice(0, 4);
 export const REVIEW_STAFF_COLUMNS = ['state', 'hide_reason', 'reply'] as const;
 /** The longest title and words a review takes. */
 export const REVIEW_TITLE_MAX = 80;
@@ -121,7 +123,7 @@ export const REVIEW_COLUMNS: Readonly<Record<string, ContractColumn<never> & { e
   body: text(REVIEW_BODY_MAX, true),
   shown_name: text(REVIEW_SHOWN_NAME_MAX),
   state: choice(REVIEW_STATES),
-  hide_reason: choice(REVIEW_HIDE_REASONS, true),
+  hide_reason: { ...choice(REVIEW_HIDE_REASONS_FIRST, true), mayAlso: ['author-asked'] },
   reply: text(REVIEW_BODY_MAX, true),
   replied_at: moment(true),
   submitted_at: moment(),

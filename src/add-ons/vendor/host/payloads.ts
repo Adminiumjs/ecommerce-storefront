@@ -353,6 +353,13 @@ export interface LineOrder {
  */
 export interface OutboundOrder {
   ref: string;
+  /**
+   * THE ROW THIS ORDER IS, for a real carrier (plan 79, D2). The engine reads the
+   * address, the lines and the value from this row itself, so nothing a screen
+   * holds can change what is bought. Optional because a host still on the demo
+   * has no use for it; without it, the real booking flow says the app needs updating.
+   */
+  source?: { table: string; id: string };
   recipient: Party;
   items: readonly SlotItem[];
   /** Where the shop sends from. Every shop has one. */
@@ -370,6 +377,13 @@ export interface OutboundOrder {
    * are one number; absent, the add-on works one out from the items.
    */
   parcelWeightGrams?: number;
+  /**
+   * WHAT THE CUSTOMER PAID FOR, in carrier-neutral terms (plan 79, D13 and R1).
+   * `label` is already translated. A service that may miss `maxDays`, is not
+   * tracked when this is, or states no speed asks for a deliberate confirm.
+   * Absent when the shop's orders keep no delivery promise.
+   */
+  deliveryPromise?: { label: string; maxDays?: number; tracked?: boolean };
 }
 
 // ── the eleven payloads ─────────────────────────────────────────────────────

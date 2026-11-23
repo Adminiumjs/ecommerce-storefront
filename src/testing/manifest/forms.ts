@@ -81,6 +81,8 @@ export interface ContractColumn<Part extends string = string> {
   atLeast?: number;
   /** An enum's values, exactly. */
   values?: readonly string[];
+  /** Values the enum may also hold: a reason added after add-ons shipped without it, which they gain in their own release. */
+  mayAlso?: readonly string[];
   /** A link to another part of the block. */
   links?: Part;
 }
@@ -358,7 +360,8 @@ export function contractColumnIssues<Part extends string>(
     if (want.atLeast !== undefined && column.maxLength !== undefined && column.maxLength < want.atLeast) say(`takes up to ${String(want.atLeast)} characters: leave out maxLength, or make it at least that`, 'maxLength');
     if (want.values !== undefined) {
       const values = new Set(column.enum ?? []);
-      if (values.size !== want.values.length || !want.values.every((value) => values.has(value))) say(`takes exactly ${want.values.map((value) => `"${value}"`).join(', ')}`, 'enum');
+      const allowed = new Set([...want.values, ...(want.mayAlso ?? [])]);
+      if (!want.values.every((value) => values.has(value)) || [...values].some((value) => !allowed.has(value))) say(`takes exactly ${want.values.map((value) => `"${value}"`).join(', ')}`, 'enum');
     }
     if (want.links !== undefined) {
       const target = linkOf(want.links);

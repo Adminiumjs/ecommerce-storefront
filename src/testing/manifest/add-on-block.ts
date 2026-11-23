@@ -27,6 +27,7 @@ import { z } from 'zod';
 import { i18nMessageSchema, wordsByLanguageSchema } from './common.ts';
 import { contractIdSchema, hasContractVersion } from './contracts.ts';
 import { RECORD_ACTION_KINDS } from './record-actions.ts';
+import { framedPageSchema } from './framed-page.ts';
 import { recordPanelsSchema } from './record-panels.ts';
 import { recordTabsSchema } from './record-tabs.ts';
 import { slotIdSchema } from './slots.ts';
@@ -149,14 +150,70 @@ export const addOnEventSchema = z
   })
   .strict();
 
+/** Where an account's sign-in may be kept: one per install, or one per row of the app. */
+export const CONNECT_ACCOUNTS = ['install', 'row'] as const;
+
+/** The authorize parameters Adminium writes itself: a manifest's `authorizeParams` never names one. */
+export const OAUTH_RESERVED_PARAMS: readonly string[] = ['response_type', 'client_id', 'redirect_uri', 'state', 'scope', 'code_challenge', 'code_challenge_method', 'login_hint'];
+
+/** The slot a provider's sign-in address may hold for the customer's own directory. */
+export const OAUTH_TENANT_SLOT = '{tenant}';
+
+/** A directory's id or name: a GUID, a domain, or a word like `common`. Never a path. */
+export const OAUTH_TENANT = /^[A-Za-z0-9](?:[A-Za-z0-9.-]{0,126}[A-Za-z0-9])?$/;
+
 export const addOnConnectSchema = z
   .object({
     kind: connectKindSchema,
     authorizeUrl: z.url().optional(),
     tokenUrl: z.url().optional(),
     scopes: z.array(z.string().min(1)).optional(),
+    /**
+     * Connected accounts: Adminium keeps one sign-in per install or per row,
+     * runs the flow and every refresh, and the add-on's code never holds a
+     * token or the client secret. Absent: the one credential of the install.
+     */
+    accounts: z.enum(CONNECT_ACCOUNTS).optional(),
+    /** Fixed extras on the authorize address (Google's `access_type=offline`, `prompt=consent`). */
+    authorizeParams: z.record(z.string().regex(/^[a-z][a-z0-9_]{0,39}$/), z.string().min(1).max(200)).optional(),
+    /** The scopes the add-on cannot work without: a shorter grant reads "partial", never "connected". */
+    requiredScopes: z.array(z.string().min(1)).optional(),
+    /** Where a grant is given back when a connection ends. */
+    revokeUrl: z.url().optional(),
+    /** Which claims of the ID token say who connected: a stable id, and an address (first one present). */
+    identity: z.object({ subject: z.string().min(1).max(40), address: z.array(z.string().min(1).max(40)).min(1).max(4) }).strict().optional(),
+    /** With `{tenant}` in the two addresses: what fills it when the registration names no directory. */
+    tenant: z.object({ default: z.string().regex(OAUTH_TENANT) }).strict().optional(),
   })
-  .strict();
+  .strict()
+  .superRefine((connect, ctx) => {
+    const extras = ['authorizeParams', 'requiredScopes', 'revokeUrl', 'identity', 'tenant'] as const;
+    if (connect.accounts === undefined) {
+      for (const word of extras) {
+        if (connect[word] !== undefined) ctx.addIssue({ code: 'custom', path: [word], message: `"${word}" is for connected accounts: declare "accounts"` });
+      }
+    } else {
+      if (connect.kind !== 'oauth2') ctx.addIssue({ code: 'custom', path: ['accounts'], message: 'connected accounts sign in over oauth2' });
+      if (connect.identity === undefined) ctx.addIssue({ code: 'custom', path: ['identity'], message: 'connected accounts name who connected: declare "identity"' });
+    }
+    for (const name of Object.keys(connect.authorizeParams ?? {})) {
+      if (OAUTH_RESERVED_PARAMS.includes(name)) ctx.addIssue({ code: 'custom', path: ['authorizeParams', name], message: `"${name}" is written by Adminium` });
+    }
+    for (const scope of connect.requiredScopes ?? []) {
+      if (!(connect.scopes ?? []).includes(scope)) ctx.addIssue({ code: 'custom', path: ['requiredScopes'], message: `"${scope}" is not one of "scopes"` });
+    }
+    const slotted = [connect.authorizeUrl, connect.tokenUrl].filter((url) => url?.includes(OAUTH_TENANT_SLOT) === true).length;
+    if (slotted !== 0 && slotted !== 2) ctx.addIssue({ code: 'custom', path: ['tokenUrl'], message: `"${OAUTH_TENANT_SLOT}" goes in both addresses or neither` });
+    if ((slotted === 2) !== (connect.tenant !== undefined)) {
+      ctx.addIssue({ code: 'custom', path: ['tenant'], message: `"tenant" and "${OAUTH_TENANT_SLOT}" in the two addresses come together` });
+    }
+    for (const [field, raw] of [['authorizeUrl', connect.authorizeUrl], ['tokenUrl', connect.tokenUrl]] as const) {
+      if (raw === undefined || !raw.includes(OAUTH_TENANT_SLOT)) continue;
+      if (raw.indexOf(OAUTH_TENANT_SLOT) !== raw.lastIndexOf(OAUTH_TENANT_SLOT) || !new URL(raw.replace(OAUTH_TENANT_SLOT, 'common')).pathname.includes('/common')) {
+        ctx.addIssue({ code: 'custom', path: [field], message: `"${OAUTH_TENANT_SLOT}" appears once, in the path` });
+      }
+    }
+  });
 
 export const addOnNetworkSchema = z
   .object({
@@ -396,6 +453,8 @@ export const addOnBlockSchema = z
       .optional(),
     /** The only settings the client bundle may read. */
     publicSettings: z.array(z.string().min(1)).optional(),
+    /** One small page of its own, served in a sandbox with its own outside hosts (see `framed-page.ts`). */
+    framedPage: framedPageSchema.optional(),
     /** Required to ship a demo that makes no real third-party call. */
     demoTransport: z.string().min(1).optional(),
     /**

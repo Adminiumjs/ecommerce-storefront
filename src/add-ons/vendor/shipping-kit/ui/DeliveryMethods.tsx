@@ -26,7 +26,7 @@ import { collectionDay, dispatchDay } from "../clock.ts";
 import { useFormat, useT } from "../i18n/t.ts";
 import { parcelFor } from "../parcel.ts";
 import { cheapestCode, postponedTo, type QuotedRate } from "../rates.ts";
-import { carrier, carrierState, isDemo, setHostClock, setHostCurrency } from "../runtime.ts";
+import { carrier, hasPageCarrier, isDemo, setHostClock, setHostCurrency } from "../runtime.ts";
 import { domesticStandIn, originOf } from "../seed.ts";
 import { publicSettings } from "../settings.ts";
 import { Monogram, Mono, NotAffiliated, Panel, PanelTitle, Tag } from "./atoms.tsx";
@@ -94,7 +94,7 @@ export function DeliveryMethods({
     // Priced in the shop's own currency, off the basket's total.
     setHostCurrency(currency);
     // No carrier account and no demo: the till shows the shop's own delivery and nothing of the carrier's.
-    if (carrierState() === "not-connected") return;
+    if (!hasPageCarrier()) return;
     const estimate = parcelFor(items);
     const from = originOf({ origin });
     carrier()

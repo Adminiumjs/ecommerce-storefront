@@ -596,7 +596,7 @@ const withholdSchema = z
  * stamps. `links`: it also stops the person's rows' own links (each gets a
  * new code, which closes every session its old one opened) — an app's choice.
  */
-const forgetSchema = z.object({ columns: z.array(refSchema).min(1).max(16), stamp: refSchema.optional(), links: z.literal(true).optional() }).strict();
+const forgetSchema = z.object({ columns: z.array(refSchema).min(1).max(16), stamp: refSchema.optional(), links: z.literal(true).optional(), copies: z.literal(true).optional() }).strict();
 
 /**
  * "Make a new link" for a signed-in person's row: its own link (`column`)
@@ -701,6 +701,20 @@ export const publicAccessSchema = z
      * browser cannot choose it), and a change never moves it.
      */
     appColumn: refSchema.optional(),
+    /**
+     * On an add-on's read: only the rows this address column holds the address
+     * of the person signed in on the app's key, the one they proved by reading
+     * mail. A row an add-on keeps for a person (a pack, a gift card) names them
+     * by address, never by a key of the app's table, so `claimedBy` cannot.
+     */
+    heldBy: z
+      .object({
+        address: refSchema,
+        /** A date column: until that day the row is not shown yet (a gift card dated for a birthday). */
+        from: refSchema.optional(),
+      })
+      .strict()
+      .optional(),
     /** On a signed-in person's rows: "Make a new link" for a row's own link. */
     newLink: newLinkSchema.optional(),
     /**
@@ -1225,6 +1239,29 @@ function appColumnIssues(entries: readonly PublicAccess[], index: TableIndex): R
   return out;
 }
 
+/**
+ * A read of the rows a signed-in person holds (`heldBy`): a plain read at
+ * `verified`, listing what it shows, on the app's key, by a column that keeps
+ * an address in one spelling. Anything else could show one person another's.
+ */
+function heldByIssues(entries: readonly PublicAccess[], index: TableIndex): ReferenceIssue[] {
+  const out: ReferenceIssue[] = [];
+  entries.forEach((entry, i) => {
+    if (entry.heldBy === undefined) return;
+    const at = ['publicAccess', i, 'heldBy'];
+    const found = index.column(entry.table, entry.heldBy.address) as { type?: string; rules?: { normalize?: unknown } } | undefined;
+    if (found === undefined) out.push({ path: at, message: `"${entry.table}" has no column "${entry.heldBy.address}"` });
+    else if (found.type !== 'text' || found.rules?.normalize !== 'email') out.push({ path: at, message: `"${entry.table}.${entry.heldBy.address}" does not keep an address in one spelling (a text column with normalize "email")` });
+    if (entry.heldBy.from !== undefined && index.column(entry.table, entry.heldBy.from)?.type !== 'date') out.push({ path: at, message: `"${entry.table}.${entry.heldBy.from}" is not a date column` });
+    if (entry.methods.length !== 1 || entry.methods[0] !== 'GET') out.push({ path: at, message: 'the rows a person holds are read, never written, through this entry' });
+    if (entry.level !== 'verified') out.push({ path: at, message: 'the rows a person holds are read at level "verified"' });
+    if (entry.select === undefined) out.push({ path: at, message: 'a read of the rows a person holds lists what it shows' });
+    if (entry.claim !== undefined || entry.claimedBy !== undefined || entry.visibleWith !== undefined || entry.unlockBy !== undefined) out.push({ path: at, message: 'an entry is read by the address a session proved, or by a claim, never both' });
+    if ((entry.key ?? CUSTOMER_KEY) !== CUSTOMER_KEY) out.push({ path: at, message: `an entry on "${String(entry.key)}" has no signed-in customer` });
+  });
+  return out;
+}
+
 /** Whether an entry declares any of a shopper's lists: filters, search, order, a filter through another list, a count. */
 export function shopperLists(entry: PublicAccess): boolean {
   return entry.filterable !== undefined || entry.searchable !== undefined || entry.orderable !== undefined || entry.via !== undefined || entry.count !== undefined;
@@ -1370,6 +1407,7 @@ export function publicAccessIssues(entries: readonly PublicAccess[], ctx: Public
   const { index } = ctx;
   const has = index.has;
   out.push(...appColumnIssues(entries, index));
+  out.push(...heldByIssues(entries, index));
   out.push(...shopperListIssues(entries, ctx));
 
   const doorKeys = ctx.chatReserved === false ? [FORMS_KEY] : DOOR_KEYS;

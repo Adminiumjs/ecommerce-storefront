@@ -55,7 +55,7 @@ import { useFormat, useT } from "../i18n/t.ts";
 import { labelFilename } from "../label.ts";
 import { parcelFor } from "../parcel.ts";
 import { cheapestCode, type QuotedRate } from "../rates.ts";
-import { carrier, carrierState, findShipment, isDemo, labels, rememberRoute, setHostClock } from "../runtime.ts";
+import { carrier, carrierState, hasPageCarrier, findShipment, isDemo, labels, rememberRoute, setHostClock } from "../runtime.ts";
 import { DemoNotice, NotConnected } from "./account.tsx";
 import { addressIsUsable, blankAddress, POSTCODE_HINT } from "../seed.ts";
 import {
@@ -158,6 +158,8 @@ export function ReturnLabel({ payload }: { payload: RecordActionsPayload }) {
 
   // No carrier account and no demo, and no label made earlier: nothing can be quoted, and the card says so.
   if (made === null && carrierState() === "not-connected") return <NotConnected />;
+  // Connected through the engine, which has no return-label route until T13: no button with no call behind it.
+  if (made === null && !hasPageCarrier()) return null;
 
   const getRates = async () => {
     setBusy(true);

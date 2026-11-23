@@ -113,6 +113,12 @@ export const publicConsentSchema = z
   .object({
     column: refSchema,
     purpose: z.enum(CONSENT_PURPOSES),
+    /**
+     * What a ticked box says. `yes` (the default): "Email me about new shows". `no`: "Don't send me a review
+     * request", which records the person's "no" for the purpose. A no is safe to take from a stranger, where a
+     * yes is not: it can only stop mail, and the person may switch it back on where they are signed in.
+     */
+    means: z.enum(['yes', 'no']).optional(),
     wording: z
       .object({
         version: z.number().int().min(1).max(9999),
@@ -498,6 +504,10 @@ export function publicConsentIssues<C extends PeopleColumn>(
     else if (column.type !== 'bool') out.push({ path: at('column'), message: `"${entry.table}.${consent.column}" is not a bool (a tick)` });
     else if (!(entry.writable ?? []).includes(consent.column)) out.push({ path: at('column'), message: `"${entry.table}.${consent.column}" is not writable through this entry, so no tick reaches it` });
     const person = entry.identity?.table ?? entry.claimedBy?.table ?? entry.table;
+    // A box that says no is not the yes column that mirrors the purpose: ticked, that column would read yes.
+    if (consent.means === 'no' && entry.table === person && (m.people ?? []).some((declared) => declared.table === person && declared.consent?.column === consent.column)) {
+      out.push({ path: at('column'), message: `"${entry.table}.${consent.column}" says yes to "${consent.purpose}" for this person, so it cannot also be a box that says no: give the box a column of its own` });
+    }
     if (!(m.people ?? []).some((declared) => declared.table === person && declared.kind === 'people')) {
       out.push({ path: at(), message: `a tick is kept for a person: "${person}" is not one of the app's people tables (people), and the entry finds no other (identity, claimedBy)` });
     }

@@ -247,19 +247,10 @@ export function PanelTitle({ children, tone }: { children: ReactNode; tone?: "po
   );
 }
 
-export function Button({
-  children,
-  onClick,
-  variant = "accent",
-  disabled = false,
-  style,
-}: {
-  children: ReactNode;
-  onClick: () => void;
-  variant?: "accent" | "ghost" | "solid";
-  disabled?: boolean;
-  style?: CSSProperties;
-}) {
+export type ButtonVariant = "accent" | "ghost" | "solid";
+
+/** One button's look, shared with the booking flow's button that keeps focus while busy. */
+export function buttonStyle(variant: ButtonVariant, off: boolean): CSSProperties {
   const base: CSSProperties = {
     display: "inline-flex",
     alignItems: "center",
@@ -269,8 +260,8 @@ export function Button({
     padding: "11px 16px",
     fontSize: 13.5,
     fontWeight: 800,
-    cursor: disabled ? "not-allowed" : "pointer",
-    opacity: disabled ? 0.55 : 1,
+    cursor: off ? "not-allowed" : "pointer",
+    opacity: off ? 0.55 : 1,
   };
   const skin: CSSProperties =
     variant === "ghost"
@@ -278,9 +269,24 @@ export function Button({
       : variant === "solid"
         ? { border: 0, background: "var(--fg)", color: "var(--bg)" }
         : { border: 0, background: "var(--accent)", color: "var(--accent-fg)" };
+  return { ...base, ...skin };
+}
 
+export function Button({
+  children,
+  onClick,
+  variant = "accent",
+  disabled = false,
+  style,
+}: {
+  children: ReactNode;
+  onClick: () => void;
+  variant?: ButtonVariant;
+  disabled?: boolean;
+  style?: CSSProperties;
+}) {
   return (
-    <button type="button" onClick={onClick} disabled={disabled} style={{ ...base, ...skin, ...style }}>
+    <button type="button" onClick={onClick} disabled={disabled} style={{ ...buttonStyle(variant, disabled), ...style }}>
       {children}
     </button>
   );

@@ -300,7 +300,7 @@ export function engineSend(request: typeof fetch, origin: string, csrfToken: () 
       headers: { ...init.headers, ...(token === null ? {} : { "x-adminium-csrf": token }) },
       ...(init.body === undefined ? {} : { body: init.body }),
     });
-    return { status: res.status, text: () => res.text() };
+    return { status: res.status, text: () => res.text(), blob: () => res.blob() };
   };
 }
 

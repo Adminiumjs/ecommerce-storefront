@@ -20,6 +20,8 @@ export { applySettings, DEFAULT_SETTINGS, type PublicSettings } from "./settings
 export { connectEngineCarrier, engineCarrier, useConnectedCarrier } from "./runtime.ts";
 export { DeliveryMethods } from "./ui/DeliveryMethods.tsx";
 export { DispatchAction } from "./ui/DispatchAction.tsx";
+export { NeedsAttentionList, type NeedsAttentionListProps } from "./ui/NeedsAttentionList.tsx";
+export { OpenParcelsRefresh, type OpenParcelsRefreshProps } from "./ui/OpenParcelsRefresh.tsx";
 export { ReturnLabel } from "./ui/ReturnLabel.tsx";
 export { SettingsPanel } from "./ui/SettingsPanel.tsx";
 export { TrackingPanel } from "./ui/TrackingPanel.tsx";

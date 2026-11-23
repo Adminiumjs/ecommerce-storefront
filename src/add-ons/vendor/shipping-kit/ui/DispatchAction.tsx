@@ -40,7 +40,7 @@ import { parseNumber, useFormat, useT } from "../i18n/t.ts";
 import { parcelFor, type ParcelEstimate } from "../parcel.ts";
 import { kitBrand } from "../brand.ts";
 import { cheapestCode, COLLECTION_WINDOW, preselectedCode, type QuotedRate } from "../rates.ts";
-import { carrier, carrierState, findShipment, isDemo, labels, rememberRoute, setHostClock, setHostCurrency } from "../runtime.ts";
+import { carrier, carrierState, engineCarrier, findShipment, isDemo, labels, rememberRoute, setHostClock, setHostCurrency } from "../runtime.ts";
 import {
   addressIsUsable,
   blankAddress,
@@ -64,6 +64,7 @@ import {
 } from "./atoms.tsx";
 import { contentsLine, eventText, serviceName } from "./labels.ts";
 import { DemoNotice, NotConnected } from "./account.tsx";
+import { EngineGate } from "./engine/EngineGate.tsx";
 
 /** `34 × 26 × 12` in any of the shapes a shop floor actually types it. */
 /*
@@ -204,7 +205,18 @@ export function UnresolvedDestination({
   );
 }
 
-export function DispatchAction({ order, now, chosen, onBooked }: DispatchPayload) {
+/**
+ * THE GATE, and all this name does now. With no engine client this is today's
+ * flow, untouched. With one, the engine says whether this add-on is the shop's
+ * carrier, and `EngineGate` draws the real flow or falls back to this one.
+ */
+export function DispatchAction(payload: DispatchPayload) {
+  const client = engineCarrier();
+  const demo = <DemoDispatch {...payload} />;
+  return client === null ? demo : <EngineGate client={client} payload={payload} demo={demo} />;
+}
+
+function DemoDispatch({ order, now, chosen, onBooked }: DispatchPayload) {
   const t = useT();
   const { clock: clockOf, money, day, number, timeOfDay, list } = useFormat();
 

@@ -111,10 +111,9 @@ let engine: EngineCarrier | null = null;
  * THE APP HANDS IN ITS CLIENT FOR ADMINIUM'S SHIPPING ROUTES (plan 79, W1 and W2).
  *
  * An add-on never activates itself, and a bundle without this export is simply
- * never handed one, which is what an older add-on gets. Holding the client
- * changes nothing on screen yet: `carrierState()` still reads the old seam, so
- * with the demo off the screens keep saying "not connected" until T12a draws
- * the real flow on this client. A client meant for another carrier is ignored.
+ * never handed one, which is what an older add-on gets. With the demo off,
+ * holding this client is what "connected" means. A client meant for another
+ * carrier is ignored.
  */
 export function connectEngineCarrier(client: EngineCarrier): void {
   if (client.addOnKey === kitBrand().addOnKey) engine = client;
@@ -163,7 +162,9 @@ function usingDemo(): boolean {
  *
  *  - `demo`: the shop switched the demo carrier on (the default). It answers,
  *    and every screen says so.
- *  - `connected`: the demo is off and a real carrier client was handed in.
+ *  - `connected`: the demo is off and the app handed in its client for
+ *    Adminium's shipping routes. Whether this shop's carrier really is this one
+ *    is the engine's to say (`access`), and the dispatch screen asks it.
  *  - `not-connected`: the demo is off and nothing real is behind it. This used
  *    to fall through to the demo carrier, silently: a shop that had switched
  *    the demo off was quoted and booked by it anyway, with nothing on screen
@@ -174,7 +175,17 @@ export type CarrierState = "demo" | "connected" | "not-connected";
 
 export function carrierState(): CarrierState {
   if (usingDemo()) return "demo";
-  return injected === null ? "not-connected" : "connected";
+  return engine === null ? "not-connected" : "connected";
+}
+
+/**
+ * CAN `carrier()` ANSWER? Asked by the screens that still speak the contract in
+ * the browser: the checkout's options and the return label. A shop connected
+ * through the engine has no such client on the page: checkout has no live rates
+ * (Q9), and return labels are T13's.
+ */
+export function hasPageCarrier(): boolean {
+  return usingDemo() || injected !== null;
 }
 
 /** Asked of a carrier that is not there: what the screens never do, refused in words a works can act on. */
@@ -185,10 +196,9 @@ export class CarrierNotConnected extends Error {
 }
 
 export function carrier(): ShippingCarrier {
-  const state = carrierState();
-  if (state === "demo") return demoCarrier();
-  if (state === "not-connected") throw new CarrierNotConnected();
-  return injected!;
+  if (usingDemo()) return demoCarrier();
+  if (injected === null) throw new CarrierNotConnected();
+  return injected;
 }
 
 /**
