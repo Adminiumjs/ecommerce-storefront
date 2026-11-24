@@ -80,6 +80,15 @@ describe("the sender a carrier's client is given", () => {
     expect(seen.map((h) => h.get("x-adminium-install"))).toEqual(["inst-9", "inst-9"]);
   });
 
+  it("passes a PUT through as a PUT, with the token, as the 1.0.36 client asks", async () => {
+    const request = vi.fn<typeof fetch>(async () => ok());
+    await engineSend(request, ORIGIN, () => "tok-1")(`/api/v1/apps/${APP}/shipping/international`, { method: "PUT", headers: {}, body: "{}" });
+    const [url, init] = request.mock.calls[0]!;
+    expect(url).toBe(`${ORIGIN}/api/v1/apps/${APP}/shipping/international`);
+    expect(init).toMatchObject({ method: "PUT", body: "{}" });
+    expect((init!.headers as Record<string, string>)["x-adminium-csrf"]).toBe("tok-1");
+  });
+
   it("sends no token on a read", async () => {
     const request = vi.fn<typeof fetch>(async () => ok());
     await engineSend(request, ORIGIN, () => "tok-1")(ROUTE, { method: "GET", headers: {} });
