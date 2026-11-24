@@ -96,6 +96,7 @@ FILES_shipping_kit=(
   ui/EngineDispatch.tsx ui/EngineReturnLabel.tsx ui/PaidLabelDialog.tsx ui/NeedsAttentionList.tsx ui/OpenParcelsRefresh.tsx
   ui/engine/EngineGate.tsx ui/engine/LabelCard.tsx ui/engine/ParcelBooking.tsx
   ui/engine/RatesPanel.tsx ui/engine/RefundBlock.tsx ui/engine/UnknownCard.tsx ui/engine/flow.ts ui/engine/parts.tsx
+  ui/engine/CustomsForm.tsx ui/CountriesPanel.tsx ui/CustomsDefaultsPanel.tsx ui/countries.ts ui/customsSettings.ts
 )
 
 # Reachable from the client entry point, and nothing else. An explicit list

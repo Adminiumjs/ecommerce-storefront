@@ -22,7 +22,7 @@ import type { EngineAccess, EngineBooking, EngineQuote } from "../../host/engine
 import { useLocale, useT } from "../i18n/t.ts";
 import { engineCarrier } from "../runtime.ts";
 import { inputStyle } from "./atoms.tsx";
-import { decimalMarkOf, moneyText, readSize, readWeight, type EngineRate } from "./engine/flow.ts";
+import { decimalMarkOf, moneyText, readFailure, readSize, readWeight, type EngineRate } from "./engine/flow.ts";
 import { LabelCard } from "./engine/LabelCard.tsx";
 import { FlowButton } from "./engine/parts.tsx";
 
@@ -44,7 +44,7 @@ export function EngineReturnLabel({ payload }: { payload: RecordActionsPayload }
   const [quote, setQuote] = useState<EngineQuote | null>(null);
   const [rateId, setRateId] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [fault, setFault] = useState<"badFigures" | "failed" | "unclear" | null>(null);
+  const [fault, setFault] = useState<"badFigures" | "failed" | "unclear" | "abroad" | null>(null);
   const mark = useMemo(() => decimalMarkOf(locale), [locale]);
 
   const load = useCallback(async () => {
@@ -80,8 +80,8 @@ export function EngineReturnLabel({ payload }: { payload: RecordActionsPayload }
       const answer = await client.quote({ source: { table: order.table, id: order.id }, parcel: { ...parcel, contents: String(payload.record["number"] ?? returnId) }, purpose: "return", returnId });
       setQuote(answer);
       setRateId((answer.rates as readonly EngineRate[]).find((one) => one.withinLimit)?.rateId ?? null);
-    } catch {
-      setFault("failed");
+    } catch (err) {
+      setFault(readFailure(err).code === "CUSTOMS_ONE_PARCEL" ? "abroad" : "failed");
     } finally {
       setBusy(false);
     }

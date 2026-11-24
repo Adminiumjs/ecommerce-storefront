@@ -28,6 +28,9 @@ import { buttonStyle, Mono, type ButtonVariant } from "../atoms.tsx";
 
 export const TOUCH = 44;
 
+/** The form grid the comps draw: two columns, one when the space is narrow. */
+export const FORM_COLUMNS = "repeat(auto-fit, minmax(min(100%, max(190px, calc(50% - 7px))), 1fr))";
+
 /**
  * A button for a flow that must not lose its place.
  *

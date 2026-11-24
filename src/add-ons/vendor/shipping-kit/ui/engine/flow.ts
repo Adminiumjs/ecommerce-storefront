@@ -18,7 +18,7 @@
 
 import type { DispatchPayload } from "../../../host/index.ts";
 import type { CarrierRefusal } from "../../../host/contracts/index.ts";
-import type { EngineBooking, EngineMode, EngineQuote } from "../../../host/engine-carrier.ts";
+import type { EngineBooking, EngineCustomsEdit, EngineCustomsLine, EngineMode, EngineQuote } from "../../../host/engine-carrier.ts";
 
 export type EngineRate = EngineQuote["rates"][number];
 
@@ -192,6 +192,8 @@ export interface EngineFailure {
   reason?: CarrierRefusal;
   /** The engine's own word for why, such as `daily-limit`. */
   detail?: string;
+  /** Which fields stopped it, when the engine names them. */
+  fields?: readonly string[];
 }
 
 /** Read by shape: each bundle inlines its own copy of the error class, so `instanceof` cannot tell. */
@@ -203,6 +205,7 @@ export function readFailure(err: unknown): EngineFailure {
     message: typeof fields.carrierMessage === "string" ? fields.carrierMessage : "",
     ...(typeof fields.reason === "string" ? { reason: fields.reason as CarrierRefusal } : {}),
     ...(typeof fields.refusalDetail === "string" ? { detail: fields.refusalDetail } : {}),
+    ...(Array.isArray(fields.refusalFields) ? { fields: fields.refusalFields.filter((one): one is string => typeof one === "string") } : {}),
   };
 }
 
@@ -218,6 +221,17 @@ export type RefusalCard =
   | "address-gap"
   | "country"
   | "abroad"
+  | "abroad-owner"
+  | "not-offered"
+  | "phone"
+  | "cancelled"
+  | "customs-app"
+  | "customs-tick"
+  | "customs-none"
+  | "customs-lines"
+  | "customs-weight"
+  | "customs-one"
+  | "customs-signer"
   | "no-answer"
   | "address"
   | "customs"
@@ -253,6 +267,14 @@ const CARD_OF_CODE: Readonly<Record<string, RefusalCard>> = {
   ADDRESS_INCOMPLETE: "address-gap",
   COUNTRY_NOT_RECORDED: "country",
   OUTSIDE_OWN_COUNTRY: "abroad",
+  COUNTRY_NOT_OFFERED: "not-offered",
+  ORDER_CANCELLED: "cancelled",
+  CUSTOMS_NOT_DECLARED: "customs-app",
+  CUSTOMS_NOT_CONFIRMED: "customs-tick",
+  CUSTOMS_NOT_NEEDED: "customs-none",
+  CUSTOMS_INCOMPLETE: "customs-lines",
+  CUSTOMS_ONE_PARCEL: "customs-one",
+  CUSTOMS_SIGNER: "customs-signer",
   ENGINE_NO_ANSWER: "no-answer",
   ENGINE_BAD_ANSWER: "no-answer",
   CARRIER_BAD_ANSWER: "no-answer",
@@ -260,7 +282,10 @@ const CARD_OF_CODE: Readonly<Record<string, RefusalCard>> = {
 };
 
 /** The card for a refusal: the engine's own code first, then what the carrier's no was about. */
-export function refusalCardOf(code: string, reason: CarrierRefusal | undefined): RefusalCard {
+export function refusalCardOf(code: string, reason: CarrierRefusal | undefined, fields: readonly string[] = []): RefusalCard {
+  // Each has its own fix: the phone goes on the order, and a weight on this form.
+  if (code === "ADDRESS_INCOMPLETE" && fields.length === 1 && fields[0] === "phone") return "phone";
+  if (code === "CUSTOMS_INCOMPLETE" && fields.includes("weight")) return "customs-weight";
   const byCode = CARD_OF_CODE[code];
   if (byCode !== undefined) return byCode;
   switch (reason) {
@@ -288,6 +313,7 @@ export const NEW_RATES_HELP: ReadonlySet<RefusalCard> = new Set<RefusalCard>([
   "no-answer",
   "address",
   "address-gap",
+  "phone",
   "country",
   "ship-from",
   "payment",
@@ -295,11 +321,84 @@ export const NEW_RATES_HELP: ReadonlySet<RefusalCard> = new Set<RefusalCard>([
   "rate-old",
   "unavailable",
   "over-limit",
+  "customs-none",
   "other",
 ]);
 
+/** Fixed on the customs form, so the card opens it instead of asking for rates that would be refused again. */
+export const CUSTOMS_FORM_FIXES: ReadonlySet<RefusalCard> = new Set<RefusalCard>(["customs", "customs-tick", "customs-lines"]);
+
 /** Fixed only by someone who manages the shop's carrier: anyone else reads "Ask the owner". */
-export const OWNER_FIXES: ReadonlySet<RefusalCard> = new Set<RefusalCard>(["payment", "key", "ship-from", "not-ready", "customs"]);
+export const OWNER_FIXES: ReadonlySet<RefusalCard> = new Set<RefusalCard>(["payment", "key", "ship-from", "not-ready", "not-offered", "customs-app", "customs-signer"]);
+
+// ── a customs form ──────────────────────────────────────────────────────────
+
+/** What a person has typed over one line. Absent means the order's own value stands. */
+export interface CustomsLineDraft {
+  description?: string;
+  hsCode?: string;
+  manufacturerCode?: string;
+}
+
+export type CustomsDraft = Readonly<Record<string, CustomsLineDraft>>;
+export type CustomsFieldFault = "description" | "hs-format" | "hs-kept" | "code-kept";
+
+const hsBare = (text: string) => text.replace(/[\s.]/g, "");
+
+/** A code as a person pasted it: 6 to 10 digits, with its dots and spaces if they copied them. */
+export const hsLooksRight = (text: string): boolean => /^\d{6,10}$/.test(hsBare(text));
+
+/**
+ * The corrections to send, or which field stops them. A blank is never sent as
+ * a correction: the engine would keep the shop's default while the screen
+ * showed nothing, so what was declared would not be what was ticked.
+ */
+export function customsEdits(
+  lines: readonly EngineCustomsLine[],
+  draft: CustomsDraft,
+): { ok: true; edits: EngineCustomsEdit[] } | { ok: false; line: string; field: "description" | "hsCode" | "manufacturerCode"; fault: CustomsFieldFault } {
+  const edits: EngineCustomsEdit[] = [];
+  for (const line of lines) {
+    const typed = draft[line.line] ?? {};
+    const description = typed.description?.trim();
+    const hs = typed.hsCode?.trim();
+    const maker = typed.manufacturerCode?.trim();
+    if ((description ?? line.description ?? "") === "") return { ok: false, line: line.line, field: "description", fault: "description" };
+    if (hs === "" && line.hsCode !== undefined) return { ok: false, line: line.line, field: "hsCode", fault: "hs-kept" };
+    if (hs !== undefined && hs !== "" && !hsLooksRight(hs)) return { ok: false, line: line.line, field: "hsCode", fault: "hs-format" };
+    if (maker === "" && line.manufacturerCode !== undefined) return { ok: false, line: line.line, field: "manufacturerCode", fault: "code-kept" };
+    const edit: EngineCustomsEdit = {
+      line: line.line,
+      ...(description !== undefined && description !== line.description ? { description } : {}),
+      ...(hs !== undefined && hs !== "" && hsBare(hs) !== line.hsCode ? { hsCode: hsBare(hs) } : {}),
+      ...(maker !== undefined && maker !== "" && maker !== line.manufacturerCode ? { manufacturerCode: maker } : {}),
+    };
+    if (Object.keys(edit).length > 1) edits.push(edit);
+  }
+  return { ok: true, edits };
+}
+
+/** `quantity × unit` as an exact decimal string, so a declared total is never rounded through a float. */
+export function lineTotal(unitValue: string, quantity: number): string {
+  const [whole = "0", fraction = ""] = unitValue.split(".");
+  const digits = (BigInt(`${whole}${fraction}`) * BigInt(quantity)).toString().padStart(fraction.length + 1, "0");
+  if (fraction.length === 0) return digits;
+  const point = digits.length - fraction.length;
+  return `${digits.slice(0, point)}.${digits.slice(point)}`;
+}
+
+/** A country in the reader's language. An order holds its ISO code; anything else is shown as it is. */
+export function countryName(code: string, locale: string): string {
+  if (!/^[A-Z]{2}$/.test(code)) return code;
+  try {
+    return new Intl.DisplayNames([locale], { type: "region" }).of(code) ?? code;
+  } catch {
+    return code;
+  }
+}
+
+/** Which words a tariff link wears. The address itself is the engine's, so no host is written in this bundle. */
+export const codeListWords = (country: string): "uk" | "us" => (country === "GB" ? "uk" : "us");
 
 // ── how a figure is written ─────────────────────────────────────────────────
 
@@ -327,6 +426,10 @@ export const stampOf = (at: number, locale: string): string =>
 
 export const timeOf = (at: number, locale: string): string =>
   new Intl.DateTimeFormat(locale, { hour: "2-digit", minute: "2-digit" }).format(new Date(at));
+
+export function invoiceFileName(reference: string, parcelNumber: number): string {
+  return `invoice-${reference.toLowerCase().replace(/[^a-z0-9_-]+/g, "-")}-${parcelNumber}.pdf`;
+}
 
 export function labelFileName(reference: string, parcelNumber: number, mediaType: string): string {
   const safe = reference.toLowerCase().replace(/[^a-z0-9_-]+/g, "-");

@@ -33,8 +33,8 @@ import type {
 import { kitBrand } from "../../brand.ts";
 import type { StringKey } from "../../i18n/strings.ts";
 import { useLocale, useT } from "../../i18n/t.ts";
-import { Code, Tag } from "../atoms.tsx";
-import { labelFileName, moneyText, readFailure, stampOf } from "./flow.ts";
+import { Code, Mono, Tag } from "../atoms.tsx";
+import { invoiceFileName, labelFileName, moneyText, readFailure, stampOf } from "./flow.ts";
 import { Detail, FlowButton, SampleStamp, Worded } from "./parts.tsx";
 import { HANDOVER } from "./RatesPanel.tsx";
 import { RefundBlock } from "./RefundBlock.tsx";
@@ -111,6 +111,107 @@ function openInTab(blob: Blob): void {
     anchor.rel = "noopener noreferrer";
     anchor.click();
   });
+}
+
+/**
+ * The customs invoice: only for who may send the parcel abroad, since it
+ * states what the goods are worth. One that is owed is fetched by a person's
+ * press, and the label itself stays usable whatever happens here.
+ */
+function InvoiceRow({
+  booking,
+  client,
+  orderRef,
+  say,
+  onChange,
+  onStale,
+}: {
+  booking: EngineBooking;
+  client: EngineCarrier;
+  orderRef: string;
+  say: (text: string) => void;
+  onChange: (fresh: EngineBooking) => void;
+  onStale: () => void;
+}) {
+  const t = useT();
+  const [working, setWorking] = useState(false);
+  const [fault, setFault] = useState<StringKey | null>(null);
+  const company = booking.carrierName ?? kitBrand().name;
+  const fileName = invoiceFileName(orderRef, booking.parcelNumber);
+  const failed = (err: unknown) => {
+    const code = readFailure(err).code;
+    const words = documentFault(code);
+    setFault(words);
+    say(t(words, { company }));
+    if (code === "LABEL_GONE" || code === "LABEL_EXPIRED" || code === "LABEL_OWED") onStale();
+  };
+  const download = async () => {
+    if (working) return;
+    setWorking(true);
+    setFault(null);
+    try {
+      const blob = await client.downloadDocument(booking.id, "customs-invoice");
+      withBlob(blob, (url) => {
+        const anchor = document.createElement("a");
+        anchor.href = url;
+        anchor.download = fileName;
+        anchor.click();
+      });
+      say(t("addon.shipping-kit.engine.say.saved"));
+    } catch (err) {
+      failed(err);
+    } finally {
+      setWorking(false);
+    }
+  };
+  const fetchIt = async () => {
+    if (working) return;
+    setWorking(true);
+    setFault(null);
+    try {
+      const fresh = await client.fetchDocument(booking.id, "customs-invoice");
+      onChange(fresh);
+      if (fresh.label.customsInvoice) say(t("addon.shipping-kit.engine.say.arrived"));
+      else {
+        setFault("addon.shipping-kit.engine.label.fetchFailed");
+        say(t("addon.shipping-kit.engine.label.fetchFailed", { company }));
+      }
+    } catch (err) {
+      failed(err);
+    } finally {
+      setWorking(false);
+    }
+  };
+  const { customsInvoice, customsInvoiceOwed } = booking.label;
+  return (
+    <div data-testid="engine-invoice" style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "6px 12px", border: "1px solid var(--border)", borderRadius: 11, background: "var(--surface-2)", padding: "9px 12px" }}>
+        <FileText size={15} aria-hidden="true" style={{ color: "var(--fg-subtle)", flex: "0 0 auto" }} />
+        <span style={{ fontSize: 13, fontWeight: 700 }}>{t("addon.shipping-kit.customs.invoice")}</span>
+        {customsInvoice && <Mono style={{ fontSize: 11, fontWeight: 500, color: "var(--fg-subtle)", whiteSpace: "normal", overflowWrap: "anywhere" }}>{fileName}</Mono>}
+        <span style={{ flex: 1 }} />
+        {customsInvoice ? (
+          <FlowButton variant="ghost" busy={working} onClick={() => void download()} testId="engine-invoice-download" style={{ fontSize: 12.5, fontWeight: 700, padding: "8px 12px" }}>
+            <Download size={14} aria-hidden="true" />
+            {t("addon.shipping-kit.label.download")}
+          </FlowButton>
+        ) : (
+          <FlowButton variant="ghost" busy={working} onClick={() => void fetchIt()} testId="engine-invoice-retry" style={{ fontSize: 12.5, fontWeight: 700, padding: "8px 12px" }}>
+            <RefreshCw size={14} aria-hidden="true" />
+            {t("addon.shipping-kit.engine.label.retry")}
+          </FlowButton>
+        )}
+      </div>
+      <div style={{ fontSize: 12.5, color: "var(--fg-muted)" }}>
+        {t(customsInvoiceOwed ? "addon.shipping-kit.customs.invoiceOwed" : "addon.shipping-kit.customs.invoiceHow", { company })}
+      </div>
+      {fault !== null && (
+        <div data-testid="engine-invoice-fault" style={{ fontSize: 12.5, fontWeight: 600, color: "var(--danger)" }}>
+          {t(fault, { company })}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function LabelActions({
@@ -458,6 +559,10 @@ export function LabelCard({
         </div>
       ) : (
         <LabelActions booking={booking} client={client} orderRef={orderRef} say={say} onChange={onChange} onStale={onStale} />
+      )}
+
+      {!voiding && access.mayShipAbroad && (booking.label.customsInvoice || booking.label.customsInvoiceOwed) && (
+        <InvoiceRow booking={booking} client={client} orderRef={orderRef} say={say} onChange={onChange} onStale={onStale} />
       )}
 
       {!voiding && booking.purpose !== "return" && (

@@ -23,11 +23,11 @@
  * else goes to the parent, which reads what really happened.
  */
 
-import { useEffect, useId, useMemo, useRef, useState } from "react";
-import { CircleX, MapPin, RefreshCw, Search } from "lucide-react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { CircleCheck, CircleX, FileText, LoaderCircle, MapPin, RefreshCw, Search } from "lucide-react";
 import { classifyBookFailure } from "../../../host/contracts/index.ts";
 import type { DispatchPayload } from "../../../host/index.ts";
-import type { EngineAccess, EngineBooking, EngineCarrier, EngineMode, EngineQuote } from "../../../host/engine-carrier.ts";
+import type { EngineAccess, EngineBooking, EngineCarrier, EngineCustomsTick, EngineMode, EngineQuote } from "../../../host/engine-carrier.ts";
 
 import { kitBrand } from "../../brand.ts";
 import type { StringKey } from "../../i18n/strings.ts";
@@ -35,8 +35,12 @@ import { useFormat, useLocale, useT } from "../../i18n/t.ts";
 import { parcelFor, type ParcelEstimate } from "../../parcel.ts";
 import { inputStyle, Mono, monoInputStyle, Panel, PanelTitle, Typed } from "../atoms.tsx";
 import { contentsLine } from "../labels.ts";
+import { CustomsForm, type CustomsFaultAt, type OfferedForm } from "./CustomsForm.tsx";
 import {
   contentsFor,
+  countryName,
+  CUSTOMS_FORM_FIXES,
+  customsEdits,
   decimalMarkOf,
   firstPick,
   MAX_SIDE_CM,
@@ -47,6 +51,8 @@ import {
   readSize,
   readWeight,
   refusalCardOf,
+  type CustomsDraft,
+  type CustomsLineDraft,
   type EngineFailure,
   type EngineRate,
   type FigureFault,
@@ -77,11 +83,34 @@ const REFUSAL: Readonly<Record<RefusalCard, { title: StringKey; next: StringKey;
   "address-gap": { title: "addon.shipping-kit.engine.refused.addressGap.title", next: "addon.shipping-kit.engine.refused.addressGap.next" },
   country: { title: "addon.shipping-kit.engine.refused.country.title", next: "addon.shipping-kit.engine.refused.country.next" },
   abroad: { title: "addon.shipping-kit.engine.refused.abroad.title", next: "addon.shipping-kit.engine.refused.abroad.next" },
+  "abroad-owner": { title: "addon.shipping-kit.customs.refused.ownerAbroad.title", next: "addon.shipping-kit.customs.refused.ownerAbroad.next" },
+  "not-offered": {
+    title: "addon.shipping-kit.customs.refused.notOffered.title",
+    next: "addon.shipping-kit.customs.refused.notOffered.next",
+    ask: "addon.shipping-kit.customs.refused.notOffered.ask",
+  },
+  phone: { title: "addon.shipping-kit.customs.refused.phone.title", next: "addon.shipping-kit.customs.refused.phone.next" },
+  cancelled: { title: "addon.shipping-kit.engine.refused.cancelled.title", next: "addon.shipping-kit.engine.refused.cancelled.next" },
+  "customs-app": {
+    title: "addon.shipping-kit.customs.refused.app.title",
+    next: "addon.shipping-kit.customs.refused.app.next",
+    ask: "addon.shipping-kit.customs.refused.app.ask",
+  },
+  "customs-tick": { title: "addon.shipping-kit.customs.refused.tick.title", next: "addon.shipping-kit.customs.refused.tick.next" },
+  "customs-none": { title: "addon.shipping-kit.customs.refused.none.title", next: "addon.shipping-kit.customs.refused.none.next" },
+  "customs-lines": { title: "addon.shipping-kit.customs.refused.lines.title", next: "addon.shipping-kit.customs.refused.lines.next" },
+  "customs-weight": { title: "addon.shipping-kit.customs.refused.weight.title", next: "addon.shipping-kit.customs.refused.weight.next" },
+  "customs-one": { title: "addon.shipping-kit.customs.refused.oneParcel.title", next: "addon.shipping-kit.customs.refused.oneParcel.next" },
+  "customs-signer": {
+    title: "addon.shipping-kit.customs.refused.signer.title",
+    next: "addon.shipping-kit.customs.noSigner.manage",
+    ask: "addon.shipping-kit.customs.noSigner.ask",
+  },
   "no-answer": { title: "addon.shipping-kit.engine.refused.noAnswer.title", next: "addon.shipping-kit.engine.refused.noAnswer.next" },
   address: { title: "addon.shipping-kit.engine.refused.address.title", next: "addon.shipping-kit.engine.refused.address.next" },
   customs: {
     title: "addon.shipping-kit.engine.refused.customs.title",
-    next: "addon.shipping-kit.engine.refused.owner",
+    next: "addon.shipping-kit.customs.refused.carrier.next",
     ask: "addon.shipping-kit.engine.refused.owner",
   },
   payment: {
@@ -174,16 +203,6 @@ function FigureField({
       )}
     </div>
   );
-}
-
-/** The country in the reader's language. An order holds its ISO code; anything else is shown as it is. */
-function countryName(code: string, locale: string): string {
-  if (!/^[A-Z]{2}$/.test(code)) return code;
-  try {
-    return new Intl.DisplayNames([locale], { type: "region" }).of(code) ?? code;
-  } catch {
-    return code;
-  }
 }
 
 /** Where it is going. Read-only here: an address change is the order's own audited write. */
@@ -294,6 +313,38 @@ export function ParcelBooking({
   const [rebuyAsking, setRebuyAsking] = useState(false);
   const rebuyTitle = useId();
 
+  /** Only a shop set up for abroad ever asks, so a shop that is not draws and requests exactly what it always did. */
+  const asksCustoms = access.shipsAbroad && access.mayShipAbroad && parcelNumber === 1;
+  const [customsLoad, setCustomsLoad] = useState<"idle" | "loading" | "failed">(asksCustoms ? "loading" : "idle");
+  const [heldForm, setCustomsForm] = useState<OfferedForm | null>(null);
+  const [heldNotOffered, setNotOffered] = useState<string | null>(null);
+  /** Drawn only while this person may still send it abroad: the owner can turn that off with this screen open. */
+  const customsForm = asksCustoms ? heldForm : null;
+  const notOffered = asksCustoms ? heldNotOffered : null;
+  const [customsDraft, setCustomsDraft] = useState<CustomsDraft>({});
+  const [customsTicked, setCustomsTicked] = useState(false);
+  const [tickFault, setTickFault] = useState(false);
+  const [fieldFault, setFieldFault] = useState<CustomsFaultAt | null>(null);
+  /** Folds away once rates are on screen. Anything that needs the form opens it again. */
+  const [customsOpen, setCustomsOpen] = useState(true);
+  const customsBox = useRef<HTMLDivElement>(null);
+
+  const loadCustoms = useCallback(async () => {
+    setCustomsLoad("loading");
+    try {
+      const answer = await client.customsForm({ table: source.table, id: source.id });
+      setCustomsForm(answer.abroad && answer.offered ? answer : null);
+      setNotOffered(answer.abroad && !answer.offered ? answer.to : null);
+      setCustomsLoad("idle");
+    } catch {
+      setCustomsLoad("failed");
+    }
+  }, [client, source.table, source.id]);
+
+  useEffect(() => {
+    if (asksCustoms) void loadCustoms();
+  }, [asksCustoms, loadCustoms, order.destination?.country]);
+
   /** Moves on every edit: a quote asked for before it is not this parcel's any more. */
   const edition = useRef(0);
   const bookingNow = useRef(false);
@@ -346,8 +397,10 @@ export function ParcelBooking({
       say(t("addon.shipping-kit.engine.rate.ownerBooks"));
       return;
     }
-    const card: RefusalCard = info.code === "OWNER_BOOKS" ? (info.detail === "abroad" ? "abroad" : "over-limit") : refusalCardOf(info.code, info.reason);
+    const card: RefusalCard = info.code === "OWNER_BOOKS" ? (info.detail === "abroad" ? "abroad-owner" : "over-limit") : refusalCardOf(info.code, info.reason, info.fields);
     setFailure({ card, info, company, afterBook, wordsHidden: hidesMoney, nothingStands: false });
+    // The order may have changed since the form was read: what it marks must be why this stopped.
+    if (info.code === "CUSTOMS_INCOMPLETE") void loadCustoms();
     setQuote(null);
     setSelectedId(null);
     say(t(REFUSAL[card].title, { company }));
@@ -363,6 +416,25 @@ export function ParcelBooking({
       say(t(!readW.ok ? "addon.shipping-kit.engine.form.fixWeight" : "addon.shipping-kit.engine.form.fixSize"));
       return;
     }
+    let customsTick: EngineCustomsTick | undefined;
+    if (customsForm !== null) {
+      const read = customsEdits(customsForm.lines, customsDraft);
+      if (!read.ok) {
+        setCustomsOpen(true);
+        setFieldFault({ line: read.line, field: read.field, fault: read.fault });
+        say(t("addon.shipping-kit.customs.refused.lines.title"));
+        requestAnimationFrame(() => customsBox.current?.querySelector<HTMLElement>("[data-customs-fault]")?.focus());
+        return;
+      }
+      setFieldFault(null);
+      if (!customsTicked) {
+        setCustomsOpen(true);
+        setTickFault(true);
+        requestAnimationFrame(() => customsBox.current?.querySelector<HTMLElement>('[data-testid="customs-declare"]')?.focus());
+        return;
+      }
+      customsTick = { certified: true, ...(read.edits.length > 0 ? { lines: read.edits } : {}) };
+    }
     setFailure(null);
     setCleared(false);
     setRebuy(null);
@@ -373,6 +445,7 @@ export function ParcelBooking({
         source: { table: source.table, id: source.id },
         parcel: { weightKg: readW.weightKg, lengthCm: readS.lengthCm, widthCm: readS.widthCm, heightCm: readS.heightCm, contents },
         parcelNumber,
+        ...(customsTick === undefined ? {} : { customs: customsTick }),
       });
       if (edition.current !== asked) return;
       if (answer.mode !== access.mode) {
@@ -380,6 +453,7 @@ export function ParcelBooking({
         return;
       }
       onQuoted();
+      setCustomsOpen(false);
       const wantedCode = chosen !== undefined && chosen !== null && chosen.addOn === kitBrand().addOnKey ? chosen.code : null;
       setQuote(answer);
       setSelectedId(firstPick(answer.rates, speed, wantedCode));
@@ -436,8 +510,14 @@ export function ParcelBooking({
   };
 
   const refusal = failure === null ? null : REFUSAL[failure.card];
-  const canFix = failure !== null && (!OWNER_FIXES.has(failure.card) || access.manages);
+  const canFix = failure !== null && (failure.card === "customs" ? access.mayShipAbroad : !OWNER_FIXES.has(failure.card) || access.manages);
   const offersRates = failure !== null && canFix && NEW_RATES_HELP.has(failure.card);
+  const opensCustoms = failure !== null && customsForm !== null && canFix && CUSTOMS_FORM_FIXES.has(failure.card) && !customsOpen;
+  const editCustoms = (line: string, field: keyof CustomsLineDraft, value: string) => {
+    setCustomsDraft((held) => ({ ...held, [line]: { ...held[line], [field]: value } }));
+    setFieldFault(null);
+    clearRates();
+  };
   const carrierWords =
     failure !== null && failure.info.code === "CARRIER_REFUSED" && !failure.wordsHidden && failure.info.message !== ""
       ? { by: t("addon.shipping-kit.engine.refused.said", { who: failure.company }), words: failure.info.message }
@@ -491,6 +571,39 @@ export function ParcelBooking({
         </div>
       </Panel>
 
+      {asksCustoms && customsLoad === "loading" && (
+        <div data-testid="customs-loading" style={{ display: "flex", gap: 8, alignItems: "center", fontSize: 13, color: "var(--fg-muted)" }}>
+          <LoaderCircle size={15} aria-hidden="true" />
+          {t("addon.shipping-kit.engine.loading")}
+        </div>
+      )}
+
+      {asksCustoms && customsLoad === "failed" && (
+        <StatusCard
+          tone="warn"
+          icon={<CircleX size={20} />}
+          testId="customs-load-failed"
+          title={t("addon.shipping-kit.customs.loadFailed.title")}
+          body={t("addon.shipping-kit.customs.loadFailed.body")}
+          actions={
+            <FlowButton variant="ghost" onClick={() => void loadCustoms()} testId="customs-look-again">
+              <RefreshCw size={15} aria-hidden="true" />
+              {t("addon.shipping-kit.engine.lookAgain")}
+            </FlowButton>
+          }
+        />
+      )}
+
+      {notOffered !== null && failure === null && (
+        <StatusCard
+          tone="warn"
+          icon={<MapPin size={20} />}
+          testId="customs-not-offered"
+          title={t("addon.shipping-kit.customs.notOffered.title", { c: countryName(notOffered, locale) })}
+          {...(access.manages ? { next: t("addon.shipping-kit.customs.refused.notOffered.next") } : { note: t("addon.shipping-kit.customs.refused.notOffered.ask") })}
+        />
+      )}
+
       {ownerBlock !== null && (
         <StatusCard
           tone="warn"
@@ -527,7 +640,19 @@ export function ParcelBooking({
           {...(canFix ? { next: t(refusal.next, { company: failure.company }) } : {})}
           {...(!canFix && refusal.ask !== undefined ? { note: t(refusal.ask) } : {})}
           actions={
-            offersRates ? (
+            opensCustoms ? (
+              <FlowButton
+                variant="accent"
+                testId="engine-open-customs"
+                onClick={() => {
+                  setFailure(null);
+                  setCustomsOpen(true);
+                }}
+              >
+                <FileText size={15} aria-hidden="true" />
+                {t("addon.shipping-kit.customs.open")}
+              </FlowButton>
+            ) : offersRates ? (
               <FlowButton variant="accent" onClick={() => void getRates()} testId="engine-new-rates">
                 <RefreshCw size={15} aria-hidden="true" />
                 {t("addon.shipping-kit.engine.refused.getRates")}
@@ -584,6 +709,48 @@ export function ParcelBooking({
         </Dialog>
       )}
 
+      {ownerBlock === null && customsForm !== null && (customsOpen || (shownQuote === null && !opensCustoms)) && (
+        <div ref={customsBox}>
+          <CustomsForm
+            form={customsForm}
+            draft={customsDraft}
+            ticked={customsTicked}
+            tickFault={tickFault}
+            fieldFault={fieldFault}
+            busy={booking}
+            manages={access.manages}
+            showSubmit={shownQuote === null && rebuy === null && !offersRates}
+            onEdit={editCustoms}
+            onTick={(next) => {
+              setCustomsTicked(next);
+              setTickFault(false);
+              clearRates();
+            }}
+            onSubmit={() => void getRates()}
+          />
+        </div>
+      )}
+
+      {ownerBlock === null && customsForm !== null && !customsOpen && shownQuote !== null && (
+        <div data-testid="customs-done" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px 12px", border: "1px solid var(--border)", borderRadius: 11, background: "var(--surface-2)", padding: "9px 12px" }}>
+          <CircleCheck size={15} aria-hidden="true" style={{ color: "var(--pos)", flex: "0 0 auto" }} />
+          <span style={{ flex: "1 1 180px", minInlineSize: 0, fontSize: 13, fontWeight: 700 }}>{t("addon.shipping-kit.customs.declared", { who: customsForm.signer ?? "" })}</span>
+          <FlowButton
+            variant="ghost"
+            busy={booking}
+            testId="customs-reopen"
+            style={{ fontSize: 12.5, fontWeight: 700, padding: "8px 12px" }}
+            onClick={() => {
+              clearRates();
+              setCustomsOpen(true);
+            }}
+          >
+            <FileText size={14} aria-hidden="true" />
+            {t("addon.shipping-kit.customs.open")}
+          </FlowButton>
+        </div>
+      )}
+
       {ownerBlock === null && shownQuote !== null && rebuy === null && (
         <RatesPanel
           quote={shownQuote}
@@ -599,7 +766,7 @@ export function ParcelBooking({
         />
       )}
 
-      {ownerBlock === null && shownQuote === null && failure === null && rebuy === null && (
+      {ownerBlock === null && shownQuote === null && failure === null && rebuy === null && customsForm === null && notOffered === null && !(asksCustoms && customsLoad === "loading") && (
         <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
           <FlowButton variant="accent" busy={booking} onClick={() => void getRates()} testId="engine-get-rates">
             <Search size={15} aria-hidden="true" />

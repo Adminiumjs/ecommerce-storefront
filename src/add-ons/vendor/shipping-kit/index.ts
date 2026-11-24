@@ -25,6 +25,8 @@ export { OpenParcelsRefresh, type OpenParcelsRefreshProps } from "./ui/OpenParce
 export { ReturnLabel } from "./ui/ReturnLabel.tsx";
 export { EngineReturnLabel } from "./ui/EngineReturnLabel.tsx";
 export { clearPaidLabel, isPaidLabelStopped, PAID_LABEL_HEADER, PaidLabelHost, withPaidLabel } from "./ui/PaidLabelDialog.tsx";
+export { CountriesPanel, type CountryPrices } from "./ui/CountriesPanel.tsx";
+export { CustomsDefaultsPanel } from "./ui/CustomsDefaultsPanel.tsx";
 export { SettingsPanel } from "./ui/SettingsPanel.tsx";
 export { TrackingPanel } from "./ui/TrackingPanel.tsx";
 
