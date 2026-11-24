@@ -28,7 +28,7 @@ export const ADD_ONS = {
     { key: "invoices", range: ADD_ONS_RANGE, checked: true, reason: l("Give customers a receipt, and print packing slips for a day's orders.") },
     { key: "forms", range: ADD_ONS_RANGE, checked: true, reason: l("Take reviews from customers who bought, and confirm newsletter sign-ups.") },
     { key: "shipping-dhl", range: ADD_ONS_RANGE, reason: l("Try DHL's dispatch flow on the desk (a demo carrier this release).") },
-    { key: "shipping-shippo", range: "^1.0.35", reason: l("Buy shipping labels on your own Shippo account.") },
+    { key: "shipping-shippo", range: "^1.0.36", reason: l("Buy shipping labels on your own Shippo account.") },
     { key: "barcode-labels", range: ADD_ONS_RANGE, reason: l("Print SKU labels for the stockroom.") },
     { key: "live-chat", range: ADD_ONS_RANGE, reason: l("Answer shoppers in a chat window on the shop.") },
   ],
